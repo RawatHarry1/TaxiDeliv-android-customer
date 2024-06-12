@@ -2,7 +2,6 @@
 <layout>
 
     <data>
-
         <variable
             name="walkViewModel"
             type="com.salonedriver.viewmodel.WalkThroughViewModel" />
