@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/clParent"
+    android:visibility="gone"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:visibility="visible"
+    app:layout_constraintTop_toTopOf="parent"
+    android:background="@android:color/transparent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/bg_bottom_sheet">
+
+        <View
+            android:id="@+id/viewTop"
+            android:layout_width="30dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/grey_line_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"></View>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvBestRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:fontFamily="@font/poppins_regular"
+            android:lineSpacingExtra="14sp"
+            android:text="@string/txt_best_route"
+            android:textColor="#1a1824"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivArrivePickup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_location_pin_faded"
+            app:layout_constraintStart_toStartOf="@id/tvBestRoute"
+            app:layout_constraintTop_toBottomOf="@id/tvBestRoute" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="@color/grey_arrow"
+            app:layout_constraintBottom_toTopOf="@id/ivOnDestination"
+            app:layout_constraintEnd_toEndOf="@id/ivArrivePickup"
+            app:layout_constraintStart_toStartOf="@id/ivArrivePickup"
+            app:layout_constraintTop_toBottomOf="@id/ivArrivePickup" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvArrivePickup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:fontFamily="@font/poppins_regular"
+            android:letterSpacing="-0.03"
+            android:lineSpacingExtra="8sp"
+            android:text="@string/txt_arrived_at_pickup_location"
+            android:textColor="@color/text_color"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="@id/ivArrivePickup"
+            app:layout_constraintStart_toEndOf="@id/ivArrivePickup"
+            app:layout_constraintTop_toTopOf="@id/ivArrivePickup" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivOnDestination"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_location_pin_faded"
+            app:layout_constraintStart_toStartOf="@id/ivArrivePickup"
+            app:layout_constraintTop_toBottomOf="@id/ivArrivePickup" />
+
+        <View
+            android:id="@+id/viewOnDestination"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="@color/grey_arrow"
+            app:layout_constraintBottom_toTopOf="@id/ivRideComplete"
+            app:layout_constraintEnd_toEndOf="@id/ivOnDestination"
+            app:layout_constraintStart_toStartOf="@id/ivOnDestination"
+            app:layout_constraintTop_toBottomOf="@id/ivOnDestination" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvOnDestination"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:fontFamily="@font/poppins_regular"
+            android:letterSpacing="-0.03"
+            android:lineSpacingExtra="8sp"
+            android:text="@string/on_the_way_to_destination"
+            android:textColor="@color/text_color"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="@id/ivOnDestination"
+            app:layout_constraintStart_toEndOf="@id/ivOnDestination"
+            app:layout_constraintTop_toTopOf="@id/ivOnDestination" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivRideComplete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_location_pin_faded"
+            app:layout_constraintStart_toStartOf="@id/ivOnDestination"
+            app:layout_constraintTop_toBottomOf="@id/ivOnDestination" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvRideComplete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:fontFamily="@font/poppins_regular"
+            android:letterSpacing="-0.03"
+            android:lineSpacingExtra="8sp"
+            android:text="@string/txt_volt_ride_completed"
+            android:textColor="@color/text_color"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="@id/ivRideComplete"
+            app:layout_constraintStart_toEndOf="@id/ivRideComplete"
+            app:layout_constraintTop_toTopOf="@id/ivRideComplete" />
+
+
+        <com.ncorti.slidetoact.SlideToActView
+            android:id="@+id/tvSlideTrip"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:area_margin="4dp"
+            android:layout_marginHorizontal="@dimen/_30sdp"
+            android:text="@string/txt_slide_to_cancel"
+            app:animation_duration="250"
+            app:border_radius="50dp"
+            app:slider_icon="@drawable/ic_fade_slide"
+            app:complete_icon="@drawable/ic_fade_slide"
+            app:rotate_icon="@drawable/ic_fade_slide"
+            android:background="@drawable/bg_theme_shape_round_button"
+            app:slider_icon_color="@color/white"
+            app:inner_color="@android:color/transparent"
+            app:outer_color="@android:color/transparent"
+            app:text_color="@color/white"
+            app:text="@string/txt_slide_to_cancel_trip"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="20dp"
+            app:text_size="12sp"
+            app:slider_height="50dp"
+            app:slider_locked="false"
+            app:bounce_on_start="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvRideComplete" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

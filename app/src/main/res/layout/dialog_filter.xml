@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginBottom="20dp"
+    android:background="@android:color/transparent">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="2dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <CheckBox
+                android:id="@+id/cbAll"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_medium"
+                android:layoutDirection="rtl"
+                android:paddingStart="60dp"
+                android:paddingEnd="10dp"
+                android:text="@string/all"
+                android:textColor="@color/grey_text_color"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <CheckBox
+                android:id="@+id/cbAccept"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_medium"
+                android:layoutDirection="rtl"
+                android:paddingStart="60dp"
+                android:paddingEnd="10dp"
+                android:text="@string/accept"
+                android:textColor="@color/grey_text_color"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/cbAll"
+                app:layout_constraintTop_toBottomOf="@id/cbAll" />
+
+            <CheckBox
+                android:id="@+id/cbCancel"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_medium"
+                android:layoutDirection="rtl"
+                android:paddingStart="60dp"
+                android:paddingEnd="10dp"
+                android:text="@string/cancel"
+                android:textColor="@color/grey_text_color"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/cbAll"
+                app:layout_constraintTop_toBottomOf="@id/cbAccept" />
+
+            <CheckBox
+                android:id="@+id/cbLatest"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_medium"
+                android:layoutDirection="rtl"
+                android:paddingStart="60dp"
+                android:paddingEnd="10dp"
+                android:text="@string/latest"
+                android:textColor="@color/grey_text_color"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/cbCancel"
+                app:layout_constraintStart_toStartOf="@id/cbCancel"
+                app:layout_constraintTop_toBottomOf="@id/cbCancel" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.appcompat.widget.LinearLayoutCompat>

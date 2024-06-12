@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivSenderImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/shape_sender_chat_image"
+            android:padding="5dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_banner_image"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivReceiverImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/shape_sender_chat_image_left"
+            android:padding="5dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_banner_image"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/shape_sender_chat"
+            android:fontFamily="@font/poppins"
+            android:maxWidth="300dp"
+            android:padding="10dp"
+            android:text="@string/txt_hey_there_how_are_you"
+            android:textColor="@color/chat_text_color"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivSenderImage" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvReceiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/shape_receiver_chat"
+            android:fontFamily="@font/poppins"
+            android:maxWidth="300dp"
+            android:padding="10dp"
+            android:text="@string/txt_hey_there_how_are_you"
+            android:textColor="@color/chat_text_color"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivReceiverImage" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSenderTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:drawableStart="@drawable/ic_double_tick"
+            android:drawablePadding="5dp"
+            android:fontFamily="@font/poppins"
+            android:paddingStart="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/txt_dummy_time"
+            android:textColor="@color/chat_time_color"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSender" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvReceiverTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/poppins"
+            android:paddingTop="5dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/txt_dummy_time"
+            android:textColor="@color/chat_time_color"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvReceiver" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

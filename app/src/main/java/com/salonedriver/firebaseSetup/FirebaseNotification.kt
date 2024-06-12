@@ -1,0 +1,203 @@
+package com.salonedriver.firebaseSetup
+
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.graphics.BitmapFactory
+import android.media.RingtoneManager
+import android.os.Build
+import android.os.Bundle
+import android.os.Parcelable
+import androidx.core.app.NotificationCompat
+import androidx.navigation.NavDeepLinkBuilder
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
+import com.salonedriver.R
+import com.salonedriver.model.dataclassses.userData.UserDataDC
+import com.salonedriver.util.SharedPreferencesManager
+import com.salonedriver.view.fragment.wallet.WalletFragment
+import com.salonedriver.view.ui.home_drawer.HomeActivity
+import com.salonedriver.view.ui.home_drawer.ui.home.HomeFragment
+import kotlinx.parcelize.Parcelize
+import org.json.JSONObject
+
+
+@SuppressLint("MissingFirebaseInstanceTokenRefresh")
+class FirebaseNotification : FirebaseMessagingService() {
+
+    /**
+     * Initialize Variables
+     * */
+    private val notificationData by lazy { NotificationData() }
+
+
+    /**
+     * On Message Received
+     * */
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        super.onMessageReceived(remoteMessage)
+
+        remoteMessage.notification.let {
+            notificationData.title = it?.title ?: getString(R.string.app_name)
+            notificationData.message = it?.body ?: getString(R.string.app_name)
+        }
+
+        if (remoteMessage.data.isNotEmpty()) {
+            remoteMessage.data.let { data ->
+                if (data["title"].orEmpty().isNotEmpty()) notificationData.title =
+                    data["title"].orEmpty()
+
+                if (data["body"].orEmpty().isNotEmpty()) notificationData.message =
+                    data["body"].orEmpty()
+
+                notificationData.notificationType = data["notification_type"].orEmpty()
+                fetchNotificationData(data)
+            }
+        }
+
+        try {
+            when {
+                (notificationData.notificationType?.toIntOrNull()
+                    ?: -1) == NotificationStatus.NEW_RIDE.type -> {
+                    HomeFragment.notificationInterface?.newRide()
+                        ?: kotlin.run { sendNotification() }
+                }
+
+                (notificationData.notificationType?.toIntOrNull()
+                    ?: -1) == NotificationStatus.TIME_OUT_RIDE.type -> {
+                    HomeFragment.notificationInterface?.timeOutRide()
+                }
+
+                (notificationData.notificationType?.toIntOrNull()
+                    ?: -1) == NotificationStatus.WALLET_UPDATE.type -> {
+                    WalletFragment.notificationInterface?.walletUpdate()
+                    HomeFragment.notificationInterface?.walletUpdate()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+
+        //Check User Login
+        SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+            ?.let {
+                if (it.accessToken?.isNotEmpty() == true) {
+                    sendNotification()
+                }
+            }
+
+    }
+
+
+    /**
+     * Fetch Notification Data
+     * */
+    private fun fetchNotificationData(data: MutableMap<String, String>) {
+        try {
+            val jsonData = JSONObject(data["notificationDetails"].orEmpty())
+
+            when (notificationData.notificationType?.toIntOrNull() ?: -1) {
+                NotificationStatus.NEW_RIDE.type -> {
+                    NewRideNotificationDC(
+                        customerName = jsonData.optString("customer_name"),
+                        customerImage = jsonData.optString("customer_image"),
+                        customerId = jsonData.optString("customer_id"),
+                        pickUpAddress = jsonData.optString("pickup_address"),
+                        latitude = jsonData.optString("latitude"),
+                        tripId = jsonData.optString("trip_id"),
+                        estimatedDriverFare = jsonData.optString("estimated_driver_fare"),
+                        longitude = jsonData.optString("longitude"),
+                        currency = jsonData.optString("currency"),
+                        estimatedDistance = jsonData.optString("estimated_distance"),
+                        dropAddress = jsonData.optString("drop_address"),
+                        dryEta = jsonData.optString("dry_eta"),
+                        date = jsonData.optString("date")
+                    ).apply {
+                        SharedPreferencesManager.putModel(
+                            SharedPreferencesManager.Keys.NEW_BOOKING, this
+                        )
+                    }
+                }
+
+                NotificationStatus.TIME_OUT_RIDE.type -> {
+                    SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.NEW_BOOKING)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
+    /**
+     * Send Notifications
+     * */
+    private fun sendNotification() {
+
+        val notificationBuilder = NotificationCompat.Builder(this, packageName)
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle(notificationData.title ?: "").setContentText(notificationData.message)
+            .setAutoCancel(true).setSilent(false).setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
+            .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
+            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            .setContentIntent(
+                when (notificationData.notificationType?.toIntOrNull() ?: -1) {
+                    NotificationStatus.WALLET_UPDATE.type -> getPendingIntent(destinationId = R.id.wallet)
+                    else -> getPendingIntent(destinationId = R.id.nav_home)
+                }
+            )
+
+
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                packageName, notificationData.title, NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = notificationData.message
+                setBypassDnd(true)
+                enableVibration(true)
+                setShowBadge(true)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    setAllowBubbles(true)
+                }
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        notificationManager.notify(0, notificationBuilder.build())
+    }
+
+
+    /**
+     * Pending Intent Handle
+     * */
+    private fun getPendingIntent(destinationId: Int, bundle: Bundle? = null): PendingIntent =
+        if (Build.VERSION.SDK_INT >= 31) NavDeepLinkBuilder(this).setComponentName(HomeActivity::class.java)
+            .setGraph(R.navigation.mobile_navigation).setDestination(destinationId)
+            .setArguments(bundle).createTaskStackBuilder()
+            .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)!!
+        else NavDeepLinkBuilder(this).setComponentName(HomeActivity::class.java)
+            .setGraph(R.navigation.mobile_navigation).setDestination(destinationId)
+            .setArguments(bundle).createPendingIntent()
+
+
+    /**
+     * Notification Data
+     * */
+    @Parcelize
+    data class NotificationData(
+        var title: String? = "",
+        var message: String? = "",
+        var notificationType: String? = "",
+    ) : Parcelable
+
+}

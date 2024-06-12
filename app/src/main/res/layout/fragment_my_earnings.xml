@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivMenuBurg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            android:elevation="1dp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/home" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
+            android:text="@string/my_earnings"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            app:fontFamily="@font/poppins_regular"
+            app:layout_constraintStart_toStartOf="@+id/ivMenuBurg"
+            app:layout_constraintTop_toBottomOf="@+id/ivMenuBurg"
+
+            />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/llSelectionBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvEarnings"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_left_rounded_24dp_theme"
+                android:gravity="center"
+                android:text="@string/menu_earnings"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:fontFamily="@font/poppins_regular" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvBookings"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_right_rounded_24dp_white"
+                android:gravity="center"
+                android:text="@string/menu_bookings"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:fontFamily="@font/poppins_regular" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clEarnings"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/llSelectionBtn">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:textColor="@color/black"
+                android:textSize="36sp"
+                app:fontFamily="@font/poppins_bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/titleBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/menu_earnings"
+                android:textColor="@color/black_text_color2"
+                android:textSize="15sp"
+                app:fontFamily="@font/poppins_regular"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvBalance"
+                app:textAllCaps="true" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvPaymentHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="25dp"
+                android:text="@string/payment_history"
+                android:textSize="13sp"
+                app:fontFamily="@font/poppins_semibold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titleBalance" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/btnFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/stroke_rectangular"
+                android:drawableStart="@drawable/ic_filter"
+                android:drawableEnd="@drawable/ic_keyboard_arrow_down_24"
+                android:drawablePadding="10dp"
+                android:visibility="invisible"
+                android:elevation="4dp"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:text="@string/filter"
+                android:textSize="8sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titleBalance" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvEarnings"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/stroke_rectangular"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnFilter"
+                tools:listitem="@layout/item_earnings" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvEarningNoData"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:visibility="gone"
+                android:text="No Data Found"
+                android:textSize="@dimen/_16sdp"
+                android:fontFamily="@font/poppins_bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnFilter"
+                android:textColor="@color/black"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clBookings"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/llSelectionBtn">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvBookings"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="30dp"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:listitem="@layout/item_bookings" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvBookingNoData"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:visibility="gone"
+                android:text="No Data Found"
+                android:textSize="@dimen/_16sdp"
+                android:fontFamily="@font/poppins_bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/black"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

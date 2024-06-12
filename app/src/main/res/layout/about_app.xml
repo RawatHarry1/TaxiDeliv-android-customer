@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="vm"
+            type="com.salonedriver.viewmodel.AboutAppVM" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".view.fragment.profile.AboutUsFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clToolBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivMenuBurg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="10dp"
+                android:elevation="1dp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/home" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/about_app"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                app:fontFamily="@font/poppins_regular"
+                app:layout_constraintStart_toStartOf="@+id/ivMenuBurg"
+                app:layout_constraintTop_toBottomOf="@+id/ivMenuBurg"
+
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            app:layout_constraintTop_toBottomOf="@+id/clToolBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            >
+
+            <RelativeLayout
+                android:id="@+id/rlRateUs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivRateUs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_rate_us"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rate_us_on_app_store"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/black_text_color2"
+                    android:layout_centerVertical="true"
+                    android:textSize="12sp"
+                    android:layout_toEndOf="@id/ivRateUs"
+                    android:layout_marginStart="15dp"
+                    />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_keyboard_right"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    />
+
+
+
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/rlLikeUs"
+                android:layout_width="match_parent"
+                android:layout_marginTop="15dp"
+                android:layout_height="wrap_content"
+                >
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivLikeUs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_like_us"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/like_us_on_facebook"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/black_text_color2"
+                    android:layout_centerVertical="true"
+                    android:textSize="12sp"
+                    android:layout_toEndOf="@id/ivLikeUs"
+                    android:layout_marginStart="15dp"
+                    />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_keyboard_right"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    />
+
+
+
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/rlLegal"
+                android:layout_width="match_parent"
+                android:layout_marginTop="15dp"
+                android:layout_height="wrap_content"
+                >
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivLegal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_legal"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/legal"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/black_text_color2"
+                    android:layout_centerVertical="true"
+                    android:textSize="12sp"
+                    android:layout_toEndOf="@id/ivLegal"
+                    android:layout_marginStart="15dp"
+                    />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_keyboard_right"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    />
+
+
+
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/rlWhoAreWe"
+                android:layout_width="match_parent"
+                android:layout_marginTop="15dp"
+                android:layout_height="wrap_content"
+                >
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivWho"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_who_are_we"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/who_are_we"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/black_text_color2"
+                    android:layout_centerVertical="true"
+                    android:textSize="12sp"
+                    android:layout_toEndOf="@id/ivWho"
+                    android:layout_marginStart="15dp"
+                    />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_keyboard_right"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    />
+
+
+
+
+
+            </RelativeLayout>
+
+
+
+            <RelativeLayout
+                android:id="@+id/rlPrivacy"
+                android:layout_width="match_parent"
+                android:layout_marginTop="15dp"
+                android:layout_height="wrap_content"
+                >
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivPrivacy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_privacy"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/privacy_policy"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/black_text_color2"
+                    android:layout_centerVertical="true"
+                    android:textSize="12sp"
+                    android:layout_toEndOf="@id/ivPrivacy"
+                    android:layout_marginStart="15dp"
+                    />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_keyboard_right"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    />
+
+
+
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/rlEmailSupport"
+                android:layout_width="match_parent"
+                android:layout_marginTop="15dp"
+                android:layout_height="wrap_content"
+                >
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_email_support"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/email_support"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/black_text_color2"
+                    android:layout_centerVertical="true"
+                    android:textSize="12sp"
+                    android:layout_toEndOf="@id/ivEmail"
+                    android:layout_marginStart="15dp"
+                    />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_keyboard_right"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    />
+
+
+
+
+
+            </RelativeLayout>
+
+
+
+
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

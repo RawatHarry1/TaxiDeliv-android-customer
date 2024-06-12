@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        tools:context=".view.ui.UploadMuniciple">
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBackMuniUpload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:src="@drawable/ic_close"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvUploadMuni"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:fontFamily="@font/sufi_semi_bold"
+            android:text="@string/upload_municiple_card"
+            android:textColor="@color/walk_title_color"
+            android:textSize="22sp"
+            android:textStyle="normal"
+            app:layout_constraintTop_toBottomOf="@+id/ivBackMuniUpload" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivMuni"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/doc_corner_bg"
+            android:backgroundTint="#60000000"
+            app:layout_constraintTop_toBottomOf="@+id/tvUploadMuni" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivPlusMuni"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/plus"
+            app:layout_constraintBottom_toBottomOf="@+id/ivMuni"
+            app:layout_constraintEnd_toEndOf="@+id/ivMuni"
+            app:layout_constraintStart_toStartOf="@+id/ivMuni"
+            app:layout_constraintTop_toTopOf="@+id/ivMuni" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvNextMuni"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginVertical="20dp"
+            android:background="@drawable/bg_theme_shape_round_button"
+            android:fontFamily="@font/poppins_regular"
+            android:gravity="center"
+            android:paddingVertical="7dp"
+            android:text="@string/next"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintTop_toBottomOf="@+id/ivMuni" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

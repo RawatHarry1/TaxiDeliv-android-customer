@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvFront"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="15dp"
+        android:fontFamily="@font/sufi_semi_bold"
+        android:text="@string/front_view"
+        android:textColor="@color/walk_title_color"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivFrontView"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="10dp"
+        android:theme="@style/RoundedImageCorner"
+        android:background="@drawable/doc_corner_bg"
+        android:backgroundTint="#60000000"
+        app:layout_constraintTop_toBottomOf="@+id/tvFront" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivPlus"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/plus"
+        app:layout_constraintBottom_toBottomOf="@+id/ivFrontView"
+        app:layout_constraintEnd_toEndOf="@+id/ivFrontView"
+        app:layout_constraintStart_toStartOf="@+id/ivFrontView"
+        app:layout_constraintTop_toTopOf="@+id/ivFrontView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

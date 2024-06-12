@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/cbItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/customer_is_not_picking_call"
+        android:textAlignment="textStart"
+        android:includeFontPadding="false"
+        android:textColor="@color/black_text_color"
+        android:paddingVertical="@dimen/_8sdp"
+        android:textSize="15sp"
+        app:fontFamily="@font/poppins_regular" />
+</layout>

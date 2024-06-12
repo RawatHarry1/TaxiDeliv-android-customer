@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_top_rounded100"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <View
+                    android:id="@+id/viewTop"
+                    android:layout_width="30dp"
+                    android:layout_height="5dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/grey_line_color"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/bg_top_rounded2"
+                    app:layout_constraintTop_toBottomOf="@id/viewTop">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/ivUser"
+                        android:layout_width="@dimen/_50sdp"
+                        android:layout_height="@dimen/_50sdp"
+                        android:theme="@style/CircleImage"
+                        android:layout_marginStart="15dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/rectangle" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvUser"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:text="@string/esther"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@id/ivUser"
+                        app:layout_constraintStart_toEndOf="@id/ivUser"
+                        app:layout_constraintEnd_toStartOf="@+id/tvPrice"
+                        app:layout_constraintTop_toTopOf="@id/ivUser" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="15dp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:gravity="end"
+                        android:text="@string/usd_20_43"
+                        android:textColor="@color/text_color"
+                        android:textSize="15sp"
+                        android:textStyle="normal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/ivUser" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="@string/_2_2_miles"
+                        android:textColor="#5b5b5b"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintEnd_toEndOf="@id/tvPrice"
+                        app:layout_constraintTop_toBottomOf="@id/tvPrice" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvPickUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="25dp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/txt_pick_up"
+                    android:includeFontPadding="false"
+                    android:textColor="#5b5b5b"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/clUser" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvPickUpAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/_7958_swift_village"
+                    android:includeFontPadding="false"
+                    android:textColor="#242e42"
+                    android:textSize="15sp"
+                    android:textStyle="normal"
+                    app:layout_constraintStart_toStartOf="@id/tvPickUp"
+                    app:layout_constraintTop_toBottomOf="@id/tvPickUp" />
+
+                <View
+                    android:id="@+id/viewPickUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="5dp"
+                    android:background="#efeff4"
+                    app:layout_constraintTop_toBottomOf="@id/tvPickUpAddress" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvDestination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="25dp"
+                    android:layout_marginTop="15dp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/destination"
+                    android:textColor="#5b5b5b"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/viewPickUp" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvDestinationAddress"
+                    android:layout_width="match_parent"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/_7958_swift_village"
+                    android:textColor="#242e42"
+                    android:textSize="15sp"
+                    android:textStyle="normal"
+                    app:layout_constraintStart_toStartOf="@id/tvDestination"
+                    app:layout_constraintTop_toBottomOf="@id/tvDestination" />
+
+                <View
+                    android:id="@+id/viewDestination"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="5dp"
+                    android:background="#efeff4"
+                    app:layout_constraintTop_toBottomOf="@id/tvDestinationAddress" />
+
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideCenter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent=".5" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvIgnoreBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/shape_round_button"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/ignore"
+                    android:textColor="@color/black"
+                    android:textSize="18dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/guideCenter"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/viewDestination" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvAcceptBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/bg_theme_shape_round_button"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/accept"
+                    android:textColor="@color/white"
+                    android:textSize="18dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/guideCenter"
+                    app:layout_constraintTop_toBottomOf="@id/viewDestination" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

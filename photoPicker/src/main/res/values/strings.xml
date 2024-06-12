@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="upload_from">Upload From</string>
+    <string name="gallery">Gallary</string>
+    <string name="camera">Camera</string>
+    <string name="submit">Submit</string>
+</resources>

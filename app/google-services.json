@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "473774154132",
+    "project_id": "saloneride-faca9",
+    "storage_bucket": "saloneride-faca9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473774154132:android:47b82315db00433cc3af81",
+        "android_client_info": {
+          "package_name": "com.salonedriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "473774154132-upaj7bugsn6acg6mqlm2ohed7vvrjhhp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9MuRazdzKtkgKoM1XZkfTVsD1AA27i5o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "473774154132-upaj7bugsn6acg6mqlm2ohed7vvrjhhp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "473774154132-8ee8kdthohhpt1nvqapmlh905h261e40.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.saloneride.driver"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473774154132:android:47b82315db00433cc3af81",
+        "android_client_info": {
+          "package_name": "com.venusdriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "473774154132-upaj7bugsn6acg6mqlm2ohed7vvrjhhp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9MuRazdzKtkgKoM1XZkfTVsD1AA27i5o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "473774154132-upaj7bugsn6acg6mqlm2ohed7vvrjhhp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "473774154132-8ee8kdthohhpt1nvqapmlh905h261e40.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.venusride.driver"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

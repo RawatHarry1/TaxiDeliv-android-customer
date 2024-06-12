@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBackElectric"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvElectricInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="20dp"
+            android:fontFamily="@font/sufi_semi_bold"
+            android:text="@string/electric_vehicle_information"
+            android:textColor="@color/walk_title_color"
+            android:textSize="22sp"
+            android:textStyle="normal"
+            app:layout_constraintTop_toBottomOf="@+id/ivBackElectric" />
+
+        <AutoCompleteTextView
+            android:id="@+id/etVehicleCountry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="20dp"
+            android:fontFamily="@font/sufi_reg"
+            android:hint="@string/vehicle_country"
+            android:inputType="none"
+            android:dropDownHeight="@dimen/_180sdp"
+            android:drawableEnd="@drawable/down"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvElectricInfo" />
+
+        <AutoCompleteTextView
+            android:id="@+id/etVehicleType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="10dp"
+            android:fontFamily="@font/sufi_reg"
+            android:hint="@string/vehicle_type"
+            android:inputType="none"
+            android:dropDownHeight="@dimen/_180sdp"
+            android:drawableEnd="@drawable/down"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etVehicleCountry" />
+
+        <AutoCompleteTextView
+            android:id="@+id/etVehicleMake"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="10dp"
+            android:fontFamily="@font/sufi_reg"
+            android:hint="@string/vehicle_make"
+            android:inputType="none"
+            android:dropDownHeight="@dimen/_180sdp"
+            android:maxLength="4"
+            android:drawableEnd="@drawable/down"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etVehicleType" />
+
+        <AutoCompleteTextView
+            android:id="@+id/etVehicleModel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="10dp"
+            android:drawableEnd="@drawable/down"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
+            android:background="@color/white"
+            android:fontFamily="@font/sufi_reg"
+            android:hint="@string/vehicle_model"
+            android:paddingVertical="@dimen/_8sdp"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etVehicleMake" />
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/spinner"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="invisible"
+            app:layout_constraintTop_toTopOf="@+id/etVehicleModel"
+            app:layout_constraintBottom_toBottomOf="@+id/etVehicleModel"
+            app:layout_constraintStart_toStartOf="@+id/etVehicleModel"
+            app:layout_constraintEnd_toEndOf="@+id/etVehicleModel"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/etVehicleModel"
+            app:layout_constraintStart_toStartOf="@+id/etVehicleModel"
+            app:layout_constraintEnd_toEndOf="@+id/etVehicleModel"
+            android:background="@color/black"
+            />
+
+        <AutoCompleteTextView
+            android:id="@+id/etVehicleColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="10dp"
+            android:drawableEnd="@drawable/down"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
+            android:fontFamily="@font/sufi_reg"
+            android:hint="@string/color_of_vehicle"
+            android:inputType="none"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etVehicleModel" />
+
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etVehiclePlate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="10dp"
+            android:fontFamily="@font/sufi_reg"
+            android:hint="@string/license_plate"
+            android:inputType="text"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etVehicleColor" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSubmitVehicle"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="20dp"
+            android:background="@drawable/bg_theme_shape_round_button"
+            android:fontFamily="@font/poppins_regular"
+            android:gravity="center"
+            android:paddingVertical="7dp"
+            android:text="@string/submit"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

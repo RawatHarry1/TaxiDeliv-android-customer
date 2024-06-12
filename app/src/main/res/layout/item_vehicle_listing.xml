@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/rootView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="3dp"
+        android:layout_marginTop="8dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivCarImage"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_car_round" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCarName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="5dp"
+                android:minWidth="80dp"
+                android:singleLine="true"
+                android:text="@string/maruti_suzuki_baleno"
+                android:textColor="@color/black_text_color2"
+                android:textSize="15sp"
+                app:fontFamily="@font/poppins_medium"
+                app:layout_constraintEnd_toStartOf="@+id/tvCarNo"
+                app:layout_constraintStart_toEndOf="@+id/ivCarImage"
+                app:layout_constraintTop_toTopOf="@+id/ivCarImage"
+
+                />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCarNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="24dp"
+                android:elevation="4dp"
+                android:gravity="top"
+                android:paddingHorizontal="5dp"
+                android:singleLine="true"
+                android:text="@string/rua_7403"
+                android:textColor="@color/grey_text_color3"
+                android:textSize="15sp"
+                app:fontFamily="@font/poppins_medium"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ivCarImage"
+
+                />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivCarImage"
+                app:layout_constraintTop_toBottomOf="@+id/tvCarName">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.1"
+                    android:orientation="vertical">
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_car_seats"
+                        android:drawablePadding="6dp"
+                        android:gravity="center"
+                        android:text="@string/seats"
+                        android:textColor="@color/black_text_color2"
+                        android:textSize="11sp"
+                        app:fontFamily="@font/poppins" />
+
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:drawableStart="@drawable/ic_taxi_permit"
+                        android:drawablePadding="6dp"
+                        android:gravity="start"
+                        android:text="@string/vehicle_color"
+                        android:textColor="@color/black_text_color2"
+                        android:textSize="11sp"
+                        app:fontFamily="@font/poppins" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:drawableStart="@drawable/ic_taxi_permit"
+                        android:drawablePadding="6dp"
+                        android:gravity="center"
+                        android:text="Vehicle Type"
+                        android:textColor="@color/black_text_color2"
+                        android:textSize="11sp"
+                        app:fontFamily="@font/poppins"
+
+                        />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.9"
+                    android:layout_marginEnd="20dp"
+                    android:orientation="vertical">
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvCarSeats"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="6dp"
+                        android:gravity="end"
+                        android:text="@string/_4_seats"
+                        android:textColor="@color/theme"
+                        android:textSize="11sp"
+                        app:fontFamily="@font/poppins" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvInsuranceDeatils"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:drawablePadding="6dp"
+                        android:gravity="end"
+                        android:text="@string/valid_up_to_dec_2023"
+                        android:textColor="@color/theme"
+                        android:textSize="11sp"
+                        app:fontFamily="@font/poppins" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvVehicleType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:drawablePadding="6dp"
+                        android:gravity="end"
+                        android:textColor="@color/theme"
+                        android:textSize="11sp"
+                        app:fontFamily="@font/poppins" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

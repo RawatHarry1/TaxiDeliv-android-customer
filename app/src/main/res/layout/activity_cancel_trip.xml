@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.fragment.cancelRideFragment.CancelRideFragment">
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:padding="2dp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_back" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/cancel_ride"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:fontFamily="@font/poppins_bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCancelRide"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@color/pink_card"
+            android:gravity="center"
+            android:text="@string/i_want_to_cancel_my_ride_because"
+            android:textColor="@color/black_text_color"
+            android:textSize="14sp"
+            app:fontFamily="@font/poppins_bold"
+            app:layout_constraintTop_toBottomOf="@+id/ivBack" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCancelRide">
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="27dp"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/cbDriverLate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/customer_is_not_picking_call"
+                    android:textAlignment="center"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="15sp"
+                    app:fontFamily="@font/poppins_regular" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/cbDeniedDuty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/customer_is_not_available"
+                    android:textAlignment="center"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="15sp"
+                    app:fontFamily="@font/poppins_regular" />
+
+                <!--
+
+                                <androidx.appcompat.widget.AppCompatCheckBox
+                                    android:id="@+id/cbChangedMind"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/changed_my_mind"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/black_text_color"
+                                    android:textSize="15sp"
+                                    app:fontFamily="@font/poppins_regular" />
+
+                                <androidx.appcompat.widget.AppCompatCheckBox
+                                    android:id="@+id/cbAnotherRide"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/booked_another_ride"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/black_text_color"
+                                    android:textSize="15sp"
+                                    app:fontFamily="@font/poppins_regular" />
+
+
+                                <androidx.appcompat.widget.AppCompatCheckBox
+                                    android:id="@+id/cbOnlinePayment"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/driver_denied_online_payment"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/black_text_color"
+                                    android:textSize="15sp"
+                                    app:fontFamily="@font/poppins_regular" />
+                -->
+
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/cbOthers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/others"
+                    android:textAlignment="center"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="15sp"
+                    app:fontFamily="@font/poppins_regular" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etReason"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="100dp"
+                    android:background="@drawable/bg_white_8_rad_1_stroke"
+                    android:gravity="start"
+                    android:hint="@string/please_specify_your_reason"
+                    android:maxLines="5"
+                    android:minLines="5"
+                    android:padding="10dp"
+                    android:textAlignment="viewStart"
+                    android:textSize="14sp" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/btnNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_theme_shape_round_button"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/no"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:fontFamily="@font/poppins_regular" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/btnCancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginBottom="18dp"
+                    android:background="@drawable/shape_round_button"
+                    android:backgroundTint="@color/pink_card"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/cancel"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="14sp"
+                    app:fontFamily="@font/poppins_regular" />
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.core.widget.NestedScrollView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

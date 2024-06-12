@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_background"
+    android:backgroundTint="@color/_ffffff"
+    android:padding="@dimen/_15sdp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/viewLine"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_3sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@drawable/bg_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/uploadFrom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/bw_modelica_medium"
+            android:letterSpacing="-0.03"
+            android:lineSpacingExtra="8sp"
+            android:text="@string/upload_from"
+            android:textColor="@color/_1a1824"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/ivCross"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ivCross"
+            tools:text="Upload from" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCross"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:padding="@dimen/_10sdp"
+            android:tint="@color/_1a1824"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_cancel" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvGallery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:background="@drawable/bg_background"
+            android:backgroundTint="@color/_52A8A0"
+            android:drawableTop="@drawable/iv_gallery"
+            android:drawablePadding="@dimen/_10sdp"
+            android:fontFamily="@font/bw_modelica_medium"
+            android:gravity="center"
+            android:letterSpacing="-0.02"
+            android:lineSpacingExtra="10sp"
+            android:paddingVertical="@dimen/_25sdp"
+            android:text="@string/gallery"
+            android:textColor="@color/_ffffff"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toStartOf="@id/tvCamera"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivCross"
+            tools:text="Gallery" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCamera"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:background="@drawable/bg_background"
+            android:backgroundTint="@color/_f6fafa"
+            android:drawableTop="@drawable/iv_camera"
+            android:drawablePadding="@dimen/_10sdp"
+            android:fontFamily="@font/bw_modelica_medium"
+            android:gravity="center"
+            android:letterSpacing="-0.02"
+            android:lineSpacingExtra="10sp"
+            android:paddingVertical="@dimen/_25sdp"
+            android:text="@string/camera"
+            android:textColor="@color/_1a1824"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvGallery"
+            app:layout_constraintTop_toBottomOf="@id/ivCross"
+            tools:text="Camera" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btSubmit"
+            style="@style/PrimaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_35sdp"
+            android:backgroundTint="@color/_0C163F"
+            android:paddingVertical="@dimen/_10sdp"
+            android:visibility="gone"
+            android:text="@string/submit"
+            app:layout_constraintTop_toBottomOf="@id/tvCamera" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
