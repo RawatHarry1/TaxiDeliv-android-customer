@@ -127,7 +127,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA12Rbcs3mWSpYuJkkSODZameeQRmlXR4U" />
+            android:value="AIzaSyAK6809b_21d4H62yMZpIV9JcTVWcyDtPY" />
 
         <service
             android:name=".firebaseSetup.FirebaseNotification"

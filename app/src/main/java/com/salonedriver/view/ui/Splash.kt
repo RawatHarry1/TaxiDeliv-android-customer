@@ -63,10 +63,10 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
      * Call Walkthrough
      * */
     private fun callWalkThrough() {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_MONTH, 12)
-        calendar.set(Calendar.MONTH, 5)
-        if (System.currentTimeMillis() < calendar.timeInMillis){
+//        val calendar = Calendar.getInstance()
+//        calendar.set(Calendar.DAY_OF_MONTH, 12)
+//        calendar.set(Calendar.MONTH, 5)
+//        if (System.currentTimeMillis() < calendar.timeInMillis){
             SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
                 ?.let {
                     if ((it.login?.registrationStepCompleted?.isVehicleInfoCompleted == true) && (it.accessToken?.isNotEmpty() == true)) {
@@ -77,9 +77,7 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
                 } ?: run {
                 changeIntent(WalkThrough::class.java)
             }
-        }
-
-
+//        }
     }
 
 

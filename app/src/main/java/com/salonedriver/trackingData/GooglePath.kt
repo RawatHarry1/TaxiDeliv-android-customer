@@ -29,6 +29,7 @@ import kotlin.math.sign
 
 
 var polyLine: List<LatLng>? = null
+var mainPolyLine:List<LatLng>? = null
 private var srcMarker: Marker? = null
 private var driverMarker: Marker? = null
 private var destMarker: Marker? = null
@@ -75,8 +76,8 @@ fun Context.showPath(
                         options.add(point)
                         latLongB.include(point)
                     }
-                    polyLine = polyPoints
-                    if (polyLine != polyPoints){
+                    mainPolyLine = polyPoints
+                    if (mainPolyLine != polyPoints){
                         mMap?.clear()
                     }
                     val bounds = latLongB.build()
@@ -270,10 +271,12 @@ fun Context.animateDriver(
     oldDriverLat = driverLatitude
     oldDriverLng = driverLongitude
 
-    if (polyLine != null) {
+    if (mainPolyLine != null) {
+        val currentPosition = LatLng(driverLatitude ?: 0.0, driverLongitude ?: 0.0)
+
         val exceededTolerance = !PolyUtil.isLocationOnPath(
             LatLng(driverLatitude ?: 0.0, driverLongitude ?: 0.0),
-            polyLine,
+            mainPolyLine,
             false,
             50.0
         )
@@ -286,18 +289,100 @@ fun Context.animateDriver(
                 destination = destination,
                 via = via
             ) {}
-        } else
-            animateCar(
+        } else {
+            newAnimateCar(
                 LatLng(driverLatitude ?: 0.0, driverLongitude ?: 0.0),
                 (bearing ?: 0.0).toFloat(),
                 googleMap
             ) {
                 eta(it)
             }
+            Log.d("animateDriver", "Before Updated Polyline with ${polyline?.points?.size} points.")
+            polyline?.remove()
+            polyLine = null
+
+            val nearestPointIndex = mainPolyLine!!.indexOfFirst {
+                PolyUtil.isLocationOnPath(currentPosition, listOf(it), false, 50.0)
+            }
+
+            if (nearestPointIndex != -1) {
+                val filteredPoints = mainPolyLine!!.subList(nearestPointIndex, mainPolyLine!!.size)
+                val polylineOptions = PolylineOptions()
+                    .color(ContextCompat.getColor(this, R.color.black))
+                    .addAll(filteredPoints)
+                googleMap?.clear()
+                // Add a new polyline to the map
+                googleMap?.addPolyline(polylineOptions).also {
+                    polyline = it
+                    polyLine = it?.points
+                }
+                Log.d("animateDriver", "after Updated Polyline with ${polyline?.points?.size} points.")
+                googleMap?.addMarker(
+                    MarkerOptions().position(
+                        currentPosition
+                    ).apply {
+                        icon(vectorToBitmap(source))
+                        rotation(bearing!!.toFloat())
+                        anchor(0.5f, 1f)
+                    }
+                )
+
+                googleMap?.addMarker(
+                    MarkerOptions().apply {
+                        position(destMarker?.position ?: LatLng(0.0, 0.0))
+                        icon(vectorToBitmap(destination))
+                        anchor(0.5f, 1f)
+                    }
+                )
+                // Logging for debugging
+
+            } else {
+                // Logging for debugging
+                Log.d("animateDriver", "No points found on the path for current position.")
+            }
+        }
     }
 }
 
+private fun Context.newAnimateCar(
+    endPosition: LatLng,
+    bearing: Float,
+    googleMap: GoogleMap?,
+    eta: (String) -> Unit
+) {
+    try {
+        srcMarker?.let { marker ->
+            val startPosition = marker.position
 
+            // Use ValueAnimator for smooth marker movement
+            val valueAnimator = ValueAnimator.ofFloat(0f, 1f)
+            valueAnimator.duration = 1000 // Duration of animation in milliseconds
+            valueAnimator.interpolator = LinearInterpolator()
+            valueAnimator.addUpdateListener { animation ->
+                val fraction = animation.animatedFraction
+                val latLng = LatLng(
+                    newLerp(startPosition.latitude, endPosition.latitude, fraction.toDouble()),
+                    newLerp(startPosition.longitude, endPosition.longitude, fraction.toDouble())
+                )
+                marker.position = latLng
+                marker.rotation = bearing
+
+                // Smooth camera movement
+                if (fraction == 1f) {
+                    googleMap?.animateCamera(CameraUpdateFactory.newLatLng(latLng), 1000, null)
+                }
+
+            }
+            valueAnimator.start()
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+private fun newLerp(a: Double, b: Double, t: Double): Double {
+    return a + (b - a) * t
+}
 private interface LatLngInterpolator {
     fun interpolate(fraction: Float, a: LatLng, b: LatLng): LatLng
     class LinearFixed : LatLngInterpolator {

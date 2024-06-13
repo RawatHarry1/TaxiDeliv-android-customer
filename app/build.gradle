@@ -57,7 +57,7 @@ android {
             dimension "server"
             buildConfigField("String", "BASE_URL", '"https://dev-rides.venustaxi.in/"')
             buildConfigField("String", "VARIANT", '"dev"')
-            resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
+            resValue "string", "map_api_key", "AIzaSyAK6809b_21d4H62yMZpIV9JcTVWcyDtPY"
         }
         qa {
             dimension "server"

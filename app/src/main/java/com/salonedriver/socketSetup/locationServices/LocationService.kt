@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -63,13 +64,31 @@ class LocationService : LifecycleService() {
                 enableBackgroundUpdates = true
             }
             Locus.startLocationUpdates(this).observe(this) { result ->
-                if (
-                    result.location?.latitude == previousLatLong.latitude &&
-                    result.location?.longitude == previousLatLong.longitude
-                ) {
-                    return@observe
+//                if (
+//                    result.location?.latitude == previousLatLong.latitude &&
+//                    result.location?.longitude == previousLatLong.longitude
+//                ) {
+//                    return@observe
+//                }
+
+
+                val currentLocation = result.location ?: return@observe
+                // Set a threshold for considering significant location changes (in meters)
+                val thresholdDistance = 10 // 10 meters
+                val distance = FloatArray(1)
+                Location.distanceBetween(
+                    previousLatLong.latitude, previousLatLong.longitude,
+                    currentLocation.latitude, currentLocation.longitude,
+                    distance
+                )
+                if (distance[0] < thresholdDistance) {
+                    return@observe // If the change in location is less than the threshold, ignore it
                 }
-                Log.e("sfdsfsdfds","sdfsdfsdfsdf  ${result.location?.latitude}")
+
+                // Update the previous location with the current location
+                previousLatLong = LatLng(currentLocation.latitude, currentLocation.longitude)
+                Log.e("LocationUpdate", "OnService   Lat: ${currentLocation.latitude}, Lng: ${currentLocation.longitude}")
+
                 LocalBroadcastManager.getInstance(this).sendBroadcast(Intent().apply {
                     action = LOCATION_BROADCAST
                     putExtra("latitude", result.location?.latitude.toString())

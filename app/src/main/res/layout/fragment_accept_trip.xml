@@ -71,10 +71,10 @@
                             android:id="@+id/ivMsg"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:layout_constraintBottom_toBottomOf="@+id/ivCustomerPic"
-                            app:layout_constraintEnd_toStartOf="@+id/ivCustomerPic"
-                            app:layout_constraintStart_toStartOf="@+id/ivCustomerPic"
+                            android:layout_marginEnd="@dimen/_10sdp"
                             app:layout_constraintTop_toTopOf="@+id/ivCustomerPic"
+                            app:layout_constraintBottom_toBottomOf="@+id/ivCustomerPic"
+                            app:layout_constraintEnd_toStartOf="@+id/ivCall"
                             app:srcCompat="@drawable/ic_msg" />
 
 

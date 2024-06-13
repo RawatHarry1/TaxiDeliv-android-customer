@@ -6,7 +6,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.media.AudioAttributes
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
@@ -22,6 +24,7 @@ import com.salonedriver.view.ui.home_drawer.HomeActivity
 import com.salonedriver.view.ui.home_drawer.ui.home.HomeFragment
 import kotlinx.parcelize.Parcelize
 import org.json.JSONObject
+import kotlin.random.Random
 
 
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
@@ -136,7 +139,14 @@ class FirebaseNotification : FirebaseMessagingService() {
      * Send Notifications
      * */
     private fun sendNotification() {
-
+        // Define vibration patterns
+        val hardVibrationPattern = longArrayOf(0, 1000, 500, 1000) // Hard vibration pattern
+        val normalVibrationPattern = longArrayOf(0, 500, 250, 500) // Normal vibration pattern
+        val notificationType = notificationData.notificationType?.toIntOrNull() ?: -1
+        val soundUri =
+            Uri.parse("android.resource://" + packageName + "/" + R.raw.alert_for_new_ride)
+        // Create the notification channel ID based on the notification type
+        val channelId = if (notificationType == 0) "new_ride" else packageName
         val notificationBuilder = NotificationCompat.Builder(this, packageName)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(notificationData.title ?: "").setContentText(notificationData.message)
@@ -145,7 +155,17 @@ class FirebaseNotification : FirebaseMessagingService() {
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
             .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            .setSound(
+                if (notificationType == 0) {
+                    soundUri
+                } else {
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                }
+            )
+            .setVibrate(
+                if (notificationType == 0
+                ) hardVibrationPattern else normalVibrationPattern
+            )
             .setContentIntent(
                 when (notificationData.notificationType?.toIntOrNull() ?: -1) {
                     NotificationStatus.WALLET_UPDATE.type -> getPendingIntent(destinationId = R.id.wallet)
@@ -159,21 +179,45 @@ class FirebaseNotification : FirebaseMessagingService() {
 
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                packageName, notificationData.title, NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = notificationData.message
-                setBypassDnd(true)
-                enableVibration(true)
-                setShowBadge(true)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    setAllowBubbles(true)
+            if (notificationType == 0) {
+                val sirenChannel = NotificationChannel(
+                    channelId, "new_ride", NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = notificationData.message
+                    setBypassDnd(true)
+                    enableVibration(true)
+                    vibrationPattern = hardVibrationPattern
+                    setShowBadge(true)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        setAllowBubbles(true)
+                    }
+                    setSound(
+                        soundUri,
+                        AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .setUsage(AudioAttributes.USAGE_ALARM)
+                            .build()
+                    )
                 }
+                notificationManager.createNotificationChannel(sirenChannel)
+            } else {
+                val channel = NotificationChannel(
+                    channelId, packageName, NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = notificationData.message
+                    setBypassDnd(true)
+                    enableVibration(true)
+                    setShowBadge(true)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        setAllowBubbles(true)
+                    }
+                    setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),null)
+                }
+                notificationManager.createNotificationChannel(channel)
             }
-            notificationManager.createNotificationChannel(channel)
         }
-
-        notificationManager.notify(0, notificationBuilder.build())
+        val id = Random.nextInt(100000, 999999)
+        notificationManager.notify(id, notificationBuilder.build())
     }
 
 
