@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvPickDrop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="15dp"
+            app:cardCornerRadius="20dp"
+            android:layout_marginBottom="10dp"
+            app:cardElevation="2dp"
+            >
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clPickDrop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:visibility="gone"
+                >
+
+                <TextView
+                    android:id="@+id/tvSelectPickDrop"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:drawablePadding="10dp"
+                    android:text="@string/txt_pick_up"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="@color/grey_text_color"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins"
+                    app:drawableStartCompat="@drawable/ic_dot_circle" />
+
+<!--                <fragment-->
+<!--                    android:id="@+id/autocomplete_fragment"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:visibility="gone"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/tvSelectPickDrop"-->
+<!--                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"-->
+<!--                    />-->
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etSearchLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/search_hint"
+                    android:textSize="@dimen/_12ssp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/poppins_regular"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSelectPickDrop"
+                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                    />
+                <View
+                    android:id="@+id/viewPickDrop"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    app:layout_constraintStart_toStartOf="@id/etSearchLocation"
+                    app:layout_constraintEnd_toEndOf="@id/etSearchLocation"
+                    app:layout_constraintTop_toBottomOf="@id/etSearchLocation"
+                    android:layout_marginTop="10dp"
+                    android:visibility="visible"
+                    android:background="@color/theme">
+                </View>
+                <ProgressBar
+                    android:id="@+id/progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    app:layout_constraintTop_toBottomOf="@+id/viewPickDrop"
+                    android:indeterminate="true"
+                    />
+
+                <TextView
+                    android:id="@+id/tvSavedLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/viewPickDrop"
+                    app:layout_constraintStart_toStartOf="@id/etSearchLocation"
+                    android:text="@string/txt_saved_locations"
+                    android:visibility="gone"
+                    android:textColor="@color/grey_text_color"
+                    android:textSize="12sp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/poppins"
+                     />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvPickDrop"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxHeight="200dp"
+                        android:layout_marginTop="5dp"
+                        android:orientation="vertical"
+                        app:layout_constraintTop_toBottomOf="@id/tvSavedLocation"
+                        tools:itemCount="4"
+                        tools:listitem="@layout/item_address_list"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:cardElevation="5dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0"
+            app:cardCornerRadius="40dp"
+            android:visibility="gone"
+            >
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:textSize="15sp"
+                android:textColor="@color/arrive_text_color"
+                android:text="@string/txt_sector_65_chandigarh"
+                android:drawableStart="@drawable/ic_direction"
+                app:drawableTint="@color/black"
+                android:maxLines="1"
+                android:paddingStart="25dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:drawablePadding="15dp"
+                />
+        </androidx.cardview.widget.CardView>
+
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/fragmentMapFullScreen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvConfirmBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/bg_button"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/txt_confirm"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

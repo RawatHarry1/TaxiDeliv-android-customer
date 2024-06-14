@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+
+    </data>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.activity.walk_though.ui.home.HomeFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clWhereMain"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                >
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvWhereTo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_margin="20dp"
+                    app:cardElevation="5dp"
+                    app:cardCornerRadius="25dp"
+                    >
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/clWhereTo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        >
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvWhereTo"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tvNow"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:text="@string/txt_where_to"
+                            android:textSize="18sp"
+                            android:padding="10dp"
+                            android:textColor="@color/black_text_color"
+                            android:drawablePadding="10dp"
+                            android:drawableStart="@drawable/ic_direction"
+                            />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvNow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/txt_now"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginEnd="2dp"
+                            android:textSize="16dp"
+                            android:padding="10dp"
+                            android:background="@drawable/shape_round_button"
+                            android:backgroundTint="@color/grey_light"
+                            android:textColor="@color/black_text_color"
+                            android:textAlignment="center"
+                            android:drawablePadding="5dp"
+                            android:drawableStart="@drawable/ic_watch"
+                            android:drawableEnd="@drawable/arrow_down"
+                            app:drawableTint="@color/black_text_color"
+                            />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/vpBanners"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/cvWhereTo"
+                    android:layout_marginTop="15dp"
+                    />
+
+                <com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
+                    android:id="@+id/diBanner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:dotsSize="12dp"
+                    app:dotsColor="@color/theme_button"
+                    app:dotsSpacing="4dp"
+                    app:dotsStrokeColor="@color/text_color"
+                    attachToViewPager="@{vpBanners}"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintTop_toBottomOf="@id/vpBanners"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvNearYou"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/diBanner"
+                    app:layout_constraintStart_toStartOf="@id/cvWhereTo"
+                    android:text="@string/txt_near_you"
+                    android:textColor="@color/black_text_color"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    />
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvMap"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="20dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    app:cardElevation="5dp"
+                    app:contentPadding="10dp"
+                    app:layout_constraintTop_toBottomOf="@id/tvNearYou"
+                    >
+
+                    <com.google.android.gms.maps.MapView
+                        android:id="@+id/fragment_map"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:background="@color/pink_card"
+                        />
+
+                </androidx.cardview.widget.CardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clMapMain"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                >
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivBack"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    app:srcCompat="@drawable/arrow_down"
+                    android:tint="@color/white"
+                    android:rotation="90"
+                    android:elevation="20dp"
+                    android:padding="20dp"
+                    android:layout_marginTop="40dp"
+                    android:background="@drawable/bg_start_rounded_back_bg"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+
+                    />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:cardElevation="5dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintVertical_bias="0"
+                    app:cardCornerRadius="40dp"
+                    android:visibility="gone"
+                    >
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvTitleStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins"
+                        android:textSize="15sp"
+                        android:textColor="@color/arrive_text_color"
+                        android:text="@string/txt_meet_at_pickup_location"
+                        android:drawableStart="@drawable/ic_dot_circle"
+                        app:drawableTint="@color/black"
+                        android:paddingStart="25dp"
+                        android:paddingEnd="12dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:drawablePadding="10dp"
+                        />
+                </androidx.cardview.widget.CardView>
+
+                <com.google.android.gms.maps.MapView
+                    android:id="@+id/fragmentMapFullScreen"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            android:id="@+id/viewLocation"
+            layout="@layout/dialog_where_to"
+            />
+
+        <include
+            android:id="@+id/viewCarType"
+            layout="@layout/dialog_car_types"
+            />
+
+        <include
+            android:id="@+id/viewCarDetail"
+            layout="@layout/dialog_car_detail"
+            />
+
+        <include
+            android:id="@+id/viewStartRide"
+            layout="@layout/dialog_ride_start"
+            />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

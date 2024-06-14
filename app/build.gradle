@@ -1,0 +1,182 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-kapt'
+    id 'kotlin-android'
+    id("kotlin-parcelize")
+    id ("dagger.hilt.android.plugin")
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id("com.google.gms.google-services")
+
+}
+
+android {
+    signingConfigs {
+        release {
+            storeFile file('SalonCustomer.jks')
+            storePassword '123456'
+            keyAlias 'SalonCustomer'
+            keyPassword '123456'
+        }
+    }
+    namespace 'com.venus_customer'
+    compileSdk 33
+
+    dataBinding {
+        enabled true
+    }
+
+    defaultConfig {
+        applicationId "com.venus_customer"
+        minSdk 23
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug{
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField("String", "BASE_URL", '"https://dev-rides.venustaxi.in/"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://dev-rides.venustaxi.in:4012/"')
+        }
+        release {
+            minifyEnabled false
+            _isDebuggable true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField("String", "BASE_URL", '"https://trips-prod.venustaxi.in/"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://dev-rides.venustaxi.in:4012/"')
+            signingConfig signingConfigs.debug
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    flavorDimensions "product"
+    productFlavors {
+        venus {
+            dimension "product"
+            buildConfigField("String", "VARIANT", '"dev"')
+            resValue "string", "app_name", "Venus"
+            resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
+        }
+        salon {
+            dimension "product"
+            applicationId "com.saloneCustomer"
+            buildConfigField("String", "VARIANT", '"salon"')
+            resValue "string", "app_name", "Salone Ride"
+            resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
+            signingConfig signingConfigs.release
+        }
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
+    implementation project(':photoPicker')
+/*
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+*/
+    def preference_version = "1.2.0"
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+
+    //hilt
+    implementation 'com.google.dagger:hilt-android:2.45'
+    kapt 'com.google.dagger:hilt-compiler:2.45'
+
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    //Preference Manager
+    implementation "androidx.preference:preference-ktx:$preference_version"
+    // Navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
+    implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
+
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+
+    //AWS SDK
+    def aws_sdk = "2.9.0"
+    implementation "com.amazonaws:aws-android-sdk-s3:$aws_sdk"
+
+    implementation 'com.intuit.sdp:sdp-android:1.1.0'
+
+    //Event Bus
+    implementation("org.greenrobot:eventbus:3.3.1")
+
+
+    //circular image view
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //dots indicator
+    implementation("com.tbuonomo:dotsindicator:4.3")
+
+    //map
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
+
+    //country code
+    implementation 'com.hbb20:android-country-picker:0.0.7'
+
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
+
+    //Otp View
+    implementation 'com.github.rajputmukesh748:MukeshOtpView:1.0.0'
+
+    implementation 'com.hbb20:ccp:2.6.1'
+
+    //FCM
+    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation("com.google.firebase:firebase-messaging-directboot:23.2.1")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")
+
+    implementation "androidx.browser:browser:1.5.0"
+
+    implementation 'com.github.BirjuVachhani:locus-android:4.1.2'
+    //Location Services
+    implementation 'com.google.android.gms:play-services-location:21.1.0'
+
+    implementation 'com.github.rajputmukesh748:Mukesh-Circular-Image-View:1.0.0'
+
+    implementation 'com.google.android.libraries.places:places:3.3.0'
+
+    implementation "com.ncorti:slidetoact:0.11.0"
+
+    //Socket
+    implementation("io.socket:socket.io-client:2.1.0")
+
+    implementation 'com.beust:klaxon:5.5'
+
+    implementation 'com.google.maps.android:android-maps-utils:3.8.0'
+
+
+}

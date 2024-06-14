@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.venus_customer.view.activity.walk_though.ui.home.HomeFragment"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_trips"
+        android:name="com.venus_customer.view.fragment.trips.TripsFragment"
+        tools:layout="@layout/fragment_trips" />
+
+    <fragment
+        android:id="@+id/navigation_notifications"
+        android:name="com.venus_customer.view.fragment.notification.NotificationFragment"
+        tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_account"
+        android:name="com.venus_customer.view.fragment.profile.AccountFragment"
+        tools:layout="@layout/fragment_account" />
+
+    <fragment
+        android:id="@+id/navigation_faq"
+        android:name="com.venus_customer.view.fragment.FAQFragment"
+        tools:layout="@layout/fragment_f_a_q" />
+
+    <fragment
+        android:id="@+id/navigation_change_password"
+        android:name="com.venus_customer.view.fragment.profile.ChangePasswordFragment"
+        tools:layout="@layout/fragment_change_password" />
+
+    <fragment
+        android:id="@+id/navigation_ride_details"
+        android:name="com.venus_customer.view.fragment.trips.RideDetailsFragment"
+        tools:layout="@layout/fragment_ride_details" >
+        <argument
+            android:name="tripId"
+            app:argType="string"
+            android:defaultValue=""
+            />
+        <argument
+            android:name="driverId"
+            app:argType="string"
+            android:defaultValue=""
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_rate_driver"
+        android:name="com.venus_customer.view.fragment.feedback.FeedbackFragment"
+        tools:layout="@layout/fragment_feed_bacl" >
+        <argument
+            android:name="engagementId"
+            app:argType="string"
+            android:defaultValue=""
+            />
+        <argument
+            android:name="driverName"
+            app:argType="string"
+            android:defaultValue=""
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_ride_complete"
+        android:name="com.venus_customer.view.fragment.RideCompleteFragment"
+        tools:layout="@layout/fragment_ride_complete" />
+
+    <fragment
+        android:id="@+id/navigation_select_location"
+        android:name="com.venus_customer.view.fragment.SelectLocationFragment"
+        tools:layout="@layout/fragment_select_location" >
+        <argument
+            android:name="selectLocationType"
+            app:argType="string"
+            android:defaultValue="pickUp"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_cancel_ride"
+        android:name="com.venus_customer.view.fragment.cancelRideFragment.CancelRideFragment"
+        tools:layout="@layout/fragment_cancel_ride" >
+        <argument
+            android:name="sessionId"
+            app:argType="string"
+            android:defaultValue=""
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_terms_conditions"
+        android:name="com.venus_customer.view.fragment.profile.TermsConditionsFragment"
+        tools:layout="@layout/fragment_terms_conditions" />
+
+
+    <fragment
+        android:id="@+id/navigation_about_us"
+        android:name="com.venus_customer.view.fragment.profile.AboutUsFragment"
+        tools:layout="@layout/fragment_about_us" />
+
+    <fragment
+        android:id="@+id/navigation_offers"
+        android:name="com.venus_customer.view.fragment.profile.OffersFragment"
+        tools:layout="@layout/fragment_offers" />
+
+    <fragment
+        android:id="@+id/navigation_wallet"
+        android:name="com.venus_customer.view.fragment.profile.WalletFragment"
+        tools:layout="@layout/fragment_wallet" />
+</navigation>

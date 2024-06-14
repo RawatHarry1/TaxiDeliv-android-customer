@@ -1,0 +1,90 @@
+package com.venus_customer.view.fragment.notification
+
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
+import com.venus_customer.R
+import com.venus_customer.customClasses.PaginationScrollListener
+import com.venus_customer.databinding.FragmentNotificationBinding
+import com.venus_customer.model.api.observeData
+import com.venus_customer.view.base.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
+
+    lateinit var binding: FragmentNotificationBinding
+    private val adapter by lazy { NotificationAdapter() }
+    private val viewModel by viewModels<NotificationsVM>()
+    override fun initialiseFragmentBaseViewModel() {
+
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_notification
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = getViewDataBinding()
+        binding.rvNotifications.adapter = adapter
+        viewModel.currentPage = 1
+        viewModel.isLastPage = false
+        observeNotification()
+
+        binding.ivBack.setOnClickListener {
+            requireView().findNavController().popBackStack()
+        }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        binding.rvNotifications.addOnScrollListener(object : PaginationScrollListener(){
+            override fun loadMoreItems() {
+                if (!viewModel.isLoading) {
+                    viewModel.isLoading = true
+                    viewModel.currentPage = viewModel.currentPage.plus(1)
+                    viewModel.getNotifications()
+                }
+            }
+
+            override val isLastPage: Boolean
+                get() = viewModel.isLastPage
+
+            override val isLoading: Boolean
+                get() = viewModel.isLoading
+
+        })
+
+    }
+
+
+    /**
+     * Observe Notification
+     * */
+    private fun observeNotification() = viewModel.notificationData.observeData(viewLifecycleOwner, onLoading = {
+        if (viewModel.currentPage == 1){
+            showProgressDialog()
+        }
+    }, onSuccess = {
+        hideProgressDialog()
+        viewModel.isLastPage = this.isNullOrEmpty() == true
+        if (viewModel.currentPage == 1){
+            adapter.submitList(this ?: emptyList())
+        } else {
+            adapter.addMoreItems(this ?: emptyList())
+        }
+    }, onError = {
+        hideProgressDialog()
+        showToastLong(this)
+    })
+
+
+
+}

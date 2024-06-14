@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<com.google.android.material.card.MaterialCardView
+    android:layout_width="match_parent"
+    app:cardElevation="20dp"
+    android:elevation="20dp"
+    android:layout_marginHorizontal="6dp"
+    android:layout_marginTop="15dp"
+    app:cardBackgroundColor="@color/white"
+    android:layout_height="wrap_content">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvRideStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:text="@string/completed"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/bg_button"
+            android:backgroundTint="@color/theme"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="17dp"
+            android:paddingHorizontal="20dp"
+            android:textSize="10sp"
+            android:gravity="center"
+            app:fontFamily="@font/poppins_medium"
+
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvRideDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/_8_june_2019_18_39"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvRideStatus"
+            app:layout_constraintBottom_toBottomOf="@id/tvRideStatus"
+            android:layout_marginStart="20dp"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toStartOf="@+id/tvRideStatus"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/black_text_color2"
+            app:fontFamily="@font/poppins_semibold"
+            />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/stroke_light"
+            app:layout_constraintStart_toStartOf="@+id/tvRideDate"
+            app:layout_constraintEnd_toEndOf="@+id/tvRideStatus"
+            app:layout_constraintTop_toBottomOf="@+id/tvRideStatus"
+            android:layout_marginTop="8dp"
+            />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvStartTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/view"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="20dp"
+            app:fontFamily="@font/poppins_regular"
+            android:layout_marginTop="21dp"
+            android:textColor="@color/black_text_color_dark"
+            android:textSize="13sp"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivTrack"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/tvStartTime"
+            android:layout_marginStart="8dp"
+            app:srcCompat="@drawable/ic_route"
+            app:layout_constraintTop_toTopOf="@+id/tvStartTime"
+            app:layout_constraintTop_toBottomOf="@+id/tvStartTime"
+            app:layout_constraintBottom_toBottomOf="@id/tvEndTime"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvStartAdress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/view"
+            app:layout_constraintStart_toEndOf="@+id/ivTrack"
+            android:layout_marginStart="20dp"
+            android:text="@string/_1_thrale_street_london_se19hw_uk"
+            app:fontFamily="@font/poppins_regular"
+            android:layout_marginTop="21dp"
+            android:textColor="@color/black_text_color2"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp"
+            android:textSize="15sp"
+            android:minLines="3"
+            android:maxLines="4"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvEndTime"
+            android:layout_width="0dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="25dp"
+            android:textColor="@color/black_text_color_dark"
+            android:textSize="13sp"
+            app:fontFamily="@font/poppins_regular"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvStartAdress" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvEndAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@+id/tvEndTime"
+            app:layout_constraintStart_toEndOf="@+id/ivTrack"
+            android:layout_marginStart="20dp"
+            android:text="@string/_18_ocean_avenue_london_se19hw_uk"
+            app:fontFamily="@font/poppins_regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/black_text_color2"
+            android:textSize="15sp"
+            android:minLines="3"
+            android:maxLines="4"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
+</layout>

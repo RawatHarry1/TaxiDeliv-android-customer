@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/clRootView"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:behavior_hideable="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clCar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/theme"
+            android:paddingBottom="60dp"
+            >
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCarType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_semibold"
+                android:textStyle="normal"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:text="@string/txt_economy"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ivCarImage"
+                android:layout_margin="20dp"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:textStyle="normal"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:lineSpacingExtra="3sp"
+                android:text="@string/txt_time"
+                android:drawablePadding="5dp"
+                android:layout_marginTop="5dp"
+                android:drawableStart="@drawable/ic_stand_up"
+                app:layout_constraintTop_toBottomOf="@id/tvCarType"
+                app:layout_constraintStart_toStartOf="@id/tvCarType"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvPersonCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:textStyle="normal"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:lineSpacingExtra="3sp"
+                android:text="@string/txt_count"
+                android:drawablePadding="5dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:drawableStart="@drawable/ic_user_count"
+                app:layout_constraintTop_toBottomOf="@id/tvCarType"
+                app:layout_constraintStart_toEndOf="@id/tvTime"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivCarImage"
+                android:layout_width="150dp"
+                android:layout_height="90dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:srcCompat="@drawable/ic_tesla_car_model"
+                android:layout_margin="4dp"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/clCar"
+            android:layout_marginTop="-45dp"
+            android:background="@drawable/bg_top_rounded">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCustomerDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@+id/tvPrice"
+                android:textColor="@color/black_text_color_dark"
+                android:lineSpacingExtra="22sp"
+                android:text="@string/txt_customer_details"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="25dp"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@color/black_text_color_dark"
+                android:lineSpacingExtra="4sp"
+                android:text="@string/txt__20_43"
+                app:layout_constraintTop_toTopOf="@id/tvCustomerDetail"
+                app:layout_constraintBottom_toBottomOf="@id/tvCustomerDetail"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="15dp"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCustomerName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                app:layout_constraintEnd_toStartOf="@+id/tvContactDetails"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:textColor="@color/grey_text_color"
+                android:text="@string/txt_customer_name"
+                app:layout_constraintTop_toBottomOf="@id/tvCustomerDetail"
+                app:layout_constraintStart_toStartOf="@id/tvCustomerDetail"
+                android:layout_marginTop="15dp"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvContactDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:textColor="@color/grey_text_color"
+                android:text="@string/txt_contact_details"
+                app:layout_constraintTop_toBottomOf="@id/tvCustomerDetail"
+                app:layout_constraintEnd_toEndOf="@id/tvPrice"
+                android:layout_marginTop="15dp"
+                />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCustomerNameValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/poppins_medium"
+                android:lineSpacingExtra="-1sp"
+                android:text="@string/txt_gurman_kanda"
+                android:textColor="@color/black_text_color"
+                android:textSize="15sp"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toStartOf="@+id/tvNumber"
+                app:layout_constraintStart_toStartOf="@id/tvCustomerName"
+                app:layout_constraintTop_toBottomOf="@id/tvCustomerName" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:textStyle="normal"
+                android:textSize="15sp"
+                android:textColor="@color/black_text_color"
+                android:lineSpacingExtra="-1sp"
+                android:text="@string/txt_1234567890"
+                app:layout_constraintEnd_toEndOf="@id/tvContactDetails"
+                app:layout_constraintTop_toBottomOf="@id/tvContactDetails"
+                android:layout_marginTop="5dp"
+                />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etNotes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/tvCustomerNameValue"
+                app:layout_constraintStart_toStartOf="@id/tvCustomerNameValue"
+                app:layout_constraintEnd_toEndOf="@id/tvNumber"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:layout_marginTop="10dp"
+                android:hint="@string/txt_notes"
+                android:textColorHint="@color/grey_text_color"
+                android:textColor="@color/black_text_color"
+                />
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvSavedCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/etNotes"
+                app:layout_constraintBottom_toTopOf="@id/cvPromoCode"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="5dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="20dp"
+                >
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <TextView
+                        android:id="@+id/tvSavedCard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins"
+                        android:textStyle="normal"
+                        android:textSize="16sp"
+                        android:textColor="@color/black_text_color"
+                        android:text="Cash"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:drawablePadding="20dp"
+                        android:padding="18dp"
+                        app:drawableEndCompat="@drawable/ic_tick_circle" />
+
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvPromoCode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cvSavedCard"
+                app:layout_constraintBottom_toTopOf="@id/cvNewCard"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="5dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="20dp"
+                >
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <TextView
+                        android:id="@+id/tvPromoCode"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins"
+                        android:textStyle="normal"
+                        android:textSize="16sp"
+                        android:textColor="@color/black_text_color"
+                        android:text="@string/txt_apply_promo_code"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:drawablePadding="20dp"
+                        android:padding="18dp"
+                        app:drawableStartCompat="@drawable/ic_promo_ticket"
+                        app:drawableEndCompat="@drawable/ic_arrow_right" />
+
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvNewCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cvPromoCode"
+                app:layout_constraintBottom_toTopOf="@id/tvConfirmBtn"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="25dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="20dp"
+                >
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <TextView
+                        android:id="@+id/tvNewCard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins"
+                        android:textStyle="normal"
+                        android:textSize="16sp"
+                        android:textColor="@color/black_text_color"
+                        android:text="@string/txt_add_new_card"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:drawablePadding="20dp"
+                        android:padding="18dp"
+                        app:drawableStartCompat="@drawable/ic_credit_card"
+                        app:drawableEndCompat="@drawable/ic_arrow_right" />
+
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvConfirmBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_button"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/txt_confirm"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.core.widget.NestedScrollView>
+
+
+

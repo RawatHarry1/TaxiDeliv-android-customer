@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="30dp"
+        app:cardBackgroundColor="@color/white"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ivClose"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp"
+                android:padding="10dp"
+                app:srcCompat="@drawable/baseline_close_24"
+                android:layout_marginTop="12dp"
+                app:tint="@color/grey_text_color"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/ivClose"
+                app:layout_constraintStart_toStartOf="parent"
+                android:text="@string/verification"
+                android:layout_marginStart="30dp"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:textColor="@color/theme"
+                app:fontFamily="@font/poppins_regular"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvSubTitle"
+                android:layout_width="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                android:text="@string/please_enter_the_4_digit_code"
+                android:layout_marginStart="30dp"
+                android:textSize="14sp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="90dp"
+                android:gravity="start"
+                android:textColor="@color/text_color"
+                app:fontFamily="@font/poppins_regular"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvSentTo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/tvSubTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                android:text="@string/sent_to"
+                android:layout_marginStart="30dp"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"
+                android:gravity="start"
+                android:textColor="@color/text_color"
+                app:fontFamily="@font/poppins_regular"
+                />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvEmailAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@+id/tvSentTo"
+                app:layout_constraintStart_toEndOf="@+id/tvSentTo"
+                android:text="@string/admin_gmail_com"
+                android:textSize="14sp"
+                android:layout_marginStart="4dp"
+                android:gravity="start"
+                android:textColor="@color/theme"
+                app:fontFamily="@font/poppins_regular"
+                />
+
+
+            <com.mukesh.mukeshotpview.mukeshOtpView.MukeshOtpView
+                android:id="@+id/simpleOtpView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:inputType="number"
+                android:textColor="@android:color/black"
+                android:itemBackground="@drawable/bg_otp_input_box"
+                app:layout_constraintTop_toBottomOf="@+id/tvEmailAddress"
+                android:textSize="18sp"
+                app:hideLineWhenFilled="false"
+                app:itemCount="4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:itemSpacing="@dimen/_18sdp"
+                app:lineColor="@android:color/black"
+                app:state_filled="true"
+                app:viewType="none"
+                />
+
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvVerify"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_button"
+                android:padding="10dp"
+                android:text="@string/verify"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:fontFamily="@font/poppins_regular"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/simpleOtpView" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvResend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="40dp"
+                android:text="@string/resend_it"
+                android:textAlignment="center"
+                android:textColor="@color/black_text_color"
+                android:textSize="14sp"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/shape_round_button_22"
+                android:backgroundTint="@color/pink_card"
+                app:fontFamily="@font/poppins_medium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvVerify" />
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
