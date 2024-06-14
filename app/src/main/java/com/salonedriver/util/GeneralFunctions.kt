@@ -112,6 +112,7 @@ fun showSessionExpire() {
             Toast.makeText(context, context.getString(R.string.session_expire_due_to_security_purpose_please_sign_in_again), Toast.LENGTH_SHORT).show()
             SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.USER_DATA)
             (context as Activity).startActivity(Intent(context, SignIn::class.java))
+            (context as Activity).finishAffinity()
         }
     } catch (e: Exception) {
         e.printStackTrace()

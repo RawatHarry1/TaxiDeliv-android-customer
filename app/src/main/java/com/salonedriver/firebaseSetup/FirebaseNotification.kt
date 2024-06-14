@@ -6,7 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -22,6 +22,7 @@ import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.view.fragment.wallet.WalletFragment
 import com.salonedriver.view.ui.home_drawer.HomeActivity
 import com.salonedriver.view.ui.home_drawer.ui.home.HomeFragment
+import kotlinx.coroutines.NonCancellable.start
 import kotlinx.parcelize.Parcelize
 import org.json.JSONObject
 import kotlin.random.Random
@@ -65,7 +66,10 @@ class FirebaseNotification : FirebaseMessagingService() {
                 (notificationData.notificationType?.toIntOrNull()
                     ?: -1) == NotificationStatus.NEW_RIDE.type -> {
                     HomeFragment.notificationInterface?.newRide()
-                        ?: kotlin.run { sendNotification() }
+                        ?: kotlin.run {
+//                            sendNotification()
+                            playCustomSound()
+                        }
                 }
 
                 (notificationData.notificationType?.toIntOrNull()
@@ -89,6 +93,10 @@ class FirebaseNotification : FirebaseMessagingService() {
             ?.let {
                 if (it.accessToken?.isNotEmpty() == true) {
                     sendNotification()
+                    if ((notificationData.notificationType?.toIntOrNull()
+                            ?: -1) == 0
+                    )
+                        playCustomSound()
                 }
             }
 
@@ -140,13 +148,15 @@ class FirebaseNotification : FirebaseMessagingService() {
      * */
     private fun sendNotification() {
         // Define vibration patterns
+
         val hardVibrationPattern = longArrayOf(0, 1000, 500, 1000) // Hard vibration pattern
         val normalVibrationPattern = longArrayOf(0, 500, 250, 500) // Normal vibration pattern
         val notificationType = notificationData.notificationType?.toIntOrNull() ?: -1
         val soundUri =
             Uri.parse("android.resource://" + packageName + "/" + R.raw.alert_for_new_ride)
         // Create the notification channel ID based on the notification type
-        val channelId = if (notificationType == 0) "new_ride" else packageName
+//        val channelId = if (notificationType == 0) "new_ride" else packageName
+        val channelId = packageName
         val notificationBuilder = NotificationCompat.Builder(this, packageName)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(notificationData.title ?: "").setContentText(notificationData.message)
@@ -156,11 +166,11 @@ class FirebaseNotification : FirebaseMessagingService() {
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
             .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
             .setSound(
-                if (notificationType == 0) {
-                    soundUri
-                } else {
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                }
+//                if (notificationType == 0) {
+//                    soundUri
+//                } else {
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+//                }
             )
             .setVibrate(
                 if (notificationType == 0
@@ -179,42 +189,45 @@ class FirebaseNotification : FirebaseMessagingService() {
 
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (notificationType == 0) {
-                val sirenChannel = NotificationChannel(
-                    channelId, "new_ride", NotificationManager.IMPORTANCE_HIGH
-                ).apply {
-                    description = notificationData.message
-                    setBypassDnd(true)
-                    enableVibration(true)
-                    vibrationPattern = hardVibrationPattern
-                    setShowBadge(true)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        setAllowBubbles(true)
-                    }
-                    setSound(
-                        soundUri,
-                        AudioAttributes.Builder()
-                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                            .setUsage(AudioAttributes.USAGE_ALARM)
-                            .build()
-                    )
+//            if (notificationType == 0) {
+//
+//                val sirenChannel = NotificationChannel(
+//                    channelId, "new_ride", NotificationManager.IMPORTANCE_HIGH
+//                ).apply {
+//                    description = notificationData.message
+//                    setBypassDnd(true)
+//                    enableVibration(true)
+//                    vibrationPattern = hardVibrationPattern
+//                    setShowBadge(true)
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                        setAllowBubbles(true)
+//                    }
+//                    setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), null)
+//
+////                    setSound(
+////                        soundUri,
+////                        AudioAttributes.Builder()
+////                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+////                            .setUsage(AudioAttributes.USAGE_ALARM)
+////                            .build()
+////                    )
+//                }
+//                notificationManager.createNotificationChannel(sirenChannel)
+//            } else {
+            val channel = NotificationChannel(
+                channelId, packageName, NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = notificationData.message
+                setBypassDnd(true)
+                enableVibration(true)
+                setShowBadge(true)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    setAllowBubbles(true)
                 }
-                notificationManager.createNotificationChannel(sirenChannel)
-            } else {
-                val channel = NotificationChannel(
-                    channelId, packageName, NotificationManager.IMPORTANCE_HIGH
-                ).apply {
-                    description = notificationData.message
-                    setBypassDnd(true)
-                    enableVibration(true)
-                    setShowBadge(true)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        setAllowBubbles(true)
-                    }
-                    setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),null)
-                }
-                notificationManager.createNotificationChannel(channel)
+                setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), null)
             }
+            notificationManager.createNotificationChannel(channel)
+//            }
         }
         val id = Random.nextInt(100000, 999999)
         notificationManager.notify(id, notificationBuilder.build())
@@ -244,4 +257,30 @@ class FirebaseNotification : FirebaseMessagingService() {
         var notificationType: String? = "",
     ) : Parcelable
 
+    private var mediaPlayer: MediaPlayer? = null
+    private fun playCustomSound() {
+        try {
+            // Release previous media player instance
+            releaseMediaPlayer()
+
+            // Create and configure the MediaPlayer instance with the custom sound file
+            mediaPlayer = MediaPlayer.create(this, R.raw.alert_for_new_ride).apply {
+                start()
+                setOnCompletionListener {
+                    releaseMediaPlayer()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun releaseMediaPlayer() {
+        mediaPlayer?.run {
+            if (isPlaying) stop()
+            reset()
+            release()
+        }
+        mediaPlayer = null
+    }
 }

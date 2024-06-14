@@ -1,7 +1,6 @@
 package com.salonedriver.trackingData
 
 
-import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
@@ -13,10 +12,19 @@ import android.view.animation.LinearInterpolator
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import com.beust.klaxon.*
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.gson.Gson
 import com.google.maps.android.PolyUtil
 import com.salonedriver.R
@@ -29,7 +37,7 @@ import kotlin.math.sign
 
 
 var polyLine: List<LatLng>? = null
-var mainPolyLine:List<LatLng>? = null
+var mainPolyLine: List<LatLng>? = null
 private var srcMarker: Marker? = null
 private var driverMarker: Marker? = null
 private var destMarker: Marker? = null
@@ -41,9 +49,10 @@ fun Context.showPath(
     desLat: LatLng,
     mMap: GoogleMap?,
     @DrawableRes source: Int = R.drawable.car_icon,
-    @DrawableRes destination: Int = R.drawable.location_placeholder,
-    @DrawableRes via: Int = R.drawable.location_placeholder,
+    @DrawableRes destination: Int = R.drawable.new_location_placeholder,
+    @DrawableRes via: Int = R.drawable.new_location_placeholder,
     wayPoints: ArrayList<LatLng> = ArrayList(),
+    bearing: Double? = 0.0,
     valueIs: (PathModel) -> Unit = { _ -> }
 ) {
     try {
@@ -65,25 +74,30 @@ fun Context.showPath(
                 val json: JsonObject = parser.parse(stringBuilder) as JsonObject
                 val routes = json.array<JsonObject>("routes")
                 if (routes != null && routes.size > 0) {
-                    pathModel.durationText = pathResponse.routes?.get(0)?.legs?.get(0)?.duration?.text ?: ""
-                    pathModel.durationMin = (pathResponse.routes?.get(0)?.legs?.get(0)?.duration?.value ?: 0.0) / 60
-                    pathModel.srcDesDistance = (pathResponse.routes?.get(0)?.legs?.get(0)?.distance?.value?.toDouble() ?: 0.0) / 1000
-                    pathModel.srcDesDistanceInKm = pathResponse.routes?.get(0)?.legs?.get(0)?.distance?.text ?: ""
+                    pathModel.durationText =
+                        pathResponse.routes?.get(0)?.legs?.get(0)?.duration?.text ?: ""
+                    pathModel.durationMin =
+                        (pathResponse.routes?.get(0)?.legs?.get(0)?.duration?.value ?: 0.0) / 60
+                    pathModel.srcDesDistance =
+                        (pathResponse.routes?.get(0)?.legs?.get(0)?.distance?.value?.toDouble()
+                            ?: 0.0) / 1000
+                    pathModel.srcDesDistanceInKm =
+                        pathResponse.routes?.get(0)?.legs?.get(0)?.distance?.text ?: ""
                     val points = routes["legs"]["steps"][0] as JsonArray<JsonObject>
-                    val polyPoints = points.flatMap { decodePoly(it.obj("polyline")?.string("points") ?: "") }
+                    val polyPoints =
+                        points.flatMap { decodePoly(it.obj("polyline")?.string("points") ?: "") }
                     latLongB.include(srcLat)
                     for (point in polyPoints) {
                         options.add(point)
                         latLongB.include(point)
                     }
                     mainPolyLine = polyPoints
-                    if (mainPolyLine != polyPoints){
+                    if (mainPolyLine != polyPoints) {
                         mMap?.clear()
                     }
                     val bounds = latLongB.build()
-                    polyline = mMap?.addPolyline(options)
                     if (mMap != null && srcLat.latitude != 0.0 && srcLat.longitude != 0.0) {
-                        mMap.addPolyline(options)
+                        polyline = mMap.addPolyline(options)
                         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
                     }
                     if (mMap != null) {
@@ -107,6 +121,7 @@ fun Context.showPath(
                                 srcLat
                             ).apply {
                                 icon(vectorToBitmap(source))
+                                bearing?.toFloat()?.let { rotation(it) }
                                 anchor(0.5f, 1f)
                             }
                         )
@@ -253,19 +268,19 @@ fun Context.vectorToBitmap(@DrawableRes id: Int): BitmapDescriptor? {
 
 /**Animate Driver*/
 
-var oldDriverLat:Double?=null
-var oldDriverLng:Double?=null
+var oldDriverLat: Double? = null
+var oldDriverLng: Double? = null
 fun Context.animateDriver(
     driverLatitude: Double?,
     driverLongitude: Double?,
     bearing: Double?,
     googleMap: GoogleMap?,
     @DrawableRes source: Int = R.drawable.car_icon,
-    @DrawableRes destination: Int = R.drawable.location_placeholder,
-    @DrawableRes via: Int = R.drawable.location_placeholder,
+    @DrawableRes destination: Int = R.drawable.new_location_placeholder,
+    @DrawableRes via: Int = R.drawable.new_location_placeholder,
     eta: (String) -> Unit = {}
 ) {
-    if(oldDriverLat == driverLatitude && oldDriverLng == driverLongitude){
+    if (oldDriverLat == driverLatitude && oldDriverLng == driverLongitude) {
         return
     }
     oldDriverLat = driverLatitude
@@ -287,7 +302,7 @@ fun Context.animateDriver(
                 mMap = googleMap,
                 source = source,
                 destination = destination,
-                via = via
+                via = via, bearing = bearing
             ) {}
         } else {
             newAnimateCar(
@@ -297,45 +312,28 @@ fun Context.animateDriver(
             ) {
                 eta(it)
             }
-            Log.d("animateDriver", "Before Updated Polyline with ${polyline?.points?.size} points.")
-            polyline?.remove()
-            polyLine = null
-
+            /*To filter travelled points from existed polyline*/
             val nearestPointIndex = mainPolyLine!!.indexOfFirst {
                 PolyUtil.isLocationOnPath(currentPosition, listOf(it), false, 50.0)
             }
-
             if (nearestPointIndex != -1) {
+                polyline?.remove()
+                polyLine = null
                 val filteredPoints = mainPolyLine!!.subList(nearestPointIndex, mainPolyLine!!.size)
                 val polylineOptions = PolylineOptions()
                     .color(ContextCompat.getColor(this, R.color.black))
                     .addAll(filteredPoints)
-                googleMap?.clear()
                 // Add a new polyline to the map
-                googleMap?.addPolyline(polylineOptions).also {
-                    polyline = it
-                    polyLine = it?.points
+                if (polyline?.equals(filteredPoints) == false) {
+                    googleMap?.addPolyline(polylineOptions).also {
+                        polyline = it
+                        polyLine = it?.points
+                    }
+                    Log.d(
+                        "animateDriver",
+                        "after Updated Polyline with ${polyline?.points?.size} points."
+                    )
                 }
-                Log.d("animateDriver", "after Updated Polyline with ${polyline?.points?.size} points.")
-                googleMap?.addMarker(
-                    MarkerOptions().position(
-                        currentPosition
-                    ).apply {
-                        icon(vectorToBitmap(source))
-                        rotation(bearing!!.toFloat())
-                        anchor(0.5f, 1f)
-                    }
-                )
-
-                googleMap?.addMarker(
-                    MarkerOptions().apply {
-                        position(destMarker?.position ?: LatLng(0.0, 0.0))
-                        icon(vectorToBitmap(destination))
-                        anchor(0.5f, 1f)
-                    }
-                )
-                // Logging for debugging
-
             } else {
                 // Logging for debugging
                 Log.d("animateDriver", "No points found on the path for current position.")
@@ -383,6 +381,7 @@ private fun Context.newAnimateCar(
 private fun newLerp(a: Double, b: Double, t: Double): Double {
     return a + (b - a) * t
 }
+
 private interface LatLngInterpolator {
     fun interpolate(fraction: Float, a: LatLng, b: LatLng): LatLng
     class LinearFixed : LatLngInterpolator {
@@ -398,14 +397,19 @@ private interface LatLngInterpolator {
     }
 }
 
-private fun Context.animateCar(endPosition: LatLng, bearing: Float, googleMap: GoogleMap?, eta: (String) -> Unit) {
+private fun Context.animateCar(
+    endPosition: LatLng,
+    bearing: Float,
+    googleMap: GoogleMap?,
+    eta: (String) -> Unit
+) {
 
     try {
         srcMarker?.let {
             val startPosition = it.position
             googleMap?.moveCamera(
-               CameraUpdateFactory.newLatLngZoom(endPosition, 16f)
-           )
+                CameraUpdateFactory.newLatLngZoom(endPosition, 16f)
+            )
             val endPosition = endPosition
 
             val valueAnimator = ValueAnimator.ofFloat(0f, 1f)

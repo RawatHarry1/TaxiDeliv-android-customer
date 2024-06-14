@@ -2,6 +2,7 @@ package com.salonedriver.util
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -46,7 +47,17 @@ import java.util.*
 
 object AppUtils {
     const val DATE_yyyy_MM_dd_T_HH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss"
-
+    var tripId = ""
+    fun isAppRunning(context: Context, packageName: String): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val runningProcesses = activityManager.runningAppProcesses
+        for (processInfo in runningProcesses) {
+            if (processInfo.processName == packageName) {
+                return true
+            }
+        }
+        return false
+    }
     fun hasScreenNavigation(activity: Activity): Boolean {
         val hasSoftwareKeys: Boolean
         val d = activity.windowManager.defaultDisplay
@@ -946,4 +957,7 @@ fun showHomePageDialog(
             }
         }
     }
+
+
+
 }

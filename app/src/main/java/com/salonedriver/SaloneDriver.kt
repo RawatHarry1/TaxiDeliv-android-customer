@@ -8,10 +8,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.text.HtmlCompat
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.android.gms.maps.model.LatLng
 import com.salonedriver.di.AppComponent
 import com.salonedriver.di.DaggerAppComponent
 import com.salonedriver.socketSetup.SocketSetup
+import com.salonedriver.util.AppLifecycleObserver
 import com.salonedriver.util.getFCMToken
 import com.salonedriver.util.getPaginationResponse
 import dagger.hilt.android.HiltAndroidApp
@@ -33,6 +35,8 @@ class SaloneDriver : Application(), ActivityLifecycleCallbacks {
         instance = this
         applicationComponent = DaggerAppComponent.builder().build()
         registerActivityLifecycleCallbacks(this)
+        // Register the process lifecycle observer
+        ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleObserver)
         getFCMToken {
             Log.e("TokenIS","Here:- $it")
         }

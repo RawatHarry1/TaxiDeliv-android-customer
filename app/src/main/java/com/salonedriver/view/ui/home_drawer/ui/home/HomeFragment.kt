@@ -42,6 +42,8 @@ import com.salonedriver.socketSetup.locationServices.LocationService
 import com.salonedriver.trackingData.animateDriver
 import com.salonedriver.trackingData.clearMap
 import com.salonedriver.trackingData.showPath
+import com.salonedriver.trackingData.vectorToBitmap
+import com.salonedriver.util.AppUtils
 import com.salonedriver.util.DriverDocumentStatusForApp
 import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.util.TripStatus
@@ -119,8 +121,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                 val longitude = intent.getStringExtra("longitude").orEmpty()
                 val bearing = intent.getStringExtra("bearing").orEmpty()
 
+                Log.e("LocationUpdate", "OnBroadcast   Lat: ${latitude}, Lng: ${longitude}")
 
                 if (!rideViewModel.newRideNotificationData.tripId.isNullOrEmpty()) {
+                    AppUtils.tripId = rideViewModel.newRideNotificationData.tripId.orEmpty()
                     SaloneDriver.latLng =
                         LatLng(latitude.toDoubleOrNull() ?: 0.0, longitude.toDoubleOrNull() ?: 0.0)
                     SocketSetup.emitLocation(
@@ -324,6 +328,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                             rideTime = rideViewModel.newRideNotificationData.rideTime.orEmpty(),
                             waitTime = rideViewModel.newRideNotificationData.waitTime.orEmpty()
                         )
+
                     }
                 }
 
@@ -472,7 +477,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
 
     override fun updatedLocation(location: Location) {
         val latLng = LatLng(location.latitude, location.longitude)
-        googleMap?.addMarker(MarkerOptions().position(latLng))
+        googleMap?.addMarker(
+            MarkerOptions().position(
+                latLng
+            ).apply {
+                icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder))
+                anchor(0.5f, 1f)
+            }
+        )
         googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
         SaloneDriver.latLng = LatLng(location.latitude, location.longitude)
         viewModel.loginViaAccessToken(location.latitude, location.longitude)
@@ -612,7 +624,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             } else {
                 googleMap?.clearMap()
                 SaloneDriver.latLng?.let {
-                    googleMap?.addMarker(MarkerOptions().position(it))
+                    googleMap?.addMarker(
+                        MarkerOptions().position(
+                            it
+                        ).apply {
+                            icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder))
+                            anchor(0.5f, 1f)
+                        }
+                    )
                 }
                 binding.bestRoute.clParent.isVisible = false
                 fetchNewNotification()
@@ -666,11 +685,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
 
             }
             googleMap?.clear()
+
             (activity as HomeActivity).startActivity(
                 Intent(activity, AcceptTripActivity::class.java).putExtra(
                     "screenType", "RideCompleted"
                 ).putExtra("rideData", rideViewModel.newRideNotificationData)
             )
+            AppUtils.tripId = ""
+            stopService()
         }, onError = {
             hideProgressDialog()
             showToastLong(this)
@@ -694,8 +716,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         super.timeOutRide()
         try {
             requireActivity().runOnUiThread {
+                AppUtils.tripId = ""
                 rideViewModel.newRideNotificationData = NewRideNotificationDC()
                 screenType = 0
+                SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.NEW_BOOKING)
                 dialog?.dismiss()
             }
         } catch (e: Exception) {
@@ -768,12 +792,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
 
     private fun stopService() {
         try {
+            AppUtils.tripId = ""
             requireActivity().stopService(Intent(requireContext(), LocationService::class.java))
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
-
 }
 
 

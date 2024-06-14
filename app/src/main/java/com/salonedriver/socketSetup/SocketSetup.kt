@@ -121,7 +121,10 @@ object SocketSetup {
     fun emitLocation(latLng: LatLng, bearing: String , engagementId: String){
         val clientConfig = SharedPreferencesManager.getModel<ClientConfigDC>(SharedPreferencesManager.Keys.CLIENT_CONFIG)
         val userData = SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
-        Log.e("sfdsfsdfds","sdfsdfsdfsdf  ${latLng.latitude}")
+        Log.e(
+            "LocationUpdate",
+            "onEmit   ${latLng.latitude}"
+        )
         emit(SocketKeys.DRIVER_TRACKING, JSONObject().apply {
             put("operatorToken", clientConfig?.operatorToken.orEmpty())
             put("accessToken", userData?.accessToken.orEmpty())
