@@ -44,7 +44,7 @@ object SocketSetup {
                     timeout = 10000
                     transports = arrayOf(WebSocket.NAME)
                 }
-                socket = IO.socket("https://dev-rides.venustaxi.in/", ioOptions)
+                socket = IO.socket("https://dev-rides-api.venustaxi.in", ioOptions)
                 listenerOn(Socket.EVENT_CONNECT, SOCKET_CONNECT)
                 listenerOn(Socket.EVENT_DISCONNECT, SOCKET_DISCONNECT)
                 listenerOn(Socket.EVENT_CONNECT_ERROR, SOCKET_ERROR)

@@ -108,7 +108,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
 
 
     private fun observeData() = viewModel.loginViaToken.observeData(this, onLoading = {
-        showProgressDialog()
+//        showProgressDialog()
     }, onSuccess = {
         hideProgressDialog()
         SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.USER_DATA, this)

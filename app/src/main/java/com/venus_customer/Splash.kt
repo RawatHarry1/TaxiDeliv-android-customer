@@ -60,10 +60,10 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
 
 
     private fun callWalkThrough() {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_MONTH, 12)
-        calendar.set(Calendar.MONTH, 5)
-        if (System.currentTimeMillis() < calendar.timeInMillis){
+//        val calendar = Calendar.getInstance()
+//        calendar.set(Calendar.DAY_OF_MONTH, 12)
+//        calendar.set(Calendar.MONTH, 5)
+//        if (System.currentTimeMillis() < calendar.timeInMillis){
             val userData = SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
             if (userData?.login?.isCustomerProfileComplete == 1){
                 val intent = Intent(this, Home::class.java)
@@ -73,7 +73,7 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
                 startActivity(intent)
             }
             finishAffinity()
-        }
+//        }
 
     }
 }

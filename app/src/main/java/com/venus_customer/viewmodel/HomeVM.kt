@@ -1,6 +1,7 @@
 package com.venus_customer.viewmodel
 
 import android.location.Location
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.venus_customer.VenusApp
@@ -29,6 +30,7 @@ class HomeVM @Inject constructor(
     fun loginViaToken() = SingleFusedLocation.initialize(VenusApp.appContext, object :
         LocationResultHandler {
         override fun updatedLocation(location: Location) {
+            Log.i("loginViaToken", "loginViaToken")
             viewModelScope.launch {
                 preLoginRepo.loginViaAccessToken(jsonObject = JSONObject().apply {
                     put("latitude", location.latitude)

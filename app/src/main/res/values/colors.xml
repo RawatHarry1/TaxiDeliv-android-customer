@@ -33,6 +33,7 @@
     <color name="chat_time_color">#080808</color>
     <color name="arrive_text_color">#4b545a</color>
     <color name="grey_bg">#c3cbcd</color>
+    <color name="bg_gray_round">#F2F2F7</color>
     <color name="grey_line">#c6c6c6</color>
     <color name="grey_light_text">#9ea2b0</color>
     <color name="green_text_color">#2bc763</color>

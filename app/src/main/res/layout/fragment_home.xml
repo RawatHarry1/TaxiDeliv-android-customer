@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
 
     </data>
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -13,153 +14,303 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clWhereMain"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="visible"
-                >
+                android:visibility="visible">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvWhereTo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
                     android:layout_margin="20dp"
-                    app:cardElevation="5dp"
                     app:cardCornerRadius="25dp"
-                    >
+                    app:cardElevation="5dp"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/clWhereTo"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        >
+                        android:layout_height="52dp">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tvWhereTo"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/tvNow"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            android:text="@string/txt_where_to"
-                            android:textSize="18sp"
-                            android:padding="10dp"
-                            android:textColor="@color/black_text_color"
-                            android:drawablePadding="10dp"
                             android:drawableStart="@drawable/ic_direction"
-                            />
+                            android:drawablePadding="10dp"
+                            android:padding="10dp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:text="@string/txt_where_to"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tvNow"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tvNow"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/txt_now"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             android:layout_marginEnd="2dp"
-                            android:textSize="16dp"
-                            android:padding="10dp"
                             android:background="@drawable/shape_round_button"
                             android:backgroundTint="@color/grey_light"
-                            android:textColor="@color/black_text_color"
-                            android:textAlignment="center"
-                            android:drawablePadding="5dp"
                             android:drawableStart="@drawable/ic_watch"
                             android:drawableEnd="@drawable/arrow_down"
+                            android:drawablePadding="6dp"
+                            android:padding="12dp"
+                            android:text="@string/txt_now"
+
+                            android:textAlignment="center"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="16dp"
                             app:drawableTint="@color/black_text_color"
-                            />
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.cardview.widget.CardView>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintRideRentalSchedule"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_20sdp"
+                    app:layout_constraintTop_toBottomOf="@+id/cvWhereTo">
+
+                    <RelativeLayout
+                        android:id="@+id/rlRide"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/bg_gray_round"
+                        app:layout_constraintEnd_toStartOf="@+id/rlRental"
+                        app:layout_constraintHeight_default="wrap"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.3">
+
+                        <ImageView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ride" />
+
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Ride"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="@id/rlRide"
+                        app:layout_constraintStart_toStartOf="@id/rlRide"
+                        app:layout_constraintTop_toBottomOf="@id/rlRide" />
+
+
+                    <RelativeLayout
+                        android:id="@+id/rlRental"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/bg_gray_round"
+                        app:layout_constraintEnd_toStartOf="@+id/rlSchedule"
+                        app:layout_constraintHeight_default="wrap"
+                        app:layout_constraintStart_toEndOf="@+id/rlRide"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.3">
+
+                        <ImageView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/rental" />
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Rental"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="@id/rlRental"
+                        app:layout_constraintStart_toStartOf="@id/rlRental"
+                        app:layout_constraintTop_toBottomOf="@id/rlRental" />
+
+
+                    <RelativeLayout
+                        android:id="@+id/rlSchedule"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/bg_gray_round"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHeight_default="wrap"
+                        app:layout_constraintStart_toEndOf="@+id/rlRental"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.3">
+
+                        <ImageView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/schedule" />
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Schedule"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="@id/rlSchedule"
+                        app:layout_constraintStart_toStartOf="@id/rlSchedule"
+                        app:layout_constraintTop_toBottomOf="@id/rlSchedule" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/vpBanners"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintTop_toBottomOf="@id/cvWhereTo"
                     android:layout_marginTop="15dp"
-                    />
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/cvWhereTo" />
 
                 <com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
                     android:id="@+id/diBanner"
+                    attachToViewPager="@{vpBanners}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:dotsSize="12dp"
+                    android:layout_marginTop="5dp"
+                    android:visibility="gone"
                     app:dotsColor="@color/theme_button"
+                    app:dotsSize="12dp"
                     app:dotsSpacing="4dp"
                     app:dotsStrokeColor="@color/text_color"
-                    attachToViewPager="@{vpBanners}"
-                    android:layout_marginTop="5dp"
-                    app:layout_constraintTop_toBottomOf="@id/vpBanners"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/vpBanners" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvNearYou"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/diBanner"
-                    app:layout_constraintStart_toStartOf="@id/cvWhereTo"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:fontFamily="@font/poppins_bold"
                     android:text="@string/txt_near_you"
                     android:textColor="@color/black_text_color"
-                    android:textStyle="bold"
                     android:textSize="16sp"
-                    />
+                    app:layout_constraintStart_toStartOf="@id/cvWhereTo"
+                    app:layout_constraintTop_toBottomOf="@id/constraintRideRentalSchedule" />
 
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvMap"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="20dp"
-                    android:layout_marginTop="15dp"
                     android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginEnd="20dp"
+                    app:cardCornerRadius="20dp"
                     app:cardElevation="5dp"
                     app:contentPadding="10dp"
-                    app:layout_constraintTop_toBottomOf="@id/tvNearYou"
-                    >
+                    app:layout_constraintTop_toBottomOf="@id/tvNearYou">
 
-                    <com.google.android.gms.maps.MapView
-                        android:id="@+id/fragment_map"
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="300dp"
-                        android:background="@color/pink_card"
-                        />
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.gms.maps.MapView
+                            android:id="@+id/fragment_map"
+                            android:layout_width="match_parent"
+                            android:layout_height="300dp"
+                            android:background="@color/pink_card" />
+
+                        <ProgressBar
+                            android:id="@+id/progressMap"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_centerInParent="true"
+                            android:indeterminate="true"
+                            android:indeterminateDrawable="@drawable/bg_progress_dialog" />
+                    </RelativeLayout>
 
                 </androidx.cardview.widget.CardView>
 
+                <LinearLayout
+                    android:id="@+id/llInProgessRide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:drawableStart="@drawable/ic_dot_circle"
+                        android:drawablePadding="10dp"
+                        android:fontFamily="@font/poppins"
+                        android:lineSpacingExtra="5sp"
+                        android:text="Fetching in progress ride"
+                        android:textColor="@color/arrive_text_color"
+                        android:textSize="15sp"
+                        android:textStyle="normal"
+                        app:drawableTint="@color/black"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:indeterminate="true"
+                        app:layout_constraintTop_toBottomOf="@id/tvConnecting" />
+
+                </LinearLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clMapMain"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"
-                >
+                android:visibility="gone">
 
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivBack"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    app:srcCompat="@drawable/arrow_down"
-                    android:tint="@color/white"
-                    android:rotation="90"
-                    android:elevation="20dp"
-                    android:padding="20dp"
                     android:layout_marginTop="40dp"
                     android:background="@drawable/bg_start_rounded_back_bg"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:elevation="20dp"
+                    android:padding="20dp"
+                    android:rotation="90"
+                    android:tint="@color/white"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/arrow_down"
 
                     />
 
@@ -167,41 +318,38 @@
                     android:id="@+id/cvTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:cardElevation="5dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="10dp"
                     android:layout_marginStart="30dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginEnd="30dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintVertical_bias="0"
-                    app:cardCornerRadius="40dp"
+                    android:layout_marginBottom="10dp"
                     android:visibility="gone"
-                    >
+                    app:cardCornerRadius="40dp"
+                    app:cardElevation="5dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvTitleStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins"
-                        android:textSize="15sp"
-                        android:textColor="@color/arrive_text_color"
-                        android:text="@string/txt_meet_at_pickup_location"
                         android:drawableStart="@drawable/ic_dot_circle"
-                        app:drawableTint="@color/black"
-                        android:paddingStart="25dp"
-                        android:paddingEnd="12dp"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp"
                         android:drawablePadding="10dp"
-                        />
+                        android:fontFamily="@font/poppins"
+                        android:paddingStart="25dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="12dp"
+                        android:text="@string/txt_meet_at_pickup_location"
+                        android:textColor="@color/arrive_text_color"
+                        android:textSize="15sp"
+                        app:drawableTint="@color/black" />
                 </androidx.cardview.widget.CardView>
 
                 <com.google.android.gms.maps.MapView
                     android:id="@+id/fragmentMapFullScreen"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
+                    android:layout_height="match_parent" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -209,23 +357,19 @@
 
         <include
             android:id="@+id/viewLocation"
-            layout="@layout/dialog_where_to"
-            />
+            layout="@layout/dialog_where_to" />
 
         <include
             android:id="@+id/viewCarType"
-            layout="@layout/dialog_car_types"
-            />
+            layout="@layout/dialog_car_types" />
 
         <include
             android:id="@+id/viewCarDetail"
-            layout="@layout/dialog_car_detail"
-            />
+            layout="@layout/dialog_car_detail" />
 
         <include
             android:id="@+id/viewStartRide"
-            layout="@layout/dialog_ride_start"
-            />
+            layout="@layout/dialog_ride_start" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

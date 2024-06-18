@@ -60,7 +60,7 @@ object SingleFusedLocation {
 
     private fun requestSingleTimeLocation() {
         context?.get()?.let { context ->
-            progressBar.show(VenusApp.appContext)
+//            progressBar.show(VenusApp.appContext)
             Locus.getCurrentLocation(context){
                 hideProcessDialog()
                 it.location?.let { it1 ->

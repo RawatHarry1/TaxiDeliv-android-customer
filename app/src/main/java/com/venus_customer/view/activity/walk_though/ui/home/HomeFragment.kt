@@ -21,7 +21,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -83,6 +82,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.i("HOMEFRAGMENT", "onViewCreated")
         SocketSetup.initializeInterface(this)
         SocketSetup.connectSocket()
         binding = getViewDataBinding()
@@ -104,6 +104,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     override fun onResume() {
         super.onResume()
         notificationInterface = this
+        Log.i("HOMEFRAGMENT", "onResume")
     }
 
 
@@ -142,11 +143,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             binding.tvNow.text = requireContext().getString(R.string.schedule)
             startTimeDialog(requireContext())
         }
+
+        binding.rlSchedule.setOnSingleClickListener {
+            binding.tvNow.text = requireContext().getString(R.string.schedule)
+            startTimeDialog(requireContext())
+        }
         binding.tvWhereTo.setOnSingleClickListener {
+            rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+        }
+        binding.rlRide.setOnSingleClickListener {
             rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
         }
 
         if (rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.HomeScreen || rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.ShowLocationDialog) {
+            Log.i("fetchOngoingTrip", "clickHandler")
             rideVM.fetchOngoingTrip()
         } else if (rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.FindDriverDialog) {
             binding.clWhereMain.visibility = View.GONE
@@ -201,7 +211,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                 val bundle = bundleOf("selectLocationType" to "dropOff")
                 findNavController().navigate(R.id.navigation_select_location, bundle)
-
             }
         }
     }
@@ -542,7 +551,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     binding.clWhereMain.visibility = View.VISIBLE
                     binding.clMapMain.visibility = View.GONE
                     locationAlertState?.state = BottomSheetBehavior.STATE_EXPANDED
-
                 }
 
                 RideVM.RideAlertUiState.ShowVehicleTypesDialog -> {
@@ -595,12 +603,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
     private fun observeFetchOngoingTrip() =
         rideVM.fetchOngoingTripData.observeData(lifecycle = viewLifecycleOwner, onLoading = {
-            showProgressDialog()
+//            showProgressDialog()
+            if (activity != null)
+                binding.llInProgessRide.isVisible = true
         }, onError = {
-            hideProgressDialog()
+//            hideProgressDialog()
+            if (activity != null)
+                binding.llInProgessRide.isVisible = false
             showSnackBar(this)
         }, onSuccess = {
-            hideProgressDialog()
+//            hideProgressDialog()
+            if (activity != null)
+                binding.llInProgessRide.isVisible = false
             if (this?.trips?.isNotEmpty() == true) {
                 this.trips.firstOrNull()?.let { trip ->
                     with(rideVM.createRideData) {
@@ -642,18 +656,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailDialog)
                 }
             } else {
+                var alreadyHittingApi = false
                 rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
                 SingleFusedLocation.initialize(requireContext(), object : LocationResultHandler {
                     override fun updatedLocation(location: Location) {
-                        nearByDriverMap?.moveCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                LatLng(
-                                    location.latitude,
-                                    location.longitude
-                                ), 12f
+                        if (!alreadyHittingApi) {
+                            alreadyHittingApi = true
+                            nearByDriverMap?.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    LatLng(
+                                        location.latitude,
+                                        location.longitude
+                                    ), 12f
+                                )
                             )
-                        )
-                        rideVM.findNearDriver(location.latitude, location.longitude)
+                            rideVM.findNearDriver(location.latitude, location.longitude)
+                        }
                     }
                 })
             }
@@ -666,8 +684,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private fun observeNearDriver() =
         rideVM.findNearDriverData.observeData(lifecycle = viewLifecycleOwner, onLoading = {
 //        showProgressDialog()
+            if (activity != null)
+                binding.progressMap.isVisible = true
+
         }, onSuccess = {
 //        hideProgressDialog()
+            if (activity != null)
+                binding.progressMap.isVisible = false
             try {
                 this?.drivers?.forEach {
                     val marker = nearByDriverMap?.addMarker(
@@ -684,6 +707,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             }
         }, onError = {
 //        hideProgressDialog()
+            if (activity != null)
+                binding.progressMap.isVisible = false
         })
 
 
@@ -713,8 +738,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             }, onError = {
                 hideProgressDialog()
             })
-
-
         })
 
 
@@ -760,6 +783,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
     override fun acceptRide() {
         try {
+            Log.i("fetchOngoingTrip", "acceptRide")
+
             rideVM.fetchOngoingTrip()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -767,10 +792,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
     override fun rideStarted() {
+        Log.i("fetchOngoingTrip", "rideStarted")
         rideVM.fetchOngoingTrip()
     }
 
     override fun callFetchRideApi() {
+        Log.i("fetchOngoingTrip", "callFetchRideApi")
         rideVM.fetchOngoingTrip()
     }
 
@@ -791,6 +818,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
     override fun requestTimeout() {
         super.requestTimeout()
+        Log.i("fetchOngoingTrip", "requestTimeout")
         rideVM.fetchOngoingTrip()
     }
 

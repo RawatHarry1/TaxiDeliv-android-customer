@@ -23,6 +23,8 @@ class NetworkInterceptor : Interceptor {
             addHeader("deviceToken", fcmToken)
             addHeader("deviceType", "0")
             addHeader("loginType", "0")
+//            addHeader("Connection", "keep-alive")
+            addHeader("Connection","close")
 
             SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)?.let {
                 addHeader("accessToken", it.accessToken.orEmpty())
