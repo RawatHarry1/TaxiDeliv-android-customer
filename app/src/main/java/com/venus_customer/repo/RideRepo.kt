@@ -21,21 +21,25 @@ class RideRepo @Inject constructor(
     suspend fun searchPlaces(
         search: String
     ) = flow {
-        emit(apiInterface.searchPlaces(
-            inputText = search,
-            key = context.getString(R.string.map_api_key)
-        ))
+        emit(
+            apiInterface.searchPlaces(
+                inputText = search,
+                key = context.getString(R.string.map_api_key)
+            )
+        )
     }.flowOn(Dispatchers.IO)
 
     suspend fun getDistanceFromGoogle(
         originId: String,
         destinationId: String
     ) = flow {
-        emit(apiInterface.getDistanceFromGoogle(
-            destination = "place_id:$destinationId",
-            origin = "place_id:$originId",
-            key = context.getString(R.string.map_api_key)
-        ))
+        emit(
+            apiInterface.getDistanceFromGoogle(
+                destination = "place_id:$destinationId",
+                origin = "place_id:$originId",
+                key = context.getString(R.string.map_api_key)
+            )
+        )
     }
 
     suspend fun findDriver(latLng: LatLng) = flow {
@@ -47,14 +51,21 @@ class RideRepo @Inject constructor(
 
 
     suspend fun requestTrip(jsonObject: JSONObject) = flow {
-        emit(apiInterface.requestTrip(
-            requestBody = jsonObject.getJsonRequestBody()
-        ))
+        emit(
+            apiInterface.requestTrip(
+                requestBody = jsonObject.getJsonRequestBody()
+            )
+        )
     }.flowOn(Dispatchers.IO)
 
 
     suspend fun cancelTrip(sessionId: String, jsonObject: JSONObject) = flow {
-        emit(apiInterface.cancelTrip(sessionId = sessionId, requestBody = jsonObject.getJsonRequestBody()))
+        emit(
+            apiInterface.cancelTrip(
+                sessionId = sessionId,
+                requestBody = jsonObject.getJsonRequestBody()
+            )
+        )
     }.flowOn(Dispatchers.IO)
 
 
@@ -87,12 +98,18 @@ class RideRepo @Inject constructor(
 
 
     suspend fun findNearDriver(latitude: Double, longitude: Double) = flow {
-        emit(apiInterface.findNearDriver(
-            JSONObject().apply {
-                put("latitude", VenusApp.latLng.latitude)
-                put("longitude", VenusApp.latLng.longitude)
-            }.getJsonRequestBody()
-        ))
+        emit(
+            apiInterface.findNearDriver(
+                JSONObject().apply {
+                    put("latitude", VenusApp.latLng.latitude)
+                    put("longitude", VenusApp.latLng.longitude)
+                }.getJsonRequestBody()
+            )
+        )
+    }
+
+    suspend fun addAddress(request: okhttp3.RequestBody) = flow {
+        emit(apiInterface.addAddress(request))
     }
 
 }

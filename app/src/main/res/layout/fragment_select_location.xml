@@ -2,179 +2,199 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cvPickDrop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:layout_marginTop="15dp"
-            app:cardCornerRadius="20dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            >
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clPickDrop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="20dp"
-                android:visibility="gone"
-                >
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tvSelectPickDrop"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:drawablePadding="10dp"
-                    android:text="@string/txt_pick_up"
                     android:layout_marginEnd="20dp"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/poppins"
+                    android:text="@string/txt_pick_up"
                     android:textColor="@color/grey_text_color"
                     android:textSize="12sp"
-                    android:fontFamily="@font/poppins"
-                    app:drawableStartCompat="@drawable/ic_dot_circle" />
+                    app:drawableStartCompat="@drawable/ic_dot_circle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-<!--                <fragment-->
-<!--                    android:id="@+id/autocomplete_fragment"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:visibility="gone"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/tvSelectPickDrop"-->
-<!--                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"-->
-<!--                    />-->
+                <!--                <fragment-->
+                <!--                    android:id="@+id/autocomplete_fragment"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:visibility="gone"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/tvSelectPickDrop"-->
+                <!--                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"-->
+                <!--                    />-->
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/etSearchLocation"
+                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/search_hint"
-                    android:textSize="@dimen/_12ssp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/poppins_regular"
-                    app:layout_constraintTop_toBottomOf="@+id/tvSelectPickDrop"
-                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-                    />
+                    android:hint="@string/search_hint"
+                    android:textSize="@dimen/_12ssp"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSelectPickDrop" />
+
                 <View
                     android:id="@+id/viewPickDrop"
                     android:layout_width="0dp"
                     android:layout_height="1dp"
-                    app:layout_constraintStart_toStartOf="@id/etSearchLocation"
-                    app:layout_constraintEnd_toEndOf="@id/etSearchLocation"
-                    app:layout_constraintTop_toBottomOf="@id/etSearchLocation"
                     android:layout_marginTop="10dp"
+                    android:background="@color/theme"
                     android:visibility="visible"
-                    android:background="@color/theme">
-                </View>
+                    app:layout_constraintEnd_toEndOf="@id/etSearchLocation"
+                    app:layout_constraintStart_toStartOf="@id/etSearchLocation"
+                    app:layout_constraintTop_toBottomOf="@id/etSearchLocation"></View>
+
                 <ProgressBar
                     android:id="@+id/progress"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    app:layout_constraintTop_toBottomOf="@+id/viewPickDrop"
                     android:indeterminate="true"
-                    />
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@+id/viewPickDrop" />
 
                 <TextView
                     android:id="@+id/tvSavedLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/viewPickDrop"
-                    app:layout_constraintStart_toStartOf="@id/etSearchLocation"
-                    android:text="@string/txt_saved_locations"
-                    android:visibility="gone"
-                    android:textColor="@color/grey_text_color"
-                    android:textSize="12sp"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/poppins"
-                     />
+                    android:text="@string/txt_saved_locations"
+                    android:textColor="@color/grey_text_color"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="@id/etSearchLocation"
+                    app:layout_constraintTop_toBottomOf="@id/viewPickDrop" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPickDrop"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:maxHeight="200dp"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/tvSavedLocation"
+                    tools:itemCount="4"
+                    tools:listitem="@layout/item_address_list" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="10dp"
+                app:cardCornerRadius="40dp"
+                app:cardElevation="5dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/etAddAddressSearchLocation"
+                        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:drawableStart="@drawable/ic_direction"
+                        android:drawablePadding="15dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:hint="@string/search_hint"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:imeOptions="actionDone"
+                        android:ellipsize="end"
+                        android:paddingStart="25dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="12dp"
+                        android:textSize="@dimen/_12ssp"
+                        app:drawableTint="@color/black"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ProgressBar
+                        android:id="@+id/addAddressProgress"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@+id/etAddAddressSearchLocation" />
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvPickDrop"
+                        android:id="@+id/rvAddAddressPickDrop"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:maxHeight="200dp"
-                        android:layout_marginTop="5dp"
+                        android:visibility="gone"
+                        android:paddingHorizontal="@dimen/_10sdp"
+                        android:paddingBottom="@dimen/_10sdp"
                         android:orientation="vertical"
-                        app:layout_constraintTop_toBottomOf="@id/tvSavedLocation"
-                        tools:itemCount="4"
-                        tools:listitem="@layout/item_address_list"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        />
+                        app:layout_constraintTop_toBottomOf="@id/addAddressProgress" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cvAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:cardElevation="5dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0"
-            app:cardCornerRadius="40dp"
-            android:visibility="gone"
-            >
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/fragmentMapFullScreen"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvAddress"
+                android:id="@+id/tvConfirmBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins"
-                android:textSize="15sp"
-                android:textColor="@color/arrive_text_color"
-                android:text="@string/txt_sector_65_chandigarh"
-                android:drawableStart="@drawable/ic_direction"
-                app:drawableTint="@color/black"
-                android:maxLines="1"
-                android:paddingStart="25dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:drawablePadding="15dp"
-                />
-        </androidx.cardview.widget.CardView>
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_button"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/txt_confirm"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/fragmentMapFullScreen"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvConfirmBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/bg_button"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="@string/txt_confirm"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

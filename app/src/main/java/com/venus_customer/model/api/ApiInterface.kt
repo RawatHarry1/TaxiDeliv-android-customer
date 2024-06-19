@@ -4,7 +4,6 @@ import com.google.gson.JsonElement
 import com.salonedriver.model.dataclassses.notificationDC.NotificationDC
 import com.venus_customer.BuildConfig
 import com.venus_customer.model.dataClass.AboutAppDC
-import com.venus_customer.util.constants.APIEndPointsConstants
 import com.venus_customer.model.dataClass.base.BaseResponse
 import com.venus_customer.model.dataClass.base.ClientConfig
 import com.venus_customer.model.dataClass.fareEstimate.FareEstimateDC
@@ -15,6 +14,7 @@ import com.venus_customer.model.dataClass.requestTrip.RequestTripDC
 import com.venus_customer.model.dataClass.tripsDC.RideSummaryDC
 import com.venus_customer.model.dataClass.tripsDC.TripListDC
 import com.venus_customer.model.dataClass.userData.UserDataDC
+import com.venus_customer.util.constants.APIEndPointsConstants
 import com.venus_customer.util.constants.APIEndPointsConstants.FIND_NEAR_DRIVER
 import com.venus_customer.util.constants.APIEndPointsConstants.GET_NOTIFICATIONS
 import okhttp3.MultipartBody
@@ -58,7 +58,7 @@ interface ApiInterface {
     @GET(APIEndPointsConstants.FETCH_OPERATOR_TOKEN)
     suspend fun fetchUserToken(
         @Query("packageName") packageName: String = BuildConfig.APPLICATION_ID
-    ) : Response<BaseResponse<ClientConfig>>
+    ): Response<BaseResponse<ClientConfig>>
 
 
     @POST(APIEndPointsConstants.SEND_LOGIN_OTP)
@@ -154,5 +154,14 @@ interface ApiInterface {
     suspend fun findNearDriver(
         @Body requestBody: RequestBody
     ): Response<BaseResponse<FindNearDriverDC>>
+
+    @POST(APIEndPointsConstants.ADD_ADDRESS)
+    suspend fun addAddress(
+        @Body requestBody: RequestBody
+    ): Response<BaseResponse<Any>>
+
+    @GET(APIEndPointsConstants.FETCH_USER_ADDRESS)
+    suspend fun fetchAddresses(): Response<BaseResponse<Any>>
+
 
 }

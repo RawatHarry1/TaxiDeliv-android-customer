@@ -292,6 +292,9 @@
     <string name="driver_taking_too_much_time_after_arrival">Driver taking too much time after arrival</string>
     <string name="location_permission">Location Permission</string>
     <string name="please_turn_on_device_location_and_gps">Please turn on device location and GPS.</string>
+    <string name="other">Other</string>
+    <string name="work">Work</string>
+    <string name="home">Home</string>
 
 
 </resources>

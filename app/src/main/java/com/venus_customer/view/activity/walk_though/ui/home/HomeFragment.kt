@@ -120,6 +120,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private fun getSavedStateData() {
         try {
             findNavController().currentBackStackEntry?.savedStateHandle?.let {
+                Log.i("ADDADDRESS","ONHOME")
                 if (it.contains("pickUpLocation")) {
                     rideVM.createRideData.pickUpLocation =
                         it.get<CreateRideData.LocationData>("pickUpLocation")
@@ -128,6 +129,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 if (it.contains("dropLocation")) {
                     rideVM.createRideData.dropLocation =
                         it.get<CreateRideData.LocationData>("dropLocation")
+                    rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+                }
+                if (it.contains("add_address")) {
+                    Log.i("ADDADDRESS","ONHOME inside if")
                     rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
                 }
                 hideAllBottomSheets()
@@ -185,7 +190,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     rideVM.findDriver()
                 }
             }
-            clAddress.setOnSingleClickListener {
+            llAddAddress.setOnSingleClickListener {
                 locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                 val bundle = bundleOf("selectLocationType" to "add_address")
                 findNavController().navigate(R.id.navigation_select_location, bundle)

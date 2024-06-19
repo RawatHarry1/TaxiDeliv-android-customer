@@ -6,8 +6,8 @@ object AppConstants {
     const val USER_TOKEN: String = ""
     const val USER_ACCESS_PASSWORD: String = ""
     const val USER_ACCESS_NAME: String = ""
-    const val OPERATOR_TOKEN : String = "operator_token"
-    const val CLIENT_ID : String = "client_id"
+    const val OPERATOR_TOKEN: String = "operator_token"
+    const val CLIENT_ID: String = "client_id"
 
     const val DRIVER_PICKUP: String = "pick_up"
     const val DRIVER_ARRIVED: String = "arrived"
@@ -18,7 +18,7 @@ object AppConstants {
 
 }
 
-object APIEndPointsConstants{
+object APIEndPointsConstants {
     const val FETCH_OPERATOR_TOKEN = "getClientConfig"
     const val SEND_LOGIN_OTP = "customer/sendLoginOtp"
     const val VERIFY_OTP = "customer/verifyOtp"
@@ -36,9 +36,11 @@ object APIEndPointsConstants{
     const val GET_TRIP_SUMMARY = "getTripSummary"
     const val GET_NOTIFICATIONS = "customer/notifications"
     const val FIND_NEAR_DRIVER = "customer/findDriver"
+    const val ADD_ADDRESS = "add_home_and_work_address"
+    const val FETCH_USER_ADDRESS = "customer/fetch_user_address"
 }
 
-object APIParams{
+object APIParams {
     const val DEVICE_TYPE = "device_type"
     const val DEVICE_NAME = "device_name"
     const val PACKAGE_NAME = "package_name"
@@ -49,12 +51,12 @@ object APIParams{
     const val OPERATOR_TOKEN = "operator_token"
 }
 
-object ApiKeys{
+object ApiKeys {
     const val API_SUCCESS = 143
 
 }
 
-object UserProfileConstants{
+object UserProfileConstants {
     const val USER_ID = "USER_ID"
     const val COUNTRY_CODE = "COUNTRY_CODE"
     const val VENUS_WALLET_BALANCE = "VENUS_WALLET_BALANCE"

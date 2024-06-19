@@ -1,135 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/clLocationAlert"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/clLocationAlert"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    app:layout_constraintTop_toTopOf="parent"
     android:background="@drawable/bg_top_rounded"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     app:behavior_hideable="true"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:layout_constraintTop_toTopOf="parent">
 
     <View
         android:id="@+id/viewTop"
         android:layout_width="68dp"
         android:layout_height="5dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="10dp"
-        android:background="@color/grey_line_color">
-    </View>
+        android:background="@color/grey_line_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></View>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvPickDrop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/viewTop"
-        app:layout_constraintBottom_toTopOf="@id/clAddress"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
         android:layout_marginTop="15dp"
-        app:cardCornerRadius="20dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginBottom="10dp"
+        app:cardCornerRadius="20dp"
         app:cardElevation="2dp"
-        >
+        app:layout_constraintBottom_toTopOf="@id/clAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewTop">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clPickDrop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="30dp"
             android:background="@drawable/bg_rounded_where_to"
-            >
+            android:padding="30dp">
 
             <TextView
                 android:id="@+id/tvSelectPickUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 android:drawablePadding="10dp"
+                android:fontFamily="@font/poppins"
                 android:text="@string/txt_pick_up"
                 android:textColor="@color/grey_text_color"
                 android:textSize="12sp"
-                android:fontFamily="@font/poppins"
-                app:drawableStartCompat="@drawable/ic_dot_circle" />
+                app:drawableStartCompat="@drawable/ic_dot_circle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tvPickUpValue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/tvSelectPickUp"
-                app:layout_constraintStart_toStartOf="@id/tvSelectPickUp"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:textColor="@color/black_text_color"
-                android:hint="@string/pick_up"
-                android:textSize="14sp"
                 android:layout_marginStart="20dp"
-                android:maxLines="1"
                 android:fontFamily="@font/poppins_medium"
-                />
+                android:hint="@string/pick_up"
+                android:maxLines="1"
+                android:textColor="@color/black_text_color"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tvSelectPickUp"
+                app:layout_constraintTop_toBottomOf="@id/tvSelectPickUp" />
 
 
             <View
                 android:id="@+id/viewPickUp"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                app:layout_constraintStart_toStartOf="@id/tvPickUpValue"
-                app:layout_constraintEnd_toEndOf="@id/tvPickUpValue"
-                app:layout_constraintTop_toBottomOf="@id/tvPickUpValue"
                 android:layout_marginTop="10dp"
-                android:background="@color/theme">
-            </View>
+                android:background="@color/theme"
+                app:layout_constraintEnd_toEndOf="@id/tvPickUpValue"
+                app:layout_constraintStart_toStartOf="@id/tvPickUpValue"
+                app:layout_constraintTop_toBottomOf="@id/tvPickUpValue"></View>
 
 
             <TextView
                 android:id="@+id/tvSelectDropOff"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/viewPickUp"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="20dp"
                 android:drawablePadding="10dp"
+                android:fontFamily="@font/poppins"
                 android:text="@string/txt_drop_off"
                 android:textColor="@color/grey_text_color"
                 android:textSize="12sp"
-                android:fontFamily="@font/poppins"
-                android:layout_marginTop="20dp"
                 app:drawableStartCompat="@drawable/ic_dot_circle"
-                app:drawableTint="@color/black" />
+                app:drawableTint="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/viewPickUp" />
 
             <TextView
                 android:id="@+id/tvDropOffValue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/tvSelectDropOff"
-                app:layout_constraintStart_toStartOf="@id/tvSelectDropOff"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="20dp"
+                android:fontFamily="@font/poppins_medium"
+                android:hint="@string/txt_where_to"
+                android:maxLines="1"
                 android:textColor="@color/black_text_color"
                 android:textSize="14sp"
-                android:hint="@string/txt_where_to"
-                android:layout_marginStart="20dp"
-                android:maxLines="1"
-                android:fontFamily="@font/poppins_medium"
-                />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tvSelectDropOff"
+                app:layout_constraintTop_toBottomOf="@id/tvSelectDropOff" />
 
 
             <View
                 android:id="@+id/viewDropOff"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                app:layout_constraintStart_toStartOf="@id/tvDropOffValue"
-                app:layout_constraintEnd_toEndOf="@id/tvDropOffValue"
-                app:layout_constraintTop_toBottomOf="@id/tvDropOffValue"
                 android:layout_marginTop="10dp"
-                android:background="@color/theme">
-            </View>
+                android:background="@color/theme"
+                app:layout_constraintEnd_toEndOf="@id/tvDropOffValue"
+                app:layout_constraintStart_toStartOf="@id/tvDropOffValue"
+                app:layout_constraintTop_toBottomOf="@id/tvDropOffValue"></View>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
     </androidx.cardview.widget.CardView>
@@ -140,57 +131,84 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginBottom="10dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:layout_marginEnd="30dp"
-        app:layout_constraintTop_toBottomOf="@id/cvPickDrop"
-        app:layout_constraintBottom_toTopOf="@id/tvConfirmBtn">
+        app:layout_constraintBottom_toTopOf="@id/tvConfirmBtn"
+        app:layout_constraintTop_toBottomOf="@id/cvPickDrop">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="15dp"
-            app:srcCompat="@drawable/ic_home_address"
-            />
+        <!--        <androidx.appcompat.widget.AppCompatImageView-->
+        <!--            android:id="@+id/ivAddress"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            app:layout_constraintTop_toTopOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            android:layout_marginStart="15dp"-->
+        <!--            android:visibility="gone"-->
+        <!--            app:srcCompat="@drawable/ic_home_address"-->
+        <!--            />-->
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvAddressTitle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/ivAddress"
-            app:layout_constraintTop_toTopOf="@id/ivAddress"
-            app:layout_constraintBottom_toBottomOf="@id/ivAddress"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:text="@string/add_address"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Choose address"
             android:textColor="@color/black_text_color"
             android:textSize="15sp"
-            android:fontFamily="@font/poppins"
-            android:layout_marginStart="10dp"
-            />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/llAddAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingVertical="@dimen/_4sdp"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:background="@drawable/bg_add_address_round_8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/add_address"
+                android:layout_height="14dp"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_regular"
+                android:text="Add address"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-<!--todo commented if required in future
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvPickDrop"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintBottom_toTopOf="@id/tvConfirmBtn"
-        android:orientation="vertical"
-        tools:itemCount="4"
-        tools:listitem="@layout/item_address_list"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        />
--->
+    <!--todo commented if required in future
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPickDrop"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toTopOf="@id/tvConfirmBtn"
+            android:orientation="vertical"
+            tools:itemCount="4"
+            tools:listitem="@layout/item_address_list"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            />
+    -->
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvConfirmBtn"

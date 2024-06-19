@@ -13,8 +13,7 @@
         android:id="@+id/clRootView"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         app:behavior_hideable="true"
-        android:background="@drawable/bg_top_rounded"
-        >
+        android:background="@drawable/bg_top_rounded">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clConnecting"
@@ -25,8 +24,7 @@
             app:layout_constraintVertical_bias="0"
             android:layout_margin="15dp"
             android:visibility="visible"
-            tools:visibility="visible"
-            >
+            tools:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvConnecting"
