@@ -83,6 +83,10 @@ class RideRepo @Inject constructor(
         emit(apiInterface.fetchOngoingTrip())
     }.flowOn(Dispatchers.IO)
 
+    suspend fun fetchAddedAddresses() = flow {
+        emit(apiInterface.fetchAddresses())
+    }.flowOn(Dispatchers.IO)
+
 
     suspend fun getAllTrips() = flow {
         emit(apiInterface.getAllRides())

@@ -38,4 +38,5 @@
     <color name="grey_light_text">#9ea2b0</color>
     <color name="green_text_color">#2bc763</color>
     <color name="_0054A5">#0054A5</color>
+    <color name="cancel_btn_color">#E9F0FC</color>
 </resources>

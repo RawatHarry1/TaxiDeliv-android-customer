@@ -1,5 +1,7 @@
 package com.venus_customer.view.activity.walk_though.ui.home
 
+
+import SwipeToShowDeleteCallback
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -13,8 +15,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -24,8 +29,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.Gson
 import com.ncorti.slidetoact.SlideToActView
 import com.venus_customer.R
+import com.venus_customer.VenusApp
 import com.venus_customer.customClasses.LocationResultHandler
 import com.venus_customer.customClasses.SingleFusedLocation
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
@@ -36,7 +43,9 @@ import com.venus_customer.customClasses.trackingData.vectorToBitmap
 import com.venus_customer.databinding.DialogDateTimeBinding
 import com.venus_customer.databinding.FragmentHomeBinding
 import com.venus_customer.firebaseSetup.NotificationInterface
+import com.venus_customer.model.api.getJsonRequestBody
 import com.venus_customer.model.api.observeData
+import com.venus_customer.model.dataClass.addedAddresses.SavedAddresse
 import com.venus_customer.model.dataClass.userData.UserDataDC
 import com.venus_customer.socketSetup.SocketInterface
 import com.venus_customer.socketSetup.SocketSetup
@@ -50,21 +59,34 @@ import com.venus_customer.util.showSnackBar
 import com.venus_customer.view.activity.chat.ChatActivity
 import com.venus_customer.view.base.BaseActivity
 import com.venus_customer.view.base.BaseFragment
+import com.venus_customer.viewmodel.SearchLocationVM
 import com.venus_customer.viewmodel.rideVM.CreateRideData
 import com.venus_customer.viewmodel.rideVM.RideVM
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.net.URL
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface, SocketInterface {
 
     lateinit var binding: FragmentHomeBinding
     private val rideVM by activityViewModels<RideVM>()
+    private val searchLocationVM by viewModels<SearchLocationVM>()
     private var locationAlertState: BottomSheetBehavior<View>? = null
     private var carTypeAlertState: BottomSheetBehavior<View>? = null
     private var carDetailAlertState: BottomSheetBehavior<View>? = null
     private var startRideAlertState: BottomSheetBehavior<View>? = null
     private var googleMap: GoogleMap? = null
     private var nearByDriverMap: GoogleMap? = null
+    private val addressAdapter by lazy {
+        AddedAddressAdapter(
+            requireActivity(),
+            ::addressAdapterClick
+        )
+    }
 
     companion object {
         var notificationInterface: NotificationInterface? = null
@@ -98,41 +120,91 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         observeNearDriver()
         clickHandler()
         backButtonMapView()
+        observeAddedAddress()
+        addAdapterSetupAndApiHit()
     }
 
+
+    private fun addAdapterSetupAndApiHit() {
+        binding.viewLocation.rvAddress.adapter = addressAdapter
+        val swipeToDeleteCallback = SwipeToShowDeleteCallback(addressAdapter, requireActivity())
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        itemTouchHelper.attachToRecyclerView(binding.viewLocation.rvAddress)
+        rideVM.fetchAddedAddresses()
+    }
 
     override fun onResume() {
         super.onResume()
         notificationInterface = this
-        Log.i("HOMEFRAGMENT", "onResume")
     }
 
 
     private fun hideAllBottomSheets() {
+        Log.i("SavedStateData", "in hideAllBottomSheets")
         locationAlertState =
             binding.viewLocation.clLocationAlert.getBottomSheetBehaviour(isDraggableAlert = true)
         carTypeAlertState = binding.viewCarType.clRootView.getBottomSheetBehaviour()
         carDetailAlertState = binding.viewCarDetail.clRootView.getBottomSheetBehaviour()
         startRideAlertState = binding.viewStartRide.clRootView.getBottomSheetBehaviour()
+
+        locationAlertState?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        // Bottom sheet is hidden
+                        clearSavedStateData()
+                        Log.i("SavedStateData", "in STATE_HIDDEN")
+                    }
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        // Bottom sheet is collapsed
+                        Log.i("SavedStateData", "in STATE_COLLAPSED")
+                    }
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+                        // User is dragging the bottom sheet down
+                        Log.i("SavedStateData", "in STATE_DRAGGING")
+                    }
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        // Bottom sheet is expanded
+                        Log.i("SavedStateData", "in STATE_EXPANDED")
+                    }
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+                        // Bottom sheet is expanded
+                        Log.i("SavedStateData", "in STATE_HALF_EXPANDED")
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                // When the bottom sheet is sliding, you can handle any custom behavior here
+            }
+        })
     }
 
+    private fun clearSavedStateData() {
+        val clear = findNavController().currentBackStackEntry?.savedStateHandle
+        clear?.clearSavedStateProvider("pickUpLocation")
+        clear?.clearSavedStateProvider("dropLocation")
+        clear?.clearSavedStateProvider("add_address")
+    }
 
     private fun getSavedStateData() {
         try {
+            Log.i("SavedStateData", "in getSavedStateData()")
             findNavController().currentBackStackEntry?.savedStateHandle?.let {
-                Log.i("ADDADDRESS","ONHOME")
                 if (it.contains("pickUpLocation")) {
+                    Log.i("SavedStateData", "in pickUpLocation")
                     rideVM.createRideData.pickUpLocation =
                         it.get<CreateRideData.LocationData>("pickUpLocation")
                     rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
                 }
                 if (it.contains("dropLocation")) {
+                    Log.i("SavedStateData", "in dropLocation")
                     rideVM.createRideData.dropLocation =
                         it.get<CreateRideData.LocationData>("dropLocation")
                     rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
                 }
                 if (it.contains("add_address")) {
-                    Log.i("ADDADDRESS","ONHOME inside if")
+                    Log.i("SavedStateData", "in add_address")
                     rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
                 }
                 hideAllBottomSheets()
@@ -161,7 +233,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }
 
         if (rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.HomeScreen || rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.ShowLocationDialog) {
-            Log.i("fetchOngoingTrip", "clickHandler")
             rideVM.fetchOngoingTrip()
         } else if (rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.FindDriverDialog) {
             binding.clWhereMain.visibility = View.GONE
@@ -181,10 +252,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             }
 
             tvConfirmBtn.setOnSingleClickListener {
-                if (rideVM.createRideData.pickUpLocation == null) {
-                    showSnackBar("*Please select pickup location.", this)
-                } else if (rideVM.createRideData.dropLocation == null) {
-                    showSnackBar("*Please select drop location.", this)
+                if (rideVM.createRideData.pickUpLocation?.address.isNullOrEmpty()) {
+                    showSnackBar("*Please select pickup location.", clLocationAlert)
+                } else if (rideVM.createRideData.dropLocation?.address.isNullOrEmpty()) {
+                    showSnackBar("*Please select drop location.", clLocationAlert)
                 } else {
                     locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                     rideVM.findDriver()
@@ -198,7 +269,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             tvSelectPickUp.setOnSingleClickListener {
                 locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                 val bundle = bundleOf("selectLocationType" to "pickUp")
-
                 findNavController().navigate(R.id.navigation_select_location, bundle)
             }
             tvSelectDropOff.setOnSingleClickListener {
@@ -552,6 +622,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
 
                 RideVM.RideAlertUiState.ShowLocationDialog -> {
+                    Log.i("SavedStateData", "in ShowLocationDialog")
+                    if (rideVM.createRideData.pickUpLocation?.address.isNullOrEmpty())
+                        lifecycleScope.launch {
+                            getLocationDataFromLatLng(VenusApp.latLng)
+                        }
                     startWhereDialog()
                     binding.clWhereMain.visibility = View.VISIBLE
                     binding.clMapMain.visibility = View.GONE
@@ -716,6 +791,38 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 binding.progressMap.isVisible = false
         })
 
+    private fun observeAddedAddress() =
+        rideVM.fetchAddedAddresses.observeData(lifecycle = viewLifecycleOwner, onLoading = {
+//        showProgressDialog()
+
+        }, onSuccess = {
+//        hideProgressDialog()
+            Log.i("ADDRESSSS", Gson().toJson(this))
+            this?.saved_addresses?.let { addressAdapter.submitList(it) }
+            binding.viewLocation.rvAddress.isVisible = addressAdapter.itemCount > 0
+
+        }, onError = {
+//        hideProgressDialog()
+        })
+
+    private fun addressAdapterClick(savedAddress: SavedAddresse, isDelete: Boolean = false) {
+        if (isDelete) {
+            searchLocationVM.addAddress(JSONObject().apply {
+                put("address_id", savedAddress.id)
+                put("delete_flag", 1)
+            }.getJsonRequestBody())
+        } else {
+            rideVM.createRideData.pickUpLocation = CreateRideData.LocationData(
+                address = savedAddress.addr,
+                latitude = savedAddress.lat.toString(),
+                longitude = savedAddress.lng.toString(),
+                placeId = savedAddress.google_place_id
+            )
+            rideVM.createRideData.pickUpLocation?.address?.let {
+                binding.viewLocation.tvPickUpValue.text = it
+            }
+        }
+    }
 
     private fun observeFindDriver() =
         rideVM.findDriverData.observeData(lifecycle = viewLifecycleOwner, onLoading = {
@@ -841,6 +948,53 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     durationDistance = distance,
                     durationTime = duration
                 )
+            }
+        }
+    }
+
+
+    private suspend fun getLocationDataFromLatLng(latLng: LatLng) {
+        withContext(Dispatchers.IO) {
+            try {
+                val apiKey = getString(R.string.map_api_key)
+                val url =
+                    "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=$apiKey"
+                val result = URL(url).readText()
+                val jsonObject = JSONObject(result)
+                val status = jsonObject.getString("status")
+                if (status == "OK") {
+                    val results = jsonObject.getJSONArray("results")
+                    if (results.length() > 0) {
+                        val address = results.getJSONObject(0).getString("formatted_address")
+                        val placeId = results.getJSONObject(0).getString("place_id")
+                        rideVM.createRideData.pickUpLocation = CreateRideData.LocationData(
+                            address = address,
+                            latitude = latLng.latitude.toString(),
+                            longitude = latLng.longitude.toString(),
+                            placeId = placeId
+                        )
+
+
+                        // Optionally update the UI with the new location data
+//                    // Ensure to switch back to the main thread for UI updates
+                        withContext(Dispatchers.Main) {
+                            rideVM.createRideData.pickUpLocation?.address?.let {
+                                binding.viewLocation.tvPickUpValue.text = it
+                            }
+                        }
+                    } else {
+                        null
+                    }
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.i(
+                    "CurrentLocation",
+                    "In getLocationDataFromLatLng catch::: ${e.localizedMessage}"
+                )
+                e.printStackTrace()
+                null
             }
         }
     }

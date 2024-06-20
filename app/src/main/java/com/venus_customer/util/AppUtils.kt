@@ -902,11 +902,17 @@ fun View.getBottomSheetBehaviour(isDraggableAlert: Boolean = false): BottomSheet
     return BottomSheetBehavior.from(this).apply {
         isDraggable = isDraggableAlert
         peekHeight =  context.toPx(300).toInt()
-        maxHeight = context.toPx(400).toInt()
+        maxHeight = if (isDraggableAlert) calculateDynamicHeight().toInt() else context.toPx(400).toInt()
         state = BottomSheetBehavior.STATE_HIDDEN
     }
 }
-
+fun View.calculateDynamicHeight(): Int {
+    measure(
+        View.MeasureSpec.makeMeasureSpec((parent as View).width, View.MeasureSpec.EXACTLY),
+        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+    )
+    return measuredHeight
+}
 
 fun Context.toPx(dp: Int): Float = TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_DIP,
@@ -928,3 +934,4 @@ fun getFCMToken(fcmToken : (String) -> Unit = {}) = try {
 }catch (e:Exception){
     e.printStackTrace()
 }
+

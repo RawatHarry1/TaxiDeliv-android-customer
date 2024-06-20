@@ -4,4 +4,5 @@
     <color name="theme_button">#0054A5</color>
     <color name="theme_light">#330054A5</color>
     <color name="pink_card">#1A0054A5</color>
+    <color name="cancel_btn_color">#E9F0FC</color>
 </resources>

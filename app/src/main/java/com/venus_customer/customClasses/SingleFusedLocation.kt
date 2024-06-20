@@ -5,6 +5,7 @@ import android.content.Context
 import android.location.LocationManager
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.birjuvachhani.locus.Locus
@@ -59,6 +60,7 @@ object SingleFusedLocation {
 
 
     private fun requestSingleTimeLocation() {
+        Log.i("CurrentLocation","In requestSingleTimeLocation fun")
         context?.get()?.let { context ->
 //            progressBar.show(VenusApp.appContext)
             Locus.getCurrentLocation(context){

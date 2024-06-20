@@ -4,6 +4,7 @@ import android.location.Location
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import com.venus_customer.VenusApp
 import com.venus_customer.customClasses.LocationResultHandler
 import com.venus_customer.customClasses.SingleFusedLocation
@@ -31,6 +32,7 @@ class HomeVM @Inject constructor(
         LocationResultHandler {
         override fun updatedLocation(location: Location) {
             Log.i("loginViaToken", "loginViaToken")
+            VenusApp.latLng = LatLng(location.latitude,location.longitude)
             viewModelScope.launch {
                 preLoginRepo.loginViaAccessToken(jsonObject = JSONObject().apply {
                     put("latitude", location.latitude)

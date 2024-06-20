@@ -295,6 +295,7 @@
     <string name="other">Other</string>
     <string name="work">Work</string>
     <string name="home">Home</string>
+    <string name="choose_address">Choose Address</string>
 
 
 </resources>

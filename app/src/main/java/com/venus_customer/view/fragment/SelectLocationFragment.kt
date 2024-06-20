@@ -2,7 +2,6 @@ package com.venus_customer.view.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Geocoder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -56,16 +55,13 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.io.IOException
 import java.net.URL
 
 
 @AndroidEntryPoint
 class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
-
     lateinit var binding: FragmentSelectLocationBinding
     private val args: SelectLocationFragmentArgs by navArgs()
     private var googleMap: GoogleMap? = null
@@ -73,9 +69,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
     private val viewModel by viewModels<SearchLocationVM>()
     private var isSearchEnable: Boolean = true
     private val placesClient by lazy { Places.createClient(requireContext()) }
-
     private val adapter by lazy { PickDropAdapter(::adapterClick) }
-
     override fun initialiseFragmentBaseViewModel() {
 
     }
@@ -95,13 +89,18 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
 
         val type = args.selectLocationType
         if (type == "add_address") {
-            lifecycleScope.launch {
-//                fetchLocationData(LatLng(VenusApp.latLng.latitude, VenusApp.latLng.longitude))
-                getLocationDataFromLatLng(LatLng(VenusApp.latLng.latitude, VenusApp.latLng.longitude))
-            }
             setPickDropAdapter(binding.rvAddAddressPickDrop, view.context)
         } else
             setPickDropAdapter(binding.rvPickDrop, view.context)
+        if (type == "pickUp" || type == "add_address")
+            lifecycleScope.launch {
+                getLocationDataFromLatLng(
+                    LatLng(
+                        VenusApp.latLng.latitude,
+                        VenusApp.latLng.longitude
+                    )
+                )
+            }
         binding.tvConfirmBtn.setOnSingleClickListener {
             if (locationData != null) {
                 if (type == "add_address") {
@@ -115,6 +114,17 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                 }
             } else {
                 showSnackBar("*Please select location.")
+            }
+        }
+        binding.btnCancel.setOnSingleClickListener { findNavController().popBackStack() }
+        binding.rlMyGps.setOnSingleClickListener {
+            lifecycleScope.launch {
+                getLocationDataFromLatLng(
+                    LatLng(
+                        VenusApp.latLng.latitude,
+                        VenusApp.latLng.longitude
+                    )
+                )
             }
         }
 
@@ -135,10 +145,12 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                 googleMap = it
                 val latLng = LatLng(VenusApp.latLng.latitude, VenusApp.latLng.longitude)
                 googleMap?.clear()
-                googleMap?.addMarker(
-                    MarkerOptions().position(latLng).draggable(true)
-                        .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
-                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+                if (args.selectLocationType == "pickUp" || args.selectLocationType == "add_address") {
+                    googleMap?.addMarker(
+                        MarkerOptions().position(latLng).draggable(true)
+                            .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
+                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+                }
                 setUpMapListeners()
             }
             if (!Places.isInitialized()) {
@@ -223,8 +235,8 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
             //When api getting success
             Status.SUCCESS -> {
                 requireActivity().runOnUiThread {
-                   hideProgressDialog()
-                    findNavController().previousBackStackEntry?.savedStateHandle?.let {save->
+                    hideProgressDialog()
+                    findNavController().previousBackStackEntry?.savedStateHandle?.let { save ->
                         save["add_address"] = "add_address"
                     }
                     findNavController().popBackStack()
@@ -376,71 +388,6 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
         })
     }
 
-
-    private suspend fun fetchLocationData(latLng: LatLng) {
-        withContext(Dispatchers.IO) {
-            try {
-                val geocoder = Geocoder(requireActivity())
-                val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
-                if (!addresses.isNullOrEmpty()) {
-                    val address = addresses[0]
-                    val fullAddress = address.getAddressLine(0)
-                    val locationName = address.featureName
-                    // Use Places API to get placeId for the new location
-                    val placeFields = listOf(Place.Field.ID, Place.Field.NAME)
-                    val bounds = RectangularBounds.newInstance(
-                        LatLng(latLng.latitude, latLng.longitude),
-                        LatLng(latLng.latitude, latLng.longitude)
-                    )
-//                    val request = FindAutocompletePredictionsRequest.builder()
-//                        .setQuery(locationName)
-//                        .setLocationBias(bounds)
-//                        .build()
-                    val token = AutocompleteSessionToken.newInstance()
-                    val request = FindAutocompletePredictionsRequest.builder()
-                        .setQuery("${latLng.latitude}, ${latLng.longitude}")
-                        .setLocationBias(
-                            RectangularBounds.newInstance(
-                                LatLng(latLng.latitude, latLng.longitude),
-                                LatLng(latLng.latitude , latLng.longitude)
-                            )
-                        )
-                        .setSessionToken(token)
-                        .build()
-
-                    val response = placesClient.findAutocompletePredictions(request).await()
-                    val placeId = response.autocompletePredictions.firstOrNull()?.placeId
-                    // Update locationData with the fetched details
-                    locationData = CreateRideData.LocationData(
-                        latitude = latLng.latitude.toString(),
-                        longitude = latLng.longitude.toString(),
-                        address = fullAddress,
-                        placeId = placeId
-                    )
-
-//                    // Optionally update the UI with the new location data
-//                    // Ensure to switch back to the main thread for UI updates
-                    withContext(Dispatchers.Main) {
-                        isSearchEnable = false
-
-                        if (args.selectLocationType == "add_address") {
-                            binding.etAddAddressSearchLocation.setText(locationData?.address.orEmpty())
-                        } else
-                            binding.etSearchLocation.setText(locationData?.address.orEmpty())
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            isSearchEnable = true
-                        }, 2000)
-                    }
-//                    getLatLngFromPlaces(data)
-
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-                // Handle error
-            }
-        }
-    }
-
     private var addressType = "Home"
     private fun addAddressBottomSheet(context: Context) {
         val dialog = BottomSheetDialog(context, R.style.SheetDialog)
@@ -464,11 +411,12 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
         binding.tvOther.setOnSingleClickListener {
             setSaveAsUI(binding.tvOther, binding)
         }
-        binding.tvAddAddress.setOnClickListener {
+        binding.tvAddAddress.setOnSingleClickListener {
             if (locationData != null) {
+                Log.i("AddressType", addressType)
                 if (addressType == "Other") {
                     if (binding.etOther.text.toString().trim().isEmpty())
-                        showSnackBar("Please enter name for Save as!!")
+                        showSnackBar("Please enter name for Save as!!", binding.clRootView)
                     else {
                         hitAddAddress(
                             binding.etNickName.text.toString().trim(),
@@ -535,10 +483,11 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
     }
 
     private suspend fun getLocationDataFromLatLng(latLng: LatLng) {
-         withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             try {
                 val apiKey = getString(R.string.map_api_key)
-                val url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=$apiKey"
+                val url =
+                    "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=$apiKey"
                 val result = URL(url).readText()
                 val jsonObject = JSONObject(result)
                 val status = jsonObject.getString("status")
@@ -547,23 +496,32 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                     if (results.length() > 0) {
                         val address = results.getJSONObject(0).getString("formatted_address")
                         val placeId = results.getJSONObject(0).getString("place_id")
-                      locationData = CreateRideData.LocationData(
+                        locationData = CreateRideData.LocationData(
                             address = address,
                             latitude = latLng.latitude.toString(),
                             longitude = latLng.longitude.toString(),
                             placeId = placeId
                         )
-
-
                         // Optionally update the UI with the new location data
 //                    // Ensure to switch back to the main thread for UI updates
                         withContext(Dispatchers.Main) {
                             isSearchEnable = false
-
                             if (args.selectLocationType == "add_address") {
                                 binding.etAddAddressSearchLocation.setText(locationData?.address.orEmpty())
                             } else
                                 binding.etSearchLocation.setText(locationData?.address.orEmpty())
+                            if (args.selectLocationType != "pickUp" && args.selectLocationType != "add_address") {
+                                googleMap?.clear()
+                                googleMap?.addMarker(
+                                    MarkerOptions().position(latLng).draggable(true)
+                                        .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
+                                googleMap?.animateCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        latLng,
+                                        12f
+                                    )
+                                )
+                            }
                             Handler(Looper.getMainLooper()).postDelayed({
                                 isSearchEnable = true
                             }, 2000)

@@ -1,19 +1,14 @@
 package com.venus_customer.viewmodel.rideVM
 
-import android.content.Context
-import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.google.gson.JsonElement
 import com.venus_customer.VenusApp
-import com.venus_customer.customClasses.LocationResultHandler
-import com.venus_customer.customClasses.SingleFusedLocation
-import com.venus_customer.di.ErrorModel
 import com.venus_customer.model.api.ApiState
 import com.venus_customer.model.api.SingleLiveEvent
 import com.venus_customer.model.api.setApiState
+import com.venus_customer.model.dataClass.addedAddresses.AddedAddressData
 import com.venus_customer.model.dataClass.base.BaseResponse
 import com.venus_customer.model.dataClass.fareEstimate.FareEstimateDC
 import com.venus_customer.model.dataClass.fetchOngoingTrip.FetchOngoingTripDC
@@ -37,7 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RideVM @Inject constructor(
     private val rideRepo: RideRepo
-): ViewModel() {
+) : ViewModel() {
 
     val regionsList by lazy { ArrayList<FindDriverDC.Region>() }
     val fareStructureList by lazy { ArrayList<FindDriverDC.FareStructure>() }
@@ -60,9 +55,14 @@ class RideVM @Inject constructor(
      * Find Drive
      * */
     private val _findDriverData by lazy { SingleLiveEvent<ApiState<BaseResponse<FindDriverDC>>>() }
-    val findDriverData : LiveData<ApiState<BaseResponse<FindDriverDC>>> = _findDriverData
+    val findDriverData: LiveData<ApiState<BaseResponse<FindDriverDC>>> = _findDriverData
     fun findDriver() = viewModelScope.launch {
-        rideRepo.findDriver(latLng = LatLng(createRideData.pickUpLocation?.latitude.convertDouble(), createRideData.pickUpLocation?.longitude.convertDouble())).setApiState(_findDriverData)
+        rideRepo.findDriver(
+            latLng = LatLng(
+                createRideData.pickUpLocation?.latitude.convertDouble(),
+                createRideData.pickUpLocation?.longitude.convertDouble()
+            )
+        ).setApiState(_findDriverData)
     }
 
 
@@ -70,7 +70,7 @@ class RideVM @Inject constructor(
      * Find Near Driver
      * */
     private val _findNearDriverData by lazy { SingleLiveEvent<ApiState<BaseResponse<FindNearDriverDC>>>() }
-    val findNearDriverData : LiveData<ApiState<BaseResponse<FindNearDriverDC>>> = _findNearDriverData
+    val findNearDriverData: LiveData<ApiState<BaseResponse<FindNearDriverDC>>> = _findNearDriverData
     fun findNearDriver(latitude: Double, longitude: Double) = viewModelScope.launch {
         rideRepo.findNearDriver(latitude, longitude).setApiState(_findNearDriverData)
     }
@@ -102,7 +102,6 @@ class RideVM @Inject constructor(
             }
         ).setApiState(_requestRideData)
     }
-
 
 
     /**
@@ -165,21 +164,31 @@ class RideVM @Inject constructor(
      * Fetch Ongoing Trip
      * */
     private val _fetchOngoingTripData by lazy { SingleLiveEvent<ApiState<BaseResponse<FetchOngoingTripDC>>>() }
-    val fetchOngoingTripData: LiveData<ApiState<BaseResponse<FetchOngoingTripDC>>> = _fetchOngoingTripData
+    val fetchOngoingTripData: LiveData<ApiState<BaseResponse<FetchOngoingTripDC>>> =
+        _fetchOngoingTripData
 
     fun fetchOngoingTrip() = viewModelScope.launch {
         rideRepo.fetchOngoingTrip().setApiState(_fetchOngoingTripData)
     }
 
+    /**
+     * Get saved addresses
+     * */
+    private val _fetchAddedAddresses by lazy { SingleLiveEvent<ApiState<BaseResponse<AddedAddressData>>>() }
+    val fetchAddedAddresses: LiveData<ApiState<BaseResponse<AddedAddressData>>> = _fetchAddedAddresses
+
+    fun fetchAddedAddresses() = viewModelScope.launch {
+        rideRepo.fetchAddedAddresses().setApiState(_fetchAddedAddresses)
+    }
 
     /**
      * Update UI State
      * */
-    fun updateUiState(rideAlertUiState: RideAlertUiState){
+    fun updateUiState(rideAlertUiState: RideAlertUiState) {
         try {
 //            if (rideAlertUiState == _rideAlertUiState.value) return
             _rideAlertUiState.value = rideAlertUiState
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -214,17 +223,19 @@ class RideVM @Inject constructor(
         }.catch { error ->
             onError(error.localizedMessage.orEmpty())
         }.collectLatest {
-            if (it.isSuccessful){
+            if (it.isSuccessful) {
                 JSONObject(it.body().toString()).apply {
-                    if (has("rows")){
+                    if (has("rows")) {
                         optJSONArray("rows")?.let { rows ->
-                            if (rows.length() > 0){
+                            if (rows.length() > 0) {
                                 rows.optJSONObject(0)?.let { row ->
                                     row.optJSONArray("elements")?.let { elements ->
-                                        if (elements.length() > 0){
+                                        if (elements.length() > 0) {
                                             elements.optJSONObject(0)?.let { element ->
-                                                val distance = element.optJSONObject("distance")?.optString("text").orEmpty()
-                                                val time = element.optJSONObject("duration")?.optString("text").orEmpty()
+                                                val distance = element.optJSONObject("distance")
+                                                    ?.optString("text").orEmpty()
+                                                val time = element.optJSONObject("duration")
+                                                    ?.optString("text").orEmpty()
                                                 onSuccess(distance, time)
                                             }
                                         }
@@ -244,13 +255,13 @@ class RideVM @Inject constructor(
     /**
      * Ride Alert UI State
      * */
-    sealed class RideAlertUiState{
-        object HomeScreen: RideAlertUiState()
+    sealed class RideAlertUiState {
+        object HomeScreen : RideAlertUiState()
         object ShowLocationDialog : RideAlertUiState()
-        object ShowVehicleTypesDialog: RideAlertUiState()
-        object ShowCustomerDetailPaymentDialog: RideAlertUiState()
-        object FindDriverDialog: RideAlertUiState()
-        object ShowCustomerDetailDialog: RideAlertUiState()
+        object ShowVehicleTypesDialog : RideAlertUiState()
+        object ShowCustomerDetailPaymentDialog : RideAlertUiState()
+        object FindDriverDialog : RideAlertUiState()
+        object ShowCustomerDetailDialog : RideAlertUiState()
     }
 
 }

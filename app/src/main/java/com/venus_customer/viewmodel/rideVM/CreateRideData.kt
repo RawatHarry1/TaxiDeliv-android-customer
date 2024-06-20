@@ -1,9 +1,10 @@
 package com.venus_customer.viewmodel.rideVM
 
 import android.os.Parcelable
+import com.google.errorprone.annotations.Keep
 import kotlinx.parcelize.Parcelize
 
-
+@Keep
 data class CreateRideData(
     var regionId: String? = null,
     var vehicleType: String? = null,

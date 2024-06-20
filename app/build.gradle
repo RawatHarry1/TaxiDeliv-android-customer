@@ -5,7 +5,7 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-android'
     id("kotlin-parcelize")
-    id ("dagger.hilt.android.plugin")
+    id("dagger.hilt.android.plugin")
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id("com.google.gms.google-services")
 
@@ -38,7 +38,7 @@ android {
     }
 
     buildTypes {
-        debug{
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
@@ -177,6 +177,7 @@ dependencies {
     implementation 'com.beust:klaxon:5.5'
 
     implementation 'com.google.maps.android:android-maps-utils:3.8.0'
-
+     /*Shimmer*/
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 
 }

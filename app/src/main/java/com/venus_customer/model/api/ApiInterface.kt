@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import com.salonedriver.model.dataclassses.notificationDC.NotificationDC
 import com.venus_customer.BuildConfig
 import com.venus_customer.model.dataClass.AboutAppDC
+import com.venus_customer.model.dataClass.addedAddresses.AddedAddressData
 import com.venus_customer.model.dataClass.base.BaseResponse
 import com.venus_customer.model.dataClass.base.ClientConfig
 import com.venus_customer.model.dataClass.fareEstimate.FareEstimateDC
@@ -160,8 +161,8 @@ interface ApiInterface {
         @Body requestBody: RequestBody
     ): Response<BaseResponse<Any>>
 
-    @GET(APIEndPointsConstants.FETCH_USER_ADDRESS)
-    suspend fun fetchAddresses(): Response<BaseResponse<Any>>
+    @POST(APIEndPointsConstants.FETCH_USER_ADDRESS)
+    suspend fun fetchAddresses(): Response<BaseResponse<AddedAddressData>>
 
 
 }

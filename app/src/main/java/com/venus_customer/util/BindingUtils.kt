@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Build
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.databinding.BindingAdapter
@@ -94,9 +95,16 @@ fun showSnackBar(message: String, view: View? = null){
             message,
             Snackbar.LENGTH_SHORT
         )
+        // Set the Snackbar's anchor view to ensure it appears above the BottomSheet
+        if (view != null && view is ViewGroup) {
+            snackbar.anchorView = view
+        }
         snackbar.show()
     }
 }
+
+
+
 
 fun String?.convertDouble() = (this?.toDoubleOrNull() ?: 0.0)
 
