@@ -1,11 +1,10 @@
 package com.venus_customer.model.dataClass.findDriver
 
 
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 import com.venus_customer.util.convertDouble
 import com.venus_customer.util.splitSpace
-import kotlin.Exception
 
 @Keep
 data class FindDriverDC(
@@ -36,7 +35,9 @@ data class FindDriverDC(
     @SerializedName("show_region_specific_fare")
     val showRegionSpecificFare: String? = null,
     @SerializedName("total_rides_as_user")
-    val totalRidesAsUser: String? = null
+    val totalRidesAsUser: String? = null,
+    @SerializedName("customerETA")
+    val customerETA: CustomerETA? = null
 ) {
     @Keep
     data class Driver(
@@ -171,6 +172,14 @@ data class FindDriverDC(
     )
 
     @Keep
+    data class CustomerETA(
+        @SerializedName("rideDistance")
+        val rideDistance: Double? = null,
+        @SerializedName("rideTime")
+        val rideTime: Double? = null,
+    )
+
+    @Keep
     data class Region(
         @SerializedName("applicable_gender")
         val applicableGender: String? = null,
@@ -218,12 +227,16 @@ data class FindDriverDC(
         val vehicleProperties: String? = null,
         @SerializedName("vehicle_type")
         val vehicleType: String? = null,
+        @SerializedName("vehicle_desc")
+        val vehicle_desc: String? = null,
         @SerializedName("eta")
         val eta: String? = null,
         @SerializedName("distance")
         val distance: String? = null,
         @SerializedName("vehicleAmount")
         var vehicleAmount: String? = null,
+        @SerializedName("region_fare")
+        var region_fare: RegionFare? = null,
         @SerializedName("isSelected")
         var isSelected: Boolean = false,
         @SerializedName("rideTotalDistance")
@@ -262,38 +275,83 @@ data class FindDriverDC(
         )
 
 
-        fun calculateFearStructure(list: List<FareStructure>): String{
+        data class RegionFare(
+            val convenience_charge: Double,
+            val currency: String,
+            val currency_symbol: String,
+            val customer_fare_factor: Double,
+            val discount: Double,
+            val distance_unit: String,
+            val driver_fare_factor: Double,
+            val fare: Double,
+            val fare_float: Double,
+            val fare_text: String,
+            val flat_charges: Any,
+            val hold_amount: Double,
+            val max_fare: Double,
+            val max_original_fare: Double,
+            val max_ride_time: Double,
+            val min_fare: Double,
+            val min_original_fare: Double,
+            val min_ride_time: Double,
+            val nts_enabled: Double,
+            val original_fare: Double,
+            val ride_distance: Double,
+            val striked_fare_text: String,
+            val tax_percentage: Double,
+            val tax_value: Double,
+            val toll_charge: Double
+        )
+
+
+        fun calculateFearStructure(list: List<FareStructure>): String {
             return try {
-                val fare = list.find { it.vehicleType == vehicleType.orEmpty() } ?: kotlin.run { throw Exception() }
-                if (fare.farePerKmThresholdDistance.convertDouble() > 0.0){
+                val fare = list.find { it.vehicleType == vehicleType.orEmpty() }
+                    ?: kotlin.run { throw Exception() }
+                if (fare.farePerKmThresholdDistance.convertDouble() > 0.0) {
                     return ((fare.fareFixed.convertDouble() +
-                            if ((rideTotalDistance.splitSpace().convertDouble() - fare.fareThresholdDistance.convertDouble()) < 0)
+                            if ((rideTotalDistance.splitSpace()
+                                    .convertDouble() - fare.fareThresholdDistance.convertDouble()) < 0
+                            )
                                 0.0
                             else
-                                if ((rideTotalDistance.splitSpace().convertDouble() - fare.farePerKmThresholdDistance.convertDouble()) < 0)
-                                    (rideTotalDistance.splitSpace().convertDouble() - fare.fareThresholdDistance.convertDouble()) * fare.farePerKm.convertDouble()
+                                if ((rideTotalDistance.splitSpace()
+                                        .convertDouble() - fare.farePerKmThresholdDistance.convertDouble()) < 0
+                                )
+                                    (rideTotalDistance.splitSpace()
+                                        .convertDouble() - fare.fareThresholdDistance.convertDouble()) * fare.farePerKm.convertDouble()
                                 else
                                     (fare.farePerKmThresholdDistance.convertDouble() - fare.fareThresholdDistance.convertDouble()) * fare.farePerKm.convertDouble() +
-                                            (rideTotalDistance.splitSpace().convertDouble() - fare.farePerKmThresholdDistance.convertDouble()) * fare.farePerKm.convertDouble()) +
-                            if (rideTotalTime.splitSpace().convertDouble() - fare.fareThresholdTime.convertDouble() < 0)
+                                            (rideTotalDistance.splitSpace()
+                                                .convertDouble() - fare.farePerKmThresholdDistance.convertDouble()) * fare.farePerKm.convertDouble()) +
+                            if (rideTotalTime.splitSpace()
+                                    .convertDouble() - fare.fareThresholdTime.convertDouble() < 0
+                            )
                                 0.0
                             else
-                                (rideTotalTime.splitSpace().convertDouble() - fare.fareThresholdTime.convertDouble()) * fare.farePerMin.convertDouble() +
+                                (rideTotalTime.splitSpace()
+                                    .convertDouble() - fare.fareThresholdTime.convertDouble()) * fare.farePerMin.convertDouble() +
                                         fare.farePerXmin.convertDouble()).toString()
                 } else {
                     return (fare.fareFixed.convertDouble() +
-                            (if ((rideTotalDistance.splitSpace().convertDouble() - fare.farePerKmThresholdDistance.convertDouble()) < 0){
+                            (if ((rideTotalDistance.splitSpace()
+                                    .convertDouble() - fare.farePerKmThresholdDistance.convertDouble()) < 0
+                            ) {
                                 0.0
                             } else {
-                                rideTotalDistance.splitSpace().convertDouble() - fare.farePerKmThresholdDistance.convertDouble()
+                                rideTotalDistance.splitSpace()
+                                    .convertDouble() - fare.farePerKmThresholdDistance.convertDouble()
                             }) * fare.farePerKm.convertDouble() +
-                            (if ((rideTotalTime.splitSpace().convertDouble() - fare.fareThresholdTime.convertDouble()) < 0){
+                            (if ((rideTotalTime.splitSpace()
+                                    .convertDouble() - fare.fareThresholdTime.convertDouble()) < 0
+                            ) {
                                 0.0
                             } else {
-                                rideTotalTime.splitSpace().convertDouble() - fare.fareThresholdTime.convertDouble()
+                                rideTotalTime.splitSpace()
+                                    .convertDouble() - fare.fareThresholdTime.convertDouble()
                             }) * fare.farePerMin.convertDouble() + fare.farePerXmin.convertDouble()).toString()
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 "0.0"
             }
         }

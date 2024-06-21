@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:text="OK"
+        android:id="@+id/tvOk"
+        android:paddingHorizontal="@dimen/_14sdp"
+        android:paddingVertical="@dimen/_12sdp"
+        android:textColor="@color/theme"
+        android:textSize="@dimen/_12ssp"
+        android:layout_gravity="end"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <NumberPicker
+            android:id="@+id/dayPicker"
+            android:theme="@style/DefaultNumberPickerTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <NumberPicker
+            android:id="@+id/monthPicker"
+            android:layout_width="wrap_content"
+            android:theme="@style/DefaultNumberPickerTheme"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <NumberPicker
+            android:id="@+id/yearPicker"
+            android:layout_width="wrap_content"
+            android:theme="@style/DefaultNumberPickerTheme"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </LinearLayout>
+</LinearLayout>

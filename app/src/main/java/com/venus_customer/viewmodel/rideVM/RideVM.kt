@@ -36,6 +36,7 @@ class RideVM @Inject constructor(
 
     val regionsList by lazy { ArrayList<FindDriverDC.Region>() }
     val fareStructureList by lazy { ArrayList<FindDriverDC.FareStructure>() }
+    lateinit var customerETA :FindDriverDC.CustomerETA
     var createRideData = CreateRideData()
     val userData by lazy { SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA) }
 
@@ -84,10 +85,32 @@ class RideVM @Inject constructor(
     fun requestRideData(notes: String = "") = viewModelScope.launch {
         rideRepo.requestTrip(
             jsonObject = JSONObject().apply {
-
                 put("currentLongitude", VenusApp.latLng.longitude)
                 put("currentLatitude", VenusApp.latLng.latitude)
-
+                put("latitude", createRideData.pickUpLocation?.latitude)
+                put("longitude", createRideData.pickUpLocation?.longitude)
+                put("pickupLocationAddress", createRideData.pickUpLocation?.address)
+                put("dropLocationAddress", createRideData.dropLocation?.address)
+                put("duplicateFlag", "0")
+                put("dropLongitude", createRideData.dropLocation?.longitude)
+                put("dropLatitude", createRideData.dropLocation?.latitude)
+                put("regionId", createRideData.regionId)
+                put("vehicleType", createRideData.vehicleType)
+                put("phoneNo", userData?.login?.phoneNo.orEmpty())
+                put("customerNote", notes)
+            }
+        ).setApiState(_requestRideData)
+    }
+ /**
+     * Schedule Ride
+     * */
+    private val _scheduleRideData by lazy { SingleLiveEvent<ApiState<BaseResponse<RequestTripDC>>>() }
+    val scheduleRideData: LiveData<ApiState<BaseResponse<RequestTripDC>>> = _scheduleRideData
+    fun scheduleRideData(notes: String = "") = viewModelScope.launch {
+        rideRepo.requestTrip(
+            jsonObject = JSONObject().apply {
+                put("currentLongitude", VenusApp.latLng.longitude)
+                put("currentLatitude", VenusApp.latLng.latitude)
                 put("latitude", createRideData.pickUpLocation?.latitude)
                 put("longitude", createRideData.pickUpLocation?.longitude)
                 put("pickupLocationAddress", createRideData.pickUpLocation?.address)
@@ -175,7 +198,8 @@ class RideVM @Inject constructor(
      * Get saved addresses
      * */
     private val _fetchAddedAddresses by lazy { SingleLiveEvent<ApiState<BaseResponse<AddedAddressData>>>() }
-    val fetchAddedAddresses: LiveData<ApiState<BaseResponse<AddedAddressData>>> = _fetchAddedAddresses
+    val fetchAddedAddresses: LiveData<ApiState<BaseResponse<AddedAddressData>>> =
+        _fetchAddedAddresses
 
     fun fetchAddedAddresses() = viewModelScope.launch {
         rideRepo.fetchAddedAddresses().setApiState(_fetchAddedAddresses)

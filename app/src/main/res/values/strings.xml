@@ -9,6 +9,8 @@
     <string name="no_net_connection">No Internet Connection</string>
 
 
+
+
     <!--walk through-->
     <string name="txt_join_the_green">Join The Green Team</string>
     <string name="txt_volt_exclusively_for_drivers">Volt is exclusively for drivers with fully electric vehicles.</string>
@@ -150,7 +152,7 @@
     <string name="txt_time">3 min</string>
     <string name="txt_count">4</string>
     <string name="txt_get_comfy">get comfy, economical cars</string>
-    <string name="txt_actual_price">23 $</string>
+    <string name="txt_actual_price">$ 0.0</string>
     <string name="txt_price">58.27 $</string>
     <string name="txt_customer_details">Customer Details</string>
     <string name="txt__20_43">$ 20.43</string>

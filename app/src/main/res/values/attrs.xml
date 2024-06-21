@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AspectImageView" >
+        <attr name="height_wrt_width" format="float"/>
+    </declare-styleable>
+    <!-- Define custom attributes here -->
+    <declare-styleable name="NumberPicker">
+        <attr name="picker_selectedTextColor" format="color" />
+    </declare-styleable>
+</resources>

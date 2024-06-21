@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:width="20dp"
+        android:height="16.29dp"
+        android:drawable="@drawable/pay_by_money" />
+
+</layer-list>

@@ -51,4 +51,20 @@
     </style>
 
 
+        <style name="CustomDateTimePickerDialog" parent="Theme.MaterialComponents.Dialog">
+            <item name="android:windowMinWidthMajor">90%</item>
+            <item name="android:windowMinWidthMinor">90%</item>
+            <item name="android:windowBackground">@color/white</item>
+            <item name="android:windowNoTitle">true</item>
+        </style>
+
+    <style name="DefaultNumberPickerTheme" parent="Theme.Venus">
+        <item name="colorControlNormal">@color/grey_text_color</item>
+        <item name="android:textAppearance">@style/CustomTextAppearance</item>
+        <item name="picker_selectedTextColor">@color/theme</item>
+    </style>
+
+    <style name="CustomTextAppearance" parent="@android:style/TextAppearance">
+        <item name="fontFamily">@font/poppins_medium</item>
+    </style>
 </resources>

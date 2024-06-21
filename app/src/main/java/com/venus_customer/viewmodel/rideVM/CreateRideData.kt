@@ -17,7 +17,7 @@ data class CreateRideData(
     var dropLocation: LocationData? = LocationData(),
     var driverLocation: DriverLocation? = DriverLocation(),
     var status: Int? = null
-){
+) {
 
     @Parcelize
     data class DriverLocation(
@@ -39,7 +39,8 @@ data class CreateRideData(
         var totalCapacity: String? = null,
         var eta: String? = null,
         var distance: String? = null,
-        var price: String? = null,
+        var fare: Double? = null,
+        var currency: String? = null,
         var vehicleNumber: String? = null,
     )
 
@@ -49,5 +50,5 @@ data class CreateRideData(
         var driverId: String? = null,
         var driverRating: String? = null,
 
-    )
+        )
 }

@@ -2,20 +2,26 @@ package com.venus_customer.view.activity.walk_though.ui.home
 
 
 import SwipeToShowDeleteCallback
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -46,13 +52,13 @@ import com.venus_customer.firebaseSetup.NotificationInterface
 import com.venus_customer.model.api.getJsonRequestBody
 import com.venus_customer.model.api.observeData
 import com.venus_customer.model.dataClass.addedAddresses.SavedAddresse
+import com.venus_customer.model.dataClass.findDriver.FindDriverDC
 import com.venus_customer.model.dataClass.userData.UserDataDC
 import com.venus_customer.socketSetup.SocketInterface
 import com.venus_customer.socketSetup.SocketSetup
 import com.venus_customer.util.SharedPreferencesManager
 import com.venus_customer.util.TripStatus
 import com.venus_customer.util.constants.AppConstants
-import com.venus_customer.util.formatString
 import com.venus_customer.util.getBottomSheetBehaviour
 import com.venus_customer.util.safeCall
 import com.venus_customer.util.showSnackBar
@@ -68,6 +74,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface, SocketInterface {
@@ -86,6 +95,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             requireActivity(),
             ::addressAdapterClick
         )
+    }
+    private val stateHandle: SavedStateHandle by lazy {
+        findNavController().currentBackStackEntry?.savedStateHandle
+            ?: throw IllegalStateException("State Handle is null")
     }
 
     companion object {
@@ -112,6 +125,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         setBannerAdapter(view.context)
         setMapFragment(view, savedInstanceState)
         getSavedStateData()
+        // Using a lifecycle observer to process saved state data on fragment resumption
+//        viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+//            override fun onResume(owner: LifecycleOwner) {
+//                super.onResume(owner)
+//                getSavedStateData()
+//            }
+//        })
         observeUiState()
         observeFindDriver()
         observeRequestRide()
@@ -122,8 +142,49 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         backButtonMapView()
         observeAddedAddress()
         addAdapterSetupAndApiHit()
+//        getNearByDrivers()
+
     }
 
+    private fun getNearByDrivers() {
+        if (VenusApp.latLng.latitude != 0.0) {
+            nearByDriverMap?.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    VenusApp.latLng, 12f
+                )
+            )
+            rideVM.findNearDriver(VenusApp.latLng.latitude, VenusApp.latLng.longitude)
+        } else {
+            var alreadyHittingApi = false
+//        rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
+            SingleFusedLocation.initialize(requireContext(), object : LocationResultHandler {
+                override fun updatedLocation(location: Location) {
+                    if (!alreadyHittingApi) {
+                        alreadyHittingApi = true
+                        nearByDriverMap?.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                LatLng(
+                                    location.latitude,
+                                    location.longitude
+                                ), 12f
+                            )
+                        )
+                        rideVM.findNearDriver(location.latitude, location.longitude)
+                    }
+                }
+            })
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+//        viewLifecycleOwner.lifecycle.removeObserver(object : DefaultLifecycleObserver {
+//            override fun onResume(owner: LifecycleOwner) {
+//                super.onResume(owner)
+//                getSavedStateData()
+//            }
+//        })
+    }
 
     private fun addAdapterSetupAndApiHit() {
         binding.viewLocation.rvAddress.adapter = addressAdapter
@@ -142,31 +203,41 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private fun hideAllBottomSheets() {
         Log.i("SavedStateData", "in hideAllBottomSheets")
         locationAlertState =
-            binding.viewLocation.clLocationAlert.getBottomSheetBehaviour(isDraggableAlert = true)
-        carTypeAlertState = binding.viewCarType.clRootView.getBottomSheetBehaviour()
+            binding.viewLocation.clLocationAlert.getBottomSheetBehaviour(
+                isDraggableAlert = true,
+                showFull = true
+            )
+        carTypeAlertState = binding.viewCarType.clRootView.getBottomSheetBehaviour(showFull = true)
         carDetailAlertState = binding.viewCarDetail.clRootView.getBottomSheetBehaviour()
         startRideAlertState = binding.viewStartRide.clRootView.getBottomSheetBehaviour()
 
-        locationAlertState?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        locationAlertState?.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        // Bottom sheet is hidden
-                        clearSavedStateData()
-                        Log.i("SavedStateData", "in STATE_HIDDEN")
+                        // Bottom sheet is hidden, attempt to clear state
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            clearSavedStateData()
+                            Log.i("SavedStateData", "State cleared after STATE_HIDDEN")
+                        }, 200) // Adding a delay to ensure state changes have completed
                     }
+
                     BottomSheetBehavior.STATE_COLLAPSED -> {
                         // Bottom sheet is collapsed
                         Log.i("SavedStateData", "in STATE_COLLAPSED")
                     }
+
                     BottomSheetBehavior.STATE_DRAGGING -> {
                         // User is dragging the bottom sheet down
                         Log.i("SavedStateData", "in STATE_DRAGGING")
                     }
+
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         // Bottom sheet is expanded
                         Log.i("SavedStateData", "in STATE_EXPANDED")
                     }
+
                     BottomSheetBehavior.STATE_HALF_EXPANDED -> {
                         // Bottom sheet is expanded
                         Log.i("SavedStateData", "in STATE_HALF_EXPANDED")
@@ -181,13 +252,46 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
     private fun clearSavedStateData() {
-        val clear = findNavController().currentBackStackEntry?.savedStateHandle
-        clear?.clearSavedStateProvider("pickUpLocation")
-        clear?.clearSavedStateProvider("dropLocation")
-        clear?.clearSavedStateProvider("add_address")
+        val clearStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+
+        clearStateHandle?.let {
+            it.remove<CreateRideData.LocationData>("pickUpLocation")
+            it.remove<CreateRideData.LocationData>("dropLocation")
+            it.remove<String>("add_address")
+        } ?: run {
+            Log.e("ClearStateError", "Failed to access savedStateHandle")
+        }
     }
 
     private fun getSavedStateData() {
+//        Log.i("SavedStateData", "in getSavedStateData()")
+//        hideAllBottomSheets()
+//        try {
+//            if (stateHandle.contains("pickUpLocation")) {
+//                Log.i("SavedStateData", "in pickUpLocation")
+//                rideVM.createRideData.pickUpLocation =
+//                    stateHandle.get<CreateRideData.LocationData>("pickUpLocation")
+//                rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+////                stateHandle.remove<CreateRideData.LocationData>("pickUpLocation")
+//            }
+//            if (stateHandle.contains("dropLocation")) {
+//                Log.i("SavedStateData", "in dropLocation")
+//                rideVM.createRideData.dropLocation =
+//                    stateHandle.get<CreateRideData.LocationData>("dropLocation")
+//                rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+////                stateHandle.remove<CreateRideData.LocationData>("dropLocation")
+//            }
+//            if (stateHandle.contains("add_address")) {
+//                Log.i("SavedStateData", "in add_address")
+//                rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+////                stateHandle.remove<String>("add_address")
+//            }
+//
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+
+
         try {
             Log.i("SavedStateData", "in getSavedStateData()")
             findNavController().currentBackStackEntry?.savedStateHandle?.let {
@@ -218,17 +322,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private fun clickHandler() {
         binding.tvNow.setOnSingleClickListener {
             binding.tvNow.text = requireContext().getString(R.string.schedule)
+            hideAllBottomSheets()
             startTimeDialog(requireContext())
         }
 
         binding.rlSchedule.setOnSingleClickListener {
             binding.tvNow.text = requireContext().getString(R.string.schedule)
+            hideAllBottomSheets()
             startTimeDialog(requireContext())
         }
         binding.tvWhereTo.setOnSingleClickListener {
+            schedule = false
             rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
         }
         binding.rlRide.setOnSingleClickListener {
+            schedule = false
             rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
         }
 
@@ -258,7 +366,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     showSnackBar("*Please select drop location.", clLocationAlert)
                 } else {
                     locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
-                    rideVM.findDriver()
+                    if (schedule) {
+                        showSnackBar("This is Schedule", clLocationAlert)
+                    } else
+                        rideVM.findDriver()
                 }
             }
             llAddAddress.setOnSingleClickListener {
@@ -294,10 +405,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         with(binding.viewCarDetail) {
             rideVM.createRideData.vehicleData?.let {
                 tvCarType.text = it.name.orEmpty()
-                tvTime.text = it.eta.orEmpty().plus(" min")
-                tvPersonCount.text = it.totalCapacity.orEmpty().ifEmpty { "0" }
+                tvTime.text = it.eta.orEmpty().ifEmpty { "0" }.plus(" min away")
+//                tvPersonCount.text = it.totalCapacity.orEmpty().ifEmpty { "0" }
+//                tvPrice.text =
+//                    "${it.price.formatString()} ${rideVM.createRideData.currencyCode.orEmpty()}"
                 tvPrice.text =
-                    "${it.price.formatString()} ${rideVM.createRideData.currencyCode.orEmpty()}"
+                    "${it.currency} ${String.format("%.2f", it.fare)}"
                 Glide.with(requireContext()).load(it.image.orEmpty()).error(R.mipmap.ic_launcher)
                     .into(ivCarImage)
             }
@@ -342,56 +455,148 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         dialog.setContentView(binding.root)
 
 
-        binding.cvPickDrop.visibility = if (schedule) View.VISIBLE else View.GONE
-        binding.clHome.visibility = if (schedule) View.VISIBLE else View.GONE
+//        binding.cvPickDrop.visibility = if (schedule) View.VISIBLE else View.GONE
+//        binding.clHome.visibility = if (schedule) View.VISIBLE else View.GONE
 
-        rideVM.createRideData.pickUpLocation?.address?.let {
-            binding.tvPickUpValue.text = it
+//        rideVM.createRideData.pickUpLocation?.address?.let {
+//            binding.tvPickUpValue.text = it
+//        }
+//        rideVM.createRideData.dropLocation?.address?.let {
+//            binding.tvDropOffValue.text = it
+//        }
+
+        setCurrentDate(binding.tvDateValue)
+        setCurrentTime(binding.tvTimeValue)
+        // Show date picker dialog
+        binding.tvDateValue.setOnSingleClickListener {
+            showDatePickerDialog(binding.tvDateValue)
         }
-        rideVM.createRideData.dropLocation?.address?.let {
-            binding.tvDropOffValue.text = it
+        binding.tvTimeValue.setOnSingleClickListener {
+            showTimePickerDialog(binding.tvTimeValue)
         }
-
-
         binding.tvSubmitBtn.setOnSingleClickListener {
             this@HomeFragment.binding.tvNow.text = context.getString(R.string.schedule)
             schedule = true
             dialog.dismiss()
+            rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
         }
 
 
-        binding.clHome.setOnSingleClickListener {
-            dialog.dismiss()
-            val bundle = bundleOf("selectLocationType" to "add_address")
-            findNavController().navigate(R.id.navigation_select_location, bundle)
-        }
-        binding.tvSelectPickUp.setOnSingleClickListener {
-            dialog.dismiss()
-            val bundle = bundleOf("selectLocationType" to "pickUp")
-            findNavController().navigate(R.id.navigation_select_location, bundle)
-        }
-        binding.tvSelectDropOff.setOnSingleClickListener {
-            dialog.dismiss()
-            val bundle = bundleOf("selectLocationType" to "dropOff")
-            findNavController().navigate(R.id.navigation_select_location, bundle)
-
-        }
-
-        binding.tvPickUpValue.setOnSingleClickListener {
-            dialog.dismiss()
-            val bundle = bundleOf("selectLocationType" to "pickUp")
-
-            findNavController().navigate(R.id.navigation_select_location, bundle)
-        }
-        binding.tvDropOffValue.setOnSingleClickListener {
-            dialog.dismiss()
-            val bundle = bundleOf("selectLocationType" to "dropOff")
-            findNavController().navigate(R.id.navigation_select_location, bundle)
-
-        }
+//        binding.clHome.setOnSingleClickListener {
+//            dialog.dismiss()
+//            val bundle = bundleOf("selectLocationType" to "add_address")
+//            findNavController().navigate(R.id.navigation_select_location, bundle)
+//        }
+//        binding.tvSelectPickUp.setOnSingleClickListener {
+//            dialog.dismiss()
+//            val bundle = bundleOf("selectLocationType" to "pickUp")
+//            findNavController().navigate(R.id.navigation_select_location, bundle)
+//        }
+//        binding.tvSelectDropOff.setOnSingleClickListener {
+//            dialog.dismiss()
+//            val bundle = bundleOf("selectLocationType" to "dropOff")
+//            findNavController().navigate(R.id.navigation_select_location, bundle)
+//
+//        }
+//
+//        binding.tvPickUpValue.setOnSingleClickListener {
+//            dialog.dismiss()
+//            val bundle = bundleOf("selectLocationType" to "pickUp")
+//
+//            findNavController().navigate(R.id.navigation_select_location, bundle)
+//        }
+//        binding.tvDropOffValue.setOnSingleClickListener {
+//            dialog.dismiss()
+//            val bundle = bundleOf("selectLocationType" to "dropOff")
+//            findNavController().navigate(R.id.navigation_select_location, bundle)
+//
+//        }
 
         dialog.setCancelable(true)
         dialog.show()
+    }
+
+    private fun showTimePickerDialog(textView: TextView) {
+        val calendar = Calendar.getInstance()
+        // Time 30 minutes ahead from the current time
+        calendar.add(Calendar.MINUTE, 30)
+        val initialHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val initialMinute = calendar.get(Calendar.MINUTE)
+        val timePickerDialog = TimePickerDialog(
+            requireContext(),
+            { _, selectedHour, selectedMinute ->
+                calendar.set(Calendar.HOUR_OF_DAY, selectedHour)
+                calendar.set(Calendar.MINUTE, selectedMinute)
+                val formattedTime =
+                    SimpleDateFormat("hh:mm a", Locale.getDefault()).format(calendar.time)
+                textView.text = formattedTime
+            },
+            initialHour, initialMinute, false // `false` for 12-hour format
+        )
+//        timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE).setOnSingleClickListener {
+//            showToastShort("$shour$sMin")
+//            val selectedCalendar = Calendar.getInstance()
+//            selectedCalendar.set(Calendar.HOUR_OF_DAY, selectedHour)
+//            selectedCalendar.set(Calendar.MINUTE, selectedMinute)
+//
+//            val currentCalendar = Calendar.getInstance()
+//            currentCalendar.add(Calendar.MINUTE, 30)
+//
+//            if (selectedCalendar.timeInMillis < currentCalendar.timeInMillis) {
+//                timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE).isEnabled = false
+//                selectedTimeTextView.text = "Time must be at least 30 minutes from the current time"
+//            } else {
+//                selectedTimeTextView.text = getString(R.string.selected_time_format, selectedHour, selectedMinute)
+//            }
+//        }
+
+
+        timePickerDialog.show()
+    }
+
+    private fun setCurrentDate(textView: TextView) {
+        // Set the minimum date to the current date
+        val minDate = Calendar.getInstance()
+        val dateFormatter = SimpleDateFormat("E, MMM dd", Locale.getDefault())
+        val formattedDate = dateFormatter.format(minDate.time)
+        textView.text = formattedDate
+    }
+
+    private fun setCurrentTime(textView: TextView) {
+        val calendar = Calendar.getInstance()
+        // Time 30 minutes ahead from the current time
+        calendar.add(Calendar.MINUTE, 30)
+        val formattedTime =
+            SimpleDateFormat("hh:mm a", Locale.getDefault()).format(calendar.time)
+        textView.text = formattedTime
+    }
+
+    private fun showDatePickerDialog(textView: TextView) {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val dateFormatter = SimpleDateFormat("E, MMM dd", Locale.getDefault())
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, selectedYear, selectedMonth, selectedDay ->
+                calendar.set(selectedYear, selectedMonth, selectedDay)
+                val formattedDate = dateFormatter.format(calendar.time)
+                textView.text = formattedDate
+            }, year, month, day
+        )
+
+        // Set the minimum date to the current date
+        val minDate = Calendar.getInstance()
+
+        // Set the maximum date to four months from the current month
+        val maxDate = Calendar.getInstance().apply {
+            add(Calendar.MONTH, 3)
+        }
+
+        datePickerDialog.datePicker.minDate = minDate.timeInMillis
+        datePickerDialog.datePicker.maxDate = maxDate.timeInMillis
+        datePickerDialog.show()
     }
 
     private fun startRideDialog(context: Context, rideAlertUiState: RideVM.RideAlertUiState) {
@@ -409,7 +614,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 tvAddress.text = pickUpLocation?.address.orEmpty()
                 tvDistanceValue.text = vehicleData?.distance.orEmpty()
                 tvTimeValue.text = "${vehicleData?.eta.orEmpty()} min"
-                tvPriceValue.text = "${vehicleData?.price.orEmpty().ifEmpty { "0.0" }}"
+                tvPriceValue.text =
+                    "${vehicleData?.currency} ${String.format("%.2f", vehicleData?.fare)}}"
                 Glide.with(requireView()).load(driverDetail?.driverImage.orEmpty())
                     .error(R.mipmap.ic_launcher).into(ivProfileImage)
                 Glide.with(requireView()).load(vehicleData?.image.orEmpty())
@@ -530,7 +736,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailPaymentDialog)
             }
             rvCarsType.adapter = CarsTypeAdapter(
-                rideVM.regionsList, currencyCode = rideVM.createRideData.currencyCode.orEmpty()
+                rideVM.regionsList,
+                currencyCode = rideVM.createRideData.currencyCode.orEmpty(),
+                rideVM.customerETA
             ) {
                 rideVM.createRideData.regionId = it?.regionId.orEmpty()
                 rideVM.createRideData.vehicleType = it?.vehicleType.orEmpty()
@@ -539,7 +747,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     name = it?.regionName.orEmpty(),
                     totalCapacity = it?.maxPeople.orEmpty(),
                     eta = it?.eta.orEmpty(),
-                    price = it?.vehicleAmount.formatString()
+                    fare = it?.region_fare?.fare,
+                    currency = it?.region_fare?.currency
                 )
             }
         }
@@ -708,7 +917,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                             totalCapacity = null,
                             eta = trip.dryEta.orEmpty(),
                             distance = trip.estimatedDistance.orEmpty(),
-                            price = trip.estimatedDriverFare.orEmpty(),
+                            fare = (trip.estimatedDriverFare ?: "0.0").toDouble(),
+                            currency = trip.currency,
                             vehicleNumber = trip.licensePlate.orEmpty()
                         )
                         driverDetail = driverDetail?.copy(
@@ -835,21 +1045,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.createRideData.currencyCode = this?.currency.orEmpty()
             rideVM.regionsList.clear()
             rideVM.fareStructureList.clear()
+            rideVM.customerETA = this?.customerETA ?: FindDriverDC.CustomerETA()
             rideVM.fareStructureList.addAll(this?.fareStructure ?: emptyList())
-            rideVM.getDistanceFromGoogle(isLoading = {
-                showProgressDialog()
-            }, onSuccess = { distance, time ->
-                hideProgressDialog()
-                this?.regions?.map {
-                    it.rideTotalDistance = distance
-                    it.rideTotalTime = time
-                    it.vehicleAmount = it.calculateFearStructure(rideVM.fareStructureList)
-                }
-                rideVM.regionsList.addAll(this?.regions ?: emptyList())
-                rideVM.updateUiState(RideVM.RideAlertUiState.ShowVehicleTypesDialog)
-            }, onError = {
-                hideProgressDialog()
-            })
+            rideVM.regionsList.addAll(this?.regions ?: emptyList())
+            rideVM.updateUiState(RideVM.RideAlertUiState.ShowVehicleTypesDialog)
+//            rideVM.getDistanceFromGoogle(isLoading = {
+//                showProgressDialog()
+//            }, onSuccess = { distance, time ->
+//                hideProgressDialog()
+//                this?.regions?.map {
+//                    it.rideTotalDistance = distance
+//                    it.rideTotalTime = time
+//                    it.vehicleAmount = it.calculateFearStructure(rideVM.fareStructureList)
+//                }
+//                rideVM.regionsList.addAll(this?.regions ?: emptyList())
+//                rideVM.updateUiState(RideVM.RideAlertUiState.ShowVehicleTypesDialog)
+//            }, onError = {
+//                hideProgressDialog()
+//            })
         })
 
 

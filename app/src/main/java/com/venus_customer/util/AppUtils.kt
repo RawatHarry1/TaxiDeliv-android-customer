@@ -898,11 +898,11 @@ object AppUtils {
 }
 
 
-fun View.getBottomSheetBehaviour(isDraggableAlert: Boolean = false): BottomSheetBehavior<View> {
+fun View.getBottomSheetBehaviour(isDraggableAlert: Boolean = false,showFull: Boolean = false): BottomSheetBehavior<View> {
     return BottomSheetBehavior.from(this).apply {
         isDraggable = isDraggableAlert
         peekHeight =  context.toPx(300).toInt()
-        maxHeight = if (isDraggableAlert) calculateDynamicHeight().toInt() else context.toPx(400).toInt()
+        maxHeight = if (showFull) calculateDynamicHeight().toInt() else context.toPx(400).toInt()
         state = BottomSheetBehavior.STATE_HIDDEN
     }
 }
