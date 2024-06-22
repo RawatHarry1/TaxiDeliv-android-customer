@@ -28,6 +28,7 @@ object APIEndPointsConstants {
     const val INFORMATION_URL = "getInformationUrls"
     const val FIND_DRIVER = "customer/findDriver"
     const val REQUEST_TRIP = "customer/requestTrip"
+    const val REQUEST_SCHEDULE = "insert_pickup_schedule"
     const val CANCEL_TRIP = "customer/cancelTrip"
     const val FARE_ESTIMATE = "customer/fareEstimate"
     const val RATE_DRIVER = "rateTheDriver"

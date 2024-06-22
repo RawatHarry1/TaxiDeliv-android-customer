@@ -2,11 +2,14 @@ package com.venus_customer.view.fragment.trips
 
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.venus_customer.R
+import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.FragmentTripsBinding
 import com.venus_customer.model.api.observeData
 import com.venus_customer.model.dataClass.tripsDC.TripListDC
@@ -39,18 +42,23 @@ class TripsFragment : BaseFragment<FragmentTripsBinding>() {
         binding = getViewDataBinding()
         setUi()
         observeTripData()
-        viewModel.allTripList()
+
     }
 
     private fun setUi() {
         binding.rvTrips.adapter = tripsAdapter
+        binding.tvTrip.setOnSingleClickListener { setSaveAsUI(binding.tvTrip) }
+        binding.tvSchedule.setOnSingleClickListener { setSaveAsUI(binding.tvSchedule) }
+        setSaveAsUI(binding.tvTrip)
     }
 
-    private val onClickAdapterLambda = {tripData : TripListDC ->
-        findNavController().navigate(R.id.navigation_ride_details, bundleOf(
-            "tripId" to tripData.engagementId.orEmpty(),
-            "driverId" to tripData.driverId.orEmpty()
-        ))
+    private val onClickAdapterLambda = { tripData: TripListDC ->
+        findNavController().navigate(
+            R.id.navigation_ride_details, bundleOf(
+                "tripId" to tripData.engagementId.orEmpty(),
+                "driverId" to tripData.driverId.orEmpty()
+            )
+        )
     }
 
 
@@ -68,5 +76,31 @@ class TripsFragment : BaseFragment<FragmentTripsBinding>() {
             tripsAdapter.submitList(this ?: emptyList())
         }
     )
+
+    private fun setSaveAsUI(textView: View) {
+        if (textView !is TextView)
+            return
+        clearSaveAsUI()
+        when (textView.id) {
+            R.id.tvTrip -> {
+                binding.tvTitle.text = getString(R.string.trip_history)
+                viewModel.allTripList()
+            }
+
+            else -> {
+                binding.tvTitle.text = getString(R.string.schedule_history)
+            }
+
+        }
+        textView.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.bg_filled_gray_4dp)
+    }
+
+    private fun clearSaveAsUI() {
+        binding.tvTrip.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.bg_outline_gray_4dp)
+        binding.tvSchedule.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.bg_outline_gray_4dp)
+    }
 
 }

@@ -108,6 +108,10 @@ interface ApiInterface {
         @Body requestBody: RequestBody
     ): Response<BaseResponse<RequestTripDC>>
 
+    @POST(APIEndPointsConstants.REQUEST_SCHEDULE)
+    suspend fun requestSchedule(
+        @Body requestBody: RequestBody
+    ): Response<BaseResponse<RequestTripDC>>
 
     @HTTP(method = "DELETE", path = APIEndPointsConstants.CANCEL_TRIP, hasBody = true)
     suspend fun cancelTrip(

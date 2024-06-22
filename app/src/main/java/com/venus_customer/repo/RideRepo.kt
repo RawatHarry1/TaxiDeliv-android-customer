@@ -42,10 +42,18 @@ class RideRepo @Inject constructor(
         )
     }
 
-    suspend fun findDriver(latLng: LatLng) = flow {
+    suspend fun findDriver(
+        latLng: LatLng,
+        opLatLng: LatLng,
+        isSchedule: Boolean
+    ) = flow {
         emit(apiInterface.findDriver(JSONObject().apply {
             put("latitude", latLng.latitude)
             put("longitude", latLng.longitude)
+            if (isSchedule) {
+                put("op_drop_latitude", opLatLng.latitude)
+                put("op_drop_longitude", opLatLng.longitude)
+            }
         }.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
 
@@ -53,6 +61,14 @@ class RideRepo @Inject constructor(
     suspend fun requestTrip(jsonObject: JSONObject) = flow {
         emit(
             apiInterface.requestTrip(
+                requestBody = jsonObject.getJsonRequestBody()
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun requestSchedule(jsonObject: JSONObject) = flow {
+        emit(
+            apiInterface.requestSchedule(
                 requestBody = jsonObject.getJsonRequestBody()
             )
         )

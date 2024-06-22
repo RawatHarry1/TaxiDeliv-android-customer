@@ -76,7 +76,9 @@ import org.json.JSONObject
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface, SocketInterface {
@@ -106,7 +108,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
     var rideStatus = AppConstants.DRIVER_PICKUP
-    var schedule = true
+    var schedule = false
 
     override fun initialiseFragmentBaseViewModel() {
     }
@@ -121,20 +123,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         SocketSetup.initializeInterface(this)
         SocketSetup.connectSocket()
         binding = getViewDataBinding()
-        rideVM.createRideData = CreateRideData()
+//        rideVM.createRideData = CreateRideData()
         setBannerAdapter(view.context)
         setMapFragment(view, savedInstanceState)
         getSavedStateData()
-        // Using a lifecycle observer to process saved state data on fragment resumption
-//        viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
-//            override fun onResume(owner: LifecycleOwner) {
-//                super.onResume(owner)
-//                getSavedStateData()
-//            }
-//        })
         observeUiState()
         observeFindDriver()
         observeRequestRide()
+        observeRequestSchedule()
         observeFareEstimate()
         observeFetchOngoingTrip()
         observeNearDriver()
@@ -142,17 +138,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         backButtonMapView()
         observeAddedAddress()
         addAdapterSetupAndApiHit()
-//        getNearByDrivers()
-
+        getNearByDrivers()
     }
 
     private fun getNearByDrivers() {
         if (VenusApp.latLng.latitude != 0.0) {
-            nearByDriverMap?.moveCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    VenusApp.latLng, 12f
-                )
-            )
             rideVM.findNearDriver(VenusApp.latLng.latitude, VenusApp.latLng.longitude)
         } else {
             var alreadyHittingApi = false
@@ -264,34 +254,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
     private fun getSavedStateData() {
-//        Log.i("SavedStateData", "in getSavedStateData()")
-//        hideAllBottomSheets()
-//        try {
-//            if (stateHandle.contains("pickUpLocation")) {
-//                Log.i("SavedStateData", "in pickUpLocation")
-//                rideVM.createRideData.pickUpLocation =
-//                    stateHandle.get<CreateRideData.LocationData>("pickUpLocation")
-//                rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
-////                stateHandle.remove<CreateRideData.LocationData>("pickUpLocation")
-//            }
-//            if (stateHandle.contains("dropLocation")) {
-//                Log.i("SavedStateData", "in dropLocation")
-//                rideVM.createRideData.dropLocation =
-//                    stateHandle.get<CreateRideData.LocationData>("dropLocation")
-//                rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
-////                stateHandle.remove<CreateRideData.LocationData>("dropLocation")
-//            }
-//            if (stateHandle.contains("add_address")) {
-//                Log.i("SavedStateData", "in add_address")
-//                rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
-////                stateHandle.remove<String>("add_address")
-//            }
-//
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
-
-
         try {
             Log.i("SavedStateData", "in getSavedStateData()")
             findNavController().currentBackStackEntry?.savedStateHandle?.let {
@@ -316,7 +278,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        hideAllBottomSheets()
+//        hideAllBottomSheets()
     }
 
     private fun clickHandler() {
@@ -352,6 +314,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
     private fun startWhereDialog() {
         with(binding.viewLocation) {
+            tvPickUpValue.text = ""
+            tvDropOffValue.text = ""
             rideVM.createRideData.pickUpLocation?.address?.let {
                 tvPickUpValue.text = it
             }
@@ -366,10 +330,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     showSnackBar("*Please select drop location.", clLocationAlert)
                 } else {
                     locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
-                    if (schedule) {
-                        showSnackBar("This is Schedule", clLocationAlert)
-                    } else
-                        rideVM.findDriver()
+                    rideVM.findDriver(schedule)
                 }
             }
             llAddAddress.setOnSingleClickListener {
@@ -423,14 +384,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
             tvConfirmBtn.setOnSingleClickListener {
                 carDetailAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
-                rideVM.requestRideData(etNotes.text?.trim().toString())
+                if (schedule) {
+                    rideVM.scheduleRideData(
+                        etNotes.text?.trim().toString(),
+                        selectedPickDateTimeForSchedule
+                    )
+                } else
+                    rideVM.requestRideData(etNotes.text?.trim().toString())
             }
         }
     }
 
 
     private fun setMapFragment(view: View, savedInstanceState: Bundle?) {
-
         MapsInitializer.initialize(view.context, MapsInitializer.Renderer.LATEST) {
             binding.fragmentMap.onCreate(savedInstanceState)
             binding.fragmentMapFullScreen.onCreate(savedInstanceState)
@@ -448,6 +414,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
     }
 
+    private var selectedPickDateTimeForSchedule = ""
     private fun startTimeDialog(context: Context) {
         val dialog = BottomSheetDialog(context, R.style.SheetDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -476,9 +443,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }
         binding.tvSubmitBtn.setOnSingleClickListener {
             this@HomeFragment.binding.tvNow.text = context.getString(R.string.schedule)
-            schedule = true
-            dialog.dismiss()
-            rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+            val past =
+                isDateTimeInPast(binding.tvDateValue.text.toString() + " " + binding.tvTimeValue.text.toString())
+            if (past) {
+                showSnackBar(
+                    "Time must be at least 30 minutes from the current time",
+                    binding.clRoot
+                )
+            } else {
+                schedule = true
+                selectedPickDateTimeForSchedule =
+                    convertToUTC(binding.tvDateValue.text.toString() + " " + binding.tvTimeValue.text.toString())
+                dialog.dismiss()
+                rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+            }
         }
 
 
@@ -516,6 +494,50 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         dialog.show()
     }
 
+    private fun isDateTimeInPast(dateTimeString: String): Boolean {
+        // Get the current year
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        // Append the current year to the dateTimeString
+        val dateTimeWithYear = "$dateTimeString $currentYear"
+        Log.i("SelectedDateWithYear", dateTimeWithYear)
+
+        // Define the input format
+        val inputFormat = SimpleDateFormat("E, MMM dd hh:mm a yyyy", Locale.US)
+        inputFormat.timeZone = TimeZone.getDefault() // Ensure the time zone is set correctly
+
+        // Parse the input date string to a Date object
+        val date: Date = inputFormat.parse(dateTimeWithYear)
+            ?: throw IllegalArgumentException("Invalid date and time format")
+
+        // Get the current date and time with 30 minutes added
+        val currentCalendar = Calendar.getInstance()
+        currentCalendar.add(Calendar.MINUTE, 30)
+
+        // Logging for debugging
+        Log.i("CurrentDate", currentCalendar.time.toString())
+        Log.i("ParsedDate", date.toString())
+
+        // Compare the parsed date with the current date
+        return date.before(currentCalendar.time)
+    }
+
+    private fun convertToUTC(dateString: String): String {
+        // Define the input format
+        // Get the current year
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        // Append the current year to the dateTimeString
+        val dateTimeWithYear = "$dateString $currentYear"
+        val inputFormat = SimpleDateFormat("E, MMM dd hh:mm a yyyy", Locale.getDefault())
+        // Parse the input date string to a Date object
+        val date: Date = inputFormat.parse(dateTimeWithYear)
+        // Define the output format as UTC
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
+        outputFormat.timeZone = TimeZone.getTimeZone("UTC")
+        // Convert the Date object to a UTC formatted string
+        return outputFormat.format(date)
+    }
+
+
     private fun showTimePickerDialog(textView: TextView) {
         val calendar = Calendar.getInstance()
         // Time 30 minutes ahead from the current time
@@ -539,15 +561,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //            selectedCalendar.set(Calendar.HOUR_OF_DAY, selectedHour)
 //            selectedCalendar.set(Calendar.MINUTE, selectedMinute)
 //
-//            val currentCalendar = Calendar.getInstance()
-//            currentCalendar.add(Calendar.MINUTE, 30)
-//
-//            if (selectedCalendar.timeInMillis < currentCalendar.timeInMillis) {
-//                timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE).isEnabled = false
-//                selectedTimeTextView.text = "Time must be at least 30 minutes from the current time"
-//            } else {
-//                selectedTimeTextView.text = getString(R.string.selected_time_format, selectedHour, selectedMinute)
-//            }
+
 //        }
 
 
@@ -565,7 +579,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private fun setCurrentTime(textView: TextView) {
         val calendar = Calendar.getInstance()
         // Time 30 minutes ahead from the current time
-        calendar.add(Calendar.MINUTE, 30)
+        calendar.add(Calendar.MINUTE, 35)
         val formattedTime =
             SimpleDateFormat("hh:mm a", Locale.getDefault()).format(calendar.time)
         textView.text = formattedTime
@@ -946,24 +960,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailDialog)
                 }
             } else {
-                var alreadyHittingApi = false
-                rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
-                SingleFusedLocation.initialize(requireContext(), object : LocationResultHandler {
-                    override fun updatedLocation(location: Location) {
-                        if (!alreadyHittingApi) {
-                            alreadyHittingApi = true
-                            nearByDriverMap?.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    LatLng(
-                                        location.latitude,
-                                        location.longitude
-                                    ), 12f
-                                )
-                            )
-                            rideVM.findNearDriver(location.latitude, location.longitude)
-                        }
-                    }
-                })
+//                var alreadyHittingApi = false
+//                rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
+//                SingleFusedLocation.initialize(requireContext(), object : LocationResultHandler {
+//                    override fun updatedLocation(location: Location) {
+//                        if (!alreadyHittingApi) {
+//                            alreadyHittingApi = true
+//                            nearByDriverMap?.moveCamera(
+//                                CameraUpdateFactory.newLatLngZoom(
+//                                    LatLng(
+//                                        location.latitude,
+//                                        location.longitude
+//                                    ), 12f
+//                                )
+//                            )
+//                            rideVM.findNearDriver(location.latitude, location.longitude)
+//                        }
+//                    }
+//                })
             }
         })
 
@@ -975,13 +989,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         rideVM.findNearDriverData.observeData(lifecycle = viewLifecycleOwner, onLoading = {
 //        showProgressDialog()
             if (activity != null)
-                binding.progressMap.isVisible = true
+                binding.progressMap.shimmerLayout.isVisible = true
 
         }, onSuccess = {
 //        hideProgressDialog()
             if (activity != null)
-                binding.progressMap.isVisible = false
+                binding.progressMap.shimmerLayout.isVisible = false
             try {
+//                val latLongB = LatLngBounds.Builder()
                 this?.drivers?.forEach {
                     val marker = nearByDriverMap?.addMarker(
                         MarkerOptions().position(LatLng(it.latitude ?: 0.0, it.longitude ?: 0.0))
@@ -991,14 +1006,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                             }
                     )
                     marker?.rotation = it.bearing?.toFloatOrNull() ?: 0F
+//                    latLongB.include(LatLng(it.latitude ?: 0.0, it.longitude ?: 0.0))
                 }
+//                val bounds = latLongB.build()
+//                nearByDriverMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                nearByDriverMap?.addMarker(
+                    MarkerOptions().position(VenusApp.latLng)
+                        .apply {
+                            icon(context?.vectorToBitmap(R.drawable.new_location_placeholder))
+                            anchor(0.5f, 1f)
+                        }
+                )
+                nearByDriverMap?.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        VenusApp.latLng, 12f
+                    )
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }, onError = {
 //        hideProgressDialog()
             if (activity != null)
-                binding.progressMap.isVisible = false
+                binding.progressMap.shimmerLayout.isVisible= false
         })
 
     private fun observeAddedAddress() =
@@ -1076,6 +1106,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             hideProgressDialog()
             rideVM.createRideData.sessionId = this?.sessionId.orEmpty()
             rideVM.updateUiState(RideVM.RideAlertUiState.FindDriverDialog)
+        })
+
+    private fun observeRequestSchedule() =
+        rideVM.scheduleRideData.observeData(lifecycle = viewLifecycleOwner, onLoading = {
+            showProgressDialog()
+        }, onError = {
+            hideProgressDialog()
+            showToastShort(this)
+            rideVM.createRideData.pickUpLocation = null
+            rideVM.createRideData.dropLocation = null
+            binding.clWhereMain.visibility = View.VISIBLE
+            binding.clMapMain.visibility = View.GONE
+            hideAllBottomSheets()
+        }, onSuccess = {
+            hideProgressDialog()
+            showSnackBar("Your ride has been scheduled successfully!!")
+            rideVM.createRideData.pickUpLocation = null
+            rideVM.createRideData.dropLocation = null
+            binding.clWhereMain.visibility = View.VISIBLE
+            binding.clMapMain.visibility = View.GONE
+            hideAllBottomSheets()
+//            rideVM.createRideData.sessionId = this?.sessionId.orEmpty()
+//            rideVM.updateUiState(RideVM.RideAlertUiState.FindDriverDialog)
         })
 
 

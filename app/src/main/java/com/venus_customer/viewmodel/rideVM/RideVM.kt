@@ -33,10 +33,9 @@ import javax.inject.Inject
 class RideVM @Inject constructor(
     private val rideRepo: RideRepo
 ) : ViewModel() {
-
     val regionsList by lazy { ArrayList<FindDriverDC.Region>() }
     val fareStructureList by lazy { ArrayList<FindDriverDC.FareStructure>() }
-    lateinit var customerETA :FindDriverDC.CustomerETA
+    lateinit var customerETA: FindDriverDC.CustomerETA
     var createRideData = CreateRideData()
     val userData by lazy { SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA) }
 
@@ -57,12 +56,16 @@ class RideVM @Inject constructor(
      * */
     private val _findDriverData by lazy { SingleLiveEvent<ApiState<BaseResponse<FindDriverDC>>>() }
     val findDriverData: LiveData<ApiState<BaseResponse<FindDriverDC>>> = _findDriverData
-    fun findDriver() = viewModelScope.launch {
+    fun findDriver(isSchedule: Boolean = false) = viewModelScope.launch {
         rideRepo.findDriver(
             latLng = LatLng(
                 createRideData.pickUpLocation?.latitude.convertDouble(),
                 createRideData.pickUpLocation?.longitude.convertDouble()
-            )
+            ),
+            opLatLng = LatLng(
+                createRideData.dropLocation?.latitude.convertDouble(),
+                createRideData.dropLocation?.longitude.convertDouble()
+            ), isSchedule
         ).setApiState(_findDriverData)
     }
 
@@ -101,29 +104,34 @@ class RideVM @Inject constructor(
             }
         ).setApiState(_requestRideData)
     }
- /**
+
+    /**
      * Schedule Ride
      * */
     private val _scheduleRideData by lazy { SingleLiveEvent<ApiState<BaseResponse<RequestTripDC>>>() }
     val scheduleRideData: LiveData<ApiState<BaseResponse<RequestTripDC>>> = _scheduleRideData
-    fun scheduleRideData(notes: String = "") = viewModelScope.launch {
-        rideRepo.requestTrip(
+    fun scheduleRideData(notes: String = "",pickUpTime:String = "") = viewModelScope.launch {
+        rideRepo.requestSchedule(
             jsonObject = JSONObject().apply {
-                put("currentLongitude", VenusApp.latLng.longitude)
-                put("currentLatitude", VenusApp.latLng.latitude)
+//                put("currentLongitude", VenusApp.latLng.longitude)
+//                put("currentLatitude", VenusApp.latLng.latitude)
                 put("latitude", createRideData.pickUpLocation?.latitude)
                 put("longitude", createRideData.pickUpLocation?.longitude)
-                put("pickupLocationAddress", createRideData.pickUpLocation?.address)
-                put("dropLocationAddress", createRideData.dropLocation?.address)
-                put("duplicateFlag", "0")
-                put("dropLongitude", createRideData.dropLocation?.longitude)
-                put("dropLatitude", createRideData.dropLocation?.latitude)
-                put("regionId", createRideData.regionId)
-                put("vehicleType", createRideData.vehicleType)
-                put("phoneNo", userData?.login?.phoneNo.orEmpty())
-                put("customerNote", notes)
+                put("pickup_location_address", createRideData.pickUpLocation?.address)
+                put("drop_location_address", createRideData.dropLocation?.address)
+//                put("duplicateFlag", "0")
+                put("op_drop_longitude", createRideData.dropLocation?.longitude)
+                put("op_drop_latitude", createRideData.dropLocation?.latitude)
+                put("region_id", createRideData.regionId)
+                put("vehicle_type", createRideData.vehicleType)
+//                put("phoneNo", userData?.login?.phoneNo.orEmpty())
+                put("preferred_payment_mode", "1")
+//                put("customerNote", notes)
+                put("ride_distance", createRideData.vehicleData?.eta)
+                put("fare",createRideData.vehicleData?.fare )
+                put("pickup_time",pickUpTime)
             }
-        ).setApiState(_requestRideData)
+        ).setApiState(_scheduleRideData)
     }
 
 
