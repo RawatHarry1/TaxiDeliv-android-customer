@@ -39,4 +39,6 @@
     <color name="green_text_color">#2bc763</color>
     <color name="_0054A5">#0054A5</color>
     <color name="cancel_btn_color">#E9F0FC</color>
+    <color name="cancel_btn_red_color">#F44336</color>
+    <color name="in_progress">#FFEB3B</color>
 </resources>

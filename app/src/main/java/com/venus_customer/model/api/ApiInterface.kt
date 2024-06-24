@@ -4,6 +4,8 @@ import com.google.gson.JsonElement
 import com.salonedriver.model.dataclassses.notificationDC.NotificationDC
 import com.venus_customer.BuildConfig
 import com.venus_customer.model.dataClass.AboutAppDC
+import com.venus_customer.model.dataClass.ScheduleList
+import com.venus_customer.model.dataClass.ShowMessage
 import com.venus_customer.model.dataClass.addedAddresses.AddedAddressData
 import com.venus_customer.model.dataClass.base.BaseResponse
 import com.venus_customer.model.dataClass.base.ClientConfig
@@ -142,6 +144,9 @@ interface ApiInterface {
     ): Response<BaseResponse<List<TripListDC>>>
 
 
+    @POST(APIEndPointsConstants.GET_ALL_SCHEDULE_RIDES)
+    suspend fun getAllScheduleRides(): Response<BaseResponse<List<ScheduleList>>>
+
     @GET(APIEndPointsConstants.GET_TRIP_SUMMARY)
     suspend fun getTripSummary(
         @Query("tripId") tripId: String,
@@ -164,6 +169,11 @@ interface ApiInterface {
     suspend fun addAddress(
         @Body requestBody: RequestBody
     ): Response<BaseResponse<Any>>
+
+    @POST(APIEndPointsConstants.REMOVE_SCHEDULE)
+    suspend fun removeSchedule(
+        @Body requestBody: RequestBody
+    ): Response<BaseResponse<ShowMessage>>
 
     @POST(APIEndPointsConstants.FETCH_USER_ADDRESS)
     suspend fun fetchAddresses(): Response<BaseResponse<AddedAddressData>>

@@ -8,6 +8,8 @@ import com.venus_customer.VenusApp
 import com.venus_customer.model.api.ApiState
 import com.venus_customer.model.api.SingleLiveEvent
 import com.venus_customer.model.api.setApiState
+import com.venus_customer.model.dataClass.ScheduleList
+import com.venus_customer.model.dataClass.ShowMessage
 import com.venus_customer.model.dataClass.addedAddresses.AddedAddressData
 import com.venus_customer.model.dataClass.base.BaseResponse
 import com.venus_customer.model.dataClass.fareEstimate.FareEstimateDC
@@ -110,7 +112,7 @@ class RideVM @Inject constructor(
      * */
     private val _scheduleRideData by lazy { SingleLiveEvent<ApiState<BaseResponse<RequestTripDC>>>() }
     val scheduleRideData: LiveData<ApiState<BaseResponse<RequestTripDC>>> = _scheduleRideData
-    fun scheduleRideData(notes: String = "",pickUpTime:String = "") = viewModelScope.launch {
+    fun scheduleRideData(notes: String = "", pickUpTime: String = "") = viewModelScope.launch {
         rideRepo.requestSchedule(
             jsonObject = JSONObject().apply {
 //                put("currentLongitude", VenusApp.latLng.longitude)
@@ -128,8 +130,8 @@ class RideVM @Inject constructor(
                 put("preferred_payment_mode", "1")
 //                put("customerNote", notes)
                 put("ride_distance", createRideData.vehicleData?.eta)
-                put("fare",createRideData.vehicleData?.fare )
-                put("pickup_time",pickUpTime)
+                put("fare", createRideData.vehicleData?.fare)
+                put("pickup_time", pickUpTime)
             }
         ).setApiState(_scheduleRideData)
     }
@@ -145,8 +147,21 @@ class RideVM @Inject constructor(
             rideRepo.cancelTrip(sessionId = sessionId, jsonObject = JSONObject().apply {
                 put("sessionId", sessionId)
                 put("reasons", reason)
-            })
-                .setApiState(_cancelTripData)
+            }).setApiState(_cancelTripData)
+        }
+    }
+
+
+    /**
+     * Remove Schedule
+     * */
+    private val _removeScheduleData by lazy { SingleLiveEvent<ApiState<BaseResponse<ShowMessage>>>() }
+    val removeScheduleData: LiveData<ApiState<BaseResponse<ShowMessage>>> = _removeScheduleData
+    fun removeSchedule(pickUpId: String) {
+        viewModelScope.launch {
+            rideRepo.removeSchedules(jsonObject = JSONObject().apply {
+                put("pickup_id", pickUpId)
+            }).setApiState(_removeScheduleData)
         }
     }
 
@@ -231,6 +246,13 @@ class RideVM @Inject constructor(
 
     fun allTripList() = viewModelScope.launch {
         rideRepo.getAllTrips().setApiState(_tripListData)
+    }
+
+    private val _scheduleListData by lazy { SingleLiveEvent<ApiState<BaseResponse<List<ScheduleList>>>>() }
+    val scheduleListData: LiveData<ApiState<BaseResponse<List<ScheduleList>>>> = _scheduleListData
+
+    fun allScheduleList() = viewModelScope.launch {
+        rideRepo.getAllSchedules().setApiState(_scheduleListData)
     }
 
 

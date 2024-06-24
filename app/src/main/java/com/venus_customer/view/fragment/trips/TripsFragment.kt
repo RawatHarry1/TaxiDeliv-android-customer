@@ -12,6 +12,7 @@ import com.venus_customer.R
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.FragmentTripsBinding
 import com.venus_customer.model.api.observeData
+import com.venus_customer.model.dataClass.ScheduleList
 import com.venus_customer.model.dataClass.tripsDC.TripListDC
 import com.venus_customer.util.showSnackBar
 import com.venus_customer.view.base.BaseFragment
@@ -22,8 +23,14 @@ import dagger.hilt.android.AndroidEntryPoint
 class TripsFragment : BaseFragment<FragmentTripsBinding>() {
 
     lateinit var binding: FragmentTripsBinding
-
+    private var isRemoveSchedule = false
     private val tripsAdapter by lazy { TripsAdapter(onClickAdapterLambda) }
+    private val scheduleAdapter by lazy {
+        ScheduleAdapter(
+            requireActivity(),
+            onScheduleCancelClickAdapterLambda
+        )
+    }
 
 
     private val viewModel by viewModels<RideVM>()
@@ -40,13 +47,15 @@ class TripsFragment : BaseFragment<FragmentTripsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = getViewDataBinding()
-        setUi()
         observeTripData()
-
+        observeScheduleData()
+        observeRemoveSchedule()
+        setUi()
     }
 
     private fun setUi() {
         binding.rvTrips.adapter = tripsAdapter
+        binding.rvSchedule.adapter = scheduleAdapter
         binding.tvTrip.setOnSingleClickListener { setSaveAsUI(binding.tvTrip) }
         binding.tvSchedule.setOnSingleClickListener { setSaveAsUI(binding.tvSchedule) }
         setSaveAsUI(binding.tvTrip)
@@ -61,19 +70,66 @@ class TripsFragment : BaseFragment<FragmentTripsBinding>() {
         )
     }
 
+    private val onScheduleCancelClickAdapterLambda = { scheduleData: ScheduleList ->
+        isRemoveSchedule = true
+        viewModel.removeSchedule(scheduleData.pickup_id.toString())
+    }
+
 
     private fun observeTripData() = viewModel.tripListData.observeData(
         lifecycle = viewLifecycleOwner,
         onLoading = {
-            showProgressDialog()
+            binding.shimmerLayout.shimmerLayout.isVisible = true
+//            showProgressDialog()
         }, onError = {
-            hideProgressDialog()
+//            hideProgressDialog()
+            binding.shimmerLayout.shimmerLayout.isVisible = false
             showSnackBar(this)
         }, onSuccess = {
-            hideProgressDialog()
+//            hideProgressDialog
+            binding.shimmerLayout.shimmerLayout.isVisible = false
             binding.rvTrips.isVisible = this?.isNotEmpty() ?: false
+            binding.rvSchedule.isVisible = false
             binding.tvNoData.isVisible = this?.isEmpty() ?: false
             tripsAdapter.submitList(this ?: emptyList())
+        }
+    )
+
+    private fun observeScheduleData() = viewModel.scheduleListData.observeData(
+        lifecycle = viewLifecycleOwner,
+        onLoading = {
+            if (!isRemoveSchedule)
+                binding.shimmerLayout.shimmerLayout.isVisible = true
+//            showProgressDialog()
+        }, onError = {
+            if (!isRemoveSchedule)
+                binding.shimmerLayout.shimmerLayout.isVisible = false
+//            hideProgressDialog()
+            showSnackBar(this)
+        }, onSuccess = {
+            if (!isRemoveSchedule)
+                binding.shimmerLayout.shimmerLayout.isVisible = false
+            else
+                hideProgressDialog()
+            binding.rvTrips.isVisible = false
+            binding.rvSchedule.isVisible = this?.isNotEmpty() ?: false
+            binding.tvNoData.isVisible = this?.isEmpty() ?: false
+            scheduleAdapter.submitList(this ?: emptyList())
+        }
+    )
+
+
+    private fun observeRemoveSchedule() = viewModel.removeScheduleData.observeData(
+        lifecycle = viewLifecycleOwner,
+        onLoading = {
+//            showProgressDialog()
+        }, onError = {
+//            hideProgressDialog()
+            showSnackBar(this)
+        }, onSuccess = {
+//            hideProgressDialog()
+            showSnackBar(this?.message ?: "")
+            viewModel.allScheduleList()
         }
     )
 
@@ -85,10 +141,14 @@ class TripsFragment : BaseFragment<FragmentTripsBinding>() {
             R.id.tvTrip -> {
                 binding.tvTitle.text = getString(R.string.trip_history)
                 viewModel.allTripList()
+                binding.rvSchedule.isVisible = false
             }
 
             else -> {
                 binding.tvTitle.text = getString(R.string.schedule_history)
+                isRemoveSchedule = false
+                viewModel.allScheduleList()
+                binding.rvTrips.isVisible = false
             }
 
         }

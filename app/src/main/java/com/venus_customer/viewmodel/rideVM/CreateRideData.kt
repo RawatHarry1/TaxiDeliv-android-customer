@@ -39,7 +39,7 @@ data class CreateRideData(
         var totalCapacity: String? = null,
         var eta: String? = null,
         var distance: String? = null,
-        var fare: Double? = null,
+        var fare: String? = null,
         var currency: String? = null,
         var vehicleNumber: String? = null,
     )

@@ -24,10 +24,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="18dp"
+            android:layout_marginTop="@dimen/_15sdp"
             android:text="@string/trip_history"
             android:textColor="@color/black"
             android:textSize="30sp"
-            android:layout_marginTop="@dimen/_15sdp"
             app:fontFamily="@font/poppins_semibold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ivBack" />
@@ -37,8 +37,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_15sdp"
-            android:orientation="horizontal"
             android:layout_marginTop="@dimen/_10sdp"
+            android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
             <TextView
@@ -55,7 +55,7 @@
 
             <View
                 android:layout_width="20dp"
-                android:layout_height="0dp"/>
+                android:layout_height="0dp" />
 
             <TextView
                 android:id="@+id/tvSchedule"
@@ -70,13 +70,39 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
+        <include
+            android:id="@+id/shimmerLayout"
+            android:layout_height="0dp"
+            android:layout_width="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            layout="@layout/shimmer_trip_layout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="@dimen/_10sdp"
+            app:layout_constraintTop_toBottomOf="@+id/llTabs"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvTrips"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="20dp"
-           android:layout_marginVertical="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_10sdp"
             android:orientation="vertical"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llTabs"
+            tools:listitem="@layout/item_trips" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSchedule"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:orientation="vertical"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/llTabs"
@@ -89,6 +115,7 @@
             android:layout_marginHorizontal="@dimen/_20sdp"
             android:fontFamily="@font/poppins_bold"
             android:text="No Data Found"
+            android:visibility="gone"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="@dimen/_16ssp"

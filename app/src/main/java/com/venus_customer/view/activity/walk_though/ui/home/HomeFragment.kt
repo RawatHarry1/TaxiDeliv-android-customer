@@ -208,7 +208,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         // Bottom sheet is hidden, attempt to clear state
                         Handler(Looper.getMainLooper()).postDelayed({
-                            clearSavedStateData()
+//                            clearSavedStateData()
                             Log.i("SavedStateData", "State cleared after STATE_HIDDEN")
                         }, 200) // Adding a delay to ensure state changes have completed
                     }
@@ -333,16 +333,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     rideVM.findDriver(schedule)
                 }
             }
+
             llAddAddress.setOnSingleClickListener {
                 locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                 val bundle = bundleOf("selectLocationType" to "add_address")
                 findNavController().navigate(R.id.navigation_select_location, bundle)
             }
+
             tvSelectPickUp.setOnSingleClickListener {
                 locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                 val bundle = bundleOf("selectLocationType" to "pickUp")
                 findNavController().navigate(R.id.navigation_select_location, bundle)
             }
+
             tvSelectDropOff.setOnSingleClickListener {
                 locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                 val bundle = bundleOf("selectLocationType" to "dropOff")
@@ -371,7 +374,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //                tvPrice.text =
 //                    "${it.price.formatString()} ${rideVM.createRideData.currencyCode.orEmpty()}"
                 tvPrice.text =
-                    "${it.currency} ${String.format("%.2f", it.fare)}"
+                    "${it.currency} ${it.fare}"
                 Glide.with(requireContext()).load(it.image.orEmpty()).error(R.mipmap.ic_launcher)
                     .into(ivCarImage)
             }
@@ -561,10 +564,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //            selectedCalendar.set(Calendar.HOUR_OF_DAY, selectedHour)
 //            selectedCalendar.set(Calendar.MINUTE, selectedMinute)
 //
-
 //        }
-
-
         timePickerDialog.show()
     }
 
@@ -628,8 +628,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 tvAddress.text = pickUpLocation?.address.orEmpty()
                 tvDistanceValue.text = vehicleData?.distance.orEmpty()
                 tvTimeValue.text = "${vehicleData?.eta.orEmpty()} min"
-                tvPriceValue.text =
-                    "${vehicleData?.currency} ${String.format("%.2f", vehicleData?.fare)}}"
+                tvPriceValue.text = "${vehicleData?.fare}"
                 Glide.with(requireView()).load(driverDetail?.driverImage.orEmpty())
                     .error(R.mipmap.ic_launcher).into(ivProfileImage)
                 Glide.with(requireView()).load(vehicleData?.image.orEmpty())
@@ -761,7 +760,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     name = it?.regionName.orEmpty(),
                     totalCapacity = it?.maxPeople.orEmpty(),
                     eta = it?.eta.orEmpty(),
-                    fare = it?.region_fare?.fare,
+                    fare = it?.region_fare?.fare.toString(),
                     currency = it?.region_fare?.currency
                 )
             }
@@ -931,7 +930,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                             totalCapacity = null,
                             eta = trip.dryEta.orEmpty(),
                             distance = trip.estimatedDistance.orEmpty(),
-                            fare = (trip.estimatedDriverFare ?: "0.0").toDouble(),
+                            fare = trip.estimatedDriverFare ?: "0.0",
                             currency = trip.currency,
                             vehicleNumber = trip.licensePlate.orEmpty()
                         )
@@ -1028,7 +1027,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }, onError = {
 //        hideProgressDialog()
             if (activity != null)
-                binding.progressMap.shimmerLayout.isVisible= false
+                binding.progressMap.shimmerLayout.isVisible = false
         })
 
     private fun observeAddedAddress() =
