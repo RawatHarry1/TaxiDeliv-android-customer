@@ -3,7 +3,6 @@ package com.venus_customer.repo
 import com.venus_customer.model.api.ApiInterface
 import com.venus_customer.model.api.getJsonRequestBody
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import okhttp3.MultipartBody
@@ -14,9 +13,9 @@ import javax.inject.Inject
 class PreLoginRepo @Inject constructor(
     private val apiInterface: ApiInterface
 
-){
+) {
 
-    suspend fun fetchOperatorToken() =  flow {
+    suspend fun fetchOperatorToken() = flow {
         emit(apiInterface.fetchUserToken())
     }.flowOn(Dispatchers.IO)
 
@@ -56,6 +55,10 @@ class PreLoginRepo @Inject constructor(
 
     suspend fun aboutApp(operatorId: String, cityId: String) = flow {
         emit(apiInterface.aboutApp(operatorId = operatorId, cityId = cityId))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getTransactions(jsonObject: JSONObject) = flow {
+        emit(apiInterface.getTransactions(requestBody = jsonObject.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
 
 }

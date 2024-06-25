@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 @HiltAndroidApp
-
 class VenusApp: Application() {
     companion object {
         lateinit var instance: VenusApp

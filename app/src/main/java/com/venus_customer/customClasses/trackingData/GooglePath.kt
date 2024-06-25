@@ -51,9 +51,11 @@ fun Context.showPath(
     @DrawableRes destination: Int = R.drawable.new_location_placeholder,
     @DrawableRes via: Int = R.drawable.new_location_placeholder,
     wayPoints: ArrayList<LatLng> = ArrayList(),
+    isTracking: Boolean = true,
     valueIs: (PathModel) -> Unit = { _ -> }
 ) {
     try {
+        Log.e("RideStatus", "In showPath try --->")
         val pathModel = PathModel()
         val latLongB = LatLngBounds.Builder()
 
@@ -70,6 +72,7 @@ fun Context.showPath(
                 val stringBuilder: StringBuilder = StringBuilder(result)
                 val json: JsonObject = parser.parse(stringBuilder) as JsonObject
                 val routes = json.array<JsonObject>("routes")
+                Log.e("RideStatus", "In showPath try routes ---> ${Gson().toJson(routes)}")
                 if (routes != null && routes.size > 0) {
                     pathModel.durationText =
                         pathResponse.routes?.get(0)?.legs?.get(0)?.duration?.text ?: ""
@@ -99,50 +102,99 @@ fun Context.showPath(
                         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
                     }
                     if (mMap != null) {
-
-//                        for (data in pathResponse.routes?.get(0)?.legs?.get(0)?.viaWaypoint
-//                            ?: ArrayList()) {
-//                            data?.location?.let { loc ->
-//                                mMap.addMarker(
-//                                    MarkerOptions().position(
-//                                        LatLng(loc.lat ?: 0.0, loc.lng ?: 0.0)
-//                                    ).icon(
-//                                        vectorToBitmap(via)
-//                                    ).anchor(0.5f, 1f)
-//                                )
-//                            }
-//
-//                        }
-
-                        pathModel.srcMarker = mMap.addMarker(
-                            MarkerOptions().position(
-                                srcLat
-                            ).apply {
-                                icon(vectorToBitmap(source))
-                                anchor(0.5f, 1f)
-                            }
-                        )
-
-                        pathModel.desMarker = mMap.addMarker(
-                            MarkerOptions().apply {
-                                position(desLat)
-                                icon(vectorToBitmap(destination))
-                                anchor(0.5f, 1f)
-                            }
-                        )
-
+                        if (isTracking) {
+                            pathModel.srcMarker = mMap.addMarker(
+                                MarkerOptions().position(
+                                    srcLat
+                                ).apply {
+                                    icon(vectorToBitmap(source))
+                                    anchor(0.5f, 1f)
+                                }
+                            )
+                            pathModel.desMarker = mMap.addMarker(
+                                MarkerOptions().apply {
+                                    position(desLat)
+                                    icon(vectorToBitmap(destination))
+                                    anchor(0.5f, 1f)
+                                }
+                            )
+                        } else {
+                            pathModel.srcMarker = mMap.addMarker(
+                                MarkerOptions().position(
+                                    srcLat
+                                ).apply {
+                                    icon(vectorToBitmap(destination))
+                                    anchor(0.5f, 1f)
+                                }
+                            )
+                            val marker = mMap.addMarker(
+                                MarkerOptions().apply {
+                                    position(desLat)
+                                    title("Destination")
+                                    icon(vectorToBitmap(destination))
+                                    anchor(0.5f, 1f)
+                                }
+                            )
+                            pathModel.desMarker = marker
+                            marker?.showInfoWindow()
+                        }
                         srcMarker = pathModel.srcMarker
                         destMarker = pathModel.desMarker
                     }
-
                     valueIs(pathModel)
-                }
+                } else {
+                    if (mMap != null) {
+                        if (isTracking) {
+                            Log.i(
+                                "DRIVERLOCATION",
+                                "on showPath     lat::${srcLat.latitude?.toDouble() ?: 0.0} lan::${srcLat.longitude?.toDouble() ?: 0.0}"
+                            )
+                            pathModel.srcMarker = mMap.addMarker(
+                                MarkerOptions().position(
+                                    srcLat
+                                ).apply {
+                                    icon(vectorToBitmap(source))
+                                    anchor(0.5f, 1f)
+                                }
+                            )
 
+                            pathModel.desMarker = mMap.addMarker(
+                                MarkerOptions().apply {
+                                    position(desLat)
+                                    icon(vectorToBitmap(destination))
+                                    anchor(0.5f, 1f)
+                                }
+                            )
+                        } else {
+                            pathModel.srcMarker = mMap.addMarker(
+                                MarkerOptions().position(
+                                    srcLat
+                                ).apply {
+                                    icon(vectorToBitmap(destination))
+                                    anchor(0.5f, 1f)
+                                }
+                            )
+                            val marker = mMap.addMarker(
+                                MarkerOptions().apply {
+                                    position(desLat)
+                                    title("Destination")
+                                    icon(vectorToBitmap(destination))
+                                    anchor(0.5f, 1f)
+                                }
+                            )
+                            pathModel.desMarker = marker
+                            marker?.showInfoWindow()
+                        }
+                        srcMarker = pathModel.srcMarker
+                        destMarker = pathModel.desMarker
+                    }
+                }
             }
         }
 
     } catch (e: Exception) {
         e.printStackTrace()
+        Log.e("RideStatus", "In showPath catch --->")
     }
 }
 

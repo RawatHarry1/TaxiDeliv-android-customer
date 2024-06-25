@@ -308,9 +308,7 @@
                     android:tint="@color/white"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/arrow_down"
-
-                    />
+                    app:srcCompat="@drawable/arrow_down" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvTitle"
@@ -344,11 +342,25 @@
                         app:drawableTint="@color/black" />
                 </androidx.cardview.widget.CardView>
 
+
                 <com.google.android.gms.maps.MapView
                     android:id="@+id/fragmentMapFullScreen"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
+                <TextView
+                    android:id="@+id/tvSOS"
+                    android:layout_width="@dimen/_38sdp"
+                    android:layout_height="@dimen/_38sdp"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:background="@drawable/bg_sos_circular"
+                    android:fontFamily="@font/poppins_regular"
+                    android:gravity="center"
+                    android:text="SOS"
+                    android:visibility="gone"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cvTitle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

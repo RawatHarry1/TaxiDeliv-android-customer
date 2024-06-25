@@ -42,6 +42,7 @@ class ScheduleAdapter(
             if (data.status == 3) {
                 binding.tvCancelSchedule.isEnabled = false
                 binding.tvCancelSchedule.isClickable = false
+                binding.tvCancelSchedule.alpha = .5f
             }
             binding.tvCancelSchedule.isVisible = true
             binding.tvRideStatus.text = when (data.status) {
@@ -59,7 +60,7 @@ class ScheduleAdapter(
 //            binding.tvStartTime.text = data.pickupTime.getTime(output = "HH:mm", applyTimeZone = true)
 //            binding.tvEndTime.text = data.dropTime.getTime(output = "HH:mm", applyTimeZone = true)
 
-            binding.root.setOnSingleClickListener {
+            binding.tvCancelSchedule.setOnSingleClickListener {
                 onClickAdapterLambda(data)
 //                data.status = 3
 //                notifyItemChanged(absoluteAdapterPosition)

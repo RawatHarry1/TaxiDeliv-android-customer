@@ -6,6 +6,7 @@ import com.venus_customer.BuildConfig
 import com.venus_customer.model.dataClass.AboutAppDC
 import com.venus_customer.model.dataClass.ScheduleList
 import com.venus_customer.model.dataClass.ShowMessage
+import com.venus_customer.model.dataClass.WalletTransaction
 import com.venus_customer.model.dataClass.addedAddresses.AddedAddressData
 import com.venus_customer.model.dataClass.base.BaseResponse
 import com.venus_customer.model.dataClass.base.ClientConfig
@@ -97,6 +98,10 @@ interface ApiInterface {
         @Query("operatorId") operatorId: String,
         @Query("cityId") cityId: String
     ): Response<BaseResponse<AboutAppDC>>
+    @POST(APIEndPointsConstants.GET_TRANSACTIONS)
+    suspend fun getTransactions(
+        @Body requestBody: RequestBody
+    ): Response<BaseResponse<WalletTransaction>>
 
 
     @POST(APIEndPointsConstants.FIND_DRIVER)
@@ -126,6 +131,11 @@ interface ApiInterface {
     suspend fun fareEstimate(
         @Body requestBody: RequestBody
     ): Response<BaseResponse<FareEstimateDC>>
+
+    @POST(APIEndPointsConstants.SOS)
+    suspend fun hitSOS(
+        @Body requestBody: RequestBody
+    ): Response<BaseResponse<Any>>
 
 
     @POST(APIEndPointsConstants.RATE_DRIVER)

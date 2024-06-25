@@ -153,6 +153,20 @@ class RideVM @Inject constructor(
 
 
     /**
+     * SOS
+     * */
+    private val _sosData by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
+    val sosData: LiveData<ApiState<BaseResponse<Any>>> = _sosData
+    fun sosApi(tripId: String) {
+        viewModelScope.launch {
+            rideRepo.sosApi(jsonObject = JSONObject().apply {
+                put("engagement_id", tripId)
+            }).setApiState(_sosData)
+        }
+    }
+
+
+    /**
      * Remove Schedule
      * */
     private val _removeScheduleData by lazy { SingleLiveEvent<ApiState<BaseResponse<ShowMessage>>>() }

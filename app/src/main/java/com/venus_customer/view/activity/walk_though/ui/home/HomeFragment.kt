@@ -139,6 +139,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         observeAddedAddress()
         addAdapterSetupAndApiHit()
         getNearByDrivers()
+        observeSOS()
     }
 
     private fun getNearByDrivers() {
@@ -310,7 +311,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             startRideDialog(requireContext(), RideVM.RideAlertUiState.FindDriverDialog)
             startRideAlertState?.state = BottomSheetBehavior.STATE_EXPANDED
         }
+        binding.tvSOS.setOnSingleClickListener {
+            rideVM.sosApi(rideVM.createRideData.tripId ?: "")
+        }
     }
+
+    private fun observeSOS() = rideVM.sosData.observeData(
+        lifecycle = viewLifecycleOwner,
+        onLoading = {
+//            showProgressDialog()
+        }, onSuccess = {
+//            hideProgressDialog()
+            if (activity != null)
+            binding.tvSOS.isVisible = false
+        }, onError = {
+//            hideProgressDialog()
+            showToastShort(this)
+        }
+    )
 
     private fun startWhereDialog() {
         with(binding.viewLocation) {
@@ -671,8 +689,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             googleMap?.clearMap()
             Log.e("RideStatus", "is --->  ${rideVM.createRideData.status}")
             when (rideVM.createRideData.status) {
-                TripStatus.ACCEPTED.type -> {
+                TripStatus.REQUESTED.type -> {
+                    binding.tvSOS.isVisible = false
                     binding.viewStartRide.llDistanceTime.isVisible = false
+                    requireContext().showPath(
+                        srcLat = LatLng(
+                            rideVM.createRideData.pickUpLocation?.latitude?.toDouble() ?: 0.0,
+                            rideVM.createRideData.pickUpLocation?.longitude?.toDouble() ?: 0.0
+                        ),
+                        desLat = LatLng(
+                            rideVM.createRideData.dropLocation?.latitude?.toDouble() ?: 0.0,
+                            rideVM.createRideData.dropLocation?.longitude?.toDouble() ?: 0.0
+                        ),
+                        mMap = googleMap, isTracking = false
+                    ) {
+//                        setPathTimeAndDistance(
+//                            durationDistance = it.distanceText.orEmpty(),
+//                            durationTime = it.durationText.orEmpty()
+//                        )
+                    }
+                }
+
+                TripStatus.ACCEPTED.type -> {
+                    binding.tvSOS.isVisible = true
+                    binding.viewStartRide.llDistanceTime.isVisible = false
+                    Log.i(
+                        "DRIVERLOCATION",
+                        "on accept     lat::${rideVM.createRideData.driverLocation?.latitude?.toDouble() ?: 0.0} lan::${rideVM.createRideData.driverLocation?.longitude?.toDouble() ?: 0.0}"
+                    )
                     requireContext().showPath(
                         srcLat = LatLng(
                             rideVM.createRideData.driverLocation?.latitude?.toDouble() ?: 0.0,
@@ -684,14 +728,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                         ),
                         mMap = googleMap
                     ) {
-                        setPathTimeAndDistance(
-                            durationDistance = it.distanceText.orEmpty(),
-                            durationTime = it.durationText.orEmpty()
-                        )
+//                        setPathTimeAndDistance(
+//                            durationDistance = it.distanceText.orEmpty(),
+//                            durationTime = it.durationText.orEmpty()
+//                        )
                     }
                 }
 
                 TripStatus.ARRIVED.type -> {
+                    binding.tvSOS.isVisible = true
                     tvAddress.text = context.getString(R.string.txt_driver_arrived)
                     tvAddress.setCompoundDrawables(null, null, null, null)
                     clDistanceTime.visibility = View.GONE
@@ -701,6 +746,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
 
                 TripStatus.STARTED.type -> {
+                    binding.tvSOS.isVisible = true
                     tvAddress.text = context.getString(R.string.txt_ride_in_progress)
                     tvAddress.setCompoundDrawables(null, null, null, null)
                     clDistanceTime.visibility = View.GONE
@@ -718,14 +764,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                         ),
                         mMap = googleMap
                     ) {
-                        setPathTimeAndDistance(
-                            durationDistance = it.distanceText.orEmpty(),
-                            durationTime = it.durationText.orEmpty()
-                        )
+//                        setPathTimeAndDistance(
+//                            durationDistance = it.distanceText.orEmpty(),
+//                            durationTime = it.durationText.orEmpty()
+//                        )
                     }
                 }
 
                 TripStatus.ENDED.type -> {
+                    binding.tvSOS.isVisible = true
                     binding.viewStartRide.llDistanceTime.isVisible = false
                     startRideAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                     googleMap?.clearMap()
@@ -1039,7 +1086,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             Log.i("ADDRESSSS", Gson().toJson(this))
             this?.saved_addresses?.let { addressAdapter.submitList(it) }
             binding.viewLocation.rvAddress.isVisible = addressAdapter.itemCount > 0
-
         }, onError = {
 //        hideProgressDialog()
         })
@@ -1104,6 +1150,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }, onSuccess = {
             hideProgressDialog()
             rideVM.createRideData.sessionId = this?.sessionId.orEmpty()
+            rideVM.createRideData.status = 0
             rideVM.updateUiState(RideVM.RideAlertUiState.FindDriverDialog)
         })
 

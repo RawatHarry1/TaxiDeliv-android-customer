@@ -84,6 +84,14 @@ class RideRepo @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
+    suspend fun sosApi(jsonObject: JSONObject) = flow {
+        emit(
+            apiInterface.hitSOS(
+                requestBody = jsonObject.getJsonRequestBody()
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
 
     suspend fun fareEstimate(jsonObject: JSONObject) = flow {
         emit(apiInterface.fareEstimate(requestBody = jsonObject.getJsonRequestBody()))
