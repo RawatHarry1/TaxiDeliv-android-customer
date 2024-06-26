@@ -61,4 +61,8 @@ class PreLoginRepo @Inject constructor(
         emit(apiInterface.getTransactions(requestBody = jsonObject.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
 
+    suspend fun getCouponAndPromo(jsonObject: JSONObject) = flow {
+        emit(apiInterface.getCouponAndPromo(requestBody = jsonObject.getJsonRequestBody()))
+    }.flowOn(Dispatchers.IO)
+
 }

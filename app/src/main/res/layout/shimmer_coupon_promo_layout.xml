@@ -7,33 +7,34 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_marginHorizontal="@dimen/_16sdp"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <!-- Define shimmer placeholders here. For example: -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="160dp"
+            android:layout_marginBottom="10dp"
             android:background="@color/border_color" />
         <View
             android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="160dp"
+            android:layout_marginBottom="10dp"
             android:background="@color/border_color" />
         <View
             android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="160dp"
+            android:layout_marginBottom="10dp"
             android:background="@color/border_color" />
         <View
             android:layout_width="match_parent"
-            android:layout_height="280dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="160dp"
+            android:layout_marginBottom="10dp"
             android:background="@color/border_color" />
         <View
             android:layout_width="match_parent"
-            android:layout_height="280dp"
+            android:layout_height="160dp"
             android:layout_marginBottom="8dp"
             android:background="@color/border_color" />
     </LinearLayout>

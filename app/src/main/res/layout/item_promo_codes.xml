@@ -1,49 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginTop="10dp"
-    android:background="@drawable/bg_white_8_rad_1_stroke">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/ivPromo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_promo" />
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="10dp"
+        android:paddingVertical="@dimen/_10sdp"
+        android:paddingHorizontal="@dimen/_10sdp"
+        android:background="@drawable/bg_promo">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="18dp"
-        android:text="@string/_30_discount_on_morning_ride"
-        android:textColor="@color/black_text_color_dark"
-        android:textSize="11sp"
-        app:fontFamily="@font/poppins_medium"
-        app:layout_constraintStart_toEndOf="@id/ivPromo"
-        app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_14sdp"
+            android:background="@drawable/bg_dotted_rec_promo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="0dp">
 
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="@string/use_promocode_discount30"
-        android:textColor="@color/grey_light_text"
-        android:textSize="8sp"
-        app:fontFamily="@font/poppins_regular"
-        app:layout_constraintStart_toEndOf="@id/ivPromo"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+            <TextView
+                android:id="@+id/tvApply"
+                android:layout_width="wrap_content"
+                android:text="Apply"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/poppins_regular"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:paddingVertical="@dimen/_2sdp"
+                android:paddingHorizontal="@dimen/_10sdp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/bg_add_address_round_8dp"
+                android:layout_height="wrap_content"/>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/_30_discount_on_morning_ride"
+                android:textColor="@color/black_text_color_dark"
+                android:textSize="14sp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                app:layout_constraintEnd_toStartOf="@id/tvApply"
+                app:fontFamily="@font/poppins_medium"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/use_promocode_discount30"
+                android:textColor="@color/grey_light_text"
+                android:textSize="12sp"
+                android:id="@+id/tvDesc"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:fontFamily="@font/poppins_regular"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

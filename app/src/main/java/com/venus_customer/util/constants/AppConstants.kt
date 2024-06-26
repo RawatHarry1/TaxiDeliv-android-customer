@@ -43,6 +43,7 @@ object APIEndPointsConstants {
     const val FIND_NEAR_DRIVER = "customer/findDriver"
     const val ADD_ADDRESS = "add_home_and_work_address"
     const val FETCH_USER_ADDRESS = "customer/fetch_user_address"
+    const val FETCH_COUPON_PROMO = "getCouponsAndPromotions"
 }
 
 object APIParams {

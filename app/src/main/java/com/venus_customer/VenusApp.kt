@@ -33,7 +33,6 @@ class VenusApp: Application() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         instance = this
         appContext = applicationContext
-
         applicationComponent = DaggerAppComponent.builder().build()
 
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {

@@ -80,6 +80,8 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
+data class NearByDriverMarkers(val latLng: LatLng, val bearing: Float)
+
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface, SocketInterface {
 
@@ -92,6 +94,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private var startRideAlertState: BottomSheetBehavior<View>? = null
     private var googleMap: GoogleMap? = null
     private var nearByDriverMap: GoogleMap? = null
+    private var nearByDriverLatLanArrayList = ArrayList<NearByDriverMarkers>()
     private val addressAdapter by lazy {
         AddedAddressAdapter(
             requireActivity(),
@@ -198,10 +201,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 isDraggableAlert = true,
                 showFull = true
             )
-        carTypeAlertState = binding.viewCarType.clRootView.getBottomSheetBehaviour(showFull = true)
-        carDetailAlertState = binding.viewCarDetail.clRootView.getBottomSheetBehaviour()
-        startRideAlertState = binding.viewStartRide.clRootView.getBottomSheetBehaviour()
+        carTypeAlertState = binding.viewCarType.clRootView.getBottomSheetBehaviour(
+            isDraggableAlert = true,
+            showFull = true
+        )
 
+        carDetailAlertState =
+            binding.viewCarDetail.clRootView.getBottomSheetBehaviour(isDraggableAlert = false)
+        startRideAlertState = binding.viewStartRide.clRootView.getBottomSheetBehaviour()
         locationAlertState?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -322,8 +329,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //            showProgressDialog()
         }, onSuccess = {
 //            hideProgressDialog()
-            if (activity != null)
+//            if (activity != null) {
             binding.tvSOS.isVisible = false
+//            }
         }, onError = {
 //            hideProgressDialog()
             showToastShort(this)
@@ -636,7 +644,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             clConnecting.visibility = View.VISIBLE
             this@HomeFragment.binding.cvTitle.visibility = View.VISIBLE
             this@HomeFragment.binding.ivBack.visibility = View.GONE
-
             with(rideVM.createRideData) {
                 tvDriverRating.text = driverDetail?.driverRating.orEmpty().ifEmpty { "0.0" }
                 tvUserName.text = driverDetail?.driverName.orEmpty()
@@ -792,6 +799,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     )
                     return@setOnSingleClickListener
                 }
+                carTypeAlertState?.isHideable = true
                 carTypeAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                 rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailPaymentDialog)
             }
@@ -845,6 +853,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
     private fun backButtonMapView() {
         binding.ivBack.setOnSingleClickListener {
+            carTypeAlertState?.isHideable = true
             locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
             carTypeAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
             carDetailAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
@@ -879,6 +888,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         uiStateHandler(it)
     }
 
+    private fun setNearByDriverMarkersOnMainMap(googleMap: GoogleMap) {
+        nearByDriverLatLanArrayList.forEach { it ->
+            val marker = googleMap.addMarker(
+                MarkerOptions().position(it.latLng)
+                    .apply {
+                        icon(context?.vectorToBitmap(R.drawable.car_icon))
+                        anchor(0.5f, 1f)
+                    }
+            )
+            marker?.rotation = it.bearing
+        }
+    }
 
     private fun uiStateHandler(state: RideVM.RideAlertUiState) {
         try {
@@ -906,7 +927,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     binding.clWhereMain.visibility = View.GONE
                     binding.clMapMain.visibility = View.VISIBLE
                     startCarTypesDialog()
+                    carTypeAlertState?.isHideable = false
                     carTypeAlertState?.state = BottomSheetBehavior.STATE_EXPANDED
+
                     try {
                         findNavController().currentBackStackEntry?.savedStateHandle?.remove<CreateRideData.LocationData>(
                             "pickUpLocation"
@@ -917,6 +940,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
+                    binding.viewStartRide.llDistanceTime.isVisible = false
+                    requireContext().showPath(
+                        srcLat = LatLng(
+                            rideVM.createRideData.pickUpLocation?.latitude?.toDouble() ?: 0.0,
+                            rideVM.createRideData.pickUpLocation?.longitude?.toDouble() ?: 0.0
+                        ),
+                        desLat = LatLng(
+                            rideVM.createRideData.dropLocation?.latitude?.toDouble() ?: 0.0,
+                            rideVM.createRideData.dropLocation?.longitude?.toDouble() ?: 0.0
+                        ),
+                        mMap = googleMap, isTracking = false
+                    ) {
+//                        setPathTimeAndDistance(
+//                            durationDistance = it.distanceText.orEmpty(),
+//                            durationTime = it.durationText.orEmpty()
+//                        )
+                        googleMap?.let { setNearByDriverMarkersOnMainMap(it) }
+                    }
+
                 }
 
                 RideVM.RideAlertUiState.ShowCustomerDetailPaymentDialog -> {
@@ -1042,8 +1084,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             if (activity != null)
                 binding.progressMap.shimmerLayout.isVisible = false
             try {
+                nearByDriverLatLanArrayList.clear()
 //                val latLongB = LatLngBounds.Builder()
                 this?.drivers?.forEach {
+                    nearByDriverLatLanArrayList.add(
+                        NearByDriverMarkers(
+                            LatLng(
+                                it.latitude ?: 0.0,
+                                it.longitude ?: 0.0
+                            ), it.bearing?.toFloatOrNull() ?: 0F
+                        )
+                    )
                     val marker = nearByDriverMap?.addMarker(
                         MarkerOptions().position(LatLng(it.latitude ?: 0.0, it.longitude ?: 0.0))
                             .apply {
@@ -1123,6 +1174,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.customerETA = this?.customerETA ?: FindDriverDC.CustomerETA()
             rideVM.fareStructureList.addAll(this?.fareStructure ?: emptyList())
             rideVM.regionsList.addAll(this?.regions ?: emptyList())
+
             rideVM.updateUiState(RideVM.RideAlertUiState.ShowVehicleTypesDialog)
 //            rideVM.getDistanceFromGoogle(isLoading = {
 //                showProgressDialog()

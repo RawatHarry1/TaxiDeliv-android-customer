@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import com.salonedriver.model.dataclassses.notificationDC.NotificationDC
 import com.venus_customer.BuildConfig
 import com.venus_customer.model.dataClass.AboutAppDC
+import com.venus_customer.model.dataClass.CouponAndPromos
 import com.venus_customer.model.dataClass.ScheduleList
 import com.venus_customer.model.dataClass.ShowMessage
 import com.venus_customer.model.dataClass.WalletTransaction
@@ -98,6 +99,7 @@ interface ApiInterface {
         @Query("operatorId") operatorId: String,
         @Query("cityId") cityId: String
     ): Response<BaseResponse<AboutAppDC>>
+
     @POST(APIEndPointsConstants.GET_TRANSACTIONS)
     suspend fun getTransactions(
         @Body requestBody: RequestBody
@@ -187,6 +189,9 @@ interface ApiInterface {
 
     @POST(APIEndPointsConstants.FETCH_USER_ADDRESS)
     suspend fun fetchAddresses(): Response<BaseResponse<AddedAddressData>>
+
+    @POST(APIEndPointsConstants.FETCH_COUPON_PROMO)
+    suspend fun getCouponAndPromo(@Body requestBody: RequestBody): Response<BaseResponse<CouponAndPromos>>
 
 
 }

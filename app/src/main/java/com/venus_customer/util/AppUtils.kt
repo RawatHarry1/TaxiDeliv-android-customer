@@ -36,18 +36,20 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.venus_customer.VenusApp
 import com.venus_customer.di.ErrorModel
-import com.venus_customer.util.constants.AppConstants
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import retrofit2.HttpException
-import java.io.*
-import java.net.SocketTimeoutException
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.DateFormat
 import java.text.ParseException
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 object AppUtils {
 
@@ -195,7 +197,7 @@ object AppUtils {
         } catch (ex: Exception) {
             Log.e("Exception", "" + ex.message)
         }
-      return "-"
+        return "-"
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -210,7 +212,7 @@ object AppUtils {
         } catch (ex: Exception) {
             Log.e("Exception", "" + ex.message)
         }
-      return "-"
+        return "-"
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -225,7 +227,7 @@ object AppUtils {
         return "-"
     }
 
-    fun getLeanAngle(angle: String): String{
+    fun getLeanAngle(angle: String): String {
         val angleText = SpannableStringBuilder()
 
         val arrayStr = angle.split(",")
@@ -318,15 +320,15 @@ object AppUtils {
             smsTime.timeInMillis = date.time
         }
         val now = Calendar.getInstance()
-      return  getDateFromDateISO(selectDate, "dd MMM yy")
+        return getDateFromDateISO(selectDate, "dd MMM yy")
 
-       /* return if (now[Calendar.YEAR] == smsTime[Calendar.YEAR] && now[Calendar.MONTH] == smsTime[Calendar.MONTH] && now[Calendar.DATE] == smsTime[Calendar.DATE]) {
-            "Today "
-        } else if (now[Calendar.YEAR] == smsTime[Calendar.YEAR] && now[Calendar.MONTH] == smsTime[Calendar.MONTH] && now[Calendar.DATE] - smsTime[Calendar.DATE] === 1) {
-            "Yesterday "
-        } else {
-            getDateFromDateISO(selectDate, "dd MMM yy")
-        }*/
+        /* return if (now[Calendar.YEAR] == smsTime[Calendar.YEAR] && now[Calendar.MONTH] == smsTime[Calendar.MONTH] && now[Calendar.DATE] == smsTime[Calendar.DATE]) {
+             "Today "
+         } else if (now[Calendar.YEAR] == smsTime[Calendar.YEAR] && now[Calendar.MONTH] == smsTime[Calendar.MONTH] && now[Calendar.DATE] - smsTime[Calendar.DATE] === 1) {
+             "Yesterday "
+         } else {
+             getDateFromDateISO(selectDate, "dd MMM yy")
+         }*/
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -353,7 +355,7 @@ object AppUtils {
     }
 
     fun formatDate(millis: Long, dateFormat: String, returnFormat: String): String? {
-        var date : String = java.text.SimpleDateFormat(dateFormat).format(millis)
+        var date: String = java.text.SimpleDateFormat(dateFormat).format(millis)
         var format = "yyyy-MM-dd'T'HH:mm:ss"
         if (!dateFormat.isNullOrBlank()) {
             format = dateFormat
@@ -390,7 +392,7 @@ object AppUtils {
     }
 
     fun prepareBody(mainObject: JSONObject): RequestBody {
-        Log.e("request data","-request--$mainObject---")
+        Log.e("request data", "-request--$mainObject---")
         return mainObject.toString().toRequestBody("application/json".toMediaType())
     }
 
@@ -404,14 +406,14 @@ object AppUtils {
                 val exceptionToCheck = (catch as? Exception)
 //                println("SocketTimeoutException================" + (exceptionToCheck is SocketTimeoutException))
 //                println("TimeoutException================" + (exceptionToCheck is TimeoutException))
-    /*            if (exceptionToCheck != null && (exceptionToCheck is SocketTimeoutException)) {
-                    EventBus.getDefault().post(
-                        EventBusData(
-                            AppConstants.EventBusConstants.TIME_OUT,
-                            AppConstants.EventBusConstants.TIME_OUT
-                        )
-                    )
-                }*/
+                /*            if (exceptionToCheck != null && (exceptionToCheck is SocketTimeoutException)) {
+                                EventBus.getDefault().post(
+                                    EventBusData(
+                                        AppConstants.EventBusConstants.TIME_OUT,
+                                        AppConstants.EventBusConstants.TIME_OUT
+                                    )
+                                )
+                            }*/
                 val errorToSend = ErrorModel()
                 errorToSend.message = catch?.message
                 if (errorToSend.message == "closed")
@@ -426,7 +428,7 @@ object AppUtils {
     }
 
 
-    fun shareBitmap(activity: Context,bitmap: Bitmap?) {
+    fun shareBitmap(activity: Context, bitmap: Bitmap?) {
         try {
             val cachePath = File(activity.cacheDir, "images")
             cachePath.mkdirs() // don't forget to make the directory
@@ -514,32 +516,32 @@ object AppUtils {
         return spannable
     }*/
 
-     /*fun setTextSpan(
-         context: Context,
-         stringValue: String,
-         startPoint: Int,
-         endPoint: Int,
-         color: Int,
-         fontStyle: Int?,
-    ): Spannable {
-         val spannableString = SpannableString(stringValue)
-         val foregroundColorSpanGreen = ForegroundColorSpan(ContextCompat.getColor(context,color))
+    /*fun setTextSpan(
+        context: Context,
+        stringValue: String,
+        startPoint: Int,
+        endPoint: Int,
+        color: Int,
+        fontStyle: Int?,
+   ): Spannable {
+        val spannableString = SpannableString(stringValue)
+        val foregroundColorSpanGreen = ForegroundColorSpan(ContextCompat.getColor(context,color))
 
-         spannableString.setSpan(foregroundColorSpanGreen, startPoint, endPoint, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(foregroundColorSpanGreen, startPoint, endPoint, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
 
-         if(fontStyle!=null){
-             val typefaceLight = ResourcesCompat.getFont(context, fontStyle)
-             spannableString.setSpan(
-                 TypefaceSpan(typefaceLight!!),
-                 startPoint,
-                 endPoint,
-                 0
-             )
-         }
+        if(fontStyle!=null){
+            val typefaceLight = ResourcesCompat.getFont(context, fontStyle)
+            spannableString.setSpan(
+                TypefaceSpan(typefaceLight!!),
+                startPoint,
+                endPoint,
+                0
+            )
+        }
 
-         return spannableString
-    }*/
+        return spannableString
+   }*/
 
     /*fun setTimeTypeFaceForEmpty(
         context: Context,
@@ -695,16 +697,16 @@ object AppUtils {
         }
     }
 
-    fun convertOneFormatToAnother(eventDay:String,changeFrom: String, changeTo:String): String {
+    fun convertOneFormatToAnother(eventDay: String, changeFrom: String, changeTo: String): String {
         val clickedDayCalendar = eventDay
         val dateParser = java.text.SimpleDateFormat(changeFrom)
         val date = dateParser.parse(clickedDayCalendar.toString())
         val dateFormatter = java.text.SimpleDateFormat(changeTo)
-        return  dateFormatter.format(date)
+        return dateFormatter.format(date)
     }
 
 
-    fun convertStringToBase64(text : String) : String{
+    fun convertStringToBase64(text: String): String {
         return Base64.encodeToString(text.toByteArray(), Base64.DEFAULT)
     }
 
@@ -713,9 +715,9 @@ object AppUtils {
             val baos = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos)
             val b = baos.toByteArray()
-            Log.e("IMAGE", "image size after compression : ${(b.size.toFloat()/1024)/1024}")
+            Log.e("IMAGE", "image size after compression : ${(b.size.toFloat() / 1024) / 1024}")
             Base64.encodeToString(b, Base64.DEFAULT)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             ""
 
         }
@@ -731,18 +733,18 @@ object AppUtils {
     }*/
 
     // replace string
-    fun replaceDashWithEmpty(textString: String):String{
-        return textString.replace("-","")
+    fun replaceDashWithEmpty(textString: String): String {
+        return textString.replace("-", "")
     }
 
     // replace string
-  /*  fun getEndDrawableIconVerified(textString: Boolean):Int{
-        return if(textString){
-            R.drawable.ic_info_verified
-        }else{
-            R.drawable.ic_info_unverified
-        }
-}*/
+    /*  fun getEndDrawableIconVerified(textString: Boolean):Int{
+          return if(textString){
+              R.drawable.ic_info_verified
+          }else{
+              R.drawable.ic_info_unverified
+          }
+  }*/
 
     /*fun showCustomToast(context: Context, type : Int, message: String?, isBootomGravity: Boolean?) {
         val inflater = (context as Activity).layoutInflater
@@ -778,28 +780,29 @@ object AppUtils {
         toast.show()
     }*/
 
-  /*  fun setPlayTypeface(
-        context: Context,
-        stringValue: String,
-        startPoint: Int,
-        endPoint: Int
-    ): Spannable {
-        val spannable = SpannableString(stringValue)
-        if (stringValue.isNotEmpty()) {
-            val typefaceLight = ResourcesCompat.getFont(context, R.font.play_regular)
-            spannable.setSpan(
-                TypefaceSpan(typefaceLight!!),
-                startPoint,
-                endPoint,
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE
-            )
-        }
-        return spannable
-    }
-*/
+    /*  fun setPlayTypeface(
+          context: Context,
+          stringValue: String,
+          startPoint: Int,
+          endPoint: Int
+      ): Spannable {
+          val spannable = SpannableString(stringValue)
+          if (stringValue.isNotEmpty()) {
+              val typefaceLight = ResourcesCompat.getFont(context, R.font.play_regular)
+              spannable.setSpan(
+                  TypefaceSpan(typefaceLight!!),
+                  startPoint,
+                  endPoint,
+                  Spanned.SPAN_EXCLUSIVE_INCLUSIVE
+              )
+          }
+          return spannable
+      }
+  */
     //creates a folder inside internal storage
-    fun getOutputDirectory(fileName : String): File {
-        val dir: File = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path + "//Matter/$fileName")
+    fun getOutputDirectory(fileName: String): File {
+        val dir: File =
+            File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path + "//Matter/$fileName")
         if (!dir.exists())
             dir.mkdir();
         return dir
@@ -861,51 +864,56 @@ object AppUtils {
         return spannable
     }*/
 
-   /* fun spanOnlyNumbersInString(str: String, context: Context) : Spannable{
-        var startIndex = 0
-        val spannable = SpannableString(str)
-        val typefaceLight = ResourcesCompat.getFont(context, R.font.bevietnam_regular)
+    /* fun spanOnlyNumbersInString(str: String, context: Context) : Spannable{
+         var startIndex = 0
+         val spannable = SpannableString(str)
+         val typefaceLight = ResourcesCompat.getFont(context, R.font.bevietnam_regular)
 
-        str.forEachIndexed { index, c ->
-            if (c.isDigit()) {
-                startIndex = index
+         str.forEachIndexed { index, c ->
+             if (c.isDigit()) {
+                 startIndex = index
 
-                spannable.setSpan(
-                    TypefaceSpan(typefaceLight!!),
-                    startIndex,
-                    startIndex,
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
-                )
-                spannable.setSpan(
-                    RelativeSizeSpan(0.8f),
-                    startIndex,
-                    startIndex,
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
-                )
-            }
-        }
+                 spannable.setSpan(
+                     TypefaceSpan(typefaceLight!!),
+                     startIndex,
+                     startIndex,
+                     Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                 )
+                 spannable.setSpan(
+                     RelativeSizeSpan(0.8f),
+                     startIndex,
+                     startIndex,
+                     Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                 )
+             }
+         }
 
-        return spannable
-    }
+         return spannable
+     }
 
-    fun getImageUri(inContext:Context, inImage:Bitmap):Uri? {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path =
-            MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "matter", null)
-        return Uri.parse(path)
-    }*/
+     fun getImageUri(inContext:Context, inImage:Bitmap):Uri? {
+         val bytes = ByteArrayOutputStream()
+         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+         val path =
+             MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "matter", null)
+         return Uri.parse(path)
+     }*/
 }
 
 
-fun View.getBottomSheetBehaviour(isDraggableAlert: Boolean = false,showFull: Boolean = false): BottomSheetBehavior<View> {
+fun View.getBottomSheetBehaviour(
+    isDraggableAlert: Boolean = false,
+    showFull: Boolean = false
+): BottomSheetBehavior<View> {
     return BottomSheetBehavior.from(this).apply {
         isDraggable = isDraggableAlert
-        peekHeight =  context.toPx(300).toInt()
+        peekHeight = context.toPx(200).toInt()
         maxHeight = if (showFull) calculateDynamicHeight().toInt() else context.toPx(400).toInt()
         state = BottomSheetBehavior.STATE_HIDDEN
+        Log.d("BottomSheet", "Initial state set to HIDDEN")
     }
 }
+
 fun View.calculateDynamicHeight(): Int {
     measure(
         View.MeasureSpec.makeMeasureSpec((parent as View).width, View.MeasureSpec.EXACTLY),
@@ -924,14 +932,14 @@ fun Context.toPx(dp: Int): Float = TypedValue.applyDimension(
 /**
  * Get Auth Token
  * */
-fun getFCMToken(fcmToken : (String) -> Unit = {}) = try {
-    FirebaseMessaging.getInstance().token.addOnCompleteListener{ task ->
+fun getFCMToken(fcmToken: (String) -> Unit = {}) = try {
+    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
         if (!task.isSuccessful) {
             return@addOnCompleteListener
         }
         fcmToken(task.result)
     }
-}catch (e:Exception){
+} catch (e: Exception) {
     e.printStackTrace()
 }
 

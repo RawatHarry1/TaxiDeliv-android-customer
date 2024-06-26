@@ -3,10 +3,12 @@ package com.venus_customer.viewmodel.base
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.venus_customer.VenusApp
 import com.venus_customer.model.api.ApiState
 import com.venus_customer.model.api.getPartMap
 import com.venus_customer.model.api.setApiState
 import com.venus_customer.model.dataClass.AboutAppDC
+import com.venus_customer.model.dataClass.CouponAndPromos
 import com.venus_customer.model.dataClass.WalletTransaction
 import com.venus_customer.model.dataClass.base.BaseResponse
 import com.venus_customer.model.dataClass.base.ClientConfig
@@ -72,5 +74,14 @@ class ProfileViewModel @Inject constructor(
     fun getTransactions() = viewModelScope.launch {
         repository.getTransactions(jsonObject = JSONObject().apply { put("start_from", 0) })
             .setApiState(_transactionHistoryData)
+    }
+
+    private val _promoData by lazy { SingleLiveEvent<ApiState<BaseResponse<CouponAndPromos>>>() }
+    val promoData: LiveData<ApiState<BaseResponse<CouponAndPromos>>> get() = _promoData
+    fun getCouponAndPromotions() = viewModelScope.launch {
+        repository.getCouponAndPromo(jsonObject = JSONObject().apply {
+            put("latitude", VenusApp.latLng.latitude ?: 0.0)
+            put("longitude", VenusApp.latLng.longitude ?: 0.0)
+        }).setApiState(_promoData)
     }
 }
