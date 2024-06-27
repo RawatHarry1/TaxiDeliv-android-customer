@@ -8,4 +8,5 @@ object AppConstants {
     val USER_ACCESS_NAME: String = ""
 
     const val SALON_PACKAGE_NAME = "com.salonedriver"
+    const val VENUS_PACKAGE_NAME = "com.venusdriver"
 }

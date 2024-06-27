@@ -48,10 +48,13 @@ android {
         venus {
             dimension "product"
             applicationId "com.venusdriver"
+            resValue "string", "app_name", "Venus Driver"
+
         }
         salon {
             dimension "product"
             applicationId "com.salonedriver"
+            resValue "string", "app_name", "Salone Ride"
         }
         dev {
             dimension "server"

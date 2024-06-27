@@ -53,7 +53,6 @@ fun <T> LiveData<ApiState<BaseResponse<T>>>.observeData(
 
             //When api getting error
             Status.ERROR -> onError.invoke(it.errorModel?.message.orEmpty())
-
             //No Status
             else -> Unit
         }

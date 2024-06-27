@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="purple_200">#FFBB86FC</color>
-    <color name="theme">#ff7d02</color>
+    <color name="theme">#0054A5</color>
     <color name="theme1">#007700</color>
     <color name="theme_light">#8fc4fd</color>
     <color name="theme_light_document">#338FC4FD</color>
@@ -11,7 +11,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="theme_button">#ff7d02</color>
+    <color name="theme_button">#0054A5</color>
     <color name="text_color">#5c6660</color>
     <color name="border_color">#e6e6e6</color>
     <color name="border_color_dark">#ADADAD</color>

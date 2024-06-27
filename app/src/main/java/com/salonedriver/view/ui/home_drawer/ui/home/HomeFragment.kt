@@ -244,6 +244,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         }
         binding.tvIgnoreBtn.setOnClickListener {
             rideViewModel.rejectRide(data.tripId.orEmpty())
+            AppUtils.tripId = ""
+            rideViewModel.newRideNotificationData = NewRideNotificationDC()
+            screenType = 0
+            SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.NEW_BOOKING)
+            dialog?.dismiss()
         }
 
         dialog?.setCancelable(true)

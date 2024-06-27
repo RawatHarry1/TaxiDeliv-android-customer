@@ -14,7 +14,7 @@ data class ClientConfigDC(
     val locale: String? = null,
     @SerializedName("login_channel")
     val loginChannel: String? = null,
-    @SerializedName("operator_token")
+    @SerializedName("operatorToken")
     val operatorToken: String? = null,
     @SerializedName("show_facebook_login")
     val showFacebookLogin: String? = null,

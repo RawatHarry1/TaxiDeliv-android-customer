@@ -24,8 +24,8 @@ class RideRepo @Inject constructor(
 
     suspend fun acceptRide(customerId: String, tripId: String) = flow {
         emit(apiInterface.acceptRide(requestBody = JSONObject().apply {
-            put("longitude", SaloneDriver.latLng?.latitude)
-            put("latitude", SaloneDriver.latLng?.longitude)
+            put("longitude", SaloneDriver.latLng?.longitude)
+            put("latitude", SaloneDriver.latLng?.latitude)
             put("customerId", customerId)
             put("tripId", tripId)
         }.getJsonRequestBody()))
@@ -73,6 +73,4 @@ class RideRepo @Inject constructor(
     suspend fun cancelTrip(jsonObject: JSONObject) = flow {
         emit(apiInterface.cancelTrip(jsonObject.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
-
-
 }

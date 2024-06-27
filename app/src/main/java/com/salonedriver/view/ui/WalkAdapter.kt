@@ -34,7 +34,7 @@ class WalkAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     override fun getItemViewType(position: Int): Int {
-        return if (BuildConfig.APPLICATION_ID == AppConstants.SALON_PACKAGE_NAME) 1 else 0
+        return if (BuildConfig.APPLICATION_ID == AppConstants.VENUS_PACKAGE_NAME) 1 else 0
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
