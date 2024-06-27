@@ -16,7 +16,6 @@ class NetworkInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val fcmToken = runBlocking { fcmToken() }
-
         val newRequest = request.newBuilder().apply {
             addHeader("appVersion", "550")
             addHeader("deviceName", Build.MODEL)
@@ -25,7 +24,6 @@ class NetworkInterceptor : Interceptor {
             addHeader("loginType", "0")
 //            addHeader("Connection", "keep-alive")
             addHeader("Connection","close")
-
             SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)?.let {
                 addHeader("accessToken", it.accessToken.orEmpty())
             }

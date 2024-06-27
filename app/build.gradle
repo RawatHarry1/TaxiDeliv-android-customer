@@ -68,7 +68,7 @@ android {
         venus {
             dimension "product"
             buildConfigField("String", "VARIANT", '"dev"')
-            resValue "string", "app_name", "Venus"
+            resValue "string", "app_name", "Venus Taxi"
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }
         salon {

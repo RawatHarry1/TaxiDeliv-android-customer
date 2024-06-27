@@ -15,6 +15,7 @@ import com.venus_customer.Splash
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.ActivityWalkthorughBinding
 import com.venus_customer.util.constants.AppConstants.SALON_PACKAGE_NAME
+import com.venus_customer.util.constants.AppConstants.VENUS_PACKAGE_NAME
 import com.venus_customer.view.activity.SignUpInActivity
 
 class WalkThrough : AppCompatActivity() {
@@ -50,16 +51,16 @@ class WalkThrough : AppCompatActivity() {
     private fun setWalkAdapter() {
         binding.vpWalk.adapter = adapter
         val listData = mutableListOf<WalkData>()
-        if (BuildConfig.APPLICATION_ID == SALON_PACKAGE_NAME){
+        if (BuildConfig.APPLICATION_ID == VENUS_PACKAGE_NAME){
             binding.tvNext.isVisible = false
             binding.dotsIndicator.isVisible = false
             binding.tvSkip.isVisible = false
             binding.clBottom.isVisible = true
             binding.tvSalonSkip.isVisible = true
-            listData.add(WalkData(getString(R.string.empty_string),getString(R.string.empty_string),ContextCompat.getDrawable(this,R.drawable.salon_walkthrough_1)))
-            listData.add(WalkData(getString(R.string.empty_string),getString(R.string.empty_string),ContextCompat.getDrawable(this,R.drawable.salon_walkthrough_2)))
-            listData.add(WalkData(getString(R.string.empty_string),getString(R.string.empty_string),ContextCompat.getDrawable(this,R.drawable.salon_walkthrough_3)))
-            listData.add(WalkData(getString(R.string.empty_string),getString(R.string.empty_string),ContextCompat.getDrawable(this,R.drawable.salon_walkthrough_4)))
+            listData.add(WalkData(getString(R.string.empty_string),getString(R.string.empty_string),ContextCompat.getDrawable(this,R.drawable.venus_intro_1)))
+            listData.add(WalkData(getString(R.string.empty_string),getString(R.string.empty_string),ContextCompat.getDrawable(this,R.drawable.venus_intro_2)))
+            listData.add(WalkData(getString(R.string.empty_string),getString(R.string.empty_string),ContextCompat.getDrawable(this,R.drawable.venus_intro_3)))
+            listData.add(WalkData(getString(R.string.empty_string),getString(R.string.empty_string),ContextCompat.getDrawable(this,R.drawable.venus_intro_4)))
         }else {
             binding.tvNext.isVisible = true
             binding.dotsIndicator.isVisible = true

@@ -15,6 +15,7 @@ object AppConstants {
     const val IS_TERMS: String = "isTerms"
 
     const val SALON_PACKAGE_NAME = "com.saloneCustomer"
+    const val VENUS_PACKAGE_NAME = "com.venus_customer"
 
 }
 
