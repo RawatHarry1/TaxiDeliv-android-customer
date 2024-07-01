@@ -8,7 +8,6 @@ import com.salonedriver.model.api.SingleLiveEvent
 import com.salonedriver.model.api.setApiState
 import com.salonedriver.model.dataclassses.base.BaseResponse
 import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
-import com.salonedriver.model.dataclassses.userData.Login
 import com.salonedriver.repo.PreLoginRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -31,5 +30,6 @@ class SplashVM @Inject constructor(
     fun getClientConfig() = viewModelScope.launch {
         repository.getClientConfig().setApiState(_clientConfig)
     }
+
 
 }

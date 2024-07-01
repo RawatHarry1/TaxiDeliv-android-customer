@@ -1,15 +1,9 @@
 package com.salonedriver.view.ui
 
 import android.content.Intent
-import android.location.Location
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import com.salonedriver.R
-import com.salonedriver.customClasses.LocationResultHandler
-import com.salonedriver.customClasses.SingleFusedLocation
 import com.salonedriver.databinding.ActivitySplashBinding
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.userData.UserDataDC
@@ -20,7 +14,6 @@ import com.salonedriver.view.base.BaseActivity
 import com.salonedriver.view.ui.home_drawer.HomeActivity
 import com.salonedriver.viewmodel.SplashVM
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Calendar
 
 @AndroidEntryPoint
 class Splash : BaseActivity<ActivitySplashBinding>() {
@@ -63,21 +56,21 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
      * Call Walkthrough
      * */
     private fun callWalkThrough() {
-//        val calendar = Calendar.getInstance()
-//        calendar.set(Calendar.DAY_OF_MONTH, 12)
-//        calendar.set(Calendar.MONTH, 5)
-//        if (System.currentTimeMillis() < calendar.timeInMillis){
-            SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
-                ?.let {
-                    if ((it.login?.registrationStepCompleted?.isVehicleInfoCompleted == true) && (it.accessToken?.isNotEmpty() == true)) {
-                        changeIntent(HomeActivity::class.java)
-                    } else {
+        SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+            ?.let {
+                if ((it.login?.registrationStepCompleted?.isVehicleInfoCompleted == true) && (it.accessToken?.isNotEmpty() == true)) {
+                    changeIntent(HomeActivity::class.java)
+                } else {
+                    val walkThroughShown =
+                        SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.WALKTHROUGH)
+                    if (walkThroughShown)
+                        changeIntent(SignUpInActivity::class.java)
+                    else
                         changeIntent(WalkThrough::class.java)
-                    }
-                } ?: run {
-                changeIntent(WalkThrough::class.java)
-            }
-//        }
+                }
+            } ?: run {
+            changeIntent(WalkThrough::class.java)
+        }
     }
 
 

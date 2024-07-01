@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.salonedriver.BuildConfig
 import com.salonedriver.R
 import com.salonedriver.databinding.ActivityWalkthorughBinding
+import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.util.constants.AppConstants.VENUS_PACKAGE_NAME
 import com.salonedriver.viewmodel.WalkThroughViewModel
 
@@ -43,6 +44,7 @@ class WalkThrough : AppCompatActivity() {
         binding.tvSalonNext.setOnClickListener { nextClick() }
         binding.tvSkip.setOnClickListener { skipClick() }
         binding.tvSalonSkip.setOnClickListener { skipClick() }
+        SharedPreferencesManager.put(SharedPreferencesManager.Keys.WALKTHROUGH, true)
     }
 
     private fun setWalkAdapter() {

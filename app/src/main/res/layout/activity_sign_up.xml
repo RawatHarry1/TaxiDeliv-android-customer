@@ -80,17 +80,15 @@
                 android:background="@null"
                 android:fontFamily="@font/sufi_reg"
                 android:hint="@string/enter_your_phone_number"
-                android:inputType="textEmailAddress"
-                android:maxLength="30"
+                android:inputType="phone"
+                android:maxLength="20"
                 android:paddingVertical="@dimen/_4sdp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@id/ccp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ccp"
-                app:layout_constraintTop_toTopOf="@id/ccp"
-
-                />
+                app:layout_constraintTop_toTopOf="@id/ccp" />
 
 
             <View
@@ -142,7 +140,6 @@
         <!--            android:textColorHint="@color/border_color_dark"-->
         <!--            />-->
 
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvSignUpBtn"
             android:layout_width="match_parent"
@@ -155,8 +152,6 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintTop_toBottomOf="@id/clPhone" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 

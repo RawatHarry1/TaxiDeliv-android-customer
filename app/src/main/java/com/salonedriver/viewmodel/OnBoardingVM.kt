@@ -4,7 +4,6 @@ import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLng
 import com.salonedriver.SaloneDriver
 import com.salonedriver.customClasses.LocationResultHandler
 import com.salonedriver.customClasses.SingleFusedLocation
@@ -12,19 +11,15 @@ import com.salonedriver.model.api.ApiState
 import com.salonedriver.model.api.SingleLiveEvent
 import com.salonedriver.model.api.getPartMap
 import com.salonedriver.model.api.setApiState
-import com.salonedriver.model.dataclassses.AboutUsDC
 import com.salonedriver.model.dataclassses.base.BaseResponse
 import com.salonedriver.model.dataclassses.cityVehicle.CityVehicleDC
 import com.salonedriver.model.dataclassses.cityVehicle.Color
 import com.salonedriver.model.dataclassses.cityVehicle.Vehicle
 import com.salonedriver.model.dataclassses.cityVehicle.VehicleType
-import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
 import com.salonedriver.model.dataclassses.fetchRequiredDocument.FetchRequiredDocumentDC
+import com.salonedriver.model.dataclassses.updateDriverInfo.UpdateDriverInfo
 import com.salonedriver.model.dataclassses.userData.UserDataDC
 import com.salonedriver.repo.PreLoginRepo
-import com.salonedriver.util.SharedPreferencesManager
-import com.salonedriver.model.dataclassses.updateDriverInfo.UpdateDriverInfo
-import com.salonedriver.model.dataclassses.userData.Login
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -50,23 +45,23 @@ class OnBoardingVM @Inject constructor(
     var cityId: String = ""
 
 
-
     //Sign IN
     private val _sendLoginOtp by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
     val sendLoginOtp: LiveData<ApiState<BaseResponse<Any>>> get() = _sendLoginOtp
 
-    fun sendLoginOtp(phoneNumber: String, countryCode: String) =  SingleFusedLocation.initialize(SaloneDriver.appContext, object : LocationResultHandler{
-        override fun updatedLocation(location: Location) {
-            viewModelScope.launch {
-                repository.generateLoginOtp(jsonObject = JSONObject().apply {
-                    put("phoneNo", phoneNumber)
-                    put("countryCode", countryCode)
-                    put("latitude", location.latitude)
-                    put("longitude", location.longitude)
-                }).setApiState(_sendLoginOtp)
+    fun sendLoginOtp(phoneNumber: String, countryCode: String) =
+        SingleFusedLocation.initialize(SaloneDriver.appContext, object : LocationResultHandler {
+            override fun updatedLocation(location: Location) {
+                viewModelScope.launch {
+                    repository.generateLoginOtp(jsonObject = JSONObject().apply {
+                        put("phoneNo", phoneNumber)
+                        put("countryCode", countryCode)
+                        put("latitude", location.latitude)
+                        put("longitude", location.longitude)
+                    }).setApiState(_sendLoginOtp)
+                }
             }
-        }
-    })
+        })
 
 
     //Verify VM
@@ -74,19 +69,20 @@ class OnBoardingVM @Inject constructor(
     val verifyData: LiveData<ApiState<BaseResponse<UserDataDC>>> get() = _verifyData
 
 
-    fun verifyOtp(otpCode: String) = SingleFusedLocation.initialize(SaloneDriver.appContext, object : LocationResultHandler{
-        override fun updatedLocation(location: Location) {
-            viewModelScope.launch {
-                repository.verifyLoginOtp(jsonObject = JSONObject().apply {
-                    put("phoneNo", phoneNumber)
-                    put("countryCode", countryCode)
-                    put("loginOtp", otpCode)
-                    put("latitude", location.latitude)
-                    put("longitude", location.longitude)
-                }).setApiState(_verifyData)
+    fun verifyOtp(otpCode: String) =
+        SingleFusedLocation.initialize(SaloneDriver.appContext, object : LocationResultHandler {
+            override fun updatedLocation(location: Location) {
+                viewModelScope.launch {
+                    repository.verifyLoginOtp(jsonObject = JSONObject().apply {
+                        put("phoneNo", phoneNumber)
+                        put("countryCode", countryCode)
+                        put("loginOtp", otpCode)
+                        put("latitude", location.latitude)
+                        put("longitude", location.longitude)
+                    }).setApiState(_verifyData)
+                }
             }
-        }
-    })
+        })
 
 
     private val _updateDriverInfo by lazy { SingleLiveEvent<ApiState<BaseResponse<UpdateDriverInfo>>>() }
@@ -150,9 +146,6 @@ class OnBoardingVM @Inject constructor(
     fun payoutInfo(jsonObject: JSONObject) = viewModelScope.launch {
         repository.addBankDetail(jsonObject = jsonObject).setApiState(_payoutInfo)
     }
-
-
-
 
 
 }

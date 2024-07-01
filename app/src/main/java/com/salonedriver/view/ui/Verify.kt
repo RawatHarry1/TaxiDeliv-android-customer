@@ -1,7 +1,6 @@
 package com.salonedriver.view.ui
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.mukesh.mukeshotpview.completeListener.MukeshOtpCompleteListener
@@ -10,7 +9,6 @@ import com.salonedriver.databinding.ActivityVerifyBinding
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.api.profileStatusHandling
 import com.salonedriver.util.SharedPreferencesManager
-import com.salonedriver.util.getValue
 import com.salonedriver.view.base.BaseActivity
 import com.salonedriver.viewmodel.OnBoardingVM
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,17 +36,20 @@ class Verify : BaseActivity<ActivityVerifyBinding>() {
     }
 
 
-    private fun otpCompleteListener() = try{
-        binding.simpleOtpView.setOtpCompletionListener(object : MukeshOtpCompleteListener{
+    private fun otpCompleteListener() = try {
+        binding.simpleOtpView.setOtpCompletionListener(object : MukeshOtpCompleteListener {
             override fun otpCompleteListener(otp: String?) {
                 viewModel.verifyOtp(otp.orEmpty())
             }
         })
 
         binding.tvNotReceived.setOnClickListener {
-            viewModel.sendLoginOtp(phoneNumber = viewModel.phoneNumber.orEmpty(), countryCode = viewModel.countryCode.orEmpty())
+            viewModel.sendLoginOtp(
+                phoneNumber = viewModel.phoneNumber.orEmpty(),
+                countryCode = viewModel.countryCode.orEmpty()
+            )
         }
-    }catch (e:Exception){
+    } catch (e: Exception) {
         e.printStackTrace()
     }
 
@@ -71,6 +72,7 @@ class Verify : BaseActivity<ActivityVerifyBinding>() {
     private fun observerSendOtpResponse() = viewModel.sendLoginOtp.observeData(this, onLoading = {
         showProgressDialog()
     }, onSuccess = {
+        showErrorMessage("4-digit code has been sent")
         hideProgressDialog()
     }, onError = {
         showErrorMessage(this)

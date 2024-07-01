@@ -32,17 +32,21 @@ import android.view.WindowInsets
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.messaging.FirebaseMessaging
 import com.salonedriver.SaloneDriver
 import com.salonedriver.databinding.HomePageAlertBinding
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.DateFormat
 import java.text.ParseException
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 
 object AppUtils {
@@ -58,6 +62,7 @@ object AppUtils {
         }
         return false
     }
+
     fun hasScreenNavigation(activity: Activity): Boolean {
         val hasSoftwareKeys: Boolean
         val d = activity.windowManager.defaultDisplay
@@ -793,7 +798,9 @@ object AppUtils {
                 values
             )
             context.contentResolver?.openOutputStream(uri!!).use { output ->
-                bmp.compress(Bitmap.CompressFormat.JPEG, 100, output)
+                if (output != null) {
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, output)
+                }
             }
             return uri
         } catch (e: java.lang.Exception) {
@@ -869,14 +876,14 @@ object AppUtils {
 /**
  * Get Auth Token
  * */
-fun getFCMToken(fcmToken : (String) -> Unit = {}) = try {
-    FirebaseMessaging.getInstance().token.addOnCompleteListener{ task ->
+fun getFCMToken(fcmToken: (String) -> Unit = {}) = try {
+    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
         if (!task.isSuccessful) {
             return@addOnCompleteListener
         }
         fcmToken(task.result)
     }
-}catch (e:Exception){
+} catch (e: Exception) {
     e.printStackTrace()
 }
 
@@ -884,10 +891,10 @@ fun getFCMToken(fcmToken : (String) -> Unit = {}) = try {
 /**
  * Fetch last 30 years list
  * */
-fun fetchYearsList(): List<String>{
+fun fetchYearsList(): List<String> {
     val list = mutableListOf<String>()
     val calendar = Calendar.getInstance()
-    for (i in 0..40){
+    for (i in 0..40) {
         list.add(calendar.get(Calendar.YEAR).toString())
         calendar.add(Calendar.YEAR, -1)
     }
@@ -903,7 +910,7 @@ fun Context.composeEmail(email: String?, subject: String? = null) {
             intent.putExtra(Intent.EXTRA_SUBJECT, subject)
         }
         startActivity(intent)
-    }catch (e:Exception){
+    } catch (e: Exception) {
         e.printStackTrace()
     }
 }
@@ -916,7 +923,7 @@ fun String?.formatAmount(): String {
         } ?: run {
             throw Exception()
         }
-    }catch (e:Exception){
+    } catch (e: Exception) {
         return this
     }
 }
@@ -933,11 +940,12 @@ fun showHomePageDialog(
     btnText: String? = null,
     cancelable: Boolean = false,
     callback: () -> Unit = {}
-){
-    if (bottomSheetDialog?.isShowing != true){
+) {
+    if (bottomSheetDialog?.isShowing != true) {
         SaloneDriver.appContext.let { context ->
             bottomSheetDialog = BottomSheetDialog(context).apply {
-                val binding = HomePageAlertBinding.inflate(LayoutInflater.from(context), null, false)
+                val binding =
+                    HomePageAlertBinding.inflate(LayoutInflater.from(context), null, false)
                 setContentView(binding.root)
 
                 setCancelable(cancelable)
@@ -957,7 +965,6 @@ fun showHomePageDialog(
             }
         }
     }
-
 
 
 }

@@ -60,7 +60,6 @@ class LocationService : LifecycleService() {
     }
 
     private fun start() {
-
         startForeground(NOTIFICATION_ID, getNotification())
         checkPermissions(
             Manifest.permission.ACCESS_FINE_LOCATION,

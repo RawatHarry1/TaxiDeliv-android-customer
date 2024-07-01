@@ -2,9 +2,6 @@ package com.salonedriver.repo
 
 import com.salonedriver.model.api.ApiInterface
 import com.salonedriver.model.api.getJsonRequestBody
-import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
-import com.salonedriver.model.dataclassses.userData.UserDataDC
-import com.salonedriver.util.SharedPreferencesManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -22,6 +19,7 @@ class PreLoginRepo @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
+
     suspend fun generateLoginOtp(jsonObject: JSONObject) = flow {
         emit(apiInterface.generateLoginOtp(requestBody = jsonObject.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
@@ -32,7 +30,10 @@ class PreLoginRepo @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-    suspend fun updateDriverInfo(hashMap: HashMap<String, RequestBody?>, part: MultipartBody.Part?) = flow {
+    suspend fun updateDriverInfo(
+        hashMap: HashMap<String, RequestBody?>,
+        part: MultipartBody.Part?
+    ) = flow {
         emit(apiInterface.updateDriverInfo(partMap = hashMap, multipartBody = part))
     }.flowOn(Dispatchers.IO)
 
@@ -42,9 +43,10 @@ class PreLoginRepo @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-    suspend fun uploadDocument(hashMap: HashMap<String, RequestBody?>, part: MultipartBody.Part) = flow {
-        emit(apiInterface.uploadDocument(partMap = hashMap, multipartBody = part))
-    }.flowOn(Dispatchers.IO)
+    suspend fun uploadDocument(hashMap: HashMap<String, RequestBody?>, part: MultipartBody.Part) =
+        flow {
+            emit(apiInterface.uploadDocument(partMap = hashMap, multipartBody = part))
+        }.flowOn(Dispatchers.IO)
 
 
     suspend fun getCityVehicle(cityId: String) = flow {
@@ -71,9 +73,11 @@ class PreLoginRepo @Inject constructor(
 
 
     suspend fun aboutUsData(operatorId: String, cityId: String) = flow {
-        emit(apiInterface.aboutUs(
-            operatorId, cityId
-        ))
+        emit(
+            apiInterface.aboutUs(
+                operatorId, cityId
+            )
+        )
     }.flowOn(Dispatchers.IO)
 
 }

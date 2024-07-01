@@ -297,9 +297,9 @@ abstract class BaseActivity<MyDataBinding : ViewDataBinding> : AppCompatActivity
         supportFragmentManager.popBackStackImmediate()
     }
 
-    fun getDeviceId(): String {
-        return AppUtils.getDeviceId()
-    }
+//    fun getDeviceId(): String {
+//        return AppUtils.getDeviceId()
+//    }
 
     /*fun logoutUser() {
         SharedPreferencesManager.clearAllPreferences()

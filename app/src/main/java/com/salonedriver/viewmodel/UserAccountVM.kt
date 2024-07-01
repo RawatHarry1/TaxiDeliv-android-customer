@@ -48,4 +48,10 @@ class UserAccountVM @Inject constructor(
         ).setApiState(_vehicleListData)
     }
 
+    private val _updateDriverLocation by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
+    val updateDriverLocation: LiveData<ApiState<BaseResponse<Any>>> get() = _updateDriverLocation
+
+    fun updateDriverLocation() = viewModelScope.launch {
+        repository.updateDriverLocation().setApiState(_updateDriverLocation)
+    }
 }

@@ -2,32 +2,28 @@ package com.salonedriver.view.ui.home_drawer
 
 import android.Manifest
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams
-import android.widget.RelativeLayout
 import androidx.activity.viewModels
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.mukesh.photopicker.utils.checkPermissions
 import com.salonedriver.R
+import com.salonedriver.SaloneDriver
 import com.salonedriver.customClasses.LocationResultHandler
 import com.salonedriver.customClasses.SingleFusedLocation
 import com.salonedriver.databinding.ActivityHomeBinding
 import com.salonedriver.model.api.observeData
+import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
 import com.salonedriver.model.dataclassses.userData.UserDataDC
 import com.salonedriver.util.DriverDocumentStatusForApp
 import com.salonedriver.util.SharedPreferencesManager
@@ -37,6 +33,11 @@ import com.salonedriver.view.base.BaseActivity
 import com.salonedriver.view.ui.SignUpInActivity
 import com.salonedriver.viewmodel.UserAccountVM
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @AndroidEntryPoint
@@ -47,7 +48,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     private lateinit var drawerLayout: DrawerLayout
     private val navController by lazy { findNavController(R.id.nav_host_fragment_content_home) }
     private val userVM by viewModels<UserAccountVM>()
-
     var onlineDriver = false
     override fun getLayoutId(): Int {
         return R.layout.activity_home
@@ -72,10 +72,38 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         observeLogout()
         observeVehicleData()
         addDrawerListener()
+        startRepeatingJob()
     }
 
+    private fun startRepeatingJob() {
+        lifecycleScope.launch {
+            while (true) {
+                withContext(Dispatchers.IO) {
+                    if (SaloneDriver.latLng != null && SaloneDriver.latLng?.latitude != 0.0) {
+                        userVM.updateDriverLocation()
+                    }
+                }
+                try {
+                    val clientConfig =
+                        SharedPreferencesManager.getModel<ClientConfigDC>(SharedPreferencesManager.Keys.CLIENT_CONFIG)
+                    val timer = clientConfig?.updateLocationTimer ?: 0f
+                    if (timer != 0f)
+                        delay((timer * 1000).toLong())
+                    else
+                        delay(15000)
+                } catch (e: Exception) {
+                    delay(15000) // 15 seconds
+                }
+            }
+        }
+    }
 
-    private fun addDrawerListener(){
+    override fun onDestroy() {
+        super.onDestroy()
+        lifecycleScope.coroutineContext.cancelChildren() // Stop the job when the activity is destroyed
+    }
+
+    private fun addDrawerListener() {
 //        binding.drawerLayout.setScrimColor(Color.TRANSPARENT)
 //        binding.drawerLayout.setDrawerShadow(ColorDrawable(Color.TRANSPARENT), GravityCompat.END)
     }
@@ -87,16 +115,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     }
 
 
-    private fun drawerLayoutCallback(){
-        binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener{
+    private fun drawerLayoutCallback() {
+        binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
                 binding.content.x = binding.navView.width * slideOffset
                 val lp: LayoutParams = binding.content.layoutParams as LayoutParams
-                if (slideOffset == 0f){
+                if (slideOffset == 0f) {
                     lp.height = LayoutParams.MATCH_PARENT
-                    lp.topMargin =0
+                    lp.topMargin = 0
                 } else {
-                    lp.height = binding.drawerLayout.height - (binding.drawerLayout.height * slideOffset * 0.3f).toInt()
+                    lp.height =
+                        binding.drawerLayout.height - (binding.drawerLayout.height * slideOffset * 0.3f).toInt()
                     lp.topMargin = (binding.drawerLayout.height - lp.height) / 2
                 }
                 binding.content.layoutParams = lp
@@ -104,12 +133,27 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
             override fun onDrawerOpened(p0: View) {
                 binding.holder.radius = 25f
-                if (SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)?.login?.driverDocumentStatus?.requiredDocStatus.orEmpty() == DriverDocumentStatusForApp.REJECTED.type){
-                    binding.tvDocuments.setTextColor(ContextCompat.getColor(this@HomeActivity, R.color.red_text_color))
-                    binding.tvDocuments.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.ic_new_info,0)
-                }else{
-                    binding.tvDocuments.setTextColor(ContextCompat.getColor(this@HomeActivity, R.color.black))
-                    binding.tvDocuments.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0)
+                if (SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)?.login?.driverDocumentStatus?.requiredDocStatus.orEmpty() == DriverDocumentStatusForApp.REJECTED.type) {
+                    binding.tvDocuments.setTextColor(
+                        ContextCompat.getColor(
+                            this@HomeActivity,
+                            R.color.red_text_color
+                        )
+                    )
+                    binding.tvDocuments.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        0,
+                        0,
+                        R.drawable.ic_new_info,
+                        0
+                    )
+                } else {
+                    binding.tvDocuments.setTextColor(
+                        ContextCompat.getColor(
+                            this@HomeActivity,
+                            R.color.black
+                        )
+                    )
+                    binding.tvDocuments.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
                 }
             }
 
@@ -122,7 +166,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         })
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            checkPermissions(Manifest.permission.POST_NOTIFICATIONS){}
+            checkPermissions(Manifest.permission.POST_NOTIFICATIONS) {}
         }
     }
 
@@ -231,7 +275,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     }, onSuccess = {
         hideProgressDialog()
         drawerLayout.close()
-        if (this?.docStatus.orEmpty() == "APPROVED") navController.navigate(R.id.nav_vehicle_listing, bundleOf("vehicleData" to this))
+        if (this?.docStatus.orEmpty() == "APPROVED") navController.navigate(
+            R.id.nav_vehicle_listing,
+            bundleOf("vehicleData" to this)
+        )
         else commonToast(message = getString(R.string.your_documents_are_not_approved_from_admin))
     })
 }

@@ -109,6 +109,7 @@ object SharedPreferencesManager {
     object Keys {
         const val CLIENT_CONFIG = "clientConfig"
         const val USER_DATA = "userData"
+        const val WALKTHROUGH = "walkThrough"
         const val NEW_BOOKING = "newBooking"
         const val DOCUMENT_APPROVED = "documentApproved"
         const val DRIVER_ONLINE = "driverOnline"

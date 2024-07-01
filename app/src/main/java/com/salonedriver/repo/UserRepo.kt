@@ -17,6 +17,12 @@ class UserRepo @Inject constructor(
         emit(apiInterface.getProfile())
     }.flowOn(Dispatchers.IO)
 
+    suspend fun updateDriverLocation() = flow {
+        emit(apiInterface.updateDriverLocation(JSONObject().apply {
+            put("latitude", SaloneDriver.latLng?.latitude)
+            put("longitude", SaloneDriver.latLng?.longitude)
+        }.getJsonRequestBody()))
+    }.flowOn(Dispatchers.IO)
 
     suspend fun logout() = flow {
         emit(apiInterface.logout())
@@ -40,7 +46,6 @@ class UserRepo @Inject constructor(
     suspend fun getWalletBalance() = flow {
         emit(apiInterface.getWalletBalance())
     }.flowOn(Dispatchers.IO)
-
 
 
     suspend fun getVehicleList(cityId: String) = flow {

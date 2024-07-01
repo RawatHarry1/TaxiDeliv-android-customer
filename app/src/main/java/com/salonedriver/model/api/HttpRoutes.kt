@@ -57,3 +57,4 @@ const val VEHICLE_DATA = "driver/fetch_driver_vehicles"
 const val TRANSACTION_HISTORY = "get_transaction_history"
 
 const val CANCEL_TRIP = "cancelTheTrip"
+const val UPDATE_DRIVER_LOCATION = "update_driver_location"

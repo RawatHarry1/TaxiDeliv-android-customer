@@ -16,6 +16,8 @@ data class ClientConfigDC(
     val loginChannel: String? = null,
     @SerializedName("operatorToken")
     val operatorToken: String? = null,
+    @SerializedName("update_location_timmer")
+    val updateLocationTimer: Float? = null,
     @SerializedName("show_facebook_login")
     val showFacebookLogin: String? = null,
     @SerializedName("show_google_login")
