@@ -9,13 +9,13 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -143,6 +143,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         addAdapterSetupAndApiHit()
         getNearByDrivers()
         observeSOS()
+//        rideVM.rideAlertUiState.value?.let { uiStateHandler(it) }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
     private fun getNearByDrivers() {
@@ -214,11 +216,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
+                        rideVM.hideHomeNav(false)
                         // Bottom sheet is hidden, attempt to clear state
-                        Handler(Looper.getMainLooper()).postDelayed({
+//                        Handler(Looper.getMainLooper()).postDelayed({
 //                            clearSavedStateData()
-                            Log.i("SavedStateData", "State cleared after STATE_HIDDEN")
-                        }, 200) // Adding a delay to ensure state changes have completed
+//                            Log.i("SavedStateData", "State cleared after STATE_HIDDEN")
+//                        }, 200) // Adding a delay to ensure state changes have completed
+//                        rideVM.createRideData = CreateRideData()
                     }
 
                     BottomSheetBehavior.STATE_COLLAPSED -> {
@@ -237,6 +241,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     }
 
                     BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+                        rideVM.hideHomeNav(false)
                         // Bottom sheet is expanded
                         Log.i("SavedStateData", "in STATE_HALF_EXPANDED")
                     }
@@ -251,7 +256,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
     private fun clearSavedStateData() {
         val clearStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
-
         clearStateHandle?.let {
             it.remove<CreateRideData.LocationData>("pickUpLocation")
             it.remove<CreateRideData.LocationData>("dropLocation")
@@ -302,13 +306,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             startTimeDialog(requireContext())
         }
         binding.tvWhereTo.setOnSingleClickListener {
+            rideVM.createRideData = CreateRideData()
             schedule = false
             rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
         }
         binding.rlRide.setOnSingleClickListener {
+            rideVM.createRideData = CreateRideData()
             schedule = false
             rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
         }
+
+        Log.i("rideAlertUiState","on home  ${rideVM.rideAlertUiState.value}")
 
         if (rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.HomeScreen || rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.ShowLocationDialog) {
             rideVM.fetchOngoingTrip()
@@ -816,7 +824,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     totalCapacity = it?.maxPeople.orEmpty(),
                     eta = it?.eta.orEmpty(),
                     fare = it?.region_fare?.fare.toString(),
-                    currency = it?.region_fare?.currency
+                    currency = it?.region_fare?.currency,
+                    distance = rideVM.customerETA.rideDistance.toString()
                 )
             }
         }
@@ -888,6 +897,32 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         uiStateHandler(it)
     }
 
+    // Register back press callback
+    val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.FindDriverDialog) {
+                AlertDialog.Builder(requireActivity()).apply {
+                    setTitle("Cancel Ride")
+                    setMessage("Your ride request will get cancelled")
+                    setPositiveButton("Okay") { _, _ ->
+                        findNavController().navigate(
+                            R.id.navigation_cancel_ride,
+                            bundleOf("sessionId" to rideVM.createRideData.sessionId)
+                        )
+                    }
+                    setNegativeButton("Cancel") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    create()
+                    show()
+                }
+            } else {
+//                hideAllBottomSheets()
+                requireActivity().finish()
+            }
+        }
+    }
+
     private fun setNearByDriverMarkersOnMainMap(googleMap: GoogleMap) {
         nearByDriverLatLanArrayList.forEach { it ->
             val marker = googleMap.addMarker(
@@ -905,6 +940,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         try {
             when (state) {
                 RideVM.RideAlertUiState.HomeScreen -> {
+//                    rideVM.hideHomeNav(false)
 //                    Intent(requireActivity(), Home::class.java).apply {
 //                        startActivity(this)
 //                        requireActivity().finishAffinity()
@@ -912,6 +948,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
 
                 RideVM.RideAlertUiState.ShowLocationDialog -> {
+                    rideVM.hideHomeNav(true)
                     Log.i("SavedStateData", "in ShowLocationDialog")
                     if (rideVM.createRideData.pickUpLocation?.address.isNullOrEmpty())
                         lifecycleScope.launch {
@@ -924,6 +961,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
 
                 RideVM.RideAlertUiState.ShowVehicleTypesDialog -> {
+                    rideVM.hideHomeNav(true)
                     binding.clWhereMain.visibility = View.GONE
                     binding.clMapMain.visibility = View.VISIBLE
                     startCarTypesDialog()
@@ -962,6 +1000,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
 
                 RideVM.RideAlertUiState.ShowCustomerDetailPaymentDialog -> {
+                    rideVM.hideHomeNav(true)
                     binding.clWhereMain.visibility = View.GONE
                     binding.clMapMain.visibility = View.VISIBLE
                     carDetailDialog(requireContext())
@@ -969,6 +1008,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
 
                 RideVM.RideAlertUiState.FindDriverDialog -> {
+                    rideVM.hideHomeNav(true)
                     binding.clWhereMain.visibility = View.GONE
                     binding.clMapMain.visibility = View.VISIBLE
                     startRideDialog(requireContext(), RideVM.RideAlertUiState.FindDriverDialog)
@@ -976,6 +1016,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
 
                 RideVM.RideAlertUiState.ShowCustomerDetailDialog -> {
+                    rideVM.hideHomeNav(true)
                     binding.clWhereMain.visibility = View.GONE
                     binding.clMapMain.visibility = View.VISIBLE
                     rideStatus = AppConstants.DRIVER_ARRIVED
@@ -1199,6 +1240,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }, onError = {
             hideProgressDialog()
             showToastShort(this)
+            binding.clWhereMain.visibility = View.VISIBLE
+            binding.clMapMain.visibility = View.GONE
+            rideVM.hideHomeNav(false)
+            rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
         }, onSuccess = {
             hideProgressDialog()
             rideVM.createRideData.sessionId = this?.sessionId.orEmpty()
@@ -1217,6 +1262,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             binding.clWhereMain.visibility = View.VISIBLE
             binding.clMapMain.visibility = View.GONE
             hideAllBottomSheets()
+            rideVM.hideHomeNav(false)
         }, onSuccess = {
             hideProgressDialog()
             showSnackBar("Your ride has been scheduled successfully!!")
@@ -1292,9 +1338,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }
     }
 
-    override fun requestTimeout() {
-        super.requestTimeout()
-        Log.i("fetchOngoingTrip", "requestTimeout")
+    override fun requestTimeout(msg: String) {
+        requireActivity().runOnUiThread {
+            binding.clWhereMain.visibility = View.VISIBLE
+            binding.clMapMain.visibility = View.GONE
+            hideAllBottomSheets()
+            rideVM.hideHomeNav(false)
+            rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
+            showSnackBar(msg)
+        }
         rideVM.fetchOngoingTrip()
     }
 

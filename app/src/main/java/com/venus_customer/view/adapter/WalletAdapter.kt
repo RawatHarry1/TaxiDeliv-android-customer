@@ -52,7 +52,7 @@ class WalletAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.Vi
                         R.color.cancel_btn_red_color
                     )
                 )
-            binding.tvAmountAdded.text = "$currency ${data.amount}"
+            binding.tvAmountAdded.text = "$currency ${data.amount?: 0.0}"
             binding.tvDate.text = "${data.txn_date ?: ""}"
             binding.tvTime.text = "${data.txn_time ?: ""}"
             binding.tvProcessNo.text = "${data.txn_id ?: ""}"

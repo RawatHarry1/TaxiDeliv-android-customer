@@ -2,26 +2,20 @@ package com.venus_customer.view.activity.walk_though
 
 import android.Manifest
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mukesh.photopicker.utils.checkPermissions
 import com.venus_customer.R
 import com.venus_customer.databinding.ActivityHomeBinding
 import com.venus_customer.model.api.observeData
-import com.venus_customer.model.dataClass.userData.UserDataDC
 import com.venus_customer.util.SharedPreferencesManager
 import com.venus_customer.util.gone
 import com.venus_customer.util.safeCall
@@ -66,7 +60,10 @@ class Home : BaseActivity<ActivityHomeBinding>() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_trips, R.id.navigation_notifications, R.id.navigation_account
+                R.id.navigation_home,
+                R.id.navigation_trips,
+                R.id.navigation_notifications,
+                R.id.navigation_account
             )
         )
         navView.setupWithNavController(navController)
@@ -74,6 +71,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
         navController.addOnDestinationChangedListener(listener)
 
         observeData()
+        observeUiState()
     }
 
     private val listener =
@@ -83,7 +81,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
                     binding.navView.visible()
                 else
                     binding.navView.gone()
-                rideVM.updateUiState(RideAlertUiState.HomeScreen)
+//                rideVM.updateUiState(RideAlertUiState.HomeScreen)
             }
         }
 
@@ -92,12 +90,11 @@ class Home : BaseActivity<ActivityHomeBinding>() {
         super.onResume()
         safeCall {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                checkPermissions(Manifest.permission.POST_NOTIFICATIONS){}
+                checkPermissions(Manifest.permission.POST_NOTIFICATIONS) {}
             }
             viewModel.loginViaToken()
         }
     }
-
 
 
     fun removeTint(source: Bitmap): Bitmap {
@@ -116,4 +113,12 @@ class Home : BaseActivity<ActivityHomeBinding>() {
         hideProgressDialog()
         showToastShort(this)
     })
+
+    private fun observeUiState() = rideVM.hideHomeNavigation.observe(this) {
+        Log.i("RIDESTATE", "$it")
+        if (it)
+            binding.navView.gone()
+        else
+            binding.navView.visible()
+    }
 }

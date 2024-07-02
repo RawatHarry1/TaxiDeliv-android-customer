@@ -48,6 +48,12 @@ class RideVM @Inject constructor(
     private val _rideAlertUiState by lazy { SingleLiveEvent<RideAlertUiState>() }
     val rideAlertUiState: LiveData<RideAlertUiState> = _rideAlertUiState
 
+    /**
+     * Home navigation hide/unhide
+     * */
+    private val _hideHomeNavigation by lazy { SingleLiveEvent<Boolean>() }
+    val hideHomeNavigation: LiveData<Boolean> = _hideHomeNavigation
+
     init {
         updateUiState(RideAlertUiState.HomeScreen)
     }
@@ -103,6 +109,8 @@ class RideVM @Inject constructor(
                 put("vehicleType", createRideData.vehicleType)
                 put("phoneNo", userData?.login?.phoneNo.orEmpty())
                 put("customerNote", notes)
+                put("estimated_fare", createRideData.vehicleData?.fare ?: "")
+                put("estimated_trip_distance", createRideData.vehicleData?.distance ?: "")
             }
         ).setApiState(_requestRideData)
     }
@@ -249,6 +257,15 @@ class RideVM @Inject constructor(
         try {
 //            if (rideAlertUiState == _rideAlertUiState.value) return
             _rideAlertUiState.value = rideAlertUiState
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun hideHomeNav(isHide: Boolean) {
+        try {
+//            if (rideAlertUiState == _rideAlertUiState.value) return
+            _hideHomeNavigation.value = isHide
         } catch (e: Exception) {
             e.printStackTrace()
         }

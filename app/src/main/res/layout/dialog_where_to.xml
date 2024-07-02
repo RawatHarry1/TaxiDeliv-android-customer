@@ -146,7 +146,7 @@
             android:fontFamily="@font/poppins_bold"
             android:text="@string/choose_address"
             android:textColor="@color/black_text_color"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -158,7 +158,7 @@
             android:orientation="horizontal"
             android:gravity="center"
             android:paddingVertical="@dimen/_6sdp"
-            android:paddingHorizontal="@dimen/_12sdp"
+            android:paddingHorizontal="@dimen/_8sdp"
             android:background="@drawable/bg_add_address_round_8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

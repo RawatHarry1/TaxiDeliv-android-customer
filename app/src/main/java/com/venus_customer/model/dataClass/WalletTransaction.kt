@@ -2,9 +2,9 @@ package com.venus_customer.model.dataClass
 
 
 data class WalletTransaction(
-    val balance: Double,
+    val balance: Double?,
     val banner: String,
-    val currency: String,
+    val currency: String?,
     val num_txns: Int,
     val page_size: Int,
     val transactions: List<TransactionData>,
@@ -14,7 +14,7 @@ data class WalletTransaction(
 data class TransactionData(
     val txn_id: Int,
     val txn_type: Int,
-    val amount: Double,
+    val amount: Double?,
     val txn_date: String,
     val txn_time: String,
     val logged_on: String,

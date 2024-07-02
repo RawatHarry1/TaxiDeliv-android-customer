@@ -60,8 +60,7 @@
                 android:nestedScrollingEnabled="true"
                 android:layout_weight="1"
                 tools:itemCount="5"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                />
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etReason"

@@ -20,7 +20,7 @@ object AppConstants {
 }
 
 object APIEndPointsConstants {
-    const val FETCH_OPERATOR_TOKEN = "getClientConfig"
+    const val FETCH_OPERATOR_TOKEN = "customer/getClientConfig"
     const val SEND_LOGIN_OTP = "customer/sendLoginOtp"
     const val VERIFY_OTP = "customer/verifyOtp"
     const val UPDATE_PROFILE = "customer/profile"

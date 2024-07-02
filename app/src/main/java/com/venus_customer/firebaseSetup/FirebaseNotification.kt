@@ -16,8 +16,8 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavDeepLinkBuilder
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import com.venus_customer.R
-import com.venus_customer.util.SharedPreferencesManager
 import com.venus_customer.view.activity.walk_though.Home
 import com.venus_customer.view.activity.walk_though.ui.home.HomeFragment
 import kotlinx.parcelize.Parcelize
@@ -38,7 +38,7 @@ class FirebaseNotification : FirebaseMessagingService() {
      * */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-
+        Log.i("PUSHNOTI", Gson().toJson(remoteMessage.data))
         remoteMessage.notification.let {
             notificationData.title = it?.title ?: getString(R.string.app_name)
             notificationData.message = it?.body ?: getString(R.string.app_name)
@@ -69,15 +69,28 @@ class FirebaseNotification : FirebaseMessagingService() {
 
             if (data.contains("notificationDetails")) {
                 JSONObject(data["notificationDetails"].toString()).let { detail ->
-                    notificationData.notificationModel.tripId = detail.optString("trip_id").toString()
-                    notificationData.notificationModel.driverId = detail.optString("driver_id").toString()
+                    notificationData.notificationModel.tripId =
+                        detail.optString("trip_id").toString()
+                    notificationData.notificationModel.driverId =
+                        detail.optString("driver_id").toString()
                 }
             }
 
-            if ((data["notification_type"]?.toIntOrNull() ?: 0) == NotificationStatus.RIDE_ENDED.type){
-                HomeFragment.notificationInterface?.rideEnd(notificationData.notificationModel.tripId.orEmpty(), notificationData.notificationModel.driverId.orEmpty())
-            } else if ((notificationData.notificationType?.toIntOrNull() ?: 0) == NotificationStatus.RIDE_ACCEPTED.type) {
+            if ((data["notification_type"]?.toIntOrNull()
+                    ?: 0) == NotificationStatus.RIDE_ENDED.type
+            ) {
+                HomeFragment.notificationInterface?.rideEnd(
+                    notificationData.notificationModel.tripId.orEmpty(),
+                    notificationData.notificationModel.driverId.orEmpty()
+                )
+            } else if ((notificationData.notificationType?.toIntOrNull()
+                    ?: 0) == NotificationStatus.RIDE_ACCEPTED.type
+            ) {
                 HomeFragment.notificationInterface?.acceptRide()
+            } else if ((notificationData.notificationType?.toIntOrNull()
+                    ?: 0) == NotificationStatus.TIME_OUT_RIDE.type
+            ) {
+                HomeFragment.notificationInterface?.requestTimeout(notificationData.message ?: "")
             } else {
                 HomeFragment.notificationInterface?.callFetchRideApi()
             }
@@ -104,10 +117,13 @@ class FirebaseNotification : FirebaseMessagingService() {
             .setContentIntent(
                 when (notificationData.notificationType?.toIntOrNull() ?: -1) {
                     NotificationStatus.WALLET_UPDATE.type -> getPendingIntent(destinationId = R.id.navigation_wallet)
-                    NotificationStatus.RIDE_ENDED.type -> getPendingIntent(destinationId = R.id.navigation_ride_details, bundleOf(
-                        "tripId" to notificationData.notificationModel.tripId.orEmpty(),
-                        "driverId" to notificationData.notificationModel.driverId.orEmpty()
-                    ))
+                    NotificationStatus.RIDE_ENDED.type -> getPendingIntent(
+                        destinationId = R.id.navigation_ride_details, bundleOf(
+                            "tripId" to notificationData.notificationModel.tripId.orEmpty(),
+                            "driverId" to notificationData.notificationModel.driverId.orEmpty()
+                        )
+                    )
+
                     else -> getPendingIntent(destinationId = R.id.mobile_navigation)
                 }
             )
@@ -142,8 +158,9 @@ class FirebaseNotification : FirebaseMessagingService() {
     private fun getPendingIntent(destinationId: Int, bundle: Bundle? = null): PendingIntent =
         if (Build.VERSION.SDK_INT >= 31) NavDeepLinkBuilder(this).setComponentName(Home::class.java)
             .setGraph(R.navigation.mobile_navigation).setDestination(destinationId)
-            .setArguments(bundle).createTaskStackBuilder()
-            .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)!!
+            .setArguments(bundle).createTaskStackBuilder().getPendingIntent(
+                0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )!!
         else NavDeepLinkBuilder(this).setComponentName(Home::class.java)
             .setGraph(R.navigation.mobile_navigation).setDestination(destinationId)
             .setArguments(bundle).createPendingIntent()

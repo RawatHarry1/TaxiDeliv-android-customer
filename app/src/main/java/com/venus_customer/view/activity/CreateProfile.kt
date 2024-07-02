@@ -82,7 +82,6 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
 
     private fun checkValidation(): Boolean {
         return when {
-
             viewModel.imagePath.isNullOrEmpty() -> {
                 showToastShort(getString(R.string.please_select_profile_pic))
                 false

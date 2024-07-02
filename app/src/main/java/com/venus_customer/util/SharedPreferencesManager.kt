@@ -5,6 +5,7 @@ import android.preference.PreferenceManager
 import com.venus_customer.VenusApp
 import com.venus_customer.model.api.convertGsonString
 import com.venus_customer.model.api.convertStringIntoClass
+import com.venus_customer.view.activity.walk_though.WalkThrough
 
 object SharedPreferencesManager {
 
@@ -106,6 +107,7 @@ object SharedPreferencesManager {
     object Keys {
         const val CLIENT_CONFIG = "clientConfig"
         const val USER_DATA = "userData"
+        const val WALKTHROUGH = "walkThrough"
         const val TRIP_ID = "tripId"
         const val SESSION_ID = "session_id"
     }

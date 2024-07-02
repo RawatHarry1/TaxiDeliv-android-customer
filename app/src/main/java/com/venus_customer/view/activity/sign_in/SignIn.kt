@@ -3,6 +3,7 @@ package com.venus_customer.view.activity.sign_in
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -36,7 +37,6 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         binding = getViewDataBinding()
         if (intent.hasExtra("type")){
@@ -46,6 +46,7 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
         setVisibility()
         observeSignIn()
         observerOtpData()
+       Log.i("DEFAULTCODE","${ binding.ccp.defaultCountryCode}")
     }
 
     private fun clicks() {

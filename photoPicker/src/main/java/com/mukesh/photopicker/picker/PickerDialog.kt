@@ -71,7 +71,6 @@ class PickerDialog internal constructor() : BottomSheetDialogFragment(), View.On
             }
         }
 
-
     /**
      * Media Images Picker
      * */

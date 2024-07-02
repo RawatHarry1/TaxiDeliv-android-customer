@@ -125,6 +125,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 app:ccp_textSize="12sp"
+                app:ccp_autoDetectCountry="true"
+                app:ccp_countryAutoDetectionPref="NETWORK_SIM_LOCALE"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

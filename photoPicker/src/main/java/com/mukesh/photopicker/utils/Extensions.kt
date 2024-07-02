@@ -3,6 +3,7 @@ package com.mukesh.photopicker.utils
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -40,29 +41,70 @@ fun Fragment.pickerDialog(): PickerDialog =
 /**
  * After Getting Image
  * */
+//fun Context.getMediaFilePathFor(uri: Uri): String {
+//    contentResolver.query(uri, null, null, null, null).use { cursor ->
+//        val nameIndex = cursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+//        cursor.moveToFirst()
+//        val name = cursor.getString(nameIndex)
+//
+//        File(filesDir, name).run {
+//            try {
+//                contentResolver.openInputStream(uri).use { inputStream ->
+//                    val outputStream = FileOutputStream(this)
+//                    var read: Int
+//                    val buffers = ByteArray(inputStream!!.available())
+//                    while (inputStream.read(buffers).also { read = it } != -1) {
+//                        outputStream.use {
+//                            it.write(buffers, 0, read)
+//                        }
+//                    }
+//                }
+//            } catch (e: java.lang.Exception) {
+//                e.printStackTrace()
+//            }
+//            return getCompressed(this@getMediaFilePathFor, path).absolutePath
+//        }
+//    }
+//}
+
 fun Context.getMediaFilePathFor(uri: Uri): String {
     contentResolver.query(uri, null, null, null, null).use { cursor ->
-        val nameIndex = cursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-        cursor.moveToFirst()
-        val name = cursor.getString(nameIndex)
-        File(filesDir, name).run {
+        if (cursor != null && cursor.moveToFirst()) {
+            val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            val name = cursor.getString(nameIndex)
+
+            val file = File(filesDir, name)
             try {
-                contentResolver.openInputStream(uri).use { inputStream ->
-                    val outputStream = FileOutputStream(this)
-                    var read: Int
-                    val buffers = ByteArray(inputStream!!.available())
-                    while (inputStream.read(buffers).also { read = it } != -1) {
-                        outputStream.use {
-                            it.write(buffers, 0, read)
+                contentResolver.openInputStream(uri)?.use { inputStream ->
+                    FileOutputStream(file).use { outputStream ->
+                        val buffer = ByteArray(4096)
+                        var read: Int
+                        while (inputStream.read(buffer).also { read = it } != -1) {
+                            outputStream.write(buffer, 0, read)
                         }
                     }
                 }
-            } catch (e: java.lang.Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
-            return getCompressed(this@getMediaFilePathFor, path).absolutePath
+            return getCompressed(this, file.path).absolutePath
+        } else {
+            throw IllegalArgumentException("Failed to retrieve media file path for URI: $uri")
         }
     }
+}
+
+
+fun Context.getMediaFilePathForm(uri: Uri): String? {
+    val projection = arrayOf(MediaStore.Images.Media.DATA)
+    val cursor = contentResolver.query(uri, projection, null, null, null)
+    cursor?.use {
+        if (it.moveToFirst()) {
+            val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            return it.getString(columnIndex)
+        }
+    }
+    return null
 }
 
 

@@ -6,28 +6,56 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
+import android.os.Environment
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
 
+//fun getCompressed(context: Context?, path: String?): File {
+//    if (context == null) throw NullPointerException("Context must not be null.")
+//    if (path == null) throw NullPointerException("Path must not be null.")
+//    var cacheDir = context.externalCacheDir
+//    if (cacheDir == null) //fall back
+//        cacheDir = context.cacheDir
+//    val rootDir = cacheDir!!.absolutePath + "/ImageCompressor"
+//    val root = File(rootDir)
+//    if (!root.exists()) root.mkdirs()
+//    var bitmap = decodeImageFromFiles(path, 512, 512)
+//    val compressed = File(root, System.currentTimeMillis().toString().plus(".png"))
+//    val byteArrayOutputStream = ByteArrayOutputStream()
+//    bitmap = rotateImageIfRequired(Uri.parse(path), bitmap)
+//    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
+//    val fileOutputStream = FileOutputStream(compressed)
+//    fileOutputStream.write(byteArrayOutputStream.toByteArray())
+//    fileOutputStream.flush()
+//    fileOutputStream.close()
+//    return compressed
+//}
+
+
 fun getCompressed(context: Context?, path: String?): File {
     if (context == null) throw NullPointerException("Context must not be null.")
-    var cacheDir = context.externalCacheDir
-    if (cacheDir == null) //fall back
-        cacheDir = context.cacheDir
-    val rootDir = cacheDir!!.absolutePath + "/ImageCompressor"
+    if (path == null) throw NullPointerException("Path must not be null.")
+//    val pathDirectory = Environment.getExternalStoragePublicDirectory(
+//            Environment.DIRECTORY_PICTURES)
+    var cacheDir = context.externalCacheDir ?: context.cacheDir
+    val rootDir = "${cacheDir.absolutePath}/ImageCompressor"
     val root = File(rootDir)
     if (!root.exists()) root.mkdirs()
-    var bitmap = decodeImageFromFiles(path, 512, 512)
-    val compressed = File(root, System.currentTimeMillis().toString().plus(".png"))
+
+    val bitmap = decodeImageFromFiles(path, 512, 512)
+    val compressed = File(root, "${System.currentTimeMillis()}.png")
+
     val byteArrayOutputStream = ByteArrayOutputStream()
-    bitmap = rotateImageIfRequired(Uri.parse(path), bitmap)
-    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
-    val fileOutputStream = FileOutputStream(compressed)
-    fileOutputStream.write(byteArrayOutputStream.toByteArray())
-    fileOutputStream.flush()
-    fileOutputStream.close()
+    val rotatedBitmap = rotateImageIfRequired(Uri.parse(path), bitmap)
+    rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
+
+    FileOutputStream(compressed).use { fileOutputStream ->
+        fileOutputStream.write(byteArrayOutputStream.toByteArray())
+        fileOutputStream.flush()
+    }
+
     return compressed
 }
 

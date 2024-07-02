@@ -70,9 +70,9 @@ class WalletFragment : BaseFragment<FragmentWalletBinding>() {
         binding.shimmerLayout.shimmerLayout.isVisible = false
         binding.llWallet.isVisible = true
         this?.let {
-            adapter.setCurrency(it.currency)
+            adapter.setCurrency(it.currency?: "")
             adapter.submitList(it.transactions.orEmpty())
-            binding.tvTotalBalance.text = "${it.currency} ${it.balance}"
+            binding.tvTotalBalance.text = "${it.currency?: ""} ${it.balance?: 0.0}"
             binding.tvUserName.text = "${it.user_name}"
         }
         binding.tvNoTransactions.isVisible = adapter.itemCount == 0

@@ -11,16 +11,13 @@
         android:includeFontPadding="false"
         android:gravity="center_vertical"
         android:textColor="@color/black_text_color"
-        android:textSize="15sp"
         app:fontFamily="@font/poppins_regular" />
     <TextView
         android:id="@+id/tvText"
+        android:layout_gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/driver_is_late"
         android:textSize="@dimen/_11ssp"
         android:fontFamily="@font/poppins_semibold"
-        android:textColor="@color/black"
-        android:includeFontPadding="false"
-        />
+        android:textColor="@color/black" />
 </androidx.appcompat.widget.LinearLayoutCompat>
