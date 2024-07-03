@@ -215,8 +215,6 @@ class PickerDialog internal constructor() : BottomSheetDialogFragment(), View.On
         binding.tvCamera.setOnClickListener(this)
         binding.btSubmit.setOnClickListener(this)
     }
-
-
     /**
      * Click Listener
      * */

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout.LayoutParams
 import androidx.activity.viewModels
@@ -52,7 +53,20 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override fun getLayoutId(): Int {
         return R.layout.activity_home
     }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+         handleIntent(intent)
+    }
 
+    private fun handleIntent(intent: Intent) {
+        if (navController.handleDeepLink(intent)) {
+            // The deep link was handled by the NavController
+            Log.d("NotificationRedirection", "The deep link was handled by the NavController")
+        } else {
+            // The deep link was not handled
+            Log.d("NotificationRedirection", "The deep link was not handled")
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -73,6 +87,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         observeVehicleData()
         addDrawerListener()
         startRepeatingJob()
+        handleIntent(intent)
     }
 
     private fun startRepeatingJob() {

@@ -10,7 +10,7 @@
 
 
     <!--walk through-->
-    <string name="empty_string"/>
+    <string name="empty_string" />
     <string name="txt_join_the_green">Join The Green Team</string>
     <string name="txt_volt_exclusively_for_drivers">Volt is exclusively for drivers with fully electric vehicles.</string>
     <string name="txt_available_everywhere">Available Everywhere</string>
@@ -402,10 +402,13 @@
     <string name="user_not_register_please_signup_first">User not register. Please signup first.</string>
     <string name="user_already_registered_with_this_number_please_try_with_different_number">User already registered with this number. Please try with different number.</string>
     <string name="please_enter_first_name">*Please enter first name.</string>
+    <string name="please_enter_first_name_length">*First name should be at least three characters.</string>
     <string name="please_enter_valid_first_name">*Please enter valid first name.</string>
     <string name="please_enter_last_name">*Please enter last name.</string>
+    <string name="please_enter_last_name_length">*Last name should be at least three characters.</string>
     <string name="please_enter_valid_last_name">*Please enter valid last name.</string>
-    <string name="please_enter_designation">*Please enter designation.</string>
+    <string name="please_enter_designation">*Please enter username.</string>
+    <string name="please_enter_designation_length">*User name should be at least three characters.</string>
     <string name="please_enter_email_address">*Please enter email address.</string>
     <string name="please_enter_valid_email_address">*Please enter valid email address.</string>
     <string name="please_enter_valid_mobile_number">*Please enter valid mobile number.</string>
@@ -415,6 +418,7 @@
     <string name="upload">Upload</string>
     <string name="complete_text">Complete</string>
     <string name="please_upload_all_documents">*Please upload all documents.</string>
+    <string name="please_select_vehicle_type">*Please select vehicle type.</string>
     <string name="please_select_vehicle_make">*Please select vehicle year.</string>
     <string name="please_select_vehicle_model">*Please select vehicle model.</string>
     <string name="please_select_vehicle_color">*Please select vehicle color.</string>

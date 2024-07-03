@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import com.salonedriver.R
 import com.salonedriver.SaloneDriver
+import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.ActivityUploadDocumentsBinding
 import com.salonedriver.model.api.observeData
 import com.salonedriver.view.adapter.DocumentsAdapter
@@ -52,13 +53,13 @@ class UploadDocuments : BaseActivity<ActivityUploadDocumentsBinding>() {
         binding.ivBackUpload.isVisible = isFromView
         binding.tvNext.isVisible = !isFromView
         binding.rvUploadDocument.adapter = documentAdapter
-        binding.tvNext.setOnClickListener {
+        binding.tvNext.setOnSingleClickListener {
             val documentRequiredList = documentAdapter.getItems().filter { it.docRequirement == 1 }
             if (documentRequiredList.all {
                     ((it.docUrl?.size ?: 0) > 0) && ((it.docUrl?.size
                         ?: 0) >= (it.imagePosition?.size ?: 0))
                 }) {
-                startActivity(Intent(this, PayoutInformation::class.java))
+                startActivity(Intent(this@UploadDocuments, PayoutInformation::class.java))
                 finish()
             } else {
                 showErrorMessage(getString(R.string.please_upload_all_documents))

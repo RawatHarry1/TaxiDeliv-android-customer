@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.salonedriver.R
+import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.ActivitySignInBinding
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
@@ -47,20 +48,20 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
                 it.defaultCountryIso ?: "IN"
             } ?: run { "IN" })
 
-        binding.tvForgotPassword.setOnClickListener {
+        binding.tvForgotPassword.setOnSingleClickListener {
             startActivity(
                 Intent(
-                    this, ForgotPassword::class.java
+                    this@SignIn, ForgotPassword::class.java
                 )
             )
         }
-        binding.tvSignUp.setOnClickListener {
-            startActivity(Intent(this, SignUp::class.java))
+        binding.tvSignUp.setOnSingleClickListener {
+            startActivity(Intent(this@SignIn, SignUp::class.java))
         }
-        binding.ivBack.setOnClickListener {
+        binding.ivBack.setOnSingleClickListener {
             finish()
         }
-        binding.tvSignUpBtn.setOnClickListener {
+        binding.tvSignUpBtn.setOnSingleClickListener {
             if (binding.etEmail.getValue().isEmpty()) {
                 showErrorMessage(getString(R.string.please_enter_phone_number))
             } else if (binding.etEmail.length() != 10) {
@@ -84,6 +85,7 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
                 handlePermissionResult(permissions)
             }
     }
+
     private fun handlePermissionResult(permissions: Map<String, Boolean>) {
         if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
             permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true

@@ -17,13 +17,13 @@ import androidx.core.app.NotificationCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import com.salonedriver.R
 import com.salonedriver.model.dataclassses.userData.UserDataDC
 import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.view.fragment.wallet.WalletFragment
 import com.salonedriver.view.ui.home_drawer.HomeActivity
 import com.salonedriver.view.ui.home_drawer.ui.home.HomeFragment
-import kotlinx.coroutines.NonCancellable.start
 import kotlinx.parcelize.Parcelize
 import org.json.JSONObject
 import kotlin.random.Random
@@ -43,7 +43,7 @@ class FirebaseNotification : FirebaseMessagingService() {
      * */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-
+        Log.i("PUSHNOTI", Gson().toJson(remoteMessage.data))
         remoteMessage.notification.let {
             notificationData.title = it?.title ?: getString(R.string.app_name)
             notificationData.message = it?.body ?: getString(R.string.app_name)
@@ -179,8 +179,15 @@ class FirebaseNotification : FirebaseMessagingService() {
             )
             .setContentIntent(
                 when (notificationData.notificationType?.toIntOrNull() ?: -1) {
-                    NotificationStatus.WALLET_UPDATE.type -> getPendingIntent(destinationId = R.id.wallet)
-                    else -> getPendingIntent(destinationId = R.id.nav_home)
+                    NotificationStatus.WALLET_UPDATE.type -> {
+                        Log.i("PUSHNOTI","in wallet")
+                        createPendingIntent(destinationId = R.id.wallet)
+                    }
+
+                    else -> {
+                        Log.i("PUSHNOTI","in home")
+                        createPendingIntent(destinationId = R.id.nav_home)
+                    }
                 }
             )
 
@@ -239,14 +246,53 @@ class FirebaseNotification : FirebaseMessagingService() {
      * Pending Intent Handle
      * */
     private fun getPendingIntent(destinationId: Int, bundle: Bundle? = null): PendingIntent =
-        if (Build.VERSION.SDK_INT >= 31) NavDeepLinkBuilder(this).setComponentName(HomeActivity::class.java)
-            .setGraph(R.navigation.mobile_navigation).setDestination(destinationId)
-            .setArguments(bundle).createTaskStackBuilder()
-            .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)!!
-        else NavDeepLinkBuilder(this).setComponentName(HomeActivity::class.java)
-            .setGraph(R.navigation.mobile_navigation).setDestination(destinationId)
+        if (Build.VERSION.SDK_INT >= 31)
+            NavDeepLinkBuilder(this)
+                .setComponentName(HomeActivity::class.java)
+                .setGraph(R.navigation.mobile_navigation)
+                .setDestination(destinationId)
+//                .setArguments(bundle)
+                .createTaskStackBuilder()
+                .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)!!
+        else NavDeepLinkBuilder(this)
+            .setComponentName(HomeActivity::class.java)
+            .setGraph(R.navigation.mobile_navigation)
+            .setDestination(destinationId)
             .setArguments(bundle).createPendingIntent()
+    private fun createPendingIntent(destinationId: Int, bundle: Bundle? = null): PendingIntent? {
+        val navDeepLinkBuilder = NavDeepLinkBuilder(this)
+            .setComponentName(HomeActivity::class.java)
+            .setGraph(R.navigation.mobile_navigation)
+            .setDestination(destinationId)
 
+        if (bundle != null) {
+            Log.d("NotificationRedirection", "Bundle is not null, setting arguments: $bundle")
+            navDeepLinkBuilder.setArguments(bundle)
+        } else {
+            Log.d("NotificationRedirection", "Bundle is null, not setting arguments.")
+        }
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            navDeepLinkBuilder.createTaskStackBuilder()
+                .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
+                .also { pendingIntent ->
+                    if (pendingIntent == null) {
+                        Log.e("NotificationRedirection", "Failed to create PendingIntent on Android 31+")
+                    } else {
+                        Log.d("NotificationRedirection", "Successfully created PendingIntent on Android 31+")
+                    }
+                }
+        } else {
+           navDeepLinkBuilder.createPendingIntent()
+                .also { pendingIntent ->
+                    if (pendingIntent == null) {
+                        Log.e("NotificationRedirection", "Failed to create PendingIntent on Android < 31")
+                    } else {
+                        Log.d("NotificationRedirection", "Successfully created PendingIntent on Android < 31")
+                    }
+                }
+        }
+    }
 
     /**
      * Notification Data

@@ -333,7 +333,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                             rideTime = rideViewModel.newRideNotificationData.rideTime.orEmpty(),
                             waitTime = rideViewModel.newRideNotificationData.waitTime.orEmpty()
                         )
-
                     }
                 }
 
@@ -687,7 +686,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                 it.estimatedDriverFare = this?.estimatedDriverFare
                 it.customerName = this?.customerName
                 it.customerImage = this?.customerImage
-
+                it.rideTime = this?.date
             }
             googleMap?.clear()
 

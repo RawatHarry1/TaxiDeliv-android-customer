@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.salonedriver.R
+import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.ActivitySignUpBinding
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
@@ -46,14 +47,14 @@ class SignUp : BaseActivity<ActivitySignUpBinding>() {
             )?.let {
                 it.defaultCountryIso ?: "IN"
             } ?: run { "IN" })
-        binding.tvSignIn.setOnClickListener {
-            startActivity(Intent(this, SignIn::class.java))
+        binding.tvSignIn.setOnSingleClickListener {
+            startActivity(Intent(this@SignUp, SignIn::class.java))
             finish()
         }
-        binding.ivBack.setOnClickListener {
+        binding.ivBack.setOnSingleClickListener {
             finish()
         }
-        binding.tvSignUpBtn.setOnClickListener {
+        binding.tvSignUpBtn.setOnSingleClickListener {
             if (binding.etEmail.getValue().isEmpty()) {
                 showErrorMessage(getString(R.string.please_enter_phone_number))
             } else if (binding.etEmail.length() != 10) {

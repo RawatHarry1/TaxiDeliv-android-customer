@@ -30,9 +30,7 @@ class CancelTripActivity : BaseActivity<ActivityCancelTripBinding>() {
         }
 
         binding.btnNo.setOnClickListener {
-
             finish()
-
         }
 
     }

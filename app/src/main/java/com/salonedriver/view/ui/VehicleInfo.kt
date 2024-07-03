@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.salonedriver.R
+import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.ActivityVehicleInfoBinding
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
@@ -36,13 +37,15 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
         setVehicleName()
         observeCityVehicles()
         observeVehicleUpdate()
-        viewModel.getCityVehicles(SharedPreferencesManager.getModel<UserDataDC>(
-            SharedPreferencesManager.Keys.USER_DATA
-        )?.login?.city.orEmpty())
+        viewModel.getCityVehicles(
+            SharedPreferencesManager.getModel<UserDataDC>(
+                SharedPreferencesManager.Keys.USER_DATA
+            )?.login?.city.orEmpty()
+        )
     }
 
 
-    private fun setVehicleName(){
+    private fun setVehicleName() {
         try {
             val cityList =
                 SharedPreferencesManager.getModel<ClientConfigDC>(SharedPreferencesManager.Keys.CLIENT_CONFIG)?.cityList
@@ -52,14 +55,19 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
                     SharedPreferencesManager.Keys.USER_DATA
                 )?.login?.city
             }?.cityName.orEmpty())
-        }catch (e:Exception){
+            viewModel.cityId = cityList.find {
+                it.cityId == SharedPreferencesManager.getModel<UserDataDC>(
+                    SharedPreferencesManager.Keys.USER_DATA
+                )?.login?.city
+            }?.cityId.orEmpty()
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
 
     private fun clickHandler() {
-        binding.tvSubmitVehicle.setOnClickListener {
+        binding.tvSubmitVehicle.setOnSingleClickListener {
             if (validations()) {
                 viewModel.updateVehiclesInfo(jsonObject = JSONObject().apply {
                     put("vehicleYear", binding.etVehicleMake.getValue())
@@ -86,9 +94,11 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
                 viewModel.cityId = cityList[it].cityId.orEmpty()
                 binding.etVehicleType.setText("")
                 binding.etVehicleModel.setText("")
-                viewModel.getCityVehicles(SharedPreferencesManager.getModel<UserDataDC>(
-                    SharedPreferencesManager.Keys.USER_DATA
-                )?.login?.city.orEmpty())
+                viewModel.getCityVehicles(
+                    SharedPreferencesManager.getModel<UserDataDC>(
+                        SharedPreferencesManager.Keys.USER_DATA
+                    )?.login?.city.orEmpty()
+                )
             }
         }
 
@@ -138,6 +148,10 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
 
 
     private fun validations(): Boolean = when {
+        binding.etVehicleType.getValue().isEmpty() -> {
+            showErrorMessage(getString(R.string.please_select_vehicle_type))
+            false
+        }
         binding.etVehicleMake.getValue().isEmpty() -> {
             showErrorMessage(getString(R.string.please_select_vehicle_make))
             false

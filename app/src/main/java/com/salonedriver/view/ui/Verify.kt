@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import com.mukesh.mukeshotpview.completeListener.MukeshOtpCompleteListener
 import com.salonedriver.R
+import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.ActivityVerifyBinding
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.api.profileStatusHandling
@@ -29,7 +30,7 @@ class Verify : BaseActivity<ActivityVerifyBinding>() {
         viewModel.phoneNumber = intent.getStringExtra("phoneNumber").orEmpty()
         viewModel.countryCode = intent.getStringExtra("countryCode").orEmpty()
         binding.tvEmailVerify.text = "${viewModel.countryCode} ${viewModel.phoneNumber}"
-        binding.ivBackVerify.setOnClickListener { finish() }
+        binding.ivBackVerify.setOnSingleClickListener { finish() }
         observeVerifyOtp()
         otpCompleteListener()
         observerSendOtpResponse()
@@ -43,7 +44,7 @@ class Verify : BaseActivity<ActivityVerifyBinding>() {
             }
         })
 
-        binding.tvNotReceived.setOnClickListener {
+        binding.tvNotReceived.setOnSingleClickListener {
             viewModel.sendLoginOtp(
                 phoneNumber = viewModel.phoneNumber.orEmpty(),
                 countryCode = viewModel.countryCode.orEmpty()
