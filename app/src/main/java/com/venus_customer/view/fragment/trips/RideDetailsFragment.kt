@@ -1,14 +1,19 @@
 package com.venus_customer.view.fragment.trips
 
+import android.Manifest
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Settings
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -36,7 +41,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
     lateinit var binding: FragmentRideDetailsBinding
     private val navArgs by navArgs<RideDetailsFragmentArgs>()
     private val viewModel by viewModels<RideVM>()
-
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
 
     override fun initialiseFragmentBaseViewModel() {
 
@@ -54,11 +59,15 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             tripId = navArgs.tripId,
             driverId = navArgs.driverId
         )
+        // Setup the permission launcher
+        requestPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                handlePermissionResult(permissions)
+            }
     }
 
     override fun onResume() {
         super.onResume()
-
         setClicks()
     }
 
@@ -82,44 +91,23 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
         }
 
         binding.tvDownloadInvoice.setOnSingleClickListener {
-            if (checkAndRequestPermissions()) {
-                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
-                downloadPdf(requireActivity(), url, "RideInvoice", "Downloading Invoice")
-            }
-        }
-    }
-
-    private fun checkAndRequestPermissions(): Boolean {
-        return if (ContextCompat.checkSelfPermission(
-                requireActivity(),
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissionLauncher.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            false
-        } else {
-            true
-        }
-    }
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission granted, you can perform the download
-                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
-                downloadPdf(
-                    requireActivity(),
-                    url,
-                    "RideInvoice",
-                    "Downloading Your File"
+//            if (checkAndRequestPermissions()) {
+//                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
+//                downloadPdf(requireActivity(), url, "RideInvoice", "Downloading Invoice")
+//            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                requestPermissionLauncher.launch(
+                    arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
                 )
-            } else {
-                // Permission denied, show a message to the user
-                showToastShort("Permission denied to write to external storage")
-//            Toast.makeText(this, "Permission denied to write to external storage", Toast.LENGTH_SHORT).show()
-            }
+            else
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                )
         }
-
+    }
     private fun downloadPdf(context: Context, url: String, title: String, description: String) {
         showToastShort("Downloading invoice please wait!!")
         val request = DownloadManager.Request(Uri.parse(url))
@@ -132,7 +120,10 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                 Environment.DIRECTORY_DOWNLOADS,
                 "$title.pdf"
             ) // Destination of the file
-            .addRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36") // Add a user-agent header
+            .addRequestHeader(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
+            ) // Add a user-agent header
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         downloadManager.enqueue(request) // Enqueue the download
     }
@@ -199,5 +190,147 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             e.printStackTrace()
         }
     }
+
+
+    private fun handlePermissionResult(permissions: Map<String, Boolean>) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (permissions[Manifest.permission.READ_MEDIA_IMAGES] == true
+            ) {
+                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
+                downloadPdf(
+                    requireActivity(),
+                    url,
+                    "RideInvoice",
+                    "Downloading Your File"
+                )
+            } else {
+                if (shouldShowRequestPermissionRationale(
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    ) || shouldShowRequestPermissionRationale(
+                        Manifest.permission.CAMERA
+                    )
+                ) {
+                    showPermissionRationaleDialog(requireActivity())
+                } else
+                    showSettingsDialog(requireActivity())
+            }
+        } else {
+            if (permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true
+                && permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
+            ) {
+                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
+                downloadPdf(
+                    requireActivity(),
+                    url,
+                    "RideInvoice",
+                    "Downloading Your File"
+                )
+            } else {
+                if (shouldShowRequestPermissionRationale(
+                        Manifest.permission.CAMERA
+                    ) || shouldShowRequestPermissionRationale(
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) || shouldShowRequestPermissionRationale(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                ) {
+                    showPermissionRationaleDialog(requireActivity())
+                } else {
+                    showSettingsDialog(requireActivity())
+                }
+            }
+        }
+    }
+
+
+    private fun showSettingsDialog(context: Context) {
+        AlertDialog.Builder(context).apply {
+            setTitle("Download Invoice")
+            setMessage("Please allow permissions to download invoice.")
+            setPositiveButton("Settings") { _, _ ->
+                val intent = Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.fromParts("package", context.packageName, null)
+                )
+                context.startActivity(intent)
+            }
+            setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            create()
+            show()
+        }
+    }
+
+    private fun showPermissionRationaleDialog(context: Context) {
+        AlertDialog.Builder(context).apply {
+            setTitle("Download Invoice")
+            setMessage("Please allow permissions to download invoice.")
+            setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                checkPermissions()
+            }
+            setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            create()
+            show()
+        }
+    }
+
+
+    private fun checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.CAMERA
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.READ_MEDIA_IMAGES
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    )
+                )
+            } else {
+                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
+                downloadPdf(
+                    requireActivity(),
+                    url,
+                    "RideInvoice",
+                    "Downloading Your File"
+                )
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                )
+            } else {
+                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
+                downloadPdf(
+                    requireActivity(),
+                    url,
+                    "RideInvoice",
+                    "Downloading Your File"
+                )
+            }
+        }
+    }
+
 
 }

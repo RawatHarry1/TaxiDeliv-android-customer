@@ -43,7 +43,12 @@ fun <T> LiveData<ApiState<BaseResponse<T>>>.observeData(
             }
 
             //When api getting error
-            Status.ERROR -> onError.invoke(it.errorModel?.message.orEmpty())
+            Status.ERROR -> {
+                if (it.errorModel?.statusCode == "503")
+                    onError.invoke("Internal server error")
+                else
+                    onError.invoke(it.errorModel?.message.orEmpty())
+            }
 
             //No Status
             else -> Unit
@@ -65,5 +70,10 @@ suspend fun <T> Flow<Response<T>>.setApiState(mutableLiveData: MutableLiveData<A
         if (it.isSuccessful)
             mutableLiveData.value = ApiState.success(it.body())
         else
-            mutableLiveData.value = ApiState.error(ErrorModel(message = it.errorBody()?.string()))
+            mutableLiveData.value = ApiState.error(
+                ErrorModel(
+                    message = it.errorBody()?.string(),
+                    statusCode = it.code().toString()
+                )
+            )
     }

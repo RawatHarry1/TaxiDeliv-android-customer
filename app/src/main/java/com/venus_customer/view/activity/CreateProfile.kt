@@ -11,6 +11,7 @@ import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.ActivityCreateProfileBinding
 import com.venus_customer.model.api.getJsonRequestBody
 import com.venus_customer.model.api.observeData
+import com.venus_customer.util.NoSpaceInputFilter
 import com.venus_customer.util.SharedPreferencesManager
 import com.venus_customer.util.getValue
 import com.venus_customer.view.base.BaseActivity
@@ -46,6 +47,7 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
 
     private fun clickListener() {
         viewModel.needToUploadImage = !isEditProfile
+        binding.etUserName.filters = arrayOf(NoSpaceInputFilter())
         binding.tvCreateProfile.text = if (isEditProfile) getString(R.string.edit_your_nprofile) else getString(R.string.create_your_nprofile)
         binding.ivCamera.setOnSingleClickListener {
             pickerDialog().setPickerCloseListener { _, uris ->

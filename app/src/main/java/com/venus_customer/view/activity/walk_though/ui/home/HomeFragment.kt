@@ -758,6 +758,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     this@HomeFragment.binding.tvTitleStatus.text =
                         context.getString(R.string.txt_your_volt_has_arrived)
                     binding.viewStartRide.llDistanceTime.isVisible = true
+                    requireContext().showPath(
+                        srcLat = LatLng(
+                            rideVM.createRideData.driverLocation?.latitude?.toDouble() ?: 0.0,
+                            rideVM.createRideData.driverLocation?.longitude?.toDouble() ?: 0.0
+                        ),
+                        desLat = LatLng(
+                            rideVM.createRideData.pickUpLocation?.latitude?.toDouble() ?: 0.0,
+                            rideVM.createRideData.pickUpLocation?.longitude?.toDouble() ?: 0.0
+                        ),
+                        mMap = googleMap
+                    ) {
+//                        setPathTimeAndDistance(
+//                            durationDistance = it.distanceText.orEmpty(),
+//                            durationTime = it.durationText.orEmpty()
+//                        )
+                    }
                 }
 
                 TripStatus.STARTED.type -> {

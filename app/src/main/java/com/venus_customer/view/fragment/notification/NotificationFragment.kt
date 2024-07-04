@@ -1,10 +1,8 @@
 package com.venus_customer.view.fragment.notification
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.venus_customer.R
@@ -45,7 +43,7 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
     override fun onResume() {
         super.onResume()
 
-        binding.rvNotifications.addOnScrollListener(object : PaginationScrollListener(){
+        binding.rvNotifications.addOnScrollListener(object : PaginationScrollListener() {
             override fun loadMoreItems() {
                 if (!viewModel.isLoading) {
                     viewModel.isLoading = true
@@ -68,23 +66,24 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
     /**
      * Observe Notification
      * */
-    private fun observeNotification() = viewModel.notificationData.observeData(viewLifecycleOwner, onLoading = {
-        if (viewModel.currentPage == 1){
-            showProgressDialog()
-        }
-    }, onSuccess = {
-        hideProgressDialog()
-        viewModel.isLastPage = this.isNullOrEmpty() == true
-        if (viewModel.currentPage == 1){
-            adapter.submitList(this ?: emptyList())
-        } else {
-            adapter.addMoreItems(this ?: emptyList())
-        }
-    }, onError = {
-        hideProgressDialog()
-        showToastLong(this)
-    })
-
+    private fun observeNotification() =
+        viewModel.notificationData.observeData(viewLifecycleOwner, onLoading = {
+            if (viewModel.currentPage == 1) {
+                showProgressDialog()
+            }
+        }, onSuccess = {
+            hideProgressDialog()
+            viewModel.isLastPage = this.isNullOrEmpty() == true
+            if (viewModel.currentPage == 1) {
+                adapter.submitList(this ?: emptyList())
+            } else {
+                adapter.addMoreItems(this ?: emptyList())
+            }
+            binding.tvNoNotificationFound.isVisible = adapter.itemCount == 0
+        }, onError = {
+            hideProgressDialog()
+            showToastLong(this)
+        })
 
 
 }
