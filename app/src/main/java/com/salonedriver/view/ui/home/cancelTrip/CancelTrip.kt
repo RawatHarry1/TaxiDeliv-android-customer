@@ -52,7 +52,7 @@ class CancelTrip: BaseActivity<CancelRideBinding>() {
             finish()
         }
         binding.tvCancelRide.setOnClickListener {
-            val reason = cancelRideAdapter.getSelectedItemName() ?: binding.etReason.text.toString()
+            val reason = cancelRideAdapter.getSelectedItemName() ?: binding.etReason.text.toString().trim()
             if (reason.isEmpty()){
                 showToastShort("*Please select or enter any reason.")
             } else {

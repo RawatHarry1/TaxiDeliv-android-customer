@@ -185,7 +185,7 @@
     <string name="volkswagen">Volkswagen</string>
     <string name="payment_summary">Payment summary</string>
     <string name="payment_cash">Payment Cash</string>
-    <string name="_21_99">$21.99</string>
+    <string name="_21_99">$0.00</string>
     <string name="sub_total">Sub Total</string>
     <string name="vat">VAT</string>
     <string name="discount">Discount</string>

@@ -56,20 +56,23 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
      * Call Walkthrough
      * */
     private fun callWalkThrough() {
+        val walkThroughShown =
+            SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.WALKTHROUGH)
         SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
             ?.let {
                 if ((it.login?.registrationStepCompleted?.isVehicleInfoCompleted == true) && (it.accessToken?.isNotEmpty() == true)) {
                     changeIntent(HomeActivity::class.java)
                 } else {
-                    val walkThroughShown =
-                        SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.WALKTHROUGH)
                     if (walkThroughShown)
                         changeIntent(SignUpInActivity::class.java)
                     else
                         changeIntent(WalkThrough::class.java)
                 }
             } ?: run {
-            changeIntent(WalkThrough::class.java)
+            if (walkThroughShown)
+                changeIntent(SignUpInActivity::class.java)
+            else
+                changeIntent(WalkThrough::class.java)
         }
     }
 

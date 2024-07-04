@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.salonedriver.R
 import com.salonedriver.databinding.ItemBookingsBinding
 import com.salonedriver.model.dataclassses.bookingHistory.BookingHistoryDC
 import com.salonedriver.util.SharedPreferencesManager
@@ -37,9 +36,15 @@ class BookingsAdapter(val onClickBookingLambda: String.() -> Unit) :
         @SuppressLint("SetTextI18n")
         fun bind(dataClass: BookingHistoryDC) {
             binding.tvCustomerName.text = dataClass.customerName.orEmpty()
-            binding.tvDateTime.text = dataClass.createdAt.getTime(input = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", output = "MMM dd, yyyy, hh:mm a", applyTimeZone = true)
-            binding.tvAmount.text = "${SharedPreferencesManager.getCurrencySymbol()} ${dataClass.totalFare.orEmpty().formatAmount()}"
-
+            binding.tvDateTime.text = dataClass.createdAt.getTime(
+                input = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+                output = "MMM dd, yyyy, hh:mm a",
+                applyTimeZone = true
+            )
+            binding.tvAmount.text = "${SharedPreferencesManager.getCurrencySymbol()} ${
+                dataClass.totalFare.orEmpty().formatAmount()
+            }"
+            binding.tvRideStatus.text = dataClass.statusString ?: ""
             Glide.with(binding.ivMap).load(dataClass.trackingImage).into(binding.ivMap)
             binding.root.setOnClickListener {
                 onClickBookingLambda(dataClass.tripId.orEmpty())
@@ -52,10 +57,9 @@ class BookingsAdapter(val onClickBookingLambda: String.() -> Unit) :
 
 
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(list: List<BookingHistoryDC>){
+    fun submitList(list: List<BookingHistoryDC>) {
         bookingHistoryList.clear()
         bookingHistoryList.addAll(list)
         notifyDataSetChanged()
     }
-
 }

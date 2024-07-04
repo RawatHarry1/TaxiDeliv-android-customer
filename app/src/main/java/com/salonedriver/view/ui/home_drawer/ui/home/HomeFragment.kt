@@ -227,8 +227,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         dialog?.setCanceledOnTouchOutside(false)
 
         binding.tvUser.text = data.customerName.orEmpty()
-        binding.tvPrice.text = data.estimatedDriverFare.orEmpty()
-        binding.tvDistance.text = data.estimatedDistance.orEmpty()
+        binding.tvPrice.text = "${data.currency} ${data.estimatedDriverFare.orEmpty()}"
+        binding.tvDistance.text = "${data.estimatedDistance.orEmpty()} ${data.distanceUnit ?: "Km"}"
         binding.tvPickUpAddress.text = data.pickUpAddress.orEmpty()
         binding.tvDestinationAddress.text = data.dropAddress.orEmpty()
         Glide.with(binding.ivUser).load(data.customerImage.orEmpty())
@@ -333,6 +333,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                             rideTime = rideViewModel.newRideNotificationData.rideTime.orEmpty(),
                             waitTime = rideViewModel.newRideNotificationData.waitTime.orEmpty()
                         )
+                        dialog?.dismiss()
                     }
                 }
 
@@ -626,6 +627,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                     }
                 }
             } else {
+                screenType = 0
                 googleMap?.clearMap()
                 SaloneDriver.latLng?.let {
                     googleMap?.addMarker(
@@ -689,7 +691,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                 it.rideTime = this?.date
             }
             googleMap?.clear()
-
+            binding.bestRoute.clParent.isVisible = false
             (activity as HomeActivity).startActivity(
                 Intent(activity, AcceptTripActivity::class.java).putExtra(
                     "screenType", "RideCompleted"

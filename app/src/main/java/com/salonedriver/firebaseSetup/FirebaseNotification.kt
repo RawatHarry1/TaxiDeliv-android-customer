@@ -181,12 +181,12 @@ class FirebaseNotification : FirebaseMessagingService() {
                 when (notificationData.notificationType?.toIntOrNull() ?: -1) {
                     NotificationStatus.WALLET_UPDATE.type -> {
                         Log.i("PUSHNOTI","in wallet")
-                        createPendingIntent(destinationId = R.id.wallet)
+                        getPendingIntent(destinationId = R.id.wallet)
                     }
 
                     else -> {
                         Log.i("PUSHNOTI","in home")
-                        createPendingIntent(destinationId = R.id.nav_home)
+                        getPendingIntent(destinationId = R.id.nav_home)
                     }
                 }
             )
@@ -246,15 +246,16 @@ class FirebaseNotification : FirebaseMessagingService() {
      * Pending Intent Handle
      * */
     private fun getPendingIntent(destinationId: Int, bundle: Bundle? = null): PendingIntent =
-        if (Build.VERSION.SDK_INT >= 31)
-            NavDeepLinkBuilder(this)
-                .setComponentName(HomeActivity::class.java)
-                .setGraph(R.navigation.mobile_navigation)
-                .setDestination(destinationId)
+//        if (Build.VERSION.SDK_INT >= 31)
+//            NavDeepLinkBuilder(this)
+//                .setComponentName(HomeActivity::class.java)
+//                .setGraph(R.navigation.mobile_navigation)
+//                .setDestination(destinationId)
 //                .setArguments(bundle)
-                .createTaskStackBuilder()
-                .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)!!
-        else NavDeepLinkBuilder(this)
+//                .createTaskStackBuilder()
+//                .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)!!
+//        else
+            NavDeepLinkBuilder(this)
             .setComponentName(HomeActivity::class.java)
             .setGraph(R.navigation.mobile_navigation)
             .setDestination(destinationId)

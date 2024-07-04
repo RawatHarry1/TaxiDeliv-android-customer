@@ -3,7 +3,6 @@ package com.salonedriver.view.ui.home
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
@@ -21,7 +20,6 @@ import com.salonedriver.util.visible
 import com.salonedriver.view.base.BaseActivity
 import com.salonedriver.view.ui.chat.ChatActivity
 import com.salonedriver.view.ui.home.cancelTrip.CancelTrip
-import com.salonedriver.view.ui.home_drawer.HomeActivity
 import com.salonedriver.view.ui.home_drawer.ui.home.HomeFragment
 import com.salonedriver.viewmodel.RideViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,11 +50,11 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
     @SuppressLint("SetTextI18n")
     private fun setUI() {
         if (screenType == "TripAccepted") {
-            if ((rideData?.status ?: 0) == TripStatus.ACCEPTED.type){
+            if ((rideData?.status ?: 0) == TripStatus.ACCEPTED.type) {
                 binding.tvSignUpBtn.text = getString(R.string.go_to_pick_up)
                 binding.tvCancel.visible()
                 binding.ivBack.visibility = View.INVISIBLE
-            }else {
+            } else {
                 binding.tvSignUpBtn.text = getString(R.string.accept)
                 binding.tvCancel.gone()
                 binding.ivBack.visibility = View.VISIBLE
@@ -76,20 +74,29 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
         }
 
         binding.tvCustomerName.text = rideData?.customerName.orEmpty()
-        binding.tvFare.text = "${if(rideData?.estimatedDriverFare?.contains(SharedPreferencesManager.getCurrencySymbol()) == true) "" else SharedPreferencesManager.getCurrencySymbol() }${rideData?.estimatedDriverFare.orEmpty().formatAmount()}"
+        binding.tvFare.text =
+            "${if (rideData?.estimatedDriverFare?.contains(SharedPreferencesManager.getCurrencySymbol()) == true) "" else SharedPreferencesManager.getCurrencySymbol()}${
+                rideData?.estimatedDriverFare.orEmpty().formatAmount()
+            }"
         binding.tvPickUp.text = rideData?.pickUpAddress.orEmpty()
         binding.tvDestination.text = rideData?.dropAddress.orEmpty()
-        binding.tvDateTime.text = rideData?.date.getTime(input = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'", output = "MMMM dd, yyyy, hh:mm a", applyTimeZone = true)
-        Glide.with(binding.ivCustomerPic).load(rideData?.customerImage.orEmpty()).error(R.drawable.ic_profile_user).into(binding.ivCustomerPic)
+        binding.tvDateTime.text = rideData?.date.getTime(
+            input = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'",
+            output = "MMMM dd, yyyy, hh:mm a",
+            applyTimeZone = true
+        )
+        Glide.with(binding.ivCustomerPic).load(rideData?.customerImage.orEmpty())
+            .error(R.drawable.ic_profile_user).into(binding.ivCustomerPic)
     }
 
 
-    private fun clickListener(){
+    private fun clickListener() {
         binding.tvSignUpBtn.setOnClickListener {
             when (binding.tvSignUpBtn.text) {
                 getString(R.string.accept) -> {
                     viewModel.acceptRide(rideData?.customerId.orEmpty(), rideData?.tripId.orEmpty())
                 }
+
                 getString(R.string.go_to_pick_up) -> {
                     finish()
                 }
@@ -97,7 +104,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
         }
 
         binding.ivBack.setOnClickListener {
-           finish()
+            finish()
         }
         binding.ivMsg.setOnClickListener { startActivity(Intent(this, ChatActivity::class.java)) }
 
@@ -126,6 +133,9 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
     }, onError = {
         hideProgressDialog()
         showToastLong(this)
+        SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.NEW_BOOKING)
+        viewModel.newRideNotificationData = NewRideNotificationDC()
+        finish()
     })
 
 

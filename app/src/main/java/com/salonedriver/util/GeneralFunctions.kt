@@ -18,7 +18,6 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.salonedriver.MainActivity
 import com.salonedriver.R
 import com.salonedriver.SaloneDriver
 import com.salonedriver.databinding.DialogNegativeTwoButtonBinding
@@ -76,6 +75,10 @@ fun Context.arrayAdapter(
 ) {
     val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, list)
     autoCompleteTextView.setAdapter(adapter)
+    // Measure the height of a single item
+    val itemHeight =
+        autoCompleteTextView.context.resources.getDimensionPixelSize(android.R.dimen.app_icon_size)
+    autoCompleteTextView.dropDownHeight = itemHeight * list.size
     autoCompleteTextView.showDropDown()
     autoCompleteTextView.onItemClickListener =
         AdapterView.OnItemClickListener { _, _, p2, _ -> onClick.invoke(p2) }
@@ -92,12 +95,12 @@ fun Context.vehicleModelAdapter(
     spinner.performClick()
     spinner.onItemSelectedListener = object : OnItemSelectedListener {
         override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-            Log.e("sdfdsfsd","dfsdfsd  yes")
+            Log.e("sdfdsfsd", "dfsdfsd  yes")
             onClick(p2)
         }
 
         override fun onNothingSelected(p0: AdapterView<*>?) {
-            Log.e("sdfdsfsd","dfsdfsd  NO")
+            Log.e("sdfdsfsd", "dfsdfsd  NO")
         }
     }
 }
@@ -109,7 +112,11 @@ fun Context.vehicleModelAdapter(
 fun showSessionExpire() {
     try {
         SaloneDriver.appContext.let { context ->
-            Toast.makeText(context, context.getString(R.string.session_expire_due_to_security_purpose_please_sign_in_again), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.session_expire_due_to_security_purpose_please_sign_in_again),
+                Toast.LENGTH_SHORT
+            ).show()
             SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.USER_DATA)
             (context as Activity).startActivity(Intent(context, SignIn::class.java))
             (context as Activity).finishAffinity()
@@ -222,13 +229,11 @@ fun commonAlert(
 
 fun commonToast(
     message: String? = null
-){
+) {
     SaloneDriver.appContext.let {
         Toast.makeText(it, message.orEmpty(), Toast.LENGTH_SHORT).show()
     }
 }
-
-
 
 
 /**
@@ -240,7 +245,7 @@ fun cancelTrip(callback: () -> Unit) = try {
             val binding =
                 DialogNegativeTwoButtonBinding.inflate(LayoutInflater.from(context), null, false)
             setView(binding.root)
-            
+
             binding.tvTitle.text = context.getString(R.string.cancel_thr_ride_request)
             binding.tvConfirm.text = context.getString(R.string.cancel_ride)
             val dialog = create()

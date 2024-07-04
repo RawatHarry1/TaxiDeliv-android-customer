@@ -34,7 +34,6 @@ class WalkThrough : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val walkViewModel: WalkThroughViewModel by viewModels()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_walkthorugh)
         binding.lifecycleOwner = this
