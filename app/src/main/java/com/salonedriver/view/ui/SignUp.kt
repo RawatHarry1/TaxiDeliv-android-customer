@@ -1,6 +1,7 @@
 package com.salonedriver.view.ui
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -17,6 +19,7 @@ import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.ActivitySignUpBinding
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
+import com.salonedriver.util.AppUtils
 import com.salonedriver.util.ResourceUtils
 import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.util.getValue
@@ -31,7 +34,7 @@ class SignUp : BaseActivity<ActivitySignUpBinding>() {
     lateinit var binding: ActivitySignUpBinding
     private val viewModel by viewModels<OnBoardingVM>()
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
-
+    private lateinit var enableGpsLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     override fun getLayoutId(): Int {
         return R.layout.activity_sign_up
@@ -60,15 +63,13 @@ class SignUp : BaseActivity<ActivitySignUpBinding>() {
             } else if (binding.etEmail.length() != 10) {
                 showErrorMessage("*Please enter valid mobile number.")
             } else {
-                requestPermissionLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    )
+                AppUtils.checkAndEnableGPS(
+                    this@SignUp,
+                    ::onGPSEnabled,
+                    ::onGPSDenied,
+                    enableGpsLauncher
                 )
             }
-
-
         }
         observerSendOtpResponse()
         observeVerifyOtp()
@@ -77,6 +78,30 @@ class SignUp : BaseActivity<ActivitySignUpBinding>() {
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
                 handlePermissionResult(permissions)
             }
+        // Initialize the GPS enable launcher
+        enableGpsLauncher =
+            registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    onGPSEnabled()
+                } else {
+                    onGPSDenied()
+                }
+            }
+    }
+
+    private fun onGPSEnabled() {
+        // GPS is now enabled
+        requestPermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+    }
+
+    private fun onGPSDenied() {
+        // The user did not enable GPS
+        showErrorMessage("GPS is required for this app")
     }
 
     private fun handlePermissionResult(permissions: Map<String, Boolean>) {

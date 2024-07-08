@@ -440,7 +440,7 @@
     <string name="logout">Logout</string>
     <string name="are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
     <string name="enter_your_phone_number">Enter your phone number</string>
-    <string name="your_document_verification_is_in_process_please_wait_until_it_been_verified">Your Document Verification is in process. Please wait until its been verified.</string>
+    <string name="your_document_verification_is_in_process_please_wait_until_it_been_verified">Your Document Verification is in process. Please wait until its verified.</string>
     <string name="unable_to_fetch_your_location_please_try_again">Unable to fetch your location. Please try again.</string>
     <string name="retry">Retry</string>
     <string name="street_address">Street Address</string>

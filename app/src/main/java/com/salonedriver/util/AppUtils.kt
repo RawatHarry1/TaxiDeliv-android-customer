@@ -6,6 +6,7 @@ import android.app.ActivityManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.IntentSender
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -13,6 +14,7 @@ import android.graphics.Canvas
 import android.graphics.Insets
 import android.icu.text.SimpleDateFormat
 import android.icu.util.TimeZone
+import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -30,10 +32,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowInsets
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.SettingsClient
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.messaging.FirebaseMessaging
 import com.salonedriver.SaloneDriver
@@ -63,6 +72,94 @@ object AppUtils {
         return false
     }
 
+    fun isGPSEnabled(context: Context): Boolean {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    //    fun promptEnableGPS(context: Context) {
+//        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+//        context.startActivity(intent)
+//    }
+    fun checkAndEnableGPS(
+        activity: Activity,
+        onGPSEnabled: () -> Unit,
+        onGPSDenied: () -> Unit,
+        gpsEnableLauncher: ActivityResultLauncher<IntentSenderRequest>
+    ) {
+        val locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            // GPS is not enabled, prompt the user to enable it
+            promptEnableGPS(activity, onGPSEnabled, onGPSDenied, gpsEnableLauncher)
+        } else {
+            // GPS is already enabled
+//            Toast.makeText(activity, "GPS is already enabled", Toast.LENGTH_SHORT).show()
+            onGPSEnabled()
+        }
+    }
+
+    fun formatStringTwoDecimal(double: Double): String {
+        var s = ""
+        try {
+            s = String.format("%.2f", double)
+        } catch (e: Exception) {
+            s = double.toString()
+        }
+        return s
+    }
+
+    fun formatStringOneDecimal(double: Double): String {
+        var s = ""
+        try {
+            s = String.format("%.1f", double)
+        } catch (e: Exception) {
+            s = double.toString()
+        }
+        return s
+    }
+
+
+    private fun promptEnableGPS(
+        activity: Activity,
+        onGPSEnabled: () -> Unit,
+        onGPSDenied: () -> Unit,
+        gpsEnableLauncher: ActivityResultLauncher<IntentSenderRequest>
+    ) {
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 10000
+            fastestInterval = 5000
+        }
+
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        builder.setAlwaysShow(true)
+
+        val settingsClient: SettingsClient = LocationServices.getSettingsClient(activity)
+        val task = settingsClient.checkLocationSettings(builder.build())
+
+        task.addOnSuccessListener { response ->
+            val states = response.locationSettingsStates
+            if (states?.isLocationPresent == true) {
+//                Toast.makeText(activity, "GPS is enabled", Toast.LENGTH_SHORT).show()
+                onGPSEnabled()
+            }
+        }
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    val intentSenderRequest =
+                        IntentSenderRequest.Builder(exception.resolution).build()
+                    gpsEnableLauncher.launch(intentSenderRequest)
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    onGPSDenied()
+                }
+            } else {
+                onGPSDenied()
+            }
+        }
+    }
+
     fun hasScreenNavigation(activity: Activity): Boolean {
         val hasSoftwareKeys: Boolean
         val d = activity.windowManager.defaultDisplay
@@ -82,8 +179,7 @@ object AppUtils {
     @SuppressLint("HardwareIds")
     fun getDeviceId(): String {
         return Settings.Secure.getString(
-            SaloneDriver.instance.contentResolver,
-            Settings.Secure.ANDROID_ID
+            SaloneDriver.instance.contentResolver, Settings.Secure.ANDROID_ID
         )
     }
 
@@ -109,11 +205,9 @@ object AppUtils {
         try {
             val proj = arrayOf(MediaStore.Images.Media.DATA)
             cursor = context.contentResolver.query(contentUri, proj, null, null, null)
-            if (cursor == null)
-                return contentUri.path
+            if (cursor == null) return contentUri.path
             val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            if (cursor.moveToFirst())
-                filePath = cursor.getString(columnIndex)
+            if (cursor.moveToFirst()) filePath = cursor.getString(columnIndex)
             cursor.close()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -137,8 +231,8 @@ object AppUtils {
     fun getScreenWidth(activity: Activity): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics = activity.windowManager.currentWindowMetrics
-            val insets: Insets = windowMetrics.windowInsets
-                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val insets: Insets =
+                windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             windowMetrics.bounds.width() - insets.left - insets.right
         } else {
             val displayMetrics = DisplayMetrics()
@@ -436,8 +530,8 @@ object AppUtils {
 
     @JvmStatic
     fun hideKeyBoard(view: View) {
-        val imm = SaloneDriver.instance
-            .getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            SaloneDriver.instance.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
@@ -658,8 +752,7 @@ object AppUtils {
 
     fun convertStringToBitmap(encodedString: String?): Bitmap? {
         return try {
-            val encodeByte =
-                Base64.decode(encodedString, Base64.DEFAULT)
+            val encodeByte = Base64.decode(encodedString, Base64.DEFAULT)
             BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.size)
         } catch (e: java.lang.Exception) {
             e.message
@@ -773,8 +866,7 @@ object AppUtils {
     fun getOutputDirectory(fileName: String): File {
         val dir: File =
             File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path + "//Matter/$fileName")
-        if (!dir.exists())
-            dir.mkdir()
+        if (!dir.exists()) dir.mkdir()
         return dir
     }
 
@@ -794,8 +886,7 @@ object AppUtils {
                 values.put(MediaStore.MediaColumns.DATA, file.absolutePath)
             }
             val uri: Uri? = context.contentResolver?.insert(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                values
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values
             )
             context.contentResolver?.openOutputStream(uri!!).use { output ->
                 if (output != null) {

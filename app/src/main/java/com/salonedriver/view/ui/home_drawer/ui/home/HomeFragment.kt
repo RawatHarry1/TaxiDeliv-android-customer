@@ -48,6 +48,7 @@ import com.salonedriver.util.DriverDocumentStatusForApp
 import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.util.TripStatus
 import com.salonedriver.util.documentNotVerifiedBottomSheet
+import com.salonedriver.util.formatAmount
 import com.salonedriver.view.base.BaseFragment
 import com.salonedriver.view.ui.CancelTripActivity
 import com.salonedriver.view.ui.chat.ChatActivity
@@ -227,8 +228,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         dialog?.setCanceledOnTouchOutside(false)
 
         binding.tvUser.text = data.customerName.orEmpty()
-        binding.tvPrice.text = "${data.currency} ${data.estimatedDriverFare.orEmpty()}"
-        binding.tvDistance.text = "${data.estimatedDistance.orEmpty()} ${data.distanceUnit ?: "Km"}"
+        binding.tvPrice.text = "${data.currency} ${data.estimatedDriverFare.orEmpty().formatAmount()}"
+        binding.tvDistance.text = "${data.estimatedDistance.orEmpty().formatAmount()} ${data.distanceUnit ?: "Km"}"
         binding.tvPickUpAddress.text = data.pickUpAddress.orEmpty()
         binding.tvDestinationAddress.text = data.dropAddress.orEmpty()
         Glide.with(binding.ivUser).load(data.customerImage.orEmpty())

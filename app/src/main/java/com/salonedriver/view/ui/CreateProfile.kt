@@ -261,8 +261,8 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
 
     private fun showSettingsDialog(context: Context) {
         AlertDialog.Builder(context).apply {
-            setTitle(ResourceUtils.getString(R.string.location_permission))
-            setMessage(ResourceUtils.getString(R.string.please_turn_on_device_location_and_gps))
+            setTitle("Permissions")
+            setMessage("Please turn on camera and gallery permissions")
             setPositiveButton("Settings") { _, _ ->
                 val intent = Intent(
                     Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -280,8 +280,8 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
 
     private fun showPermissionRationaleDialog(context: Context) {
         AlertDialog.Builder(context).apply {
-            setTitle(ResourceUtils.getString(R.string.location_permission))
-            setMessage(ResourceUtils.getString(R.string.please_turn_on_device_location_and_gps))
+            setTitle("Permissions")
+            setMessage("Please turn on camera and gallery permissions")
             setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
                 checkPermissions()

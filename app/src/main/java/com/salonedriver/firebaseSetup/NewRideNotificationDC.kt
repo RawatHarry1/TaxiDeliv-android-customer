@@ -14,13 +14,13 @@ data class NewRideNotificationDC(
     var customerId: String? = null,
     @SerializedName("pickup_address", alternate = ["pickup_location_address"])
     var pickUpAddress: String? = null,
-    @SerializedName("start_latitude", alternate = ["latitude","pickup_latitude"])
+    @SerializedName("start_latitude", alternate = ["latitude", "pickup_latitude"])
     var latitude: String? = null,
     @SerializedName("trip_id", alternate = ["engagement_id"])
     var tripId: String? = null,
     @SerializedName("estimated_driver_fare", alternate = ["fare"])
     var estimatedDriverFare: String? = null,
-    @SerializedName("start_longitude", alternate = ["longitude","pickup_longitude"])
+    @SerializedName("start_longitude", alternate = ["longitude", "pickup_longitude"])
     var longitude: String? = null,
     @SerializedName("currency")
     var currency: String? = null,
@@ -44,6 +44,8 @@ data class NewRideNotificationDC(
     var waitTime: String? = null,
     @SerializedName("distanceUnit")
     var distanceUnit: String? = null,
+    @SerializedName("customerNote")
+    var customerNote: String? = null,
     @SerializedName("date", alternate = ["driver_ride_date"])
     var date: String? = null,
-): Parcelable
+) : Parcelable

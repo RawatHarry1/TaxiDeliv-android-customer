@@ -2,7 +2,6 @@ package com.salonedriver.model.api
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,7 +10,6 @@ import com.salonedriver.model.dataclassses.base.ErrorModel
 import com.salonedriver.model.dataclassses.userData.RegistrationStepComplete
 import com.salonedriver.util.showSessionExpire
 import com.salonedriver.view.ui.CreateProfile
-import com.salonedriver.view.ui.PayoutInformation
 import com.salonedriver.view.ui.UploadDocuments
 import com.salonedriver.view.ui.VehicleInfo
 import com.salonedriver.view.ui.home_drawer.HomeActivity
@@ -52,7 +50,12 @@ fun <T> LiveData<ApiState<BaseResponse<T>>>.observeData(
             }
 
             //When api getting error
-            Status.ERROR -> onError.invoke(it.errorModel?.message.orEmpty())
+            Status.ERROR -> {
+                if (it.errorModel?.statusCode == "503")
+                    onError.invoke("Something went wrong")
+                else
+                    onError.invoke(it.errorModel?.message.orEmpty())
+            }
             //No Status
             else -> Unit
         }
@@ -73,7 +76,12 @@ suspend fun <T> Flow<Response<T>>.setApiState(mutableLiveData: MutableLiveData<A
         if (it.isSuccessful)
             mutableLiveData.value = ApiState.success(it.body())
         else
-            mutableLiveData.value = ApiState.error(ErrorModel(message = it.errorBody()?.string()))
+            mutableLiveData.value = ApiState.error(
+                ErrorModel(
+                    message = it.errorBody()?.string(),
+                    statusCode = it.code().toString()
+                )
+            )
     }
 
 
