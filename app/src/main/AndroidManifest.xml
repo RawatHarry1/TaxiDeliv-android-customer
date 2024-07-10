@@ -112,6 +112,12 @@
             android:name="com.salonedriver.MainActivity"
             android:exported="false" />
         <activity
+            android:name="com.salonedriver.view.ui.home.RateCustomerActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.salonedriver.view.ui.home.NeedHelpActivity"
+            android:exported="false" />
+        <activity
             android:name="com.salonedriver.view.ui.Splash"
             android:exported="true">
             <intent-filter>

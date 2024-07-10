@@ -7,6 +7,7 @@ import android.view.View
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.salonedriver.R
+import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.FragmentAcceptTripBinding
 import com.salonedriver.firebaseSetup.NewRideNotificationDC
 import com.salonedriver.model.api.observeData
@@ -20,7 +21,6 @@ import com.salonedriver.util.visible
 import com.salonedriver.view.base.BaseActivity
 import com.salonedriver.view.ui.chat.ChatActivity
 import com.salonedriver.view.ui.home.cancelTrip.CancelTrip
-import com.salonedriver.view.ui.home_drawer.ui.home.HomeFragment
 import com.salonedriver.viewmodel.RideViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -61,8 +61,16 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             }
             binding.tvTitle.text = getString(R.string.trip_accepted)
             binding.ivCall.gone()
+            if (rideData?.customerNote.isNullOrEmpty()) {
+                binding.tvCustomerNote.gone()
+                binding.tvCustomerNoteValue.gone()
+            } else {
+                binding.tvCustomerNote.visible()
+                binding.tvCustomerNoteValue.visible()
+            }
         } else if (screenType == "RideCompleted") {
             binding.tvTitle.text = getString(R.string.ride_completed)
+            binding.tvRateCustomer.visible()
             binding.tvSignUpBtn.gone()
             binding.tvCancel.gone()
             binding.ivCall.gone()
@@ -71,9 +79,12 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             binding.titleDestination.gone()
             binding.tvPickUp.gone()
             binding.tvDestination.gone()
+            binding.tvCustomerNote.gone()
+            binding.tvCustomerNoteValue.gone()
         }
 
         binding.tvCustomerName.text = rideData?.customerName.orEmpty()
+        binding.tvCustomerNoteValue.text = rideData?.customerNote ?: ""
         binding.tvFare.text =
             "${if (rideData?.estimatedDriverFare?.contains(SharedPreferencesManager.getCurrencySymbol()) == true) "" else SharedPreferencesManager.getCurrencySymbol()}${
                 rideData?.estimatedDriverFare.orEmpty().formatAmount()
@@ -101,6 +112,14 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
                     finish()
                 }
             }
+        }
+        binding.tvRateCustomer.setOnSingleClickListener {
+            startActivity(
+                Intent(
+                    this@AcceptTripActivity,
+                    RateCustomerActivity::class.java
+                ).putExtra("rideData", rideData)
+            )
         }
 
         binding.ivBack.setOnClickListener {

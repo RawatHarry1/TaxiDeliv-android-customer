@@ -126,7 +126,9 @@ class FirebaseNotification : FirebaseMessagingService() {
                         estimatedDistance = jsonData.optString("estimated_distance"),
                         dropAddress = jsonData.optString("drop_address"),
                         dryEta = jsonData.optString("dry_eta"),
-                        date = jsonData.optString("date")
+                        date = jsonData.optString("date"),
+                        customerNote = jsonData.optString("customer_notes"),
+                        distanceUnit = jsonData.optString("distanceUnit")
                     ).apply {
                         SharedPreferencesManager.putModel(
                             SharedPreferencesManager.Keys.NEW_BOOKING, this
@@ -180,12 +182,12 @@ class FirebaseNotification : FirebaseMessagingService() {
             .setContentIntent(
                 when (notificationData.notificationType?.toIntOrNull() ?: -1) {
                     NotificationStatus.WALLET_UPDATE.type -> {
-                        Log.i("PUSHNOTI","in wallet")
+                        Log.i("PUSHNOTI", "in wallet")
                         getPendingIntent(destinationId = R.id.wallet)
                     }
 
                     else -> {
-                        Log.i("PUSHNOTI","in home")
+                        Log.i("PUSHNOTI", "in home")
                         getPendingIntent(destinationId = R.id.nav_home)
                     }
                 }
@@ -255,11 +257,12 @@ class FirebaseNotification : FirebaseMessagingService() {
 //                .createTaskStackBuilder()
 //                .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)!!
 //        else
-            NavDeepLinkBuilder(this)
+        NavDeepLinkBuilder(this)
             .setComponentName(HomeActivity::class.java)
             .setGraph(R.navigation.mobile_navigation)
             .setDestination(destinationId)
             .setArguments(bundle).createPendingIntent()
+
     private fun createPendingIntent(destinationId: Int, bundle: Bundle? = null): PendingIntent? {
         val navDeepLinkBuilder = NavDeepLinkBuilder(this)
             .setComponentName(HomeActivity::class.java)
@@ -278,18 +281,30 @@ class FirebaseNotification : FirebaseMessagingService() {
                 .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
                 .also { pendingIntent ->
                     if (pendingIntent == null) {
-                        Log.e("NotificationRedirection", "Failed to create PendingIntent on Android 31+")
+                        Log.e(
+                            "NotificationRedirection",
+                            "Failed to create PendingIntent on Android 31+"
+                        )
                     } else {
-                        Log.d("NotificationRedirection", "Successfully created PendingIntent on Android 31+")
+                        Log.d(
+                            "NotificationRedirection",
+                            "Successfully created PendingIntent on Android 31+"
+                        )
                     }
                 }
         } else {
-           navDeepLinkBuilder.createPendingIntent()
+            navDeepLinkBuilder.createPendingIntent()
                 .also { pendingIntent ->
                     if (pendingIntent == null) {
-                        Log.e("NotificationRedirection", "Failed to create PendingIntent on Android < 31")
+                        Log.e(
+                            "NotificationRedirection",
+                            "Failed to create PendingIntent on Android < 31"
+                        )
                     } else {
-                        Log.d("NotificationRedirection", "Successfully created PendingIntent on Android < 31")
+                        Log.d(
+                            "NotificationRedirection",
+                            "Successfully created PendingIntent on Android < 31"
+                        )
                     }
                 }
         }

@@ -115,9 +115,9 @@
                     android:id="@+id/ivDriverImage"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:visibility="gone"
                     android:layout_marginStart="30dp"
                     android:layout_marginTop="15dp"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view2" />
 
@@ -127,8 +127,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:text="@string/driver"
-                    android:visibility="gone"
                     android:textSize="12sp"
+                    android:visibility="gone"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintStart_toEndOf="@+id/ivDriverImage"
                     app:layout_constraintTop_toTopOf="@+id/ivDriverImage"
@@ -141,9 +141,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:text="@string/rodney_r_matney"
-                    android:visibility="gone"
                     android:textColor="@color/black_text_color2"
                     android:textSize="12sp"
+                    android:visibility="gone"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintStart_toEndOf="@+id/ivDriverImage"
                     app:layout_constraintTop_toBottomOf="@+id/titleDriverName"
@@ -156,9 +156,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="30dp"
                     android:text="@string/honda_civic"
-                    android:visibility="gone"
                     android:textColor="@color/black_text_color2"
                     android:textSize="12sp"
+                    android:visibility="gone"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/ivDriverImage"
@@ -171,9 +171,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="30dp"
                     android:text="@string/kaa_458_black"
-                    android:visibility="gone"
                     android:textColor="@color/black_text_color2"
                     android:textSize="12sp"
+                    android:visibility="gone"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/titleDriverName"
@@ -184,10 +184,10 @@
                     android:id="@+id/view3"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:visibility="gone"
                     android:layout_marginHorizontal="30dp"
                     android:layout_marginTop="15dp"
                     android:background="@color/stroke_light"
+                    android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@+id/ivDriverImage" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -224,9 +224,7 @@
                     android:textSize="12sp"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintEnd_toEndOf="@+id/view3"
-                    app:layout_constraintTop_toBottomOf="@+id/tvFareDetails"
-
-                    />
+                    app:layout_constraintTop_toBottomOf="@+id/tvFareDetails" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/titleSubtotal"
@@ -238,9 +236,7 @@
                     android:textSize="12sp"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintStart_toStartOf="@+id/view3"
-                    app:layout_constraintTop_toBottomOf="@+id/titleRideFare"
-
-                    />
+                    app:layout_constraintTop_toBottomOf="@+id/titleRideFare" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvSubtotal"
@@ -251,9 +247,30 @@
                     android:textSize="12sp"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintEnd_toEndOf="@+id/view3"
-                    app:layout_constraintTop_toBottomOf="@+id/tvRideFare"
+                    app:layout_constraintTop_toBottomOf="@+id/tvRideFare" />
 
-                    />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/titleTotalFare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/total_fare"
+                    android:textColor="@color/black_text_color2"
+                    android:textSize="12sp"
+                    app:fontFamily="@font/poppins_regular"
+                    app:layout_constraintStart_toStartOf="@+id/view3"
+                    app:layout_constraintTop_toBottomOf="@+id/titleSubtotal" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvTotalFare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/black_text_color2"
+                    android:textSize="12sp"
+                    app:fontFamily="@font/poppins_regular"
+                    app:layout_constraintEnd_toEndOf="@+id/view3"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSubtotal" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -266,9 +283,7 @@
                     android:textSize="12sp"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintStart_toStartOf="@+id/view3"
-                    app:layout_constraintTop_toBottomOf="@+id/titleSubtotal"
-
-                    />
+                    app:layout_constraintTop_toBottomOf="@+id/titleTotalFare" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvWaitingTime"
@@ -279,11 +294,24 @@
                     android:textSize="12sp"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintEnd_toEndOf="@+id/view3"
-                    app:layout_constraintTop_toBottomOf="@+id/tvSubtotal"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTotalFare" />
 
-                    />
+                <TextView
+                    android:id="@+id/tvDownloadInvoice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:background="@drawable/bg_outline_circular"
+                    android:fontFamily="@font/poppins_regular"
+                    android:gravity="center"
+                    android:padding="@dimen/_10sdp"
+                    android:layout_marginTop="20dp"
+                    android:text="Download Invoice"
+                    app:layout_constraintTop_toBottomOf="@id/tvWaitingTime"
+                    android:textColor="@color/black_text_color"
+                    app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>

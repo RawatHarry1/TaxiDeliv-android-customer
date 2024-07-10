@@ -58,3 +58,6 @@ const val TRANSACTION_HISTORY = "get_transaction_history"
 
 const val CANCEL_TRIP = "cancelTheTrip"
 const val UPDATE_DRIVER_LOCATION = "update_driver_location"
+
+const val RATE_THE_CUSTOMER = "rate_the_customer"
+const val GENERATE_SUPPORT_TICKET = "generate_driver_support_ticket"

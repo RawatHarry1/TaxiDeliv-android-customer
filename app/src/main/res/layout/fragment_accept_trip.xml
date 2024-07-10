@@ -72,9 +72,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="@dimen/_10sdp"
-                            app:layout_constraintTop_toTopOf="@+id/ivCustomerPic"
                             app:layout_constraintBottom_toBottomOf="@+id/ivCustomerPic"
                             app:layout_constraintEnd_toStartOf="@+id/ivCall"
+                            app:layout_constraintTop_toTopOf="@+id/ivCustomerPic"
                             app:srcCompat="@drawable/ic_msg" />
 
 
@@ -194,8 +194,8 @@
                             android:layout_marginTop="36dp"
                             android:gravity="center_vertical"
                             android:text="@string/esther"
-                            android:visibility="gone"
                             android:textColor="@color/black"
+                            android:visibility="gone"
                             app:fontFamily="@font/poppins_regular"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tvDestination" />
@@ -204,9 +204,9 @@
                             android:id="@+id/view1"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:visibility="gone"
                             android:layout_marginHorizontal="29dp"
                             android:background="@color/grey_arrow"
+                            android:visibility="gone"
                             app:layout_constraintTop_toBottomOf="@+id/tvCustomerName1" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -216,9 +216,9 @@
                             android:layout_marginHorizontal="29dp"
                             android:layout_marginTop="10dp"
                             android:gravity="center_vertical"
-                            android:visibility="gone"
                             android:text="@string/kindly_call_me_once_you_arrive"
                             android:textColor="@color/black"
+                            android:visibility="gone"
                             app:fontFamily="@font/poppins_regular"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/view1" />
@@ -228,8 +228,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:layout_marginHorizontal="29dp"
-                            android:visibility="gone"
                             android:background="@color/grey_arrow"
+                            android:visibility="gone"
                             app:layout_constraintTop_toBottomOf="@+id/tvCustomerMsg" />
 
                         <androidx.appcompat.widget.AppCompatImageView
@@ -273,16 +273,39 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
-                            android:layout_marginBottom="30dp"
                             android:text="@string/incl_tax"
+                            android:layout_marginBottom="20dp"
                             android:textColor="@color/grey_text_color3"
                             android:textSize="13sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/tvFare"
+                            app:layout_constraintTop_toBottomOf="@+id/tvFare" />
 
-                            />
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvCustomerNote"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="28dp"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:text="Customer Note:"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tvInclTax" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvCustomerNoteValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="28dp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="12sp"
+                            android:layout_marginBottom="30dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tvCustomerNote" />
 
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -291,29 +314,29 @@
                 </com.google.android.material.card.MaterialCardView>
 
 
-
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_margin="30dp"
+                    android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/card">
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvCancel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_10sdp"
                         android:layout_weight="1"
                         android:background="@drawable/bg_round_outline_button"
                         android:gravity="center"
-                        android:padding="15dp"
-                        android:visibility="gone"
-                        android:layout_marginEnd="@dimen/_10sdp"
-                        android:text="@string/cancel_ride"
-                        android:singleLine="true"
                         android:maxLines="1"
+                        android:padding="15dp"
+                        android:singleLine="true"
+                        android:text="@string/cancel_ride"
                         android:textColor="@color/black"
                         android:textSize="16sp"
+                        android:visibility="gone"
                         app:fontFamily="@font/poppins_regular"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/card" />
@@ -322,19 +345,34 @@
                         android:id="@+id/tvSignUpBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/bg_theme_shape_round_button"
                         android:gravity="center"
-                        android:padding="15dp"
-                        android:layout_weight="1"
+                        android:padding="10dp"
                         android:text="@string/accept"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         app:fontFamily="@font/poppins_regular" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvRateCustomer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="30dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_theme_shape_round_button"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/rate_customer"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    app:fontFamily="@font/poppins_regular"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </androidx.core.widget.NestedScrollView>
 
 

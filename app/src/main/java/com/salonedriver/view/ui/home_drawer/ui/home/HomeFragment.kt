@@ -218,7 +218,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
      * */
     private var dialog: BottomSheetDialog? = null
     private fun callTripsDialog(context: Context, data: NewRideNotificationDC) {
-
         if (dialog?.isShowing == true) return
         dialog = BottomSheetDialog(context, R.style.SheetDialog)
         dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -375,7 +374,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     ) {
         when (routeType) {
             RideStateEnum.RIDE_ACCEPT.data -> {
-                tvSlideTrip.backgroundTintList = context.getColorStateList(R.color.theme_button)
+//                tvSlideTrip.backgroundTintList = context.getColorStateList(R.color.theme_button)
                 tvSlideTrip.textColor = ContextCompat.getColor(context, R.color.white)
                 tvSlideTrip.text = getString(R.string.txt_slide_to_mark_arrive)
                 requireContext().showPath(
@@ -389,7 +388,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             }
 
             RideStateEnum.ARRIVE_AT_PICKUP.data -> {
-                tvSlideTrip.backgroundTintList = context.getColorStateList(R.color.theme_button)
+//                tvSlideTrip.backgroundTintList = context.getColorStateList(R.color.theme_button)
                 tvSlideTrip.textColor = ContextCompat.getColor(context, R.color.white)
                 tvArrivePickup.setTextColor(context.getColorStateList(R.color.black))
                 tvSlideTrip.text = getString(R.string.txt_slide_to_start_trip)
@@ -405,7 +404,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             }
 
             RideStateEnum.ON_THE_WAY.data -> {
-                tvSlideTrip.backgroundTintList = context.getColorStateList(R.color.theme_button)
+//                tvSlideTrip.backgroundTintList = context.getColorStateList(R.color.theme_button)
                 tvSlideTrip.textColor = ContextCompat.getColor(context, R.color.white)
                 tvSlideTrip.text = getString(R.string.reach_destination)
                 tvArrivePickup.setTextColor(context.getColorStateList(R.color.black))
@@ -423,7 +422,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             }
 
             RideStateEnum.END_TRIP.data -> {
-                tvSlideTrip.backgroundTintList = context.getColorStateList(R.color.theme_button)
+//                tvSlideTrip.backgroundTintList = context.getColorStateList(R.color.theme_button)
                 tvSlideTrip.textColor = ContextCompat.getColor(context, R.color.white)
                 tvSlideTrip.text = getString(R.string.txt_complete_trip)
                 tvBestRoute.text = getString(R.string.txt_complete_trip)
@@ -690,6 +689,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                 it.customerName = this?.customerName
                 it.customerImage = this?.customerImage
                 it.rideTime = this?.date
+                it.paidUsingWallet = this?.paidUsingWallet
             }
             googleMap?.clear()
             binding.bestRoute.clParent.isVisible = false

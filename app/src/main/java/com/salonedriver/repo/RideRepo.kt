@@ -11,14 +11,16 @@ import javax.inject.Inject
 
 class RideRepo @Inject constructor(
     private val apiInterface: ApiInterface
-){
+) {
 
     suspend fun rejectRide(tripId: String) = flow {
-        emit(apiInterface.rejectRide(
-            requestBody = JSONObject().apply {
-                put("tripId", tripId)
-            }.getJsonRequestBody()
-        ))
+        emit(
+            apiInterface.rejectRide(
+                requestBody = JSONObject().apply {
+                    put("tripId", tripId)
+                }.getJsonRequestBody()
+            )
+        )
     }.flowOn(Dispatchers.IO)
 
 
@@ -52,15 +54,23 @@ class RideRepo @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-    suspend fun endTrip(customerId: String, tripId: String, dropLatitude: String, dropLongitude: String, distanceTravelled: String, rideTime: String, waitTime: String) = flow {
+    suspend fun endTrip(
+        customerId: String,
+        tripId: String,
+        dropLatitude: String,
+        dropLongitude: String,
+        distanceTravelled: String,
+        rideTime: String,
+        waitTime: String
+    ) = flow {
         emit(apiInterface.endTrip(requestBody = JSONObject().apply {
-            put("customerId",customerId)
-            put("tripId",tripId)
-            put("dropLatitude",SaloneDriver.latLng?.latitude)
-            put("dropLongitude",SaloneDriver.latLng?.longitude)
-            put("distanceTravelled","10")
-            put("rideTime","12")
-            put("waitTime","3")
+            put("customerId", customerId)
+            put("tripId", tripId)
+            put("dropLatitude", SaloneDriver.latLng?.latitude)
+            put("dropLongitude", SaloneDriver.latLng?.longitude)
+            put("distanceTravelled", "10")
+            put("rideTime", "12")
+            put("waitTime", "3")
         }.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
 
@@ -72,5 +82,13 @@ class RideRepo @Inject constructor(
 
     suspend fun cancelTrip(jsonObject: JSONObject) = flow {
         emit(apiInterface.cancelTrip(jsonObject.getJsonRequestBody()))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun rateCustomer(jsonObject: JSONObject) = flow {
+        emit(apiInterface.rateCustomer(jsonObject.getJsonRequestBody()))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun generateSupportTicket(jsonObject: JSONObject) = flow {
+        emit(apiInterface.generateSupportTicket(jsonObject.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
 }

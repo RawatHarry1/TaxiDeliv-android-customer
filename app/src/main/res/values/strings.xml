@@ -462,6 +462,11 @@
     <string name="complete_ride">Complete Ride</string>
     <string name="location_permission">Location Permission</string>
     <string name="please_turn_on_device_location_and_gps">Please turn on device location and GPS.</string>
+    <string name="rate_customer">Rate Customer</string>
+    <string name="customer_paid_by_wallet">Customer paid by wallet</string>
+    <string name="please_enter_your_feedback">Please enter your feedback</string>
+    <string name="enter_your_feedback">Enter your feedback</string>
+    <string name="total_fare">Total Fare</string>
 
 
 </resources>

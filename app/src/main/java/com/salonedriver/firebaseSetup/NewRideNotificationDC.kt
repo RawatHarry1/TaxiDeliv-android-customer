@@ -44,8 +44,10 @@ data class NewRideNotificationDC(
     var waitTime: String? = null,
     @SerializedName("distanceUnit")
     var distanceUnit: String? = null,
-    @SerializedName("customerNote")
+    @SerializedName("customer_notes")
     var customerNote: String? = null,
+    @SerializedName("paid_using_wallet")
+    var paidUsingWallet: String? = null,
     @SerializedName("date", alternate = ["driver_ride_date"])
     var date: String? = null,
 ) : Parcelable

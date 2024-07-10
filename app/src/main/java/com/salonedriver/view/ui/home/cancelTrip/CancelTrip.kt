@@ -2,17 +2,13 @@ package com.salonedriver.view.ui.home.cancelTrip
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
-import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import com.salonedriver.R
 import com.salonedriver.databinding.CancelRideBinding
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.userData.UserDataDC
 import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.view.base.BaseActivity
-import com.salonedriver.view.base.BaseFragment
 import com.salonedriver.view.ui.home_drawer.HomeActivity
 import com.salonedriver.viewmodel.RideViewModel
 import dagger.hilt.android.AndroidEntryPoint

@@ -199,4 +199,14 @@ interface ApiInterface {
         @Body requestBody: RequestBody
     ): Response<BaseResponse<Any>>
 
+    @POST(RATE_THE_CUSTOMER)
+    suspend fun rateCustomer(
+        @Body requestBody: RequestBody
+    ): Response<BaseResponse<Any>>
+
+    @POST(GENERATE_SUPPORT_TICKET)
+    suspend fun generateSupportTicket(
+        @Body requestBody: RequestBody
+    ): Response<BaseResponse<Any>>
+
 }

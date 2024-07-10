@@ -76,13 +76,6 @@ class WalkThrough : AppCompatActivity() {
                     ContextCompat.getDrawable(this, R.drawable.venus_intro_3)
                 )
             )
-            listData.add(
-                WalkData(
-                    getString(R.string.empty_string),
-                    getString(R.string.empty_string),
-                    ContextCompat.getDrawable(this, R.drawable.venus_intro_4)
-                )
-            )
         } else {
             binding.tvNext.isVisible = true
             binding.dotsIndicator.isVisible = true
