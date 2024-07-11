@@ -1,10 +1,16 @@
 package com.salonedriver.view.ui.home
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.salonedriver.R
 import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
@@ -31,7 +37,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
     private val viewModel by viewModels<RideViewModel>()
     private val screenType: String by lazy { intent?.getStringExtra("screenType") ?: "AcceptTrip" }
     private val rideData by lazy { intent.getParcelableExtra<NewRideNotificationDC>("rideData") }
-
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     override fun getLayoutId(): Int {
         return R.layout.fragment_accept_trip
     }
@@ -45,6 +51,16 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
         setUI()
         observeMarkArrived()
         observeStartTrip()
+        requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                makePhoneCall(rideData?.userPhoneNo?: "") // Replace with the phone number you want to call
+            } else {
+                // Permission denied, show a message to the user
+                showErrorMessage("Permission denied. Cannot make phone calls.")
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -60,7 +76,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
                 binding.ivBack.visibility = View.VISIBLE
             }
             binding.tvTitle.text = getString(R.string.trip_accepted)
-            binding.ivCall.gone()
+//            binding.ivCall.gone()
             if (rideData?.customerNote.isNullOrEmpty()) {
                 binding.tvCustomerNote.gone()
                 binding.tvCustomerNoteValue.gone()
@@ -100,6 +116,35 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             .error(R.drawable.ic_profile_user).into(binding.ivCustomerPic)
     }
 
+    private fun checkPermissionAndMakeCall(phoneNumber: String) {
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CALL_PHONE
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Permission is already granted
+                makePhoneCall(phoneNumber)
+            }
+
+            shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE) -> {
+                // Show rationale and request permission
+                // You can show a dialog explaining why you need this permission
+                showErrorMessage("Permission denied. Cannot make phone calls.")
+                requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+            }
+
+            else -> {
+                // Directly request the permission
+                requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+            }
+        }
+    }
+
+    private fun makePhoneCall(phoneNumber: String) {
+        val callIntent = Intent(Intent.ACTION_CALL)
+        callIntent.data = Uri.parse("tel:$phoneNumber")
+        startActivity(callIntent)
+    }
 
     private fun clickListener() {
         binding.tvSignUpBtn.setOnClickListener {
@@ -126,7 +171,9 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             finish()
         }
         binding.ivMsg.setOnClickListener { startActivity(Intent(this, ChatActivity::class.java)) }
-
+        binding.ivCall.setOnSingleClickListener {
+            checkPermissionAndMakeCall(rideData?.userPhoneNo?: "")
+        }
         binding.tvCancel.setOnClickListener {
             cancelTrip {
                 Intent(this, CancelTrip::class.java).apply {

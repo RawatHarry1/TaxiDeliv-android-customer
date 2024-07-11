@@ -128,7 +128,8 @@ class FirebaseNotification : FirebaseMessagingService() {
                         dryEta = jsonData.optString("dry_eta"),
                         date = jsonData.optString("date"),
                         customerNote = jsonData.optString("customer_notes"),
-                        distanceUnit = jsonData.optString("distanceUnit")
+                        distanceUnit = jsonData.optString("distanceUnit"),
+                        userPhoneNo = jsonData.optString("user_phone_no")
                     ).apply {
                         SharedPreferencesManager.putModel(
                             SharedPreferencesManager.Keys.NEW_BOOKING, this
