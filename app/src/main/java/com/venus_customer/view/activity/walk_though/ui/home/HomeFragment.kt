@@ -2,19 +2,26 @@ package com.venus_customer.view.activity.walk_though.ui.home
 
 
 import SwipeToShowDeleteCallback
+import android.Manifest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -59,6 +66,7 @@ import com.venus_customer.socketSetup.SocketSetup
 import com.venus_customer.util.SharedPreferencesManager
 import com.venus_customer.util.TripStatus
 import com.venus_customer.util.constants.AppConstants
+import com.venus_customer.util.formatString
 import com.venus_customer.util.getBottomSheetBehaviour
 import com.venus_customer.util.safeCall
 import com.venus_customer.util.showSnackBar
@@ -95,6 +103,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private var googleMap: GoogleMap? = null
     private var nearByDriverMap: GoogleMap? = null
     private var nearByDriverLatLanArrayList = ArrayList<NearByDriverMarkers>()
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private val addressAdapter by lazy {
         AddedAddressAdapter(
             requireActivity(),
@@ -145,6 +154,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         observeSOS()
 //        rideVM.rideAlertUiState.value?.let { uiStateHandler(it) }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
+        requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                val phone = rideVM.createRideData.driverDetail?.driverPhoneNo ?: ""
+                if (phone.isEmpty())
+                    showSnackBar("There is some issue in call. Please try after sometimes.")
+                else
+                    makePhoneCall(phone) // Replace with the phone number you want to call
+            } else {
+                // Permission denied, show a message to the user
+                showSnackBar("Permission denied. Cannot make phone calls.")
+            }
+        }
     }
 
     private fun getNearByDrivers() {
@@ -217,6 +241,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         rideVM.hideHomeNav(false)
+                        rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
                         // Bottom sheet is hidden, attempt to clear state
 //                        Handler(Looper.getMainLooper()).postDelayed({
 //                            clearSavedStateData()
@@ -316,7 +341,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
         }
 
-        Log.i("rideAlertUiState","on home  ${rideVM.rideAlertUiState.value}")
+        Log.i("rideAlertUiState", "on home  ${rideVM.rideAlertUiState.value}")
 
         if (rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.HomeScreen || rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.ShowLocationDialog) {
             rideVM.fetchOngoingTrip()
@@ -404,7 +429,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.createRideData.vehicleData?.let {
                 tvCarType.text = it.name.orEmpty()
                 tvTime.text = it.eta.orEmpty().ifEmpty { "0" }.plus(" min away")
-//                tvPersonCount.text = it.totalCapacity.orEmpty().ifEmpty { "0" }
+                tvPersonCount.text = it.totalCapacity.orEmpty().ifEmpty { "0" }
 //                tvPrice.text =
 //                    "${it.price.formatString()} ${rideVM.createRideData.currencyCode.orEmpty()}"
                 tvPrice.text =
@@ -647,20 +672,56 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         datePickerDialog.show()
     }
 
+    private fun checkPermissionAndMakeCall(phoneNumber: String) {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.CALL_PHONE
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Permission is already granted
+                makePhoneCall(phoneNumber)
+            }
+
+            shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE) -> {
+                // Show rationale and request permission
+                // You can show a dialog explaining why you need this permission
+                showSnackBar("Permission denied. Cannot make phone calls.")
+                requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+            }
+
+            else -> {
+                // Directly request the permission
+                requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+            }
+        }
+    }
+
+    private fun makePhoneCall(phoneNumber: String) {
+        val callIntent = Intent(Intent.ACTION_CALL)
+        callIntent.data = Uri.parse("tel:$phoneNumber")
+        startActivity(callIntent)
+    }
+
     private fun startRideDialog(context: Context, rideAlertUiState: RideVM.RideAlertUiState) {
         with(binding.viewStartRide) {
             clConnecting.visibility = View.VISIBLE
-            this@HomeFragment.binding.cvTitle.visibility = View.VISIBLE
+            this@HomeFragment.binding.cvTitle.visibility = View.INVISIBLE
             this@HomeFragment.binding.ivBack.visibility = View.GONE
             with(rideVM.createRideData) {
-                tvDriverRating.text = driverDetail?.driverRating.orEmpty().ifEmpty { "0.0" }
+                tvDriverRating.text =
+                    driverDetail?.driverRating.orEmpty().ifEmpty { "0.0" }.formatString(1)
                 tvUserName.text = driverDetail?.driverName.orEmpty()
                 tvNumber.text = vehicleData?.vehicleNumber.orEmpty()
                 tvCarName.text = vehicleData?.name.orEmpty()
                 tvNumber.text = vehicleData?.vehicleNumber.orEmpty()
                 tvAddress.text = pickUpLocation?.address.orEmpty()
-                tvDistanceValue.text = vehicleData?.distance.orEmpty()
+                tvPickUpAddress.text = pickUpLocation?.address.orEmpty()
+                tvDestinationAddress.text = dropLocation?.address.orEmpty()
+                tvDistanceValue.text =
+                    vehicleData?.distance.orEmpty()
                 tvTimeValue.text = "${vehicleData?.eta.orEmpty()} min"
+                tvDistanceTime.text = "${vehicleData?.eta.orEmpty()}"
+                tvDistanceTimeMin.text = "min"
                 tvPriceValue.text = "${vehicleData?.fare}"
                 Glide.with(requireView()).load(driverDetail?.driverImage.orEmpty())
                     .error(R.mipmap.ic_launcher).into(ivProfileImage)
@@ -686,6 +747,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 clConnecting.visibility = View.GONE
                 clPickUpLocation.visibility = View.VISIBLE
             }
+            ivCall.setOnSingleClickListener {
+                val phone = rideVM.createRideData.driverDetail?.driverPhoneNo ?: ""
+                if (phone.isEmpty())
+                    showSnackBar("There is some issue in call. Please try after sometimes.")
+                else
+                    checkPermissionAndMakeCall(phone)
+            }
 
             tvSlideCancelBtn.onSlideCompleteListener =
                 object : SlideToActView.OnSlideCompleteListener {
@@ -698,31 +766,36 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                             )
                         }
                     }
-
                 }
 
             googleMap?.clearMap()
             Log.e("RideStatus", "is --->  ${rideVM.createRideData.status}")
+            Log.e("RideStatus", "all data --->  ${Gson().toJson(rideVM.createRideData)}")
             when (rideVM.createRideData.status) {
                 TripStatus.REQUESTED.type -> {
+                    Log.e("RideStatus", "is --->  Requested ride")
+                    rideVM.hideHomeNav(true)
                     binding.tvSOS.isVisible = false
                     binding.viewStartRide.llDistanceTime.isVisible = false
-                    requireContext().showPath(
-                        srcLat = LatLng(
-                            rideVM.createRideData.pickUpLocation?.latitude?.toDouble() ?: 0.0,
-                            rideVM.createRideData.pickUpLocation?.longitude?.toDouble() ?: 0.0
-                        ),
-                        desLat = LatLng(
-                            rideVM.createRideData.dropLocation?.latitude?.toDouble() ?: 0.0,
-                            rideVM.createRideData.dropLocation?.longitude?.toDouble() ?: 0.0
-                        ),
-                        mMap = googleMap, isTracking = false
-                    ) {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        requireContext().showPath(
+                            srcLat = LatLng(
+                                rideVM.createRideData.pickUpLocation?.latitude?.toDouble() ?: 0.0,
+                                rideVM.createRideData.pickUpLocation?.longitude?.toDouble() ?: 0.0
+                            ),
+                            desLat = LatLng(
+                                rideVM.createRideData.dropLocation?.latitude?.toDouble() ?: 0.0,
+                                rideVM.createRideData.dropLocation?.longitude?.toDouble() ?: 0.0
+                            ),
+                            mMap = googleMap, isTracking = false
+                        ) {
 //                        setPathTimeAndDistance(
 //                            durationDistance = it.distanceText.orEmpty(),
 //                            durationTime = it.durationText.orEmpty()
 //                        )
-                    }
+                        }
+                    }, 200)
+
                 }
 
                 TripStatus.ACCEPTED.type -> {
@@ -752,6 +825,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
                 TripStatus.ARRIVED.type -> {
                     binding.tvSOS.isVisible = true
+                    tvAddress.isVisible = true
+                    clPickAndDrop.isVisible = false
                     tvAddress.text = context.getString(R.string.txt_driver_arrived)
                     tvAddress.setCompoundDrawables(null, null, null, null)
                     clDistanceTime.visibility = View.GONE
@@ -779,6 +854,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 TripStatus.STARTED.type -> {
                     binding.tvSOS.isVisible = true
                     tvAddress.text = context.getString(R.string.txt_ride_in_progress)
+                    tvAddress.isVisible = false
+                    clPickAndDrop.isVisible = true
                     tvAddress.setCompoundDrawables(null, null, null, null)
                     clDistanceTime.visibility = View.GONE
                     this@HomeFragment.binding.tvTitleStatus.text =
@@ -809,6 +886,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     googleMap?.clearMap()
                     findNavController().navigate(R.id.navigation_ride_complete)
                 }
+
+                else -> {}
             }
         }
     }
@@ -934,7 +1013,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
             } else {
 //                hideAllBottomSheets()
-                requireActivity().finish()
+                if (rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.HomeScreen || rideVM.rideAlertUiState.value == RideVM.RideAlertUiState.ShowCustomerDetailDialog)
+                    requireActivity().finish()
+                else
+                    binding.ivBack.performClick()
             }
         }
     }
@@ -1084,7 +1166,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                             driverImage = trip.driverImage.orEmpty(),
                             driverName = trip.driverName.orEmpty(),
                             driverId = trip.driverId.orEmpty(),
-                            driverRating = trip.driverRating.orEmpty()
+                            driverRating = trip.driverRating.orEmpty(),
+                            driverPhoneNo = trip.driverPhoneNo.orEmpty()
                         )
                         pickUpLocation = pickUpLocation?.copy(
                             latitude = trip.latitude.orEmpty(),
@@ -1231,7 +1314,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.customerETA = this?.customerETA ?: FindDriverDC.CustomerETA()
             rideVM.fareStructureList.addAll(this?.fareStructure ?: emptyList())
             rideVM.regionsList.addAll(this?.regions ?: emptyList())
-
             rideVM.updateUiState(RideVM.RideAlertUiState.ShowVehicleTypesDialog)
 //            rideVM.getDistanceFromGoogle(isLoading = {
 //                showProgressDialog()
@@ -1281,6 +1363,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.hideHomeNav(false)
         }, onSuccess = {
             hideProgressDialog()
+            rideVM.hideHomeNav(false)
             showSnackBar("Your ride has been scheduled successfully!!")
             rideVM.createRideData.pickUpLocation = null
             rideVM.createRideData.dropLocation = null
@@ -1339,13 +1422,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         rideVM.fetchOngoingTrip()
     }
 
-    override fun rideEnd(tripId: String, driverId: String) {
+    override fun rideEnd(
+        tripId: String,
+        driverId: String,
+        driverName: String,
+        engagementId: String
+    ) {
         requireActivity().runOnUiThread {
             try {
-                requireView().findNavController().navigate(
-                    R.id.navigation_ride_details, bundleOf(
-                        "tripId" to tripId,
-                        "driverId" to driverId
+                findNavController().navigate(
+                    R.id.navigation_rate_driver,
+                    bundleOf(
+                        "engagementId" to tripId,
+                        "driverName" to driverName,
+                        "driverId" to driverId,
+                        "tripId" to tripId
                     )
                 )
             } catch (e: Exception) {

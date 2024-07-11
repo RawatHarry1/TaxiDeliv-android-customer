@@ -1,11 +1,10 @@
 package com.venus_customer.view.fragment.feedback
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.venus_customer.R
@@ -42,7 +41,6 @@ class FeedbackFragment : BaseFragment<FragmentFeedBaclBinding>() {
 
     override fun onResume() {
         super.onResume()
-
         setClicks()
         observeFeedbackData()
     }
@@ -52,18 +50,27 @@ class FeedbackFragment : BaseFragment<FragmentFeedBaclBinding>() {
             findNavController().popBackStack()
         }
         binding.tvSkip.setOnSingleClickListener {
-            findNavController().popBackStack()
+
+            if (navArgs.tripId.isEmpty())
+                findNavController().popBackStack()
+            else
+                requireView().findNavController().navigate(
+                    R.id.navigation_ride_details, bundleOf(
+                        "tripId" to navArgs.tripId,
+                        "driverId" to navArgs.driverId
+                    )
+                )
         }
         binding.tvSubmit.setOnSingleClickListener {
             viewModel.rateDriver(
                 engagementId = navArgs.engagementId,
-                feedback = binding.etFeedback.text.toString(),
+                feedback = binding.etFeedback.text.toString().trim(),
                 rating = binding.ratingBar.rating.toInt().toString()
             )
         }
 
         binding.ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
-            val text = when(rating.roundToInt()){
+            val text = when (rating.roundToInt()) {
                 1 -> "Worst"
                 2 -> "Bad"
                 3 -> "Good"
@@ -71,7 +78,7 @@ class FeedbackFragment : BaseFragment<FragmentFeedBaclBinding>() {
                 5 -> "Best"
                 else -> ""
             }
-            if (rating.roundToInt() == 0){
+            if (rating.roundToInt() == 0) {
                 binding.ratingBar.rating = 1f
                 return@setOnRatingBarChangeListener
             }
@@ -89,7 +96,15 @@ class FeedbackFragment : BaseFragment<FragmentFeedBaclBinding>() {
             showSnackBar(this)
         }, onSuccess = {
             hideProgressDialog()
-            findNavController().popBackStack()
+            if (navArgs.tripId.isEmpty())
+                findNavController().popBackStack()
+            else
+                requireView().findNavController().navigate(
+                    R.id.navigation_ride_details, bundleOf(
+                        "tripId" to navArgs.tripId,
+                        "driverId" to navArgs.driverId
+                    )
+                )
         }
     )
 

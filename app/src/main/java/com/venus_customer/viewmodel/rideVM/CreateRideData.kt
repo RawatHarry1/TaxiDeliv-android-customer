@@ -48,7 +48,6 @@ data class CreateRideData(
         var driverImage: String? = null,
         var driverName: String? = null,
         var driverId: String? = null,
-        var driverRating: String? = null,
-
-        )
+        var driverPhoneNo: String? = null,
+        var driverRating: String? = null )
 }

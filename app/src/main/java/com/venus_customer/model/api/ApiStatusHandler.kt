@@ -45,7 +45,7 @@ fun <T> LiveData<ApiState<BaseResponse<T>>>.observeData(
             //When api getting error
             Status.ERROR -> {
                 if (it.errorModel?.statusCode == "503")
-                    onError.invoke("Internal server error")
+                    onError.invoke("Something went wrong")
                 else
                     onError.invoke(it.errorModel?.message.orEmpty())
             }

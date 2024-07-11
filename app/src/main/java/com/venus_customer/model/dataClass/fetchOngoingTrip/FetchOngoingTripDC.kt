@@ -29,6 +29,8 @@ data class FetchOngoingTripDC(
         val driverName: String? = null,
         @SerializedName("driver_rating")
         val driverRating: String? = null,
+        @SerializedName("driver_phone_no")
+        val driverPhoneNo: String? = null,
         @SerializedName("drop_address")
         val dropAddress: String? = null,
         @SerializedName("dry_eta")

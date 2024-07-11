@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="theme">#0054A5</color>
+    <color name="theme1">#007700</color>
     <color name="theme_button">#0054A5</color>
     <color name="theme_light">#330054A5</color>
     <color name="pink_card">#1A0054A5</color>

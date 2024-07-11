@@ -1,8 +1,6 @@
 package com.venus_customer.view.activity.walk_though.ui.home
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener

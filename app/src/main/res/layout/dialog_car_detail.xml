@@ -71,7 +71,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
-                    android:layout_marginTop="5dp"
                     android:drawableStart="@drawable/ic_user_count"
                     android:drawablePadding="5dp"
                     android:fontFamily="@font/poppins"
@@ -80,7 +79,6 @@
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="normal"
-                    android:visibility="gone"
                     app:layout_constraintStart_toEndOf="@id/tvTime"
                     app:layout_constraintTop_toBottomOf="@id/tvCarType" />
 
@@ -197,13 +195,13 @@
                     android:layout_marginTop="10dp"
                     android:hint="@string/txt_notes"
                     android:maxLines="1"
+                    android:maxLength="150"
                     android:singleLine="true"
                     android:textColor="@color/black_text_color"
                     android:textColorHint="@color/grey_text_color"
                     app:layout_constraintEnd_toEndOf="@id/tvNumber"
                     app:layout_constraintStart_toStartOf="@id/tvCustomerNameValue"
                     app:layout_constraintTop_toBottomOf="@id/tvCustomerNameValue" />
-
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvPayByCash"

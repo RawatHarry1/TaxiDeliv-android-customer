@@ -220,8 +220,10 @@ class RideVM @Inject constructor(
     val rateDriverData: LiveData<ApiState<BaseResponse<Any>>> = _rateDriverData
     fun rateDriver(engagementId: String, rating: String, feedback: String) = viewModelScope.launch {
         rideRepo.rateDriver(jsonObject = JSONObject().apply {
-            put("feedback", feedback)
-            put("feedbackReasons", feedback)
+            if (feedback.isNotEmpty()) {
+                put("feedback", feedback)
+                put("feedbackReasons", feedback)
+            }
             put("givenRating", rating)
             put("engagementId", engagementId)
         }).setApiState(_rateDriverData)

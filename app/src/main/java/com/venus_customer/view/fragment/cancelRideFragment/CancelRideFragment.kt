@@ -3,6 +3,7 @@ package com.venus_customer.view.fragment.cancelRideFragment
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.venus_customer.R
@@ -60,6 +61,10 @@ class CancelRideFragment : BaseFragment<FragmentCancelRideBinding>() {
     }
 
     private fun setClicks() {
+        binding.etReason.doOnTextChanged { text, start, before, count ->
+            binding.tvCharCount.text = "$count/150"
+        }
+
         binding.btnCancel.setOnSingleClickListener {
             if (CancelRideAdapter.selectedText.isNullOrEmpty() && binding.etReason.text?.trim().isNullOrEmpty()) {
                 showSnackBar(getString(R.string.please_select_cancel_reason))

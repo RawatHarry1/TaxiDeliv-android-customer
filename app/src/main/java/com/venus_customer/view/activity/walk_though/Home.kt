@@ -81,7 +81,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
                     binding.navView.visible()
                 else
                     binding.navView.gone()
-                rideVM.updateUiState(RideAlertUiState.HomeScreen)
+//                rideVM.updateUiState(RideAlertUiState.HomeScreen)
             }
         }
 

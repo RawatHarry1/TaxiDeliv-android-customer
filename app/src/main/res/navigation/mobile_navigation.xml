@@ -38,59 +38,69 @@
     <fragment
         android:id="@+id/navigation_ride_details"
         android:name="com.venus_customer.view.fragment.trips.RideDetailsFragment"
-        tools:layout="@layout/fragment_ride_details" >
+        tools:layout="@layout/fragment_ride_details">
         <argument
             android:name="tripId"
-            app:argType="string"
             android:defaultValue=""
-            />
+            app:argType="string" />
         <argument
             android:name="driverId"
-            app:argType="string"
             android:defaultValue=""
-            />
+            app:argType="string" />
+
+        <argument
+            android:name="fromTrip"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_rate_driver"
         android:name="com.venus_customer.view.fragment.feedback.FeedbackFragment"
-        tools:layout="@layout/fragment_feed_bacl" >
+        tools:layout="@layout/fragment_feed_bacl">
         <argument
             android:name="engagementId"
-            app:argType="string"
             android:defaultValue=""
-            />
+            app:argType="string" />
         <argument
             android:name="driverName"
-            app:argType="string"
             android:defaultValue=""
-            />
+            app:argType="string" />
+        <argument
+            android:name="driverId"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="tripId"
+            android:defaultValue=""
+            app:argType="string" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_ride_complete"
         android:name="com.venus_customer.view.fragment.RideCompleteFragment"
-        tools:layout="@layout/fragment_ride_complete" />
+        tools:layout="@layout/fragment_ride_complete">
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_select_location"
         android:name="com.venus_customer.view.fragment.SelectLocationFragment"
-        tools:layout="@layout/fragment_select_location" >
+        tools:layout="@layout/fragment_select_location">
         <argument
             android:name="selectLocationType"
-            app:argType="string"
-            android:defaultValue="pickUp"/>
+            android:defaultValue="pickUp"
+            app:argType="string" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_cancel_ride"
         android:name="com.venus_customer.view.fragment.cancelRideFragment.CancelRideFragment"
-        tools:layout="@layout/fragment_cancel_ride" >
+        tools:layout="@layout/fragment_cancel_ride">
         <argument
             android:name="sessionId"
-            app:argType="string"
             android:defaultValue=""
-            />
+            app:argType="string" />
     </fragment>
 
     <fragment

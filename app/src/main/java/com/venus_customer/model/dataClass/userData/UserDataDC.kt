@@ -1,8 +1,8 @@
 package com.venus_customer.model.dataClass.userData
 
 
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 
 @Keep
 data class UserDataDC(
@@ -68,7 +68,9 @@ data class UserDataDC(
         @SerializedName("is_customer_profile_complete")
         val isCustomerProfileComplete: Int? = null,
         @SerializedName("city", alternate = ["city_id"])
-        val city: String? = null
+        val city: String? = null,
+        @SerializedName("user_ratings")
+        val userRating: String? = null
     ) {
         @Keep
         data class DriverDocumentStatus(

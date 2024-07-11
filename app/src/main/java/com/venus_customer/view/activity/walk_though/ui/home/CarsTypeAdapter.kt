@@ -42,6 +42,11 @@ class CarsTypeAdapter(
             carTypeData: FindDriverDC.Region?,
             onClick: (region: FindDriverDC.Region?) -> Unit
         ) {
+            if (carTypeData?.eta == null) {
+                itemBinding.clBackground.alpha = 0.5f
+            } else {
+                itemBinding.clBackground.alpha = 1f
+            }
             Glide.with(itemBinding.root).load(carTypeData?.images?.rideNowNormal2x.orEmpty())
                 .error(R.mipmap.ic_launcher).into(itemBinding.ivCar)
             itemBinding.tvTitle.text = carTypeData?.regionName.orEmpty()
@@ -52,19 +57,20 @@ class CarsTypeAdapter(
             if (customerETA.rideDistance != null) {
                 dropOffTime = setTime(carTypeData?.eta.orEmpty().ifEmpty { "0" }
                     .toInt() + customerETA.rideTime!!.toInt())
-            }
+            } else
+                dropOffTime = ""
 
             itemBinding.tvTime.text =
                 "$dropOffTime | ${carTypeData?.eta.orEmpty().ifEmpty { "0" }.plus(" min away")}"
 
 //            itemBinding.tvActualPrice.text =
 //                "${carTypeData?.vehicleAmount.formatString()} $currencyCode"
-
+            itemBinding.tvPersonCount.text = carTypeData?.maxPeople ?: "0"
             itemBinding.tvActualPrice.text =
-                "${carTypeData?.region_fare?.currency?: "INR"} ${
+                "${carTypeData?.region_fare?.currency ?: "INR"} ${
                     String.format(
                         "%.2f",
-                        carTypeData?.region_fare?.fare?: 0.0
+                        carTypeData?.region_fare?.fare ?: 0.0
                     )
                 }"
 //            itemBinding.noDriverFound.isVisible = carTypeData?.distance.isNullOrEmpty()
@@ -73,8 +79,10 @@ class CarsTypeAdapter(
 
             itemBinding.root.setOnSingleClickListener {
                 if (!itemBinding.noDriverFound.isVisible) {
-                    onClick(carTypeData)
-                    updateListData(carTypeData)
+                    if (carTypeData?.eta != null) {
+                        onClick(carTypeData)
+                        updateListData(carTypeData)
+                    }
                 }
             }
         }

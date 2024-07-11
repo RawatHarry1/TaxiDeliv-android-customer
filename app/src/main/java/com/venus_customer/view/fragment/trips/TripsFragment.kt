@@ -65,7 +65,8 @@ class TripsFragment : BaseFragment<FragmentTripsBinding>() {
         findNavController().navigate(
             R.id.navigation_ride_details, bundleOf(
                 "tripId" to tripData.engagementId.orEmpty(),
-                "driverId" to tripData.driverId.orEmpty()
+                "driverId" to tripData.driverId.orEmpty(),
+                "fromTrip" to true
             )
         )
     }

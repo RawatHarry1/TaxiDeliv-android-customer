@@ -3,7 +3,6 @@ package com.venus_customer.view.fragment.profile
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.service.autofill.UserData
 import android.view.View
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.viewModels
@@ -17,21 +16,21 @@ import com.venus_customer.model.api.observeData
 import com.venus_customer.model.dataClass.base.ClientConfig
 import com.venus_customer.model.dataClass.userData.UserDataDC
 import com.venus_customer.util.SharedPreferencesManager
-import com.venus_customer.util.constants.AppConstants
-import com.venus_customer.util.constants.UserProfileConstants
+import com.venus_customer.util.formatString
 import com.venus_customer.util.safeCall
 import com.venus_customer.view.activity.CreateProfile
 import com.venus_customer.view.activity.sign_in.SignIn
 import com.venus_customer.view.base.BaseFragment
+import com.venus_customer.viewmodel.HomeVM
 import com.venus_customer.viewmodel.base.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AccountFragment : BaseFragment<FragmentAccountBinding>() {
 
-    lateinit var binding:FragmentAccountBinding
+    lateinit var binding: FragmentAccountBinding
     private val viewModel by viewModels<ProfileViewModel>()
-
+    private val homeViewModel by viewModels<HomeVM>()
 
     override fun initialiseFragmentBaseViewModel() {
 
@@ -45,14 +44,20 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         super.onViewCreated(view, savedInstanceState)
         binding = getViewDataBinding()
         observeData()
+        observeProfileData()
         setData(view)
+        homeViewModel.loginViaToken()
     }
 
     private fun setData(view: View) {
-        SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)?.let {
-            binding.tvUserName.text = it.login?.userName.orEmpty()
-            Glide.with(view.context).load(it.login?.userImage.orEmpty()).error(R.drawable.circleimage).into(binding.ivProfileImage)
-        }
+        SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+            ?.let {
+                binding.tvUserName.text = it.login?.userName.orEmpty()
+                binding.tvUserRating.text =
+                    it.login?.userRating.orEmpty().ifEmpty { "0.0" }.formatString(1)
+                Glide.with(view.context).load(it.login?.userImage.orEmpty())
+                    .error(R.drawable.circleimage).into(binding.ivProfileImage)
+            }
 
         binding.ivProfileImage.setOnSingleClickListener {
             startActivity(Intent(requireContext(), CreateProfile::class.java).apply {
@@ -77,17 +82,19 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         }
 
 
-      binding.llChangePassword.setOnSingleClickListener {
+        binding.llChangePassword.setOnSingleClickListener {
 
             findNavController().navigate(R.id.navigation_change_password)
         }
 
         binding.llTerms.setOnSingleClickListener {
-            val configData = SharedPreferencesManager.getModel<ClientConfig>(SharedPreferencesManager.Keys.CLIENT_CONFIG)
+            val configData =
+                SharedPreferencesManager.getModel<ClientConfig>(SharedPreferencesManager.Keys.CLIENT_CONFIG)
             configData?.termsOfUseUrl?.let {
                 safeCall {
                     if (it.isNotEmpty())
-                        CustomTabsIntent.Builder().build().launchUrl(requireContext(), Uri.parse(it))
+                        CustomTabsIntent.Builder().build()
+                            .launchUrl(requireContext(), Uri.parse(it))
                 }
             }
         }
@@ -105,12 +112,17 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         }
 
         binding.llLogout.setOnSingleClickListener {
-            DialogUtils.getNegativeDialog(requireActivity(),"Yes",getString(R.string.are_you_sure_you_want_to_log_out), ::onDialogClick)
+            DialogUtils.getNegativeDialog(
+                requireActivity(),
+                "Yes",
+                getString(R.string.are_you_sure_you_want_to_log_out),
+                ::onDialogClick
+            )
         }
     }
 
 
-    private fun onDialogClick(position: Int){
+    private fun onDialogClick(position: Int) {
         viewModel.logout()
     }
 
@@ -129,5 +141,16 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         requireActivity().finishAffinity()
     })
 
-
+    private fun observeProfileData() = homeViewModel.loginViaToken.observeData(this, onLoading = {
+        showProgressDialog()
+    }, onSuccess = {
+        hideProgressDialog()
+        SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.USER_DATA, this)
+        if (activity != null)
+        binding.tvUserRating.text =
+            this?.login?.userRating.orEmpty().ifEmpty { "0.0" }.formatString(1)
+    }, onError = {
+        hideProgressDialog()
+        showToastShort(this)
+    })
 }

@@ -74,6 +74,7 @@ fun Context.showPath(
                 val routes = json.array<JsonObject>("routes")
                 Log.e("RideStatus", "In showPath try routes ---> ${Gson().toJson(routes)}")
                 if (routes != null && routes.size > 0) {
+                    Log.e("RideStatus", "In showPath routes not null ---> ")
                     pathModel.durationText =
                         pathResponse.routes?.get(0)?.legs?.get(0)?.duration?.text ?: ""
                     pathModel.durationMin =
@@ -98,11 +99,15 @@ fun Context.showPath(
                     val bounds = latLongB.build()
 //                    polyline = mMap?.addPolyline(options)
                     if (mMap != null && srcLat.latitude != 0.0 && srcLat.longitude != 0.0) {
+                        Log.e("RideStatus", "In showPath try move Camera --->")
                         polyline = mMap.addPolyline(options)
                         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
                     }
                     if (mMap != null) {
+                        Log.e("RideStatus", "In showPath try map not null --->")
+
                         if (isTracking) {
+                            Log.e("RideStatus", "In showPath try tracking --->")
                             pathModel.srcMarker = mMap.addMarker(
                                 MarkerOptions().position(
                                     srcLat
@@ -119,6 +124,7 @@ fun Context.showPath(
                                 }
                             )
                         } else {
+                            Log.e("RideStatus", "In showPath try not tracking --->")
                             pathModel.srcMarker = mMap.addMarker(
                                 MarkerOptions().position(
                                     srcLat
@@ -140,6 +146,10 @@ fun Context.showPath(
                         }
                         srcMarker = pathModel.srcMarker
                         destMarker = pathModel.desMarker
+                    }
+                    else{
+                        Log.e("RideStatus", "In showPath try map is null --->")
+
                     }
                     valueIs(pathModel)
                 } else {

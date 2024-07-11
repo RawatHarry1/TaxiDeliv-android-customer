@@ -81,13 +81,13 @@
 
         <TextView
             android:id="@+id/tvPersonCount"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
             app:layout_constraintStart_toEndOf="@id/tvTime"
             android:text="@string/txt_count"
-            android:textSize="13sp"
+            android:gravity="bottom"
+            android:textSize="11sp"
             android:fontFamily="@font/poppins"
             android:layout_marginStart="15dp"
             android:drawablePadding="5dp"

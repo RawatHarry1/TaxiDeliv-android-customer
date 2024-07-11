@@ -81,7 +81,9 @@ class FirebaseNotification : FirebaseMessagingService() {
             ) {
                 HomeFragment.notificationInterface?.rideEnd(
                     notificationData.notificationModel.tripId.orEmpty(),
-                    notificationData.notificationModel.driverId.orEmpty()
+                    notificationData.notificationModel.driverId.orEmpty(),
+                    notificationData.notificationModel.driverName.orEmpty(),
+                    notificationData.notificationModel.sessionId.orEmpty()
                 )
             } else if ((notificationData.notificationType?.toIntOrNull()
                     ?: 0) == NotificationStatus.RIDE_ACCEPTED.type
@@ -89,6 +91,10 @@ class FirebaseNotification : FirebaseMessagingService() {
                 HomeFragment.notificationInterface?.acceptRide()
             } else if ((notificationData.notificationType?.toIntOrNull()
                     ?: 0) == NotificationStatus.TIME_OUT_RIDE.type
+            ) {
+                HomeFragment.notificationInterface?.requestTimeout(notificationData.message ?: "")
+            } else if ((notificationData.notificationType?.toIntOrNull()
+                    ?: 0) == NotificationStatus.REQUEST_TIMEOUT.type
             ) {
                 HomeFragment.notificationInterface?.requestTimeout(notificationData.message ?: "")
             } else {

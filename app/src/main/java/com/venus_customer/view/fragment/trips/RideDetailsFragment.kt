@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -64,6 +65,18 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
                 handlePermissionResult(permissions)
             }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
+    }
+
+    // Register back press callback
+    private val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (navArgs.fromTrip)
+                findNavController().popBackStack()
+            else
+                findNavController().popBackStack(R.id.navigation_home, false)
+        }
     }
 
     override fun onResume() {
@@ -73,7 +86,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
 
     private fun setClicks() {
         binding.ivBack.setOnSingleClickListener {
-            findNavController().popBackStack()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
         binding.tvRateDriver.setOnSingleClickListener {
@@ -108,6 +121,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                 )
         }
     }
+
     private fun downloadPdf(context: Context, url: String, title: String, description: String) {
         showToastShort("Downloading invoice please wait!!")
         val request = DownloadManager.Request(Uri.parse(url))
@@ -155,7 +169,8 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             binding.tvEndAddress.text = rideSummaryDC?.dropAddress.orEmpty()
             binding.tvDriverName.text = rideSummaryDC?.driverName.orEmpty()
             if ((rideSummaryDC?.driverRating ?: -1) >= 0) {
-                binding.tvRatings.text = rideSummaryDC?.driverRating.toString()
+                binding.tvRatings.text =
+                    rideSummaryDC?.driverRating.toString().ifEmpty { "0.0" }.formatString(1)
             } else {
                 binding.tvRatings.text = "0"
             }
@@ -281,10 +296,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
 
     private fun checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    requireActivity(),
-                    Manifest.permission.CAMERA
-                ) != PackageManager.PERMISSION_GRANTED ||
+            if (
                 ContextCompat.checkSelfPermission(
                     requireActivity(),
                     Manifest.permission.READ_MEDIA_IMAGES

@@ -2,6 +2,7 @@ package com.venus_customer.view.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Geocoder
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
@@ -58,6 +60,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.URL
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -70,6 +73,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
     private var isSearchEnable: Boolean = true
     private val placesClient by lazy { Places.createClient(requireContext()) }
     private val adapter by lazy { PickDropAdapter(::adapterClick) }
+    private var countryCode = ""
     override fun initialiseFragmentBaseViewModel() {
 
     }
@@ -86,7 +90,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
         observeSearchPlaces()
         observeAddAddress()
 //        placesInitializer()
-
+        countryCode = getCountryCode(VenusApp.latLng) ?: "IN"
         val type = args.selectLocationType
         if (type == "add_address") {
             setPickDropAdapter(binding.rvAddAddressPickDrop, view.context)
@@ -150,6 +154,17 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                         MarkerOptions().position(latLng).draggable(true)
                             .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
                     googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+                } else {
+                    googleMap?.addMarker(
+                        MarkerOptions().position(latLng).draggable(true)
+                            .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
+                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+//                    val latLngBounds = LatLngBounds(
+//                        LatLng(VenusApp.latLng.latitude - 5.0, VenusApp.latLng.longitude - 5.0),
+//                        LatLng(VenusApp.latLng.latitude + 5.0, VenusApp.latLng.longitude + 5.0)
+//                    )
+//                    googleMap?.setLatLngBoundsForCameraTarget(latLngBounds)
+//                    googleMap?.setMinZoomPreference(5.0f)
                 }
                 setUpMapListeners()
             }
@@ -287,8 +302,8 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                 .setSessionToken(token)
                 .setLocationBias(
                     RectangularBounds.newInstance(
-                        LatLng(VenusApp.latLng.latitude, VenusApp.latLng.longitude),
-                        LatLng(VenusApp.latLng.latitude, VenusApp.latLng.longitude)
+                        LatLng(VenusApp.latLng.latitude - 0.5, VenusApp.latLng.longitude - 0.5),
+                        LatLng(VenusApp.latLng.latitude + 0.5, VenusApp.latLng.longitude + 0.5)
                     )
                 )
                 .setQuery(text)
@@ -537,5 +552,20 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                 null
             }
         }
+    }
+
+    private fun getCountryCode(latLng: LatLng): String? {
+        val geocoder = Geocoder(requireActivity(), Locale.getDefault())
+        val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+        return if (!addresses.isNullOrEmpty()) {
+            addresses[0].countryCode
+        } else {
+            null
+        }
+    }
+
+    fun restrictMapToBounds(bounds: LatLngBounds) {
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0))
+        googleMap?.setLatLngBoundsForCameraTarget(bounds)
     }
 }
