@@ -48,7 +48,8 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
     private fun clickListener() {
         viewModel.needToUploadImage = !isEditProfile
         binding.etUserName.filters = arrayOf(NoSpaceInputFilter())
-        binding.tvCreateProfile.text = if (isEditProfile) getString(R.string.edit_your_nprofile) else getString(R.string.create_your_nprofile)
+        binding.tvCreateProfile.text =
+            if (isEditProfile) getString(R.string.edit_your_nprofile) else getString(R.string.create_your_nprofile)
         binding.ivCamera.setOnSingleClickListener {
             pickerDialog().setPickerCloseListener { _, uris ->
                 viewModel.needToUploadImage = true
@@ -94,13 +95,29 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
                 false
             }
 
+            binding.etFirstName.getValue().trim().length < 3 -> {
+                showToastShort(getString(R.string.please_enter_first_name_length))
+                false
+            }
+
             binding.etLastName.getValue().isEmpty() -> {
                 showToastShort(getString(R.string.please_enter_last_name))
                 false
             }
 
+            binding.etLastName.getValue().trim().length < 3 -> {
+                showToastShort(getString(R.string.please_enter_last_name_length))
+                false
+            }
+
+
             binding.etUserName.getValue().isEmpty() -> {
                 showToastShort(getString(R.string.please_enter_username))
+                false
+            }
+
+            binding.etUserName.getValue().trim().length < 3 -> {
+                showToastShort(getString(R.string.please_enter_user_name_length))
                 false
             }
 
@@ -125,9 +142,9 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
         showProgressDialog()
     }, onSuccess = {
         hideProgressDialog()
-        if (isEditProfile){
+        if (isEditProfile) {
             finish()
-        }else{
+        } else {
             startActivity(Intent(this@CreateProfile, Welcome::class.java))
             finish()
         }
@@ -143,7 +160,8 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
         hideProgressDialog()
         SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.USER_DATA, this)
         viewModel.imagePath = this?.login?.userImage.orEmpty()
-        Glide.with(this@CreateProfile).load(viewModel.imagePath).error(R.drawable.circleimage).into(binding.ivProfile)
+        Glide.with(this@CreateProfile).load(viewModel.imagePath).error(R.drawable.circleimage)
+            .into(binding.ivProfile)
         binding.etFirstName.setText(this?.login?.firstName.orEmpty())
         binding.etLastName.setText(this?.login?.lastName.orEmpty())
         binding.etUserName.setText(this?.login?.userName.orEmpty())

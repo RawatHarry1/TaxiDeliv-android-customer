@@ -2,7 +2,9 @@ package com.venus_customer.socketSetup
 
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
-import com.venus_customer.BuildConfig
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.venus_customer.model.dataClass.MessageData
 import com.venus_customer.model.dataClass.base.ClientConfig
 import com.venus_customer.model.dataClass.userData.UserDataDC
 import com.venus_customer.util.SharedPreferencesManager
@@ -27,7 +29,7 @@ object SocketSetup {
     /**
      * Initialize Socket Interface
      * */
-    fun initializeInterface(socketInterface: SocketInterface){
+    fun initializeInterface(socketInterface: SocketInterface) {
         SocketSetup.socketInterface = socketInterface
     }
 
@@ -37,7 +39,7 @@ object SocketSetup {
      * */
     fun connectSocket() {
         try {
-            if (socket == null){
+            if (socket == null) {
                 val ioOptions = IO.Options().apply {
                     forceNew = true
                     reconnectionAttempts = Integer.MAX_VALUE
@@ -49,17 +51,33 @@ object SocketSetup {
                 listenerOn(Socket.EVENT_DISCONNECT, SOCKET_DISCONNECT)
                 listenerOn(Socket.EVENT_CONNECT_ERROR, SOCKET_ERROR)
                 listenerOn(SocketKeys.DRIVER_LOCATION_LISTENER, driverLocationListener)
+
                 if (socket?.connected() == false)
                     socket?.connect()
-            }else{
+            } else {
                 if (socket?.connected() == false)
                     socket?.connect()
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
+    fun listenToMessage(engagementId: String, customerId: String) {
+        val listener = "msg_receiver_listener_${engagementId}_${customerId}"
+        val allMsgListener = "list_of_message"
+        Log.e("SocketPrint", listener)
+        Log.e("SocketPrint", allMsgListener)
+        listenerOn(listener, driverMessageListener)
+        listenerOn(allMsgListener, allMessageListener)
+    }
+
+    fun listenerOffOnMessage(engagementId: String, customerId: String) {
+        val listener = "msg_receiver_listener_${engagementId}_${customerId}"
+        val allMsgListener = "list_of_message"
+        listenerOff(listener, driverMessageListener)
+        listenerOff(allMsgListener, allMessageListener)
+    }
 
     /**
      * Driver Location Listener
@@ -69,10 +87,53 @@ object SocketSetup {
             try {
                 val json = JSONObject(it[0].toString())
                 socketInterface?.driverLocation(
-                    latLng = LatLng(json.optString("latitude").toDoubleOrNull() ?: 0.0, json.optString("longitude").toDoubleOrNull() ?: 0.0),
-                    bearing =json.optString("direction").toFloatOrNull() ?: 0.0F
+                    latLng = LatLng(
+                        json.optString("latitude").toDoubleOrNull() ?: 0.0,
+                        json.optString("longitude").toDoubleOrNull() ?: 0.0
+                    ),
+                    bearing = json.optString("direction").toFloatOrNull() ?: 0.0F
                 )
-            }catch (e:Exception){
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    /**
+     * Driver Message Listener
+     * */
+    private val driverMessageListener = Emitter.Listener {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val json = JSONObject(it.firstOrNull().toString())
+                val msg = Gson().fromJson(json.toString(), MessageData::class.java)
+                Log.e("SocketPrint", "Socket listen on message ${Gson().toJson(json)}")
+                msg?.let {
+                    socketInterface?.driverMessage(it)
+                }
+            } catch (e: Exception) {
+                Log.e("SocketPrint", "Socket listen on message error ${e.message}")
+                e.printStackTrace()
+            }
+        }
+    }
+
+
+    /**
+     * All Message Listener
+     * */
+    private val allMessageListener = Emitter.Listener {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val json = JSONObject(it.firstOrNull().toString()).getJSONArray("thread")
+                val itemType = object : TypeToken<List<MessageData>>() {}.type
+                val msgList = Gson().fromJson<List<MessageData>>(json.toString(), itemType)
+                Log.e("SocketPrint", "Socket listen on all message ${Gson().toJson(msgList)}")
+                msgList?.let {
+                    socketInterface?.allMessages(it as ArrayList<MessageData>)
+                }
+            } catch (e: Exception) {
+                Log.e("SocketPrint", "Socket listen on message error ${e.message}")
                 e.printStackTrace()
             }
         }
@@ -83,7 +144,7 @@ object SocketSetup {
      * For Disconnect Socket
      * */
     fun disconnectSocket() {
-        if (socket?.connected() == true){
+        if (socket?.connected() == true) {
             listenerOff(Socket.EVENT_CONNECT, SOCKET_CONNECT)
             listenerOff(Socket.EVENT_DISCONNECT, SOCKET_DISCONNECT)
             listenerOff(Socket.EVENT_CONNECT_ERROR, SOCKET_ERROR)
@@ -95,17 +156,17 @@ object SocketSetup {
 
 
     private val SOCKET_CONNECT = Emitter.Listener {
-        Log.e("SocketPrint","Socket Connected")
+        Log.e("SocketPrint", "Socket Connected")
     }
 
 
     private val SOCKET_DISCONNECT = Emitter.Listener {
-        Log.e("SocketPrint","Socket Disconnected")
+        Log.e("SocketPrint", "Socket Disconnected")
     }
 
 
     private val SOCKET_ERROR = Emitter.Listener {
-        Log.e("SocketPrint","Socket Error   ${it[0]}")
+        Log.e("SocketPrint", "Socket Error   ${it[0]}")
     }
 
 
@@ -116,7 +177,7 @@ object SocketSetup {
         try {
             if (socket?.hasListeners(key) == false)
                 socket?.on(key, listener)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -129,15 +190,17 @@ object SocketSetup {
         try {
             if (socket?.hasListeners(key) == true)
                 socket?.off(key, listener)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
 
-    fun startRideEmit(tripId: String){
-        val clientConfig = SharedPreferencesManager.getModel<ClientConfig>(SharedPreferencesManager.Keys.CLIENT_CONFIG)
-        val userData = SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+    fun startRideEmit(tripId: String) {
+        val clientConfig =
+            SharedPreferencesManager.getModel<ClientConfig>(SharedPreferencesManager.Keys.CLIENT_CONFIG)
+        val userData =
+            SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
         emit(SocketKeys.CUSTOMER_TRACKING, JSONObject().apply {
             put("operatorToken", clientConfig?.operatorToken.orEmpty())
             put("accessToken", userData?.accessToken.orEmpty())
@@ -145,16 +208,49 @@ object SocketSetup {
         })
     }
 
+    fun startMsgEmit(
+        msg: String = "",
+        senderId: String = "",
+        receiverId: String = "",
+        type: String = "",
+        engagementId: String = "",
+        attachment: String = "",
+        thumbnail: String = ""
+
+    ) {
+        emit(SocketKeys.SEND_MESSAGE, JSONObject().apply {
+            put("sender_id", senderId)
+            put("receiver_id", receiverId)
+            put("message", msg)
+            put("engagement_id", engagementId)
+            put("attachment", attachment)
+            put("attachment_type", type)
+            put("thumbnail", thumbnail)
+
+        })
+    }
+
+
+    fun getAllMsg(
+        senderId: String = "",
+        engagementId: String = ""
+    ) {
+        emit(SocketKeys.GET_ALL_MESSAGE, JSONObject().apply {
+            put("user_id", senderId)
+            put("ride_id", engagementId)
+        })
+    }
+
 
     /**
      * Emit Socket
      * */
-    private fun <T> emit(key: String, data: T){
+    private fun <T> emit(key: String, data: T) {
         try {
             if (socket?.connected() == false)
                 connectSocket()
             socket?.emit(key, data)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }

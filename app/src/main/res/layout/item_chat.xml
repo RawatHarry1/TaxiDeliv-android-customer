@@ -51,10 +51,10 @@
             app:layout_constraintTop_toBottomOf="@id/ivSenderImage"
             app:layout_constraintEnd_toEndOf="parent"
             android:background="@drawable/shape_sender_chat"
-            android:padding="10dp"
-            android:layout_marginEnd="10dp"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="16dp"
             android:visibility="gone"
-            />
+            android:layout_marginEnd="10dp" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvReceiver"
             android:layout_width="wrap_content"
@@ -68,7 +68,8 @@
             app:layout_constraintTop_toBottomOf="@id/ivReceiverImage"
             app:layout_constraintStart_toStartOf="parent"
             android:background="@drawable/shape_receiver_chat"
-            android:padding="10dp"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="16dp"
             android:layout_marginStart="10dp"
             android:visibility="gone"
             />
@@ -84,7 +85,6 @@
             android:text="@string/txt_dummy_time"
             app:layout_constraintTop_toBottomOf="@id/tvSender"
             app:layout_constraintEnd_toEndOf="parent"
-            android:drawableStart="@drawable/ic_double_tick"
             android:drawablePadding="5dp"
             android:paddingStart="5dp"
             android:paddingBottom="5dp"

@@ -100,7 +100,13 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
         }
 
         binding.ivCustomerSupport.setOnSingleClickListener {
-            startActivity(Intent(requireContext(), ChatActivity::class.java))
+            startActivity(Intent(requireContext(), ChatActivity::class.java)
+                .putExtra("customerId", "${viewModel.createRideData.customerId}")
+                .putExtra("driverId", "${viewModel.createRideData.driverDetail?.driverId}")
+                .putExtra("engagementId", "${viewModel.createRideData.tripId}")
+                .putExtra("driverName", "${viewModel.createRideData.driverDetail?.driverName}")
+                .putExtra("driverImage", "${viewModel.createRideData.driverDetail?.driverImage}"))
+
         }
 
         binding.tvDownloadInvoice.setOnSingleClickListener {

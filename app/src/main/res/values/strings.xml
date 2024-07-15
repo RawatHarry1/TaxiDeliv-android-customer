@@ -271,8 +271,12 @@
     <string name="street_address_optional">Street Address (Optional)</string>
     <string name="please_select_profile_pic">*Please select profile pic.</string>
     <string name="please_enter_first_name">*Please enter first name.</string>
+    <string name="please_enter_first_name_length">*First name should be at least three characters.</string>
     <string name="please_enter_valid_first_name">*Please enter valid first name.</string>
     <string name="please_enter_last_name">*Please enter last name.</string>
+    <string name="please_enter_last_name_length">*Last name should be at least three characters.</string>
+    <string name="please_enter_user_name_length">*User name should be at least three characters.</string>
+
     <string name="please_enter_valid_last_name">*Please enter valid last name.</string>
     <string name="please_enter_designation">*Please enter designation.</string>
     <string name="please_enter_email_address">*Please enter email address.</string>

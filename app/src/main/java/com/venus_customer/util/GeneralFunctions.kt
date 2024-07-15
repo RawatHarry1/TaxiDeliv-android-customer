@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.CheckResult
+import androidx.annotation.RequiresApi
 import com.venus_customer.R
 import com.venus_customer.VenusApp
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
@@ -26,6 +28,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.onStart
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.TimeZone
 
@@ -132,6 +137,8 @@ fun String?.getTime(
         return ""
     }
 }
+
+
 
 
 /**

@@ -18,9 +18,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
@@ -85,6 +87,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//        GoogleApiAvailability.getInstance().initialize("")
         binding = getViewDataBinding()
         setMapFragment(view, savedInstanceState)
         observeSearchPlaces()
@@ -143,10 +146,12 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
     private fun setMapFragment(view: View, savedInstanceState: Bundle?) {
 
         MapsInitializer.initialize(view.context, MapsInitializer.Renderer.LATEST) {
+
             binding.fragmentMapFullScreen.onCreate(savedInstanceState)
 
             binding.fragmentMapFullScreen.getMapAsync {
                 googleMap = it
+
                 val latLng = LatLng(VenusApp.latLng.latitude, VenusApp.latLng.longitude)
                 googleMap?.clear()
                 if (args.selectLocationType == "pickUp" || args.selectLocationType == "add_address") {
@@ -159,12 +164,6 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                         MarkerOptions().position(latLng).draggable(true)
                             .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
                     googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
-//                    val latLngBounds = LatLngBounds(
-//                        LatLng(VenusApp.latLng.latitude - 5.0, VenusApp.latLng.longitude - 5.0),
-//                        LatLng(VenusApp.latLng.latitude + 5.0, VenusApp.latLng.longitude + 5.0)
-//                    )
-//                    googleMap?.setLatLngBoundsForCameraTarget(latLngBounds)
-//                    googleMap?.setMinZoomPreference(5.0f)
                 }
                 setUpMapListeners()
             }

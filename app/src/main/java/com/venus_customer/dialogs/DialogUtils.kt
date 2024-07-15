@@ -7,25 +7,22 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
-import android.view.KeyEvent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.card.MaterialCardView
 import com.mukesh.mukeshotpview.mukeshOtpView.MukeshOtpView
 import com.venus_customer.R
-import com.venus_customer.customClasses.singleClick.SingleClick
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.DialogEditProfilePictureBinding
 import com.venus_customer.util.showSnackBar
@@ -49,8 +46,6 @@ object DialogUtils {
             setCancelable(false)
 
 
-
-
             val tvCancel = findViewById<AppCompatTextView>(R.id.tvCancel)
             val tvTitle = findViewById<AppCompatTextView>(R.id.tvTitle)
             val tvConfirm = findViewById<AppCompatTextView>(R.id.tvConfirm)
@@ -72,7 +67,6 @@ object DialogUtils {
     }
 
 
-
     fun verifyOtpDialog(
         mContext: Activity,
         countryCode: String,
@@ -89,7 +83,7 @@ object DialogUtils {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setContentView(R.layout.dialog_otp)
             setCancelable(false)
-
+            val rootView = findViewById<MaterialCardView>(R.id.cardMainOtp)
             val tvEmailAddress = findViewById<TextView>(R.id.tvEmailAddress)
             val ivClose = findViewById<ImageView>(R.id.ivClose)
             val tvConfirm = findViewById<AppCompatTextView>(R.id.tvVerify)
@@ -104,12 +98,12 @@ object DialogUtils {
             }
 
             tvConfirm.setOnSingleClickListener {
-                if ((simpleOtpView.text?.length ?: 0) == 4){
+                if ((simpleOtpView.text?.length ?: 0) == 4) {
                     verify(simpleOtpView.text.toString(), dialogView)
-                } else if ((simpleOtpView.text?.length ?: 0) == 0){
-                    showSnackBar(mContext.getString(R.string.please_enter_otp))
+                } else if ((simpleOtpView.text?.length ?: 0) == 0) {
+                    showSnackBar(mContext.getString(R.string.please_enter_otp),this)
                 } else {
-                    showSnackBar(mContext.getString(R.string.please_enter_valid_otp))
+                    showSnackBar(mContext.getString(R.string.please_enter_valid_otp), this)
                 }
             }
 
@@ -122,12 +116,11 @@ object DialogUtils {
         return dialogView
     }
 
-   lateinit var dialogView : Dialog
+    lateinit var dialogView: Dialog
 
 
-    fun dismissView()
-    {
-        if(this::dialogView.isInitialized) dialogView.dismiss()
+    fun dismissView() {
+        if (this::dialogView.isInitialized) dialogView.dismiss()
     }
 
     fun getAddTopUpDialog(mContext: Activity, onClickDialogLambda: (String) -> Unit): Dialog {
@@ -139,8 +132,6 @@ object DialogUtils {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setContentView(R.layout.dialog_add_topup)
             setCancelable(false)
-
-
 
 
             val etEnterAmount = findViewById<AppCompatEditText>(R.id.etEnterAmount)
@@ -166,6 +157,7 @@ object DialogUtils {
     private fun changeFocus(editTextArray: Array<AppCompatEditText>) {
         for (i in 1 until editTextArray.size) otpEnter(editTextArray[i - 1], editTextArray[i])
     }
+
     private fun otpEnter(currentEditText: EditText, nextEditText: EditText) {
         currentEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -215,7 +207,7 @@ object DialogUtils {
 
 
 
-            dialogBinding.tvTakePicture.setOnSingleClickListener{
+            dialogBinding.tvTakePicture.setOnSingleClickListener {
                 clickListener.onTakePictureListener()
                 mDialog.dismiss()
             }
@@ -225,12 +217,11 @@ object DialogUtils {
                 mDialog.dismiss()
             }
 
-            dialogBinding.btnCancel.setOnSingleClickListener{ mDialog.dismiss() }
+            dialogBinding.btnCancel.setOnSingleClickListener { mDialog.dismiss() }
             mDialog.setContentView(dialogBinding.getRoot())
             mDialog.show()
         }
     }
-
 
 
     interface EditProfileListener {

@@ -741,7 +741,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
 
             ivChat.setOnSingleClickListener {
-                startActivity(Intent((activity as BaseActivity<*>), ChatActivity::class.java))
+                startActivity(
+                    Intent(
+                        (activity as BaseActivity<*>),
+                        ChatActivity::class.java
+                    ).putExtra("customerId", "${rideVM.createRideData.customerId}")
+                        .putExtra("driverId", "${rideVM.createRideData.driverDetail?.driverId}")
+                        .putExtra("engagementId", "${rideVM.createRideData.tripId}")
+                        .putExtra("driverName", "${rideVM.createRideData.driverDetail?.driverName}")
+                        .putExtra("driverImage", "${rideVM.createRideData.driverDetail?.driverImage}")
+                )
             }
             tvConnecting.setOnSingleClickListener {
                 clConnecting.visibility = View.GONE
@@ -1150,6 +1159,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     with(rideVM.createRideData) {
                         currencyCode = trip.currency.orEmpty()
                         tripId = trip.tripId.orEmpty()
+                        customerId = trip.customerId.orEmpty()
                         sessionId = trip.sessionId.orEmpty()
                         status = trip.status
                         vehicleData = vehicleData?.copy(
@@ -1184,8 +1194,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                             longitude = trip.driverCurrentLongitude
                         )
                     }
-                    SocketSetup.startRideEmit(rideVM.createRideData.tripId.orEmpty())
-                    rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailDialog)
+                    if (rideVM.createRideData.status == 0) {
+                        rideVM.updateUiState(RideVM.RideAlertUiState.FindDriverDialog)
+                    } else {
+                        SocketSetup.startRideEmit(rideVM.createRideData.tripId.orEmpty())
+                        rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailDialog)
+                    }
                 }
             } else {
 //                var alreadyHittingApi = false

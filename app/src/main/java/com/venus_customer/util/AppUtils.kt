@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.IntentSender
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,6 +13,7 @@ import android.graphics.Canvas
 import android.graphics.Insets
 import android.icu.text.SimpleDateFormat
 import android.icu.util.TimeZone
+import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -29,8 +31,15 @@ import android.util.TypedValue
 import android.view.View
 import android.view.WindowInsets
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.SettingsClient
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
@@ -47,6 +56,10 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.text.DateFormat
 import java.text.ParseException
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -127,6 +140,72 @@ object AppUtils {
         return null
     }
 
+
+    fun checkAndEnableGPS(
+        activity: Activity,
+        onGPSEnabled: () -> Unit,
+        onGPSDenied: () -> Unit,
+        gpsEnableLauncher: ActivityResultLauncher<IntentSenderRequest>
+    ) {
+        val locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            // GPS is not enabled, prompt the user to enable it
+            promptEnableGPS(activity, onGPSEnabled, onGPSDenied, gpsEnableLauncher)
+        } else {
+            // GPS is already enabled
+//            Toast.makeText(activity, "GPS is already enabled", Toast.LENGTH_SHORT).show()
+            onGPSEnabled()
+        }
+    }
+
+
+    private fun promptEnableGPS(
+        activity: Activity,
+        onGPSEnabled: () -> Unit,
+        onGPSDenied: () -> Unit,
+        gpsEnableLauncher: ActivityResultLauncher<IntentSenderRequest>
+    ) {
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 10000
+            fastestInterval = 5000
+        }
+
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        builder.setAlwaysShow(true)
+
+        val settingsClient: SettingsClient = LocationServices.getSettingsClient(activity)
+        val task = settingsClient.checkLocationSettings(builder.build())
+
+        task.addOnSuccessListener { response ->
+            val states = response.locationSettingsStates
+            if (states?.isLocationPresent == true) {
+//                Toast.makeText(activity, "GPS is enabled", Toast.LENGTH_SHORT).show()
+                onGPSEnabled()
+            }
+        }
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    val intentSenderRequest =
+                        IntentSenderRequest.Builder(exception.resolution).build()
+                    gpsEnableLauncher.launch(intentSenderRequest)
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    onGPSDenied()
+                }
+            } else {
+                onGPSDenied()
+            }
+        }
+    }
+
+
+
+
+
+
+
     fun getScreenWidth(activity: Activity): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics = activity.windowManager.currentWindowMetrics
@@ -183,7 +262,23 @@ object AppUtils {
         val km = meter / 1000
         return String.format("%.1f", km)
     }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun currentUtcTimeAsString(): String {
+        val currentUtc = LocalDateTime.now(ZoneOffset.UTC)
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        return currentUtc.format(formatter)
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun convertUtcToLocal(utcTimeString: String): String {
+        val formatterUtc = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val utcDateTime = LocalDateTime.parse(utcTimeString, formatterUtc)
 
+        val localZoneId = ZoneId.systemDefault() // Or specify a specific zone ID if needed
+        val localDateTime = utcDateTime.atZone(ZoneOffset.UTC).withZoneSameInstant(localZoneId).toLocalDateTime()
+
+        val formatterLocal = DateTimeFormatter.ofPattern("dd MMM, yyyy hh:mm a", Locale.ENGLISH)
+        return localDateTime.format(formatterLocal)
+    }
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun getDateFromDateISO(selectDate: String?, format: String): String? {
