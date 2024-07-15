@@ -53,6 +53,10 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.text.DateFormat
 import java.text.ParseException
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -160,6 +164,23 @@ object AppUtils {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun currentUtcTimeAsString(): String {
+        val currentUtc = LocalDateTime.now(ZoneOffset.UTC)
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        return currentUtc.format(formatter)
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun convertUtcToLocal(utcTimeString: String): String {
+        val formatterUtc = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val utcDateTime = LocalDateTime.parse(utcTimeString, formatterUtc)
+
+        val localZoneId = ZoneId.systemDefault() // Or specify a specific zone ID if needed
+        val localDateTime = utcDateTime.atZone(ZoneOffset.UTC).withZoneSameInstant(localZoneId).toLocalDateTime()
+
+        val formatterLocal = DateTimeFormatter.ofPattern("dd MMM, yyyy hh:mm a", Locale.ENGLISH)
+        return localDateTime.format(formatterLocal)
+    }
     fun hasScreenNavigation(activity: Activity): Boolean {
         val hasSoftwareKeys: Boolean
         val d = activity.windowManager.defaultDisplay

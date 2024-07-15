@@ -152,6 +152,7 @@
             android:fontFamily="@font/sufi_reg"
             android:hint="@string/license_plate"
             android:inputType="text"
+            android:maxLength="10"
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"

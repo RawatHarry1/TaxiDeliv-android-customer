@@ -37,6 +37,7 @@ import com.salonedriver.databinding.FragmentHomeBinding
 import com.salonedriver.firebaseSetup.NewRideNotificationDC
 import com.salonedriver.firebaseSetup.NotificationInterface
 import com.salonedriver.model.api.observeData
+import com.salonedriver.model.dataclassses.userData.UserDataDC
 import com.salonedriver.socketSetup.SocketSetup
 import com.salonedriver.socketSetup.locationServices.LocationService
 import com.salonedriver.trackingData.animateDriver
@@ -69,6 +70,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     lateinit var binding: FragmentHomeBinding
     var screenType = 0
     var routeType = 3
+    private var userId = 0
     private var googleMap: GoogleMap? = null
     private val viewModel by viewModels<HomeViewModel>()
     private val rideViewModel by viewModels<RideViewModel>()
@@ -90,6 +92,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         checkOnGoingBooking = this
         binding.swOnOff.isChecked =
             SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.DRIVER_ONLINE)
+        SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+            ?.let {
+                userId = it.login?.userId?.toIntOrNull() ?: 0
+            }
         observeLoginAccessToken()
         observeChangeStatus()
         observeRejectTrip()
@@ -104,7 +110,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                 2 -> (activity as HomeActivity).startActivity(
                     Intent(
                         activity, ChatActivity::class.java
-                    )
+                    ).putExtra("customerId", "${rideViewModel.newRideNotificationData.customerId}")
+                        .putExtra("driverId", "${userId}")
+                        .putExtra(
+                            "engagementId",
+                            "${rideViewModel.newRideNotificationData.tripId}"
+                        )
+                        .putExtra(
+                            "customerName",
+                            "${rideViewModel.newRideNotificationData.customerName}"
+                        )
+                        .putExtra(
+                            "customerImage",
+                            "${rideViewModel.newRideNotificationData.customerImage}"
+                        )
                 )
             }
         }
@@ -227,8 +246,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         dialog?.setCanceledOnTouchOutside(false)
 
         binding.tvUser.text = data.customerName.orEmpty()
-        binding.tvPrice.text = "${data.currency} ${data.estimatedDriverFare.orEmpty().formatAmount()}"
-        binding.tvDistance.text = "${data.estimatedDistance.orEmpty().formatAmount()} ${data.distanceUnit ?: "Km"}"
+        binding.tvPrice.text =
+            "${data.currency} ${data.estimatedDriverFare.orEmpty().formatAmount()}"
+        binding.tvDistance.text =
+            "${data.estimatedDistance.orEmpty().formatAmount()} ${data.distanceUnit ?: "Km"}"
         binding.tvPickUpAddress.text = data.pickUpAddress.orEmpty()
         binding.tvDestinationAddress.text = data.dropAddress.orEmpty()
         Glide.with(binding.ivUser).load(data.customerImage.orEmpty())

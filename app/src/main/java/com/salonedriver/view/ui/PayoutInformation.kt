@@ -37,6 +37,7 @@ class PayoutInformation : BaseActivity<ActivityPayoutInformationBinding>() {
         binding.tvSubmitPayout.setOnClickListener {
             if (binding.etBankName.getValue().isEmpty() && binding.etAccountNo.getValue().isEmpty() && binding.etAccountName.getValue().isEmpty()){
                 startActivity(Intent(this@PayoutInformation, HomeActivity::class.java))
+                finishAffinity()
             }else {
                 if (validation()) {
                     viewModel.payoutInfo(jsonObject = JSONObject().apply {

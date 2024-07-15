@@ -132,9 +132,9 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 )
             ) {
-                showPermissionRationaleDialog(this)
-            } else {
                 showSettingsDialog(this)
+            } else {
+                showPermissionRationaleDialog(this)
             }
         }
     }
@@ -142,7 +142,7 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
     private fun showSettingsDialog(context: Context) {
         AlertDialog.Builder(context).apply {
             setTitle(ResourceUtils.getString(R.string.location_permission))
-            setMessage(ResourceUtils.getString(R.string.please_turn_on_device_location_and_gps))
+            setMessage("Please select precise location for app to work accurately with location")
             setPositiveButton("Settings") { _, _ ->
                 val intent = Intent(
                     Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -161,7 +161,7 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
     private fun showPermissionRationaleDialog(context: Context) {
         AlertDialog.Builder(context).apply {
             setTitle(ResourceUtils.getString(R.string.location_permission))
-            setMessage(ResourceUtils.getString(R.string.please_turn_on_device_location_and_gps))
+            setMessage("Please select precise location for app to work accurately with location")
             setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
                 checkPermissions()

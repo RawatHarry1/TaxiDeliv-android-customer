@@ -17,6 +17,7 @@ import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.FragmentAcceptTripBinding
 import com.salonedriver.firebaseSetup.NewRideNotificationDC
 import com.salonedriver.model.api.observeData
+import com.salonedriver.model.dataclassses.userData.UserDataDC
 import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.util.TripStatus
 import com.salonedriver.util.cancelTrip
@@ -38,6 +39,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
     private val screenType: String by lazy { intent?.getStringExtra("screenType") ?: "AcceptTrip" }
     private val rideData by lazy { intent.getParcelableExtra<NewRideNotificationDC>("rideData") }
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+    private var userId = 0
     override fun getLayoutId(): Int {
         return R.layout.fragment_accept_trip
     }
@@ -46,6 +48,10 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = getViewDataBinding()
+        SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+            ?.let {
+                userId = it.login?.userId?.toIntOrNull() ?: 0
+            }
         observeAcceptTrip()
         clickListener()
         setUI()
@@ -55,7 +61,9 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                makePhoneCall(rideData?.userPhoneNo?: "") // Replace with the phone number you want to call
+                makePhoneCall(
+                    rideData?.userPhoneNo ?: ""
+                ) // Replace with the phone number you want to call
             } else {
                 // Permission denied, show a message to the user
                 showErrorMessage("Permission denied. Cannot make phone calls.")
@@ -170,9 +178,18 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
         binding.ivBack.setOnClickListener {
             finish()
         }
-        binding.ivMsg.setOnClickListener { startActivity(Intent(this, ChatActivity::class.java)) }
+        binding.ivMsg.setOnClickListener {
+            startActivity(
+                Intent(this, ChatActivity::class.java)
+                    .putExtra("customerId", "${rideData?.customerId}")
+                    .putExtra("driverId", "${userId}")
+                    .putExtra("engagementId", "${rideData?.tripId}")
+                    .putExtra("customerName", "${rideData?.customerName}")
+                    .putExtra("customerImage", "${rideData?.customerImage}")
+            )
+        }
         binding.ivCall.setOnSingleClickListener {
-            checkPermissionAndMakeCall(rideData?.userPhoneNo?: "")
+            checkPermissionAndMakeCall(rideData?.userPhoneNo ?: "")
         }
         binding.tvCancel.setOnClickListener {
             cancelTrip {

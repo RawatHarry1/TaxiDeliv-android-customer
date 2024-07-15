@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class NewRideNotificationDC(
-    @SerializedName("customer_name", alternate = ["customerName"])
+    @SerializedName("customer_name", alternate = ["customer_ame"])
     var customerName: String? = null,
     @SerializedName("user_phone_no")
     var userPhoneNo: String? = null,
