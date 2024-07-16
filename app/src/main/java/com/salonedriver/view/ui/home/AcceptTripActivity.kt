@@ -24,6 +24,7 @@ import com.salonedriver.util.cancelTrip
 import com.salonedriver.util.formatAmount
 import com.salonedriver.util.getTime
 import com.salonedriver.util.gone
+import com.salonedriver.util.inVisible
 import com.salonedriver.util.visible
 import com.salonedriver.view.base.BaseActivity
 import com.salonedriver.view.ui.chat.ChatActivity
@@ -78,10 +79,12 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
                 binding.tvSignUpBtn.text = getString(R.string.go_to_pick_up)
                 binding.tvCancel.visible()
                 binding.ivBack.visibility = View.INVISIBLE
+                binding.ivMsg.visible()
             } else {
                 binding.tvSignUpBtn.text = getString(R.string.accept)
                 binding.tvCancel.gone()
                 binding.ivBack.visibility = View.VISIBLE
+                binding.ivMsg.inVisible()
             }
             binding.tvTitle.text = getString(R.string.trip_accepted)
 //            binding.ivCall.gone()
@@ -180,12 +183,17 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
         }
         binding.ivMsg.setOnClickListener {
             startActivity(
-                Intent(this, ChatActivity::class.java)
-                    .putExtra("customerId", "${rideData?.customerId}")
-                    .putExtra("driverId", "${userId}")
-                    .putExtra("engagementId", "${rideData?.tripId}")
-                    .putExtra("customerName", "${rideData?.customerName}")
-                    .putExtra("customerImage", "${rideData?.customerImage}")
+                Intent(this, ChatActivity::class.java).apply {
+                    flags =
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    putExtra("customerId", "${rideData?.customerId}")
+                    putExtra("driverId", "${userId}")
+                    putExtra("engagementId", "${rideData?.tripId}")
+                    putExtra("customerName", "${rideData?.customerName}")
+                    putExtra("customerImage", "${rideData?.customerImage}")
+                }
+
+
             )
         }
         binding.ivCall.setOnSingleClickListener {
@@ -213,6 +221,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
         binding.tvSignUpBtn.text = getString(R.string.go_to_pick_up)
         binding.ivBack.visibility = View.INVISIBLE
         binding.tvCancel.visible()
+        binding.ivMsg.visible()
     }, onError = {
         hideProgressDialog()
         showToastLong(this)

@@ -7,7 +7,6 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.android.gms.maps.model.LatLng
 import com.salonedriver.di.AppComponent
@@ -15,9 +14,7 @@ import com.salonedriver.di.DaggerAppComponent
 import com.salonedriver.socketSetup.SocketSetup
 import com.salonedriver.util.AppLifecycleObserver
 import com.salonedriver.util.getFCMToken
-import com.salonedriver.util.getPaginationResponse
 import dagger.hilt.android.HiltAndroidApp
-import java.lang.StringBuilder
 
 @HiltAndroidApp
 class SaloneDriver : Application(), ActivityLifecycleCallbacks {
@@ -25,7 +22,9 @@ class SaloneDriver : Application(), ActivityLifecycleCallbacks {
         lateinit var instance: SaloneDriver
         lateinit var appContext: Context
         lateinit var applicationComponent: AppComponent
-        @JvmStatic var latLng: LatLng? = null
+        @JvmStatic
+        var latLng: LatLng? = null
+        var onChatScreen = false
     }
 
     override fun onCreate() {
@@ -38,7 +37,7 @@ class SaloneDriver : Application(), ActivityLifecycleCallbacks {
         // Register the process lifecycle observer
         ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleObserver)
         getFCMToken {
-            Log.e("TokenIS","Here:- $it")
+            Log.e("TokenIS", "Here:- $it")
         }
     }
 
@@ -46,7 +45,7 @@ class SaloneDriver : Application(), ActivityLifecycleCallbacks {
     override fun onActivityCreated(p0: Activity, p1: Bundle?) {
         try {
             appContext = p0
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -56,7 +55,7 @@ class SaloneDriver : Application(), ActivityLifecycleCallbacks {
     override fun onActivityResumed(p0: Activity) {
         try {
             appContext = p0
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }

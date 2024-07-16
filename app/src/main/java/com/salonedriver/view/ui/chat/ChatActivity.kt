@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.salonedriver.R
+import com.salonedriver.SaloneDriver
 import com.salonedriver.databinding.ActivityChatBinding
 import com.salonedriver.databinding.ItemAutoMessagesBinding
 import com.salonedriver.model.dataclassses.MessageData
@@ -15,6 +16,7 @@ import com.salonedriver.socketSetup.SocketInterface
 import com.salonedriver.socketSetup.SocketSetup
 import com.salonedriver.util.AppUtils
 import com.salonedriver.view.base.BaseActivity
+import com.salonedriver.view.ui.home_drawer.HomeActivity
 
 class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface {
     override fun getLayoutId(): Int {
@@ -33,6 +35,8 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = getViewDataBinding()
+        SaloneDriver.onChatScreen = true
+        HomeActivity.isMsgNotification = false
         automaticMessagesArrayList.add("Hello?")
         automaticMessagesArrayList.add("Where are you?")
         automaticMessagesArrayList.add("Reached at pickup?")
@@ -78,14 +82,13 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface {
                 binding.rvChat.smoothScrollToPosition(chatArrayList.size - 1)
             }
         }
-
         binding.ivBack.setOnClickListener { finish() }
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
         SocketSetup.listenerOffOnMessage(tripId, driverId)
+        SaloneDriver.onChatScreen = false
     }
 
     private fun setChatAdapter() {

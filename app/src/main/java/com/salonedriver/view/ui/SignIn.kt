@@ -67,9 +67,11 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
         binding.tvSignUpBtn.setOnSingleClickListener {
             if (binding.etEmail.getValue().isEmpty()) {
                 showErrorMessage(getString(R.string.please_enter_phone_number))
-            } else if (binding.etEmail.length() != 10) {
-                showErrorMessage("*Please enter valid mobile number.")
-            } else {
+            }
+//            else if (binding.etEmail.length() != 10) {
+//                showErrorMessage("*Please enter valid mobile number.")
+//            }
+            else {
                 AppUtils.checkAndEnableGPS(
                     this@SignIn,
                     ::onGPSEnabled,

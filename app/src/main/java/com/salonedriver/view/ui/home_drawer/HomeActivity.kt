@@ -50,30 +50,56 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     private val navController by lazy { findNavController(R.id.nav_host_fragment_content_home) }
     private val userVM by viewModels<UserAccountVM>()
     var onlineDriver = false
+
+    companion object {
+        var isMsgNotification = false
+    }
+
     override fun getLayoutId(): Int {
         return R.layout.activity_home
     }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-         handleIntent(intent)
+        handleIntent(intent)
     }
 
     private fun handleIntent(intent: Intent) {
         if (navController.handleDeepLink(intent)) {
             // The deep link was handled by the NavController
-            Log.d("NotificationRedirection", "The deep link was handled by the NavController")
+            intent?.extras?.let { bundle ->
+                // Check if the deepLinkExtras exist and retrieve the bundle
+                val deepLinkExtras =
+                    bundle.getBundle("android-support-nav:controller:deepLinkExtras")
+                deepLinkExtras?.let {
+                    val notificationType = it.getString("notification_type")
+                    // Handle the notification type here
+                    Log.d("NotificationRedirection", "Notification Type: $notificationType")
+                    if (notificationType == "600")
+                        isMsgNotification = true
+                }
+            }
         } else {
             // The deep link was not handled
-            Log.d("NotificationRedirection", "The deep link was not handled")
+            intent?.extras?.let { bundle ->
+                // Check if the deepLinkExtras exist and retrieve the bundle
+                val deepLinkExtras =
+                    bundle.getBundle("android-support-nav:controller:deepLinkExtras")
+                deepLinkExtras?.let {
+                    val notificationType = it.getString("notification_type")
+                    // Handle the notification type here
+                    Log.d("NotificationRedirection", "Notification Type: $notificationType")
+                    if (notificationType == "600")
+                        isMsgNotification = true
+                }
+            }
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = getViewDataBinding()
-
         setSupportActionBar(binding.appBarHome.toolbar)
-
         drawerLayout = binding.drawerLayout
         appBarConfiguration = AppBarConfiguration(
             setOf(

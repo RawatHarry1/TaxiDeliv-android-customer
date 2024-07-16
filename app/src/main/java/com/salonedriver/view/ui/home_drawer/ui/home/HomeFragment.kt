@@ -647,7 +647,37 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                         setScreenType(requireContext())
                     }
                 }
+                if (HomeActivity.isMsgNotification)
+                    (activity as HomeActivity).startActivity(
+                        Intent(
+                            activity, ChatActivity::class.java
+                        ).apply {
+                            flags =
+                                Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            putExtra(
+                                "customerId",
+                                "${rideViewModel.newRideNotificationData.customerId}"
+                            )
+                            putExtra("driverId", "${userId}")
+                            putExtra(
+                                "engagementId",
+                                "${rideViewModel.newRideNotificationData.tripId}"
+                            )
+                            putExtra(
+                                "customerName",
+                                "${rideViewModel.newRideNotificationData.customerName}"
+                            )
+                            putExtra(
+                                "customerImage",
+                                "${rideViewModel.newRideNotificationData.customerImage}"
+                            )
+                        }
+
+                    )
+
+
             } else {
+                HomeActivity.isMsgNotification = false
                 screenType = 0
                 googleMap?.clearMap()
                 SaloneDriver.latLng?.let {

@@ -214,7 +214,8 @@ object SocketSetup {
             put("attachment", attachment)
             put("attachment_type", type)
             put("thumbnail", thumbnail)
-
+            put("device_type", "0")
+            put("login_type", "1")
         })
     }
     fun getAllMsg(

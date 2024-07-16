@@ -99,7 +99,8 @@
             android:exported="false" />
         <activity
             android:name="com.salonedriver.view.ui.chat.ChatActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop"/>
         <activity
             android:name="com.salonedriver.view.ui.ForgotPassword"
             android:exported="false" />
@@ -168,5 +169,4 @@
             android:foregroundServiceType="location"/>
 
     </application>
-
 </manifest>

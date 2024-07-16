@@ -19,6 +19,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.salonedriver.R
+import com.salonedriver.SaloneDriver
 import com.salonedriver.model.dataclassses.userData.UserDataDC
 import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.view.fragment.wallet.WalletFragment
@@ -93,7 +94,10 @@ class FirebaseNotification : FirebaseMessagingService() {
         SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
             ?.let {
                 if (it.accessToken?.isNotEmpty() == true) {
-                    sendNotification()
+                    if (notificationData.notificationType == "600" && SaloneDriver.onChatScreen) {
+
+                    } else
+                        sendNotification()
                     if ((notificationData.notificationType?.toIntOrNull()
                             ?: -1) == 0
                     )
@@ -187,8 +191,15 @@ class FirebaseNotification : FirebaseMessagingService() {
                         getPendingIntent(destinationId = R.id.wallet)
                     }
 
+                    NotificationStatus.CHAT.type -> {
+                        getPendingIntent(
+                            destinationId = R.id.nav_home,
+                            bundle = Bundle().apply { putString("notification_type", "600") })
+                    }
+
                     else -> {
                         Log.i("PUSHNOTI", "in home")
+
                         getPendingIntent(destinationId = R.id.nav_home)
                     }
                 }

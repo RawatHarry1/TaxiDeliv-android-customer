@@ -95,9 +95,7 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
                 binding.etVehicleType.setText("")
                 binding.etVehicleModel.setText("")
                 viewModel.getCityVehicles(
-                    SharedPreferencesManager.getModel<UserDataDC>(
-                        SharedPreferencesManager.Keys.USER_DATA
-                    )?.login?.city.orEmpty()
+                    viewModel.cityId
                 )
             }
         }

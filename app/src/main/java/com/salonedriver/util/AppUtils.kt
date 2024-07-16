@@ -178,7 +178,7 @@ object AppUtils {
         val localZoneId = ZoneId.systemDefault() // Or specify a specific zone ID if needed
         val localDateTime = utcDateTime.atZone(ZoneOffset.UTC).withZoneSameInstant(localZoneId).toLocalDateTime()
 
-        val formatterLocal = DateTimeFormatter.ofPattern("dd MMM, yyyy hh:mm a", Locale.ENGLISH)
+        val formatterLocal = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH)
         return localDateTime.format(formatterLocal)
     }
     fun hasScreenNavigation(activity: Activity): Boolean {
