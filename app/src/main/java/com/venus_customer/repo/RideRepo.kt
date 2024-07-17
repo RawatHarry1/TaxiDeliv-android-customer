@@ -84,6 +84,14 @@ class RideRepo @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
+    suspend fun enterPromoCode(jsonObject: JSONObject) = flow {
+        emit(
+            apiInterface.enterPromoCode(
+                requestBody = jsonObject.getJsonRequestBody()
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
     suspend fun sosApi(jsonObject: JSONObject) = flow {
         emit(
             apiInterface.hitSOS(

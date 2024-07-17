@@ -196,6 +196,7 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
             }, onSuccess = {
                 hideProgressDialog()
                 SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.CLIENT_CONFIG, this)
+                VenusApp.googleMapKey = this?.googleMapKey ?: ""
                 callWalkThrough()
             }, onError = {
                 hideProgressDialog()

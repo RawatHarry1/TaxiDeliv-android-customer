@@ -134,6 +134,11 @@ interface ApiInterface {
         @Body requestBody: RequestBody
     ): Response<BaseResponse<FareEstimateDC>>
 
+    @POST(APIEndPointsConstants.ENTER_PROMO_CODE)
+    suspend fun enterPromoCode(
+        @Body requestBody: RequestBody
+    ): Response<BaseResponse<Any>>
+
     @POST(APIEndPointsConstants.SOS)
     suspend fun hitSOS(
         @Body requestBody: RequestBody

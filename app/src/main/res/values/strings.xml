@@ -304,6 +304,7 @@
     <string name="home">Home</string>
     <string name="choose_address">Choose Address</string>
     <string name="no_notifications_found">No Notifications Found</string>
+    <string name="promo_code">Promo code</string>
 
 
 </resources>

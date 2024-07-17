@@ -1,6 +1,7 @@
 package com.venus_customer.view.activity.walk_though
 
 import android.Manifest
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.Gson
 import com.mukesh.photopicker.utils.checkPermissions
 import com.venus_customer.R
 import com.venus_customer.databinding.ActivityHomeBinding
@@ -23,7 +25,6 @@ import com.venus_customer.util.visible
 import com.venus_customer.view.base.BaseActivity
 import com.venus_customer.viewmodel.HomeVM
 import com.venus_customer.viewmodel.rideVM.RideVM
-import com.venus_customer.viewmodel.rideVM.RideVM.RideAlertUiState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,6 +35,10 @@ class Home : BaseActivity<ActivityHomeBinding>() {
     private lateinit var navController: NavController
     private val viewModel by viewModels<HomeVM>()
     private val rideVM by viewModels<RideVM>()
+
+    companion object {
+        var isFromMsgNotification = false
+    }
 
     override fun getLayoutId(): Int {
         return R.layout.activity_home
@@ -72,6 +77,12 @@ class Home : BaseActivity<ActivityHomeBinding>() {
 
         observeData()
         observeUiState()
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
     }
 
     private val listener =
@@ -96,6 +107,37 @@ class Home : BaseActivity<ActivityHomeBinding>() {
         }
     }
 
+    private fun handleIntent(intent: Intent?) {
+        if (navController.handleDeepLink(intent)) {
+            // The deep link was handled by the NavController
+            intent?.extras?.let { bundle ->
+                // Check if the deepLinkExtras exist and retrieve the bundle
+                val deepLinkExtras =
+                    bundle.getBundle("android-support-nav:controller:deepLinkExtras")
+                deepLinkExtras?.let {
+                    val notificationType = it.getString("notification_type")
+                    // Handle the notification type here
+                    Log.d("NotificationRedirection", "Notification Type: $notificationType")
+                    if (notificationType == "600")
+                        isFromMsgNotification = true
+                }
+            }
+        } else {
+            // The deep link was not handled
+            intent?.extras?.let { bundle ->
+                // Check if the deepLinkExtras exist and retrieve the bundle
+                val deepLinkExtras =
+                    bundle.getBundle("android-support-nav:controller:deepLinkExtras")
+                deepLinkExtras?.let {
+                    val notificationType = it.getString("notification_type")
+                    // Handle the notification type here
+                    Log.d("NotificationRedirection", "Notification Type: $notificationType")
+                    if (notificationType == "600")
+                        isFromMsgNotification = true
+                }
+            }
+        }
+    }
 
     fun removeTint(source: Bitmap): Bitmap {
         val copy = source.copy(source.getConfig(), true)

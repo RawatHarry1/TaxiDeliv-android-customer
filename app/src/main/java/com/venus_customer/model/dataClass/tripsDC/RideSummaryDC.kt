@@ -197,7 +197,9 @@ data class RideSummaryDC(
     @SerializedName("waiting_charges_applicable")
     val waitingChargesApplicable: String? = null,
     @SerializedName("tracking_image")
-    val trackingImage: String? = null
+    val trackingImage: String? = null,
+    @SerializedName("support_number")
+    val supportNumber: String? = null
 ) {
     @Keep
     data class Discount(

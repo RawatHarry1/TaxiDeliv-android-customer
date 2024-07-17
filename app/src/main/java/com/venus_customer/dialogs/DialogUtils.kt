@@ -18,7 +18,6 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.card.MaterialCardView
 import com.mukesh.mukeshotpview.mukeshOtpView.MukeshOtpView
@@ -66,6 +65,31 @@ object DialogUtils {
         return dialogView
     }
 
+    fun getPromoDialog(
+        mContext: Activity,
+        onClickNegativeResult: (String) -> Unit?
+    ): Dialog {
+        val dialogView = Dialog(mContext)
+        with(dialogView) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.dialog_enter_promo_code)
+            setCancelable(true)
+            val tvConfirm = findViewById<AppCompatTextView>(R.id.tvSubmit)
+            val etPromoCode = findViewById<AppCompatEditText>(R.id.etEnterPromoCode)
+            tvConfirm.setOnSingleClickListener {
+                if (etPromoCode.text.toString().trim().isEmpty())
+                    showSnackBar("Please Enter Promo Code", this)
+                else {
+                    onClickNegativeResult(etPromoCode.text.toString().trim())
+                    dismiss()
+                }
+            }
+            show()
+        }
+        return dialogView
+    }
+
 
     fun verifyOtpDialog(
         mContext: Activity,
@@ -101,7 +125,7 @@ object DialogUtils {
                 if ((simpleOtpView.text?.length ?: 0) == 4) {
                     verify(simpleOtpView.text.toString(), dialogView)
                 } else if ((simpleOtpView.text?.length ?: 0) == 0) {
-                    showSnackBar(mContext.getString(R.string.please_enter_otp),this)
+                    showSnackBar(mContext.getString(R.string.please_enter_otp), this)
                 } else {
                     showSnackBar(mContext.getString(R.string.please_enter_valid_otp), this)
                 }

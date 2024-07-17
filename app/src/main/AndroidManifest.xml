@@ -9,9 +9,10 @@
         android:name="android.hardware.telephony"
         android:required="false" />
 
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
     <uses-permission android:name="android.permission.CAMERA" />
@@ -20,7 +21,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -35,29 +37,30 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true"
-        android:icon="@mipmap/ic_launcher"
         android:hardwareAccelerated="true"
-        android:largeHeap="true"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Venus"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
             android:name=".view.activity.chat.ChatActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".view.activity.verifyOtp.VerifyOtp"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.activity.verifyOtp.VerifyOtp"
             android:exported="false"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.activity.walk_though.Home"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_home" />
+            android:label="@string/title_activity_home"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.activity.Welcome"
             android:exported="false"
@@ -65,8 +68,7 @@
         <activity
             android:name=".view.activity.CreateProfile"
             android:exported="true"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".view.activity.ForgotPassword"
             android:exported="false"
@@ -74,7 +76,7 @@
         <activity
             android:name=".view.activity.sign_in.SignIn"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.activity.walk_though.WalkThrough"
             android:exported="false"
@@ -124,8 +126,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBLniM7dDfXXs_s6y598yYs-iJCrSKtbhE" />
 
-        <meta-data android:name="com.google.android.gms.version"
+        <meta-data
+            android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
     </application>
-
 </manifest>

@@ -67,9 +67,11 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
         binding.tvSignUpBtn.setOnSingleClickListener {
             if (binding.etEmail.text?.trim().isNullOrEmpty()) {
                 showSnackBar("*Please enter mobile number.")
-            } else if (binding.etEmail.length() != 10) {
-                showSnackBar("*Please enter valid mobile number.")
-            } else {
+            }
+//            else if (binding.etEmail.length() != 10) {
+//                showSnackBar("*Please enter valid mobile number.")
+//            }
+            else {
                 viewModel.signIn(jsonObject = JSONObject().apply {
                     put("countryCode", binding.ccp.selectedCountryCodeWithPlus)
                     put("phoneNo", binding.etEmail.text.toString())

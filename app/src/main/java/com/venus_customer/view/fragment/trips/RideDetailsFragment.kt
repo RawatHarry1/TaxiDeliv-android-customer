@@ -30,7 +30,6 @@ import com.venus_customer.model.dataClass.tripsDC.RideSummaryDC
 import com.venus_customer.util.formatString
 import com.venus_customer.util.getTime
 import com.venus_customer.util.showSnackBar
-import com.venus_customer.view.activity.chat.ChatActivity
 import com.venus_customer.view.base.BaseFragment
 import com.venus_customer.viewmodel.rideVM.RideVM
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +42,8 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
     private val navArgs by navArgs<RideDetailsFragmentArgs>()
     private val viewModel by viewModels<RideVM>()
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
+    private var supportNumber = ""
+    private lateinit var requestPermissionLauncherForCall: ActivityResultLauncher<String>
 
     override fun initialiseFragmentBaseViewModel() {
 
@@ -66,7 +67,50 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                 handlePermissionResult(permissions)
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+        requestPermissionLauncherForCall = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                if (supportNumber.isEmpty())
+                    showSnackBar("There is some issue in call. Please try after sometimes.")
+                else
+                    makePhoneCall(supportNumber) // Replace with the phone number you want to call
+            } else {
+                // Permission denied, show a message to the user
+                showSnackBar("Permission denied. Cannot make phone calls.")
+            }
+        }
+    }
 
+
+    private fun checkPermissionAndMakeCall(phoneNumber: String) {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.CALL_PHONE
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Permission is already granted
+                makePhoneCall(phoneNumber)
+            }
+
+            shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE) -> {
+                // Show rationale and request permission
+                // You can show a dialog explaining why you need this permission
+                showSnackBar("Permission denied. Cannot make phone calls.")
+                requestPermissionLauncherForCall.launch(Manifest.permission.CALL_PHONE)
+            }
+
+            else -> {
+                // Directly request the permission
+                requestPermissionLauncherForCall.launch(Manifest.permission.CALL_PHONE)
+            }
+        }
+    }
+
+    private fun makePhoneCall(phoneNumber: String) {
+        val callIntent = Intent(Intent.ACTION_CALL)
+        callIntent.data = Uri.parse("tel:$phoneNumber")
+        startActivity(callIntent)
     }
 
     // Register back press callback
@@ -100,13 +144,10 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
         }
 
         binding.ivCustomerSupport.setOnSingleClickListener {
-            startActivity(Intent(requireContext(), ChatActivity::class.java)
-                .putExtra("customerId", "${viewModel.createRideData.customerId}")
-                .putExtra("driverId", "${viewModel.createRideData.driverDetail?.driverId}")
-                .putExtra("engagementId", "${viewModel.createRideData.tripId}")
-                .putExtra("driverName", "${viewModel.createRideData.driverDetail?.driverName}")
-                .putExtra("driverImage", "${viewModel.createRideData.driverDetail?.driverImage}"))
-
+            if (supportNumber.isEmpty())
+                showSnackBar("There is some issue in call. Please try after sometime.")
+            else
+                checkPermissionAndMakeCall(supportNumber)
         }
 
         binding.tvDownloadInvoice.setOnSingleClickListener {
@@ -165,6 +206,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
 
     private fun setUpUI(rideSummaryDC: RideSummaryDC?) {
         try {
+            supportNumber = rideSummaryDC?.supportNumber ?: ""
             viewModel.createRideData.sessionId = rideSummaryDC?.engagementId.orEmpty()
             binding.tvTitle.text = rideSummaryDC?.autosStatusText.orEmpty()
             binding.tvStartTime.text =

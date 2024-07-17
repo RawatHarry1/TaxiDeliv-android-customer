@@ -1,5 +1,7 @@
 package com.venus_customer.view.activity.chat
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,18 +10,54 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.venus_customer.R
+import com.venus_customer.VenusApp
 import com.venus_customer.databinding.ActivityChatBinding
 import com.venus_customer.databinding.ItemAutoMessagesBinding
+import com.venus_customer.firebaseSetup.NotificationInterface
 import com.venus_customer.model.dataClass.MessageData
 import com.venus_customer.socketSetup.SocketInterface
 import com.venus_customer.socketSetup.SocketSetup
 import com.venus_customer.util.AppUtils
 import com.venus_customer.util.showSnackBar
+import com.venus_customer.view.activity.walk_though.Home
 import com.venus_customer.view.base.BaseActivity
 
-class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface {
+class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface, NotificationInterface {
     override fun getLayoutId(): Int {
         return R.layout.activity_chat
+    }
+
+    companion object {
+        var notificationInterface: NotificationInterface? = null
+    }
+
+    override fun rideEnd(
+        tripId: String,
+        driverId: String,
+        driverName: String,
+        engagementId: String
+    ) {
+        super.rideEnd(tripId, driverId, driverName, engagementId)
+        runOnUiThread {
+            try {
+                val resultIntent = Intent()
+                resultIntent.apply {
+                    putExtra("tripId", tripId)
+                    putExtra("driverId", driverId)
+                    putExtra("driverName", driverName)
+                    putExtra("engagementId", engagementId)
+                }
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish()
+            } catch (e: Exception) {
+            }
+
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        notificationInterface = this
     }
 
     lateinit var binding: ActivityChatBinding
@@ -35,7 +73,8 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = getViewDataBinding()
-
+        VenusApp.onChatScreen = true
+        Home.isFromMsgNotification = false
         automaticMessagesArrayList.add("Hello?")
         automaticMessagesArrayList.add("Where are you?")
         automaticMessagesArrayList.add("Have you reached at pickup?")
@@ -85,6 +124,7 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface {
     override fun onDestroy() {
         super.onDestroy()
         SocketSetup.listenerOffOnMessage(tripId, customerId)
+        VenusApp.onChatScreen = false
     }
 
     override fun driverMessage(message: MessageData) {
@@ -148,7 +188,7 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface {
                             receiver_id = driverId.toInt(),
                             attachment_type = "text",
                             engagement_id = tripId.toInt(),
-                            created_at =  AppUtils.convertUtcToLocal(AppUtils.currentUtcTimeAsString())
+                            created_at = AppUtils.convertUtcToLocal(AppUtils.currentUtcTimeAsString())
                         )
                     )
                     chatAdapter.notifyDataSetChanged()

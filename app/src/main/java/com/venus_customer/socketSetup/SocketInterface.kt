@@ -5,7 +5,7 @@ import com.venus_customer.model.dataClass.MessageData
 
 interface SocketInterface {
 
-    fun driverLocation(latLng: LatLng, bearing: Float){}
+    fun driverLocation(latLng: LatLng, bearing: Float,eta:Int){}
     fun driverMessage(message: MessageData){}
     fun allMessages(messages: ArrayList<MessageData>){}
 

@@ -18,6 +18,8 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.venus_customer.R
+import com.venus_customer.VenusApp
+import com.venus_customer.view.activity.chat.ChatActivity
 import com.venus_customer.view.activity.walk_though.Home
 import com.venus_customer.view.activity.walk_though.ui.home.HomeFragment
 import kotlinx.parcelize.Parcelize
@@ -56,7 +58,10 @@ class FirebaseNotification : FirebaseMessagingService() {
                 fetchNotificationData(data)
             }
         }
-        sendNotification()
+        if (notificationData.notificationType == "600" && VenusApp.onChatScreen) {
+            Log.i("PUSHNOTI", "on chat screen")
+        } else
+            sendNotification()
     }
 
 
@@ -80,6 +85,12 @@ class FirebaseNotification : FirebaseMessagingService() {
                     ?: 0) == NotificationStatus.RIDE_ENDED.type
             ) {
                 HomeFragment.notificationInterface?.rideEnd(
+                    notificationData.notificationModel.tripId.orEmpty(),
+                    notificationData.notificationModel.driverId.orEmpty(),
+                    notificationData.notificationModel.driverName.orEmpty(),
+                    notificationData.notificationModel.sessionId.orEmpty()
+                )
+                ChatActivity.notificationInterface?.rideEnd(
                     notificationData.notificationModel.tripId.orEmpty(),
                     notificationData.notificationModel.driverId.orEmpty(),
                     notificationData.notificationModel.driverName.orEmpty(),
@@ -110,7 +121,6 @@ class FirebaseNotification : FirebaseMessagingService() {
      * Send Notifications
      * */
     private fun sendNotification() {
-
         val notificationBuilder = NotificationCompat.Builder(this, packageName)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(notificationData.title ?: "").setContentText(notificationData.message)
@@ -129,6 +139,21 @@ class FirebaseNotification : FirebaseMessagingService() {
                             "driverId" to notificationData.notificationModel.driverId.orEmpty()
                         )
                     )
+
+                    NotificationStatus.CHAT.type -> {
+                        Log.i(
+                            "PUSHNOTI",
+                            "in notification type  ${notificationData.notificationType.orEmpty()}"
+                        )
+                        getPendingIntent(
+                            destinationId = R.id.mobile_navigation, Bundle().apply {
+                                putString(
+                                    "notification_type",
+                                    notificationData.notificationType.orEmpty()
+                                )
+                            }
+                        )
+                    }
 
                     else -> getPendingIntent(destinationId = R.id.mobile_navigation)
                 }
@@ -170,7 +195,6 @@ class FirebaseNotification : FirebaseMessagingService() {
         else NavDeepLinkBuilder(this).setComponentName(Home::class.java)
             .setGraph(R.navigation.mobile_navigation).setDestination(destinationId)
             .setArguments(bundle).createPendingIntent()
-
 
     /**
      * Notification Data

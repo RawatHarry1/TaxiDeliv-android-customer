@@ -28,6 +28,9 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.gson.Gson
 import com.google.maps.android.PolyUtil
 import com.venus_customer.R
+import com.venus_customer.VenusApp
+import com.venus_customer.model.dataClass.base.ClientConfig
+import com.venus_customer.util.SharedPreferencesManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -146,8 +149,7 @@ fun Context.showPath(
                         }
                         srcMarker = pathModel.srcMarker
                         destMarker = pathModel.desMarker
-                    }
-                    else{
+                    } else {
                         Log.e("RideStatus", "In showPath try map is null --->")
 
                     }
@@ -245,8 +247,12 @@ fun Context.findEta(srcLat: LatLng, desLat: LatLng, valueIs: (PathModel) -> Unit
 private fun Context.getDirectionsUrl(
     src: LatLng, des: LatLng, markerPoints: ArrayList<LatLng> = ArrayList()
 ): String {
+    if (VenusApp.googleMapKey.isEmpty())
+        VenusApp.googleMapKey = SharedPreferencesManager.getModel<ClientConfig>(
+            SharedPreferencesManager.Keys.CLIENT_CONFIG
+        )?.googleMapKey ?: ""
     var url = "https://maps.googleapis.com/maps/api/directions/"
-    val params = "&mode=driving&key=" + getString(R.string.map_api_key)
+    val params = "&mode=driving&key=" + VenusApp.googleMapKey
     val output = "json"
     var parameters = ""
 

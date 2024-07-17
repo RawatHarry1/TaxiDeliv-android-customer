@@ -3,6 +3,7 @@ package com.venus_customer.view.activity.walk_though.ui.home
 
 import SwipeToShowDeleteCallback
 import android.Manifest
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
@@ -55,6 +56,7 @@ import com.venus_customer.customClasses.trackingData.showPath
 import com.venus_customer.customClasses.trackingData.vectorToBitmap
 import com.venus_customer.databinding.DialogDateTimeBinding
 import com.venus_customer.databinding.FragmentHomeBinding
+import com.venus_customer.dialogs.DialogUtils
 import com.venus_customer.firebaseSetup.NotificationInterface
 import com.venus_customer.model.api.getJsonRequestBody
 import com.venus_customer.model.api.observeData
@@ -71,6 +73,7 @@ import com.venus_customer.util.getBottomSheetBehaviour
 import com.venus_customer.util.safeCall
 import com.venus_customer.util.showSnackBar
 import com.venus_customer.view.activity.chat.ChatActivity
+import com.venus_customer.view.activity.walk_though.Home
 import com.venus_customer.view.base.BaseActivity
 import com.venus_customer.view.base.BaseFragment
 import com.venus_customer.viewmodel.SearchLocationVM
@@ -144,6 +147,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         observeRequestRide()
         observeRequestSchedule()
         observeFareEstimate()
+        observePromoCode()
         observeFetchOngoingTrip()
         observeNearDriver()
         clickHandler()
@@ -167,6 +171,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             } else {
                 // Permission denied, show a message to the user
                 showSnackBar("Permission denied. Cannot make phone calls.")
+            }
+        }
+    }
+
+    private val activityResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val tripId = result.data?.getStringExtra("tripId")
+            val driverId = result.data?.getStringExtra("driverId")
+            val driverName = result.data?.getStringExtra("driverName")
+            val engagementId = result.data?.getStringExtra("engagementId")
+            try {
+                findNavController().navigate(
+                    R.id.navigation_rate_driver,
+                    bundleOf(
+                        "engagementId" to tripId,
+                        "driverName" to driverName,
+                        "driverId" to driverId,
+                        "tripId" to tripId
+                    )
+                )
+            } catch (e: Exception) {
             }
         }
     }
@@ -454,7 +481,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 } else
                     rideVM.requestRideData(etNotes.text?.trim().toString())
             }
+
+            tvPromoCode.setOnSingleClickListener {
+                DialogUtils.getPromoDialog(
+                    requireActivity(),
+                    ::onDialogClick
+                )
+            }
         }
+    }
+
+    private fun onDialogClick(promoCode: String) {
+        rideVM.enterPromoCode(
+            promoCode,
+            regionId = rideVM.createRideData?.regionId ?: "",
+            vehicleType = rideVM.createRideData?.vehicleType ?: "",
+            fare = rideVM.createRideData?.vehicleData?.fare ?: "",
+            distance = rideVM.createRideData?.vehicleData?.distance ?: "",
+            currency = rideVM.createRideData?.vehicleData?.currency ?: ""
+        )
     }
 
 
@@ -741,16 +786,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
 
             ivChat.setOnSingleClickListener {
-                startActivity(
-                    Intent(
-                        (activity as BaseActivity<*>),
-                        ChatActivity::class.java
-                    ).putExtra("customerId", "${rideVM.createRideData.customerId}")
-                        .putExtra("driverId", "${rideVM.createRideData.driverDetail?.driverId}")
-                        .putExtra("engagementId", "${rideVM.createRideData.tripId}")
-                        .putExtra("driverName", "${rideVM.createRideData.driverDetail?.driverName}")
-                        .putExtra("driverImage", "${rideVM.createRideData.driverDetail?.driverImage}")
-                )
+//                startActivity(
+                val intent = Intent(
+                    (activity as BaseActivity<*>),
+                    ChatActivity::class.java
+                ).putExtra("customerId", "${rideVM.createRideData.customerId}")
+                    .putExtra("driverId", "${rideVM.createRideData.driverDetail?.driverId}")
+                    .putExtra("engagementId", "${rideVM.createRideData.tripId}")
+                    .putExtra("driverName", "${rideVM.createRideData.driverDetail?.driverName}")
+                    .putExtra(
+                        "driverImage",
+                        "${rideVM.createRideData.driverDetail?.driverImage}"
+                    )
+//                )
+                activityResultLauncher.launch(intent)
             }
             tvConnecting.setOnSingleClickListener {
                 clConnecting.visibility = View.GONE
@@ -759,7 +808,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             ivCall.setOnSingleClickListener {
                 val phone = rideVM.createRideData.driverDetail?.driverPhoneNo ?: ""
                 if (phone.isEmpty())
-                    showSnackBar("There is some issue in call. Please try after sometimes.")
+                    showSnackBar("There is some issue in call. Please try after sometime.")
                 else
                     checkPermissionAndMakeCall(phone)
             }
@@ -1133,6 +1182,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     startRideAlertState?.state = BottomSheetBehavior.STATE_EXPANDED
                 }
 
+                else -> {}
+
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -1200,8 +1251,36 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                         SocketSetup.startRideEmit(rideVM.createRideData.tripId.orEmpty())
                         rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailDialog)
                     }
+                    if (Home.isFromMsgNotification) {
+//                        startActivity(
+                        val intent = Intent(
+                            (activity as BaseActivity<*>),
+                            ChatActivity::class.java
+                        ).apply {
+                            flags =
+                                Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            putExtra("customerId", "${rideVM.createRideData.customerId}")
+                            putExtra(
+                                "driverId",
+                                "${rideVM.createRideData.driverDetail?.driverId}"
+                            )
+                            putExtra("engagementId", "${rideVM.createRideData.tripId}")
+                            putExtra(
+                                "driverName",
+                                "${rideVM.createRideData.driverDetail?.driverName}"
+                            )
+                            putExtra(
+                                "driverImage",
+                                "${rideVM.createRideData.driverDetail?.driverImage}"
+                            )
+                        }
+//                        )
+                        activityResultLauncher.launch(intent)
+
+                    }
                 }
             } else {
+                Home.isFromMsgNotification = false
 //                var alreadyHittingApi = false
 //                rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
 //                SingleFusedLocation.initialize(requireContext(), object : LocationResultHandler {
@@ -1399,6 +1478,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             hideProgressDialog()
         })
 
+    private fun observePromoCode() =
+        rideVM.enterPromoCode.observeData(lifecycle = viewLifecycleOwner, onLoading = {
+            showProgressDialog()
+        }, onError = {
+            hideProgressDialog()
+            showToastShort(this)
+        }, onSuccess = {
+            hideProgressDialog()
+        })
+
 
     data class BannerData(var drawable: Drawable?)
 
@@ -1472,19 +1561,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
 
-    override fun driverLocation(latLng: LatLng, bearing: Float) {
-        super.driverLocation(latLng, bearing)
+    override fun driverLocation(latLng: LatLng, bearing: Float,eta:Int) {
+        super.driverLocation(latLng, bearing,eta)
         requireActivity().runOnUiThread {
+            binding.viewStartRide.tvDistanceTime.text = eta.toString()
+            binding.viewStartRide.tvTimeValue.text = eta.toString()+ "min"
             requireContext().animateDriver(
                 driverLatitude = latLng.latitude,
                 driverLongitude = latLng.longitude,
                 bearing = bearing.toDouble(),
                 googleMap = googleMap
             ) { distance, duration ->
-                setPathTimeAndDistance(
-                    durationDistance = distance,
-                    durationTime = duration
-                )
+//                setPathTimeAndDistance(
+//                    durationDistance = distance,
+//                    durationTime = duration
+//                )
             }
         }
     }

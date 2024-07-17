@@ -86,12 +86,14 @@ object SocketSetup {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val json = JSONObject(it[0].toString())
+                Log.i("SOCKET", "ON DRIVER LOCATION:: ${Gson().toJson(json)}")
                 socketInterface?.driverLocation(
                     latLng = LatLng(
                         json.optString("latitude").toDoubleOrNull() ?: 0.0,
                         json.optString("longitude").toDoubleOrNull() ?: 0.0
                     ),
-                    bearing = json.optString("direction").toFloatOrNull() ?: 0.0F
+                    bearing = json.optString("direction").toFloatOrNull() ?: 0.0F,
+                    eta = json.optString("eta").toIntOrNull() ?: 0
                 )
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -226,6 +228,8 @@ object SocketSetup {
             put("attachment", attachment)
             put("attachment_type", type)
             put("thumbnail", thumbnail)
+            put("device_type", "0")
+            put("login_type", "0")
 
         })
     }

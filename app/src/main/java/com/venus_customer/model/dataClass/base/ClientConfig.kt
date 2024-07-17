@@ -36,6 +36,8 @@ data class ClientConfig(
     val showGoogleLogin: String? = null,
     @SerializedName("show_terms")
     val showTerms: String? = null,
+    @SerializedName("google_map_keys")
+    val googleMapKey: String? = null,
     @SerializedName("terms_of_use_url")
     val termsOfUseUrl: String? = null
 ) {

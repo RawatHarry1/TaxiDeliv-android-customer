@@ -159,6 +159,31 @@ class RideVM @Inject constructor(
         }
     }
 
+    /**
+     * Enter promo code
+     * */
+    private val _enterPromoCode by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
+    val enterPromoCode: LiveData<ApiState<BaseResponse<Any>>> = _enterPromoCode
+    fun enterPromoCode(
+        promoCode: String,
+        regionId: String,
+        vehicleType: String,
+        fare: String,
+        distance: String,
+        currency: String
+    ) {
+        viewModelScope.launch {
+            rideRepo.enterPromoCode(jsonObject = JSONObject().apply {
+                put("code", promoCode)
+                put("region_id", regionId)
+                put("vehicle_type", vehicleType)
+                put("fare", fare)
+                put("distance", distance)
+                put("currency", currency)
+            }).setApiState(_enterPromoCode)
+        }
+    }
+
 
     /**
      * SOS

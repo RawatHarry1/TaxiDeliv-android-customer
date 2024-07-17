@@ -18,11 +18,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
@@ -45,6 +43,8 @@ import com.venus_customer.databinding.DialogAddAddressBinding
 import com.venus_customer.databinding.FragmentSelectLocationBinding
 import com.venus_customer.model.api.Status
 import com.venus_customer.model.api.getJsonRequestBody
+import com.venus_customer.model.dataClass.base.ClientConfig
+import com.venus_customer.util.SharedPreferencesManager
 import com.venus_customer.util.convertDouble
 import com.venus_customer.util.showSnackBar
 import com.venus_customer.util.textChanges
@@ -89,6 +89,10 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
         super.onViewCreated(view, savedInstanceState)
 //        GoogleApiAvailability.getInstance().initialize("")
         binding = getViewDataBinding()
+        if (VenusApp.googleMapKey.isEmpty())
+            VenusApp.googleMapKey = SharedPreferencesManager.getModel<ClientConfig>(
+                SharedPreferencesManager.Keys.CLIENT_CONFIG
+            )?.googleMapKey ?: ""
         setMapFragment(view, savedInstanceState)
         observeSearchPlaces()
         observeAddAddress()
@@ -170,7 +174,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
             if (!Places.isInitialized()) {
                 Places.initialize(
                     requireContext().applicationContext,
-                    getString(R.string.map_api_key)
+                    VenusApp.googleMapKey
                 )
             }
         }

@@ -26,6 +26,8 @@ class VenusApp: Application() {
         lateinit var appContext: Context
         lateinit var applicationComponent: AppComponent
         var latLng: LatLng = LatLng(0.0, 0.0)
+        var onChatScreen = false
+        var googleMapKey = ""
     }
 
     override fun onCreate() {
