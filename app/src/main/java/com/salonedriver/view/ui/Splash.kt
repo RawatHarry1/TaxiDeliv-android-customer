@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.salonedriver.R
+import com.salonedriver.SaloneDriver
 import com.salonedriver.databinding.ActivitySplashBinding
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.userData.UserDataDC
@@ -44,6 +45,7 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
             binding.pbProgress.gone()
             binding.btRetry.gone()
             SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.CLIENT_CONFIG, this)
+            SaloneDriver.googleMapKey = this?.googleMapKey.orEmpty()
             callWalkThrough()
         }, onError = {
             binding.pbProgress.gone()

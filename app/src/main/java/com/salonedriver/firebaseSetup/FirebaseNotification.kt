@@ -95,7 +95,7 @@ class FirebaseNotification : FirebaseMessagingService() {
             ?.let {
                 if (it.accessToken?.isNotEmpty() == true) {
                     if (notificationData.notificationType == "600" && SaloneDriver.onChatScreen) {
-
+                        Log.i("PUSHNOTI","on chat screen")
                     } else
                         sendNotification()
                     if ((notificationData.notificationType?.toIntOrNull()

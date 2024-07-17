@@ -30,6 +30,8 @@ data class ClientConfigDC(
     val defaultCountryIso: String? = null,
     @SerializedName("operator_id")
     val operatorId: String? = null,
+    @SerializedName("google_map_keys")
+    val googleMapKey: String? = null,
     @SerializedName("city_list")
     val cityList: ArrayList<CountryList>? = ArrayList()
 )

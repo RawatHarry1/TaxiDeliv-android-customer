@@ -25,6 +25,7 @@ class SaloneDriver : Application(), ActivityLifecycleCallbacks {
         @JvmStatic
         var latLng: LatLng? = null
         var onChatScreen = false
+        var googleMapKey = ""
     }
 
     override fun onCreate() {

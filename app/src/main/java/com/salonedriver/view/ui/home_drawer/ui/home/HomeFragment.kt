@@ -658,7 +658,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                                 "customerId",
                                 "${rideViewModel.newRideNotificationData.customerId}"
                             )
-                            putExtra("driverId", "${userId}")
+                            putExtra("driverId", "$userId")
                             putExtra(
                                 "engagementId",
                                 "${rideViewModel.newRideNotificationData.tripId}"
@@ -672,10 +672,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                                 "${rideViewModel.newRideNotificationData.customerImage}"
                             )
                         }
-
                     )
-
-
             } else {
                 HomeActivity.isMsgNotification = false
                 screenType = 0
@@ -857,8 +854,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         }
     }
 }
-
-
 interface CheckOnGoingBooking {
     fun checkOnGoingBooking()
 }

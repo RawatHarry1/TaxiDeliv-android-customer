@@ -28,6 +28,9 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.gson.Gson
 import com.google.maps.android.PolyUtil
 import com.salonedriver.R
+import com.salonedriver.SaloneDriver
+import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
+import com.salonedriver.util.SharedPreferencesManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -186,8 +189,13 @@ fun Context.findEta(srcLat: LatLng, desLat: LatLng, valueIs: (PathModel) -> Unit
 private fun Context.getDirectionsUrl(
     src: LatLng, des: LatLng, markerPoints: ArrayList<LatLng> = ArrayList()
 ): String {
+    if (SaloneDriver.googleMapKey.isEmpty())
+        SaloneDriver.googleMapKey = SharedPreferencesManager.getModel<ClientConfigDC>(
+            SharedPreferencesManager.Keys.CLIENT_CONFIG
+        )?.googleMapKey ?: ""
+
     var url = "https://maps.googleapis.com/maps/api/directions/"
-    val params = "&mode=driving&key=" + getString(R.string.map_api_key)
+    val params = "&mode=driving&key=" + SaloneDriver.googleMapKey
     val output = "json"
     var parameters = ""
 
