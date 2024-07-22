@@ -194,9 +194,11 @@
         </androidx.cardview.widget.CardView>
 
 
-        <com.google.android.gms.maps.MapView
+        <fragment
             android:id="@+id/fragmentMapFullScreen"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
+
             android:layout_height="match_parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -231,6 +233,17 @@
             android:textSize="14sp"
             app:fontFamily="@font/poppins_regular"
             app:layout_constraintBottom_toBottomOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivCenterMarker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/new_location_placeholder"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

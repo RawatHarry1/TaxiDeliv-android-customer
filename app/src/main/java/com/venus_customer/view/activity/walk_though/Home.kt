@@ -13,7 +13,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.gson.Gson
 import com.mukesh.photopicker.utils.checkPermissions
 import com.venus_customer.R
 import com.venus_customer.databinding.ActivityHomeBinding
@@ -35,6 +34,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
     private lateinit var navController: NavController
     private val viewModel by viewModels<HomeVM>()
     private val rideVM by viewModels<RideVM>()
+    private var hideNavView = false
 
     companion object {
         var isFromMsgNotification = false
@@ -88,8 +88,9 @@ class Home : BaseActivity<ActivityHomeBinding>() {
     private val listener =
         NavController.OnDestinationChangedListener { controller, destination, arguments ->
             safeCall {
-                if (destination.id == R.id.navigation_home || destination.id == R.id.navigation_account || destination.id == R.id.navigation_trips || destination.id == R.id.navigation_notifications)
+                if (destination.id == R.id.navigation_home || destination.id == R.id.navigation_account || destination.id == R.id.navigation_trips || destination.id == R.id.navigation_notifications) {
                     binding.navView.visible()
+                }
                 else
                     binding.navView.gone()
 //                rideVM.updateUiState(RideAlertUiState.HomeScreen)
@@ -158,9 +159,12 @@ class Home : BaseActivity<ActivityHomeBinding>() {
 
     private fun observeUiState() = rideVM.hideHomeNavigation.observe(this) {
         Log.i("RIDESTATE", "$it")
-        if (it)
+        if (it) {
+            hideNavView = true
             binding.navView.gone()
-        else
+        } else {
+            hideNavView = false
             binding.navView.visible()
+        }
     }
 }

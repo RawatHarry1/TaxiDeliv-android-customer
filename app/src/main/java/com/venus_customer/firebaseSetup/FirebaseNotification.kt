@@ -55,6 +55,10 @@ class FirebaseNotification : FirebaseMessagingService() {
                     data["body"].orEmpty()
 
                 notificationData.notificationType = data["notification_type"].orEmpty()
+                Log.i(
+                    "PUSHNOTI",
+                    "in data not empty"
+                )
                 fetchNotificationData(data)
             }
         }
@@ -70,6 +74,10 @@ class FirebaseNotification : FirebaseMessagingService() {
      * */
     private fun fetchNotificationData(data: MutableMap<String, String>) {
         try {
+            Log.i(
+                "PUSHNOTI",
+                "in fetchNotificationData ${notificationData.notificationType.orEmpty()}"
+            )
             notificationData.notificationType = data["notification_type"].toString()
 
             if (data.contains("notificationDetails")) {
@@ -108,11 +116,20 @@ class FirebaseNotification : FirebaseMessagingService() {
                     ?: 0) == NotificationStatus.REQUEST_TIMEOUT.type
             ) {
                 HomeFragment.notificationInterface?.requestTimeout(notificationData.message ?: "")
+            } else if ((notificationData.notificationType?.toIntOrNull()
+                    ?: 0) == NotificationStatus.RIDE_REJECTED_BY_DRIVER.type
+            ) {
+                HomeFragment.notificationInterface?.rideRejectedByDriver()
+                ChatActivity.notificationInterface?.rideRejectedByDriver()
             } else {
                 HomeFragment.notificationInterface?.callFetchRideApi()
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.i(
+                "PUSHNOTI",
+                "in fetchNotificationData ERROR ${e.message}"
+            )
         }
     }
 
@@ -206,5 +223,4 @@ class FirebaseNotification : FirebaseMessagingService() {
         var notificationType: String? = "",
         var notificationModel: NotificationModel = NotificationModel()
     ) : Parcelable
-
 }

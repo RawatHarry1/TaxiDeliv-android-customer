@@ -55,6 +55,19 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface, Notif
         }
     }
 
+    override fun rideRejectedByDriver() {
+        super.rideRejectedByDriver()
+        runOnUiThread {
+            try {
+                Log.i("PUSHNOTI", "IN RIDE REJCT CHAT")
+                val resultIntent = Intent()
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish()
+            } catch (e: Exception) {
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         notificationInterface = this

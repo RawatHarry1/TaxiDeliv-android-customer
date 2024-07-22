@@ -275,7 +275,7 @@
     <string name="please_enter_valid_first_name">*Please enter valid first name.</string>
     <string name="please_enter_last_name">*Please enter last name.</string>
     <string name="please_enter_last_name_length">*Last name should be at least three characters.</string>
-    <string name="please_enter_user_name_length">*User name should be at least three characters.</string>
+    <string name="please_enter_user_name_length">*Username should be at least three characters.</string>
 
     <string name="please_enter_valid_last_name">*Please enter valid last name.</string>
     <string name="please_enter_designation">*Please enter designation.</string>

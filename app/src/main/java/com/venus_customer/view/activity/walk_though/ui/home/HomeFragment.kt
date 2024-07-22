@@ -37,8 +37,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapsInitializer
-import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -179,20 +178,31 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val tripId = result.data?.getStringExtra("tripId")
-            val driverId = result.data?.getStringExtra("driverId")
-            val driverName = result.data?.getStringExtra("driverName")
-            val engagementId = result.data?.getStringExtra("engagementId")
             try {
-                findNavController().navigate(
-                    R.id.navigation_rate_driver,
-                    bundleOf(
-                        "engagementId" to tripId,
-                        "driverName" to driverName,
-                        "driverId" to driverId,
-                        "tripId" to tripId
+                if (result.data?.hasExtra("tripId") == true) {
+                    val tripId = result.data?.getStringExtra("tripId")
+                    val driverId = result.data?.getStringExtra("driverId")
+                    val driverName = result.data?.getStringExtra("driverName")
+                    val engagementId = result.data?.getStringExtra("engagementId")
+                    findNavController().navigate(
+                        R.id.navigation_rate_driver,
+                        bundleOf(
+                            "engagementId" to tripId,
+                            "driverName" to driverName,
+                            "driverId" to driverId,
+                            "tripId" to tripId
+                        )
                     )
-                )
+                } else {
+                    requireActivity().runOnUiThread {
+                        binding.clWhereMain.visibility = View.VISIBLE
+                        binding.clMapMain.visibility = View.GONE
+                        hideAllBottomSheets()
+                        rideVM.hideHomeNav(false)
+                        rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
+                    }
+                    rideVM.fetchOngoingTrip()
+                }
             } catch (e: Exception) {
             }
         }
@@ -337,6 +347,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     Log.i("SavedStateData", "in add_address")
                     rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
                 }
+
                 hideAllBottomSheets()
             }
         } catch (e: Exception) {
@@ -504,21 +515,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
 
     private fun setMapFragment(view: View, savedInstanceState: Bundle?) {
-        MapsInitializer.initialize(view.context, MapsInitializer.Renderer.LATEST) {
-            binding.fragmentMap.onCreate(savedInstanceState)
-            binding.fragmentMapFullScreen.onCreate(savedInstanceState)
-            binding.fragmentMap.getMapAsync {
-                nearByDriverMap = it
-                OnMapReadyCallback {
-//                    it.moveCamera(CameraUpdateFactory.newLatLng(LatLng(5454.1, 556.9)))
-                }
-            }
-            binding.fragmentMapFullScreen.getMapAsync {
-                googleMap = it
-            }
+        val smallMapFragment =
+            childFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment
+        val fragmentMapFullScreen =
+            childFragmentManager.findFragmentById(R.id.fragmentMapFullScreen) as SupportMapFragment
+        smallMapFragment.getMapAsync {
+            nearByDriverMap = it
         }
-
-
+        fragmentMapFullScreen.getMapAsync {
+            googleMap = it
+        }
+//        MapsInitializer.initialize(view.context, MapsInitializer.Renderer.LATEST) {
+//            binding.fragmentMap.onCreate(savedInstanceState)
+//            binding.fragmentMapFullScreen.onCreate(savedInstanceState)
+//            binding.fragmentMap.getMapAsync {
+//                nearByDriverMap = it
+//                OnMapReadyCallback {
+//                    it.moveCamera(CameraUpdateFactory.newLatLng(LatLng(5454.1, 556.9)))
+//                }
+//            }
+//            binding.fragmentMapFullScreen.getMapAsync {
+//                googleMap = it
+//            }
+//        }
     }
 
     private var selectedPickDateTimeForSchedule = ""
@@ -1317,6 +1336,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             if (activity != null)
                 binding.progressMap.shimmerLayout.isVisible = false
             try {
+                nearByDriverMap?.clear()
                 nearByDriverLatLanArrayList.clear()
 //                val latLongB = LatLngBounds.Builder()
                 this?.drivers?.forEach {
@@ -1525,6 +1545,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         rideVM.fetchOngoingTrip()
     }
 
+    override fun rideRejectedByDriver() {
+        super.rideRejectedByDriver()
+        requireActivity().runOnUiThread {
+            Log.i("PUSHNOTI", "IN RIDE REJCT HOME")
+            binding.clWhereMain.visibility = View.VISIBLE
+            binding.clMapMain.visibility = View.GONE
+            hideAllBottomSheets()
+            rideVM.hideHomeNav(false)
+            rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
+        }
+        rideVM.fetchOngoingTrip()
+    }
+
     override fun rideEnd(
         tripId: String,
         driverId: String,
@@ -1561,11 +1594,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
 
-    override fun driverLocation(latLng: LatLng, bearing: Float,eta:Int) {
-        super.driverLocation(latLng, bearing,eta)
+    override fun driverLocation(latLng: LatLng, bearing: Float, eta: Int) {
+        super.driverLocation(latLng, bearing, eta)
         requireActivity().runOnUiThread {
             binding.viewStartRide.tvDistanceTime.text = eta.toString()
-            binding.viewStartRide.tvTimeValue.text = eta.toString()+ "min"
+            binding.viewStartRide.tvTimeValue.text = eta.toString() + "min"
             requireContext().animateDriver(
                 driverLatitude = latLng.latitude,
                 driverLongitude = latLng.longitude,
@@ -1584,7 +1617,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private suspend fun getLocationDataFromLatLng(latLng: LatLng) {
         withContext(Dispatchers.IO) {
             try {
-                val apiKey = getString(R.string.map_api_key)
+                val apiKey = VenusApp.googleMapKey
                 val url =
                     "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=$apiKey"
                 val result = URL(url).readText()
@@ -1601,8 +1634,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                             longitude = latLng.longitude.toString(),
                             placeId = placeId
                         )
-
-
                         // Optionally update the UI with the new location data
 //                    // Ensure to switch back to the main thread for UI updates
                         withContext(Dispatchers.Main) {

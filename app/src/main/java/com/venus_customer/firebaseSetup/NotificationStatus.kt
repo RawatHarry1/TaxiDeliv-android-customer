@@ -6,7 +6,7 @@ enum class NotificationStatus(val type: Int) {
     WALLET_UPDATE(120),
     REQUEST(0), //Driver
     REQUEST_TIMEOUT(1), //Customer
-    REQUEST_CANCELLED(2), //Driver
+    RIDE_CANCELLED_BY_DRIVER(11), //Driver
     RIDE_STARTED(3), //Customer
     RIDE_ENDED(4), //Customer
     RIDE_ACCEPTED(5), //Customer

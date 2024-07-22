@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -22,10 +23,10 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.Place
@@ -38,7 +39,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.venus_customer.R
 import com.venus_customer.VenusApp
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
-import com.venus_customer.customClasses.trackingData.vectorToBitmap
 import com.venus_customer.databinding.DialogAddAddressBinding
 import com.venus_customer.databinding.FragmentSelectLocationBinding
 import com.venus_customer.model.api.Status
@@ -73,6 +73,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
     private var locationData: CreateRideData.LocationData? = null
     private val viewModel by viewModels<SearchLocationVM>()
     private var isSearchEnable: Boolean = true
+    private var adapterClick: Boolean = false // to stop idle map function hit in other cases
     private val placesClient by lazy { Places.createClient(requireContext()) }
     private val adapter by lazy { PickDropAdapter(::adapterClick) }
     private var countryCode = ""
@@ -89,6 +90,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
         super.onViewCreated(view, savedInstanceState)
 //        GoogleApiAvailability.getInstance().initialize("")
         binding = getViewDataBinding()
+        adapterClick = true
         if (VenusApp.googleMapKey.isEmpty())
             VenusApp.googleMapKey = SharedPreferencesManager.getModel<ClientConfig>(
                 SharedPreferencesManager.Keys.CLIENT_CONFIG
@@ -103,7 +105,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
             setPickDropAdapter(binding.rvAddAddressPickDrop, view.context)
         } else
             setPickDropAdapter(binding.rvPickDrop, view.context)
-        if (type == "pickUp" || type == "add_address")
+        if (type == "pickUp" || type == "add_address") {
             lifecycleScope.launch {
                 getLocationDataFromLatLng(
                     LatLng(
@@ -112,6 +114,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                     )
                 )
             }
+        }
         binding.tvConfirmBtn.setOnSingleClickListener {
             if (locationData != null) {
                 if (type == "add_address") {
@@ -146,37 +149,98 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
         binding.cvAddress.visibility = if (type == "add_address") View.VISIBLE else View.GONE
     }
 
+    @SuppressLint("MissingPermission")
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun setMapFragment(view: View, savedInstanceState: Bundle?) {
+        val fragmentMapFullScreen =
+            childFragmentManager.findFragmentById(R.id.fragmentMapFullScreen) as SupportMapFragment
 
+        fragmentMapFullScreen.getMapAsync {
+            googleMap = it
+
+            val latLng = LatLng(VenusApp.latLng.latitude, VenusApp.latLng.longitude)
+            googleMap?.clear()
+//            if (args.selectLocationType == "pickUp" || args.selectLocationType == "add_address") {
+//                googleMap?.addMarker(
+//                    MarkerOptions().position(latLng).draggable(true)
+//                        .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
+//                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+//            } else {
+//                googleMap?.addMarker(
+//                    MarkerOptions().position(latLng).draggable(true)
+//                        .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
+//                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+//            }
+
+            googleMap?.let {
+                it.isMyLocationEnabled = true
+                it.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
+
+                it.setOnCameraMoveStartedListener { reason ->
+                    // Apply scale up animation when camera starts moving
+                    val scaleUp =
+                        AnimationUtils.loadAnimation(requireActivity(), R.anim.scale_up)
+                    binding.ivCenterMarker.startAnimation(scaleUp)
+                    if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                        adapterClick = false
+                    }
+                }
+                it.setOnCameraIdleListener {
+                    // Apply scale down animation when camera stops moving
+                    val scaleDown =
+                        AnimationUtils.loadAnimation(requireActivity(), R.anim.scale_down)
+                    binding.ivCenterMarker.startAnimation(scaleDown)
+                    val center: LatLng = it.cameraPosition.target
+                    // Handle the center LatLng here
+                    // Example: Display the LatLng in a Toast
+                    isSearchEnable = false
+                    if (!adapterClick)
+                        lifecycleScope.launch {
+                            getLocationDataFromLatLng(
+                                LatLng(
+                                    center.latitude,
+                                    center.longitude
+                                ), false
+                            )
+                        }
+                }
+            }
+//            setUpMapListeners()
+        }
+        if (!Places.isInitialized()) {
+            Places.initialize(
+                requireContext().applicationContext,
+                VenusApp.googleMapKey
+            )
+        }
         MapsInitializer.initialize(view.context, MapsInitializer.Renderer.LATEST) {
 
-            binding.fragmentMapFullScreen.onCreate(savedInstanceState)
+//            binding.fragmentMapFullScreen.onCreate(savedInstanceState)
 
-            binding.fragmentMapFullScreen.getMapAsync {
-                googleMap = it
-
-                val latLng = LatLng(VenusApp.latLng.latitude, VenusApp.latLng.longitude)
-                googleMap?.clear()
-                if (args.selectLocationType == "pickUp" || args.selectLocationType == "add_address") {
-                    googleMap?.addMarker(
-                        MarkerOptions().position(latLng).draggable(true)
-                            .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
-                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
-                } else {
-                    googleMap?.addMarker(
-                        MarkerOptions().position(latLng).draggable(true)
-                            .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
-                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
-                }
-                setUpMapListeners()
-            }
-            if (!Places.isInitialized()) {
-                Places.initialize(
-                    requireContext().applicationContext,
-                    VenusApp.googleMapKey
-                )
-            }
+//            binding.fragmentMapFullScreen.getMapAsync {
+//                googleMap = it
+//
+//                val latLng = LatLng(VenusApp.latLng.latitude, VenusApp.latLng.longitude)
+//                googleMap?.clear()
+//                if (args.selectLocationType == "pickUp" || args.selectLocationType == "add_address") {
+//                    googleMap?.addMarker(
+//                        MarkerOptions().position(latLng).draggable(true)
+//                            .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
+//                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+//                } else {
+//                    googleMap?.addMarker(
+//                        MarkerOptions().position(latLng).draggable(true)
+//                            .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
+//                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+//                }
+//                setUpMapListeners()
+//            }
+//            if (!Places.isInitialized()) {
+//                Places.initialize(
+//                    requireContext().applicationContext,
+//                    VenusApp.googleMapKey
+//                )
+//            }
         }
 
         binding.etSearchLocation.textChanges().debounce(1500)
@@ -277,6 +341,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
     private fun adapterClick(data: CreateRideData.LocationData) {
         try {
             isSearchEnable = false
+            adapterClick = true
             adapter.submitList(emptyList())
 
             if (args.selectLocationType == "add_address") {
@@ -363,9 +428,9 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                     val latLng =
                         LatLng(model.latitude.convertDouble(), model.longitude.convertDouble())
                     googleMap?.clear()
-                    googleMap?.addMarker(MarkerOptions().position(latLng).draggable(true)
-                        .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
-                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+//                    googleMap?.addMarker(MarkerOptions().position(latLng).draggable(true)
+//                        .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
+                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
                     locationData = model
                     Handler(Looper.getMainLooper()).postDelayed({
                         isSearchEnable = true
@@ -500,10 +565,10 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
             ContextCompat.getDrawable(requireContext(), R.drawable.bg_outline_gray_4dp)
     }
 
-    private suspend fun getLocationDataFromLatLng(latLng: LatLng) {
+    private suspend fun getLocationDataFromLatLng(latLng: LatLng, animateCamera: Boolean = true) {
         withContext(Dispatchers.IO) {
             try {
-                val apiKey = getString(R.string.map_api_key)
+                val apiKey = VenusApp.googleMapKey
                 val url =
                     "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=$apiKey"
                 val result = URL(url).readText()
@@ -530,15 +595,16 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                                 binding.etSearchLocation.setText(locationData?.address.orEmpty())
                             if (args.selectLocationType != "pickUp" && args.selectLocationType != "add_address") {
                                 googleMap?.clear()
-                                googleMap?.addMarker(
-                                    MarkerOptions().position(latLng).draggable(true)
-                                        .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
-                                googleMap?.animateCamera(
-                                    CameraUpdateFactory.newLatLngZoom(
-                                        latLng,
-                                        12f
+//                                googleMap?.addMarker(
+//                                    MarkerOptions().position(latLng).draggable(true)
+//                                        .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
+                                if (animateCamera)
+                                    googleMap?.animateCamera(
+                                        CameraUpdateFactory.newLatLngZoom(
+                                            latLng,
+                                            14f
+                                        )
                                     )
-                                )
                             }
                             Handler(Looper.getMainLooper()).postDelayed({
                                 isSearchEnable = true
