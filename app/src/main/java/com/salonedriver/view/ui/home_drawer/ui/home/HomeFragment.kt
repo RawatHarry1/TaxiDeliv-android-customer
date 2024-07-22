@@ -271,7 +271,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.NEW_BOOKING)
             dialog?.dismiss()
         }
-
         dialog?.setCancelable(true)
         dialog?.show()
     }
@@ -759,6 +758,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
      * */
     override fun newRide() {
         super.newRide()
+        Log.i("PUSHNOTI", "in notification detail HOME")
         requireActivity().runOnUiThread {
             fetchNewNotification()
         }
@@ -769,16 +769,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
      * */
     override fun timeOutRide() {
         super.timeOutRide()
-        try {
-            requireActivity().runOnUiThread {
+        requireActivity().runOnUiThread {
+            try {
+                Log.i("PUSHNOTI","IN TIME OUT")
                 AppUtils.tripId = ""
                 rideViewModel.newRideNotificationData = NewRideNotificationDC()
                 screenType = 0
                 SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.NEW_BOOKING)
                 dialog?.dismiss()
+            } catch (e: Exception) {
+                Log.i("PUSHNOTI","IN TIME OUT:: ${e.message}")
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
@@ -786,6 +788,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     private fun fetchNewNotification() {
         SharedPreferencesManager.getModel<NewRideNotificationDC>(SharedPreferencesManager.Keys.NEW_BOOKING)
             ?.let {
+                Log.i("PUSHNOTI", "in notification detail FETCHNOTI")
                 rideViewModel.newRideNotificationData = it
                 callTripsDialog(requireContext(), it)
             }
@@ -854,6 +857,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         }
     }
 }
+
 interface CheckOnGoingBooking {
     fun checkOnGoingBooking()
 }

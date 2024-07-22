@@ -203,6 +203,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             cancelTrip {
                 Intent(this, CancelTrip::class.java).apply {
                     putExtra("tripId", rideData?.tripId.orEmpty())
+                    putExtra("customerId", rideData?.customerId.orEmpty())
                     startActivity(this)
                 }
             }

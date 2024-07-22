@@ -21,6 +21,7 @@ class CancelTrip: BaseActivity<CancelRideBinding>() {
     private val cancelRideAdapter by lazy { CancelTripAdapter() }
     private val viewModel by viewModels<RideViewModel>()
     private val tripId by lazy { intent.getStringExtra("tripId").orEmpty() }
+    private val customerId by lazy { intent.getStringExtra("customerId").orEmpty() }
 
 
     override fun getLayoutId(): Int {
@@ -54,7 +55,7 @@ class CancelTrip: BaseActivity<CancelRideBinding>() {
             } else {
                 viewModel.cancelTrip(jsonObject = JSONObject().apply {
                     put("engagementId",tripId)
-                    put("customerId",SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)?.login?.userId.orEmpty())
+                    put("customerId",customerId)
                     put("cancellationReason",reason)
                     put("by_operator",1)
                 })

@@ -83,8 +83,6 @@ suspend fun <T> Flow<Response<T>>.setApiState(mutableLiveData: MutableLiveData<A
                 )
             )
     }
-
-
 /**
  * Profile Status Handling
  * */

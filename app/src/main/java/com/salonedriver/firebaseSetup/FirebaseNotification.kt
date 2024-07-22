@@ -95,7 +95,11 @@ class FirebaseNotification : FirebaseMessagingService() {
             ?.let {
                 if (it.accessToken?.isNotEmpty() == true) {
                     if (notificationData.notificationType == "600" && SaloneDriver.onChatScreen) {
-                        Log.i("PUSHNOTI","on chat screen")
+                        Log.i("PUSHNOTI", "on chat screen")
+                    } else if ((notificationData.notificationType?.toIntOrNull()
+                            ?: -1) == NotificationStatus.TIME_OUT_RIDE.type
+                    ) {
+                        Log.i("PUSHNOTI", "on type 2")
                     } else
                         sendNotification()
                     if ((notificationData.notificationType?.toIntOrNull()
@@ -114,7 +118,7 @@ class FirebaseNotification : FirebaseMessagingService() {
     private fun fetchNotificationData(data: MutableMap<String, String>) {
         try {
             val jsonData = JSONObject(data["notificationDetails"].orEmpty())
-
+            Log.i("PUSHNOTI", "in notification detail")
             when (notificationData.notificationType?.toIntOrNull() ?: -1) {
                 NotificationStatus.NEW_RIDE.type -> {
                     NewRideNotificationDC(
@@ -146,6 +150,7 @@ class FirebaseNotification : FirebaseMessagingService() {
                 }
             }
         } catch (e: Exception) {
+            Log.i("PUSHNOTI", "in notification detail error :: ${e.message}")
             e.printStackTrace()
         }
     }
