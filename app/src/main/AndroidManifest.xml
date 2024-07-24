@@ -14,6 +14,9 @@
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -107,6 +110,11 @@
             </intent-filter>
         </service>
 
+        <service
+            android:name=".customClasses.FloatingIconService"
+            android:enabled="true"
+            android:exported="false" />
+
         <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
      See README(https://goo.gl/l4GJaQ) for more. -->
         <meta-data
@@ -129,5 +137,12 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <receiver android:name=".customClasses.BringAppToForegroundReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="bring_app_to_foreground" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

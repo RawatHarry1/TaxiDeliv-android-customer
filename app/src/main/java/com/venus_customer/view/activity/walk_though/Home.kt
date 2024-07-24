@@ -1,11 +1,17 @@
 package com.venus_customer.view.activity.walk_though
 
+import com.venus_customer.customClasses.FloatingIconService
 import android.Manifest
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
@@ -35,7 +41,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
     private val viewModel by viewModels<HomeVM>()
     private val rideVM by viewModels<RideVM>()
     private var hideNavView = false
-
+    private lateinit var overlayPermissionLauncher: ActivityResultLauncher<Intent>
     companion object {
         var isFromMsgNotification = false
     }
@@ -78,6 +84,31 @@ class Home : BaseActivity<ActivityHomeBinding>() {
         observeData()
         observeUiState()
         handleIntent(intent)
+
+        overlayPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (Settings.canDrawOverlays(this)) {
+                startFloatingIconService()
+            } else {
+                // Permission is not granted. Show a message to the user.
+                Toast.makeText(this, "Overlay permission is required", Toast.LENGTH_SHORT).show()
+            }
+        }
+        // Check and request permission
+//        if (!Settings.canDrawOverlays(this)) {
+//            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+//            overlayPermissionLauncher.launch(intent)
+//        } else {
+//
+//            startFloatingIconService()
+//        }
+    }
+
+    private fun startFloatingIconService() {
+        Log.d("OverlayService", "Service called")
+        val intent = Intent(this, FloatingIconService::class.java)
+        startService(intent)
     }
 
     override fun onNewIntent(intent: Intent?) {

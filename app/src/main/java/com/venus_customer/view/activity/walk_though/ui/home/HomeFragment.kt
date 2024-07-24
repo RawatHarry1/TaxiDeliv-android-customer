@@ -1565,7 +1565,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         engagementId: String
     ) {
         requireActivity().runOnUiThread {
+
             try {
+                Log.i("PUSHNOTI","IN TRY:: ON HOME IN RIDE END")
+                binding.clWhereMain.visibility = View.VISIBLE
+                binding.clMapMain.visibility = View.GONE
+                hideAllBottomSheets()
+                rideVM.hideHomeNav(false)
+                rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
                 findNavController().navigate(
                     R.id.navigation_rate_driver,
                     bundleOf(
@@ -1575,10 +1582,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                         "tripId" to tripId
                     )
                 )
+
             } catch (e: Exception) {
                 e.printStackTrace()
+                Log.i("PUSHNOTI","IN CATCH:: ON HOME IN RIDE END ${e.message}")
             }
         }
+        rideVM.fetchOngoingTrip()
     }
 
     override fun requestTimeout(msg: String) {

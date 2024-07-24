@@ -115,6 +115,10 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                 )
             }
         }
+        else
+        {
+            isSearchEnable = true
+        }
         binding.tvConfirmBtn.setOnSingleClickListener {
             if (locationData != null) {
                 if (type == "add_address") {
@@ -140,6 +144,12 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                     )
                 )
             }
+        }
+        binding.rlClearSearch.setOnSingleClickListener {
+            binding.etSearchLocation.setText("")
+        }
+        binding.rlClearSearchAdd.setOnSingleClickListener {
+            binding.etAddAddressSearchLocation.setText("")
         }
 
         binding.tvSelectPickDrop.text =
@@ -186,6 +196,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                     }
                 }
                 it.setOnCameraIdleListener {
+                    Log.i("SearchLoc","in on camera idle $isSearchEnable")
                     // Apply scale down animation when camera stops moving
                     val scaleDown =
                         AnimationUtils.loadAnimation(requireActivity(), R.anim.scale_down)
@@ -193,7 +204,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                     val center: LatLng = it.cameraPosition.target
                     // Handle the center LatLng here
                     // Example: Display the LatLng in a Toast
-                    isSearchEnable = false
+//                    isSearchEnable = false
                     if (!adapterClick)
                         lifecycleScope.launch {
                             getLocationDataFromLatLng(
@@ -245,6 +256,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
 
         binding.etSearchLocation.textChanges().debounce(1500)
             .onEach {
+                Log.i("SearchLoc","$isSearchEnable")
                 if (it.toString().isNotEmpty() && isSearchEnable) {
                     searchPlaces(it.toString())
                 }
@@ -568,6 +580,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
     private suspend fun getLocationDataFromLatLng(latLng: LatLng, animateCamera: Boolean = true) {
         withContext(Dispatchers.IO) {
             try {
+                Log.i("SearchLoc","in get location data $isSearchEnable")
                 val apiKey = VenusApp.googleMapKey
                 val url =
                     "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=$apiKey"

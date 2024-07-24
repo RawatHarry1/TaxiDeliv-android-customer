@@ -64,6 +64,23 @@
                         android:src="@drawable/ic_my_gps" />
                 </RelativeLayout>
 
+                <RelativeLayout
+                    android:id="@+id/rlClearSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingStart="8dp"
+                    app:layout_constraintEnd_toStartOf="@id/rlMyGps"
+                    app:layout_constraintStart_toEndOf="@+id/etSearchLocation"
+                    app:layout_constraintBottom_toBottomOf="@+id/etSearchLocation">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_cancel"
+                        app:tint="@color/black" />
+                </RelativeLayout>
+
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/etSearchLocation"
@@ -75,7 +92,7 @@
                     android:fontFamily="@font/poppins_regular"
                     android:hint="@string/search_hint"
                     android:textSize="@dimen/_12ssp"
-                    app:layout_constraintEnd_toStartOf="@id/rlMyGps"
+                    app:layout_constraintEnd_toStartOf="@id/rlClearSearch"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvSelectPickDrop" />
 
@@ -136,9 +153,9 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="10dp"
-            android:visibility="gone"
             app:cardCornerRadius="40dp"
             app:cardElevation="5dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0">
@@ -147,10 +164,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <RelativeLayout
+                    android:id="@+id/rlClearSearchAdd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_cancel"
+                        app:tint="@color/black" />
+                </RelativeLayout>
+
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/etAddAddressSearchLocation"
                     android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:drawableStart="@drawable/ic_direction"
@@ -167,6 +200,9 @@
                     android:paddingBottom="12dp"
                     android:textSize="@dimen/_12ssp"
                     app:drawableTint="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/rlClearSearchAdd"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ProgressBar
