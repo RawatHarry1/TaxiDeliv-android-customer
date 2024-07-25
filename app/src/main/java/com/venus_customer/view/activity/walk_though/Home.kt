@@ -87,7 +87,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
 
         overlayPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
-        ) { result ->
+        ) {
             if (Settings.canDrawOverlays(this)) {
                 startFloatingIconService()
             } else {
@@ -95,6 +95,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
                 Toast.makeText(this, "Overlay permission is required", Toast.LENGTH_SHORT).show()
             }
         }
+
         // Check and request permission
 //        if (!Settings.canDrawOverlays(this)) {
 //            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
