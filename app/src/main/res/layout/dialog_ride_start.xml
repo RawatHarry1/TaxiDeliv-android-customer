@@ -200,6 +200,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivChat"
                 android:layout_width="wrap_content"
@@ -209,6 +210,15 @@
                 app:layout_constraintEnd_toStartOf="@id/ivCall"
                 app:layout_constraintTop_toTopOf="@id/ivProfileImage"
                 app:srcCompat="@drawable/ic_chat" />
+
+            <ImageView
+                android:id="@+id/ivChatIndicator"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/bg_sos_circular"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/ivChat"
+                app:layout_constraintTop_toTopOf="@id/ivChat" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivCall"

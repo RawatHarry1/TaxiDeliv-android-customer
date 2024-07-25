@@ -114,9 +114,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                     )
                 )
             }
-        }
-        else
-        {
+        } else {
             isSearchEnable = true
         }
         binding.tvConfirmBtn.setOnSingleClickListener {
@@ -147,9 +145,16 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
         }
         binding.rlClearSearch.setOnSingleClickListener {
             binding.etSearchLocation.setText("")
+            adapter.submitList(emptyList())
+            binding.progress.isVisible = false
+            binding.rvAddAddressPickDrop.isVisible = false
         }
+
         binding.rlClearSearchAdd.setOnSingleClickListener {
             binding.etAddAddressSearchLocation.setText("")
+            adapter.submitList(emptyList())
+            binding.rvAddAddressPickDrop.isVisible = false
+            binding.addAddressProgress.isVisible = false
         }
 
         binding.tvSelectPickDrop.text =
@@ -184,6 +189,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
 
             googleMap?.let {
                 it.isMyLocationEnabled = true
+                it.uiSettings.isMyLocationButtonEnabled = false
                 it.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
 
                 it.setOnCameraMoveStartedListener { reason ->
@@ -196,7 +202,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                     }
                 }
                 it.setOnCameraIdleListener {
-                    Log.i("SearchLoc","in on camera idle $isSearchEnable")
+                    Log.i("SearchLoc", "in on camera idle $isSearchEnable")
                     // Apply scale down animation when camera stops moving
                     val scaleDown =
                         AnimationUtils.loadAnimation(requireActivity(), R.anim.scale_down)
@@ -256,7 +262,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
 
         binding.etSearchLocation.textChanges().debounce(1500)
             .onEach {
-                Log.i("SearchLoc","$isSearchEnable")
+                Log.i("SearchLoc", "$isSearchEnable")
                 if (it.toString().isNotEmpty() && isSearchEnable) {
                     searchPlaces(it.toString())
                 }
@@ -399,27 +405,38 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                         )
                     )
                 }
-                requireActivity().runOnUiThread {
-                    adapter.submitList(array)
-                    if (args.selectLocationType == "add_address") {
-                        if (adapter.itemCount != 0)
-                            binding.rvAddAddressPickDrop.isVisible = true
-                        binding.addAddressProgress.isVisible = false
-                    } else
-                        binding.progress.isVisible = false
+
+                try {
+                    if (activity != null)
+                        requireActivity().runOnUiThread {
+                            adapter.submitList(array)
+                            if (args.selectLocationType == "add_address") {
+                                if (adapter.itemCount != 0)
+                                    binding.rvAddAddressPickDrop.isVisible = true
+                                binding.addAddressProgress.isVisible = false
+                            } else
+                                binding.progress.isVisible = false
+                        }
+                } catch (e: Exception) {
+
                 }
+
             }.addOnFailureListener { exception: Exception? ->
                 if (exception is ApiException) {
                     showSnackBar(exception.localizedMessage.orEmpty())
                 }
-                requireActivity().runOnUiThread {
-                    adapter.submitList(emptyList())
-                    if (adapter.itemCount != 0)
-                        binding.rvAddAddressPickDrop.isVisible = true
-                    if (args.selectLocationType == "add_address")
-                        binding.addAddressProgress.isVisible = false
-                    else
-                        binding.progress.isVisible = false
+                try {
+                    requireActivity().runOnUiThread {
+                        adapter.submitList(emptyList())
+                        if (adapter.itemCount != 0)
+                            binding.rvAddAddressPickDrop.isVisible = true
+                        if (args.selectLocationType == "add_address")
+                            binding.addAddressProgress.isVisible = false
+                        else
+                            binding.progress.isVisible = false
+                    }
+                } catch (e: Exception) {
+
                 }
             }
     } catch (e: Exception) {
@@ -580,7 +597,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
     private suspend fun getLocationDataFromLatLng(latLng: LatLng, animateCamera: Boolean = true) {
         withContext(Dispatchers.IO) {
             try {
-                Log.i("SearchLoc","in get location data $isSearchEnable")
+                Log.i("SearchLoc", "in get location data $isSearchEnable")
                 val apiKey = VenusApp.googleMapKey
                 val url =
                     "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=$apiKey"
@@ -611,6 +628,14 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
 //                                googleMap?.addMarker(
 //                                    MarkerOptions().position(latLng).draggable(true)
 //                                        .apply { icon(requireActivity().vectorToBitmap(R.drawable.new_location_placeholder)) })
+                                if (animateCamera)
+                                    googleMap?.animateCamera(
+                                        CameraUpdateFactory.newLatLngZoom(
+                                            latLng,
+                                            14f
+                                        )
+                                    )
+                            } else {
                                 if (animateCamera)
                                     googleMap?.animateCamera(
                                         CameraUpdateFactory.newLatLngZoom(

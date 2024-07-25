@@ -74,6 +74,7 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
         }, onSuccess = {
             hideProgressDialog()
             viewModel.isLastPage = this.isNullOrEmpty() == true
+            viewModel.isLoading = false
             if (viewModel.currentPage == 1) {
                 adapter.submitList(this ?: emptyList())
             } else {

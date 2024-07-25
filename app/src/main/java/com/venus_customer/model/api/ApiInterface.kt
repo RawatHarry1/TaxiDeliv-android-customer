@@ -173,7 +173,7 @@ interface ApiInterface {
 
     @GET(GET_NOTIFICATIONS)
     suspend fun getNotifications(
-        @Query("limit") limit: Int = 10,
+        @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int
     ): Response<BaseResponse<List<NotificationDC>>>
 

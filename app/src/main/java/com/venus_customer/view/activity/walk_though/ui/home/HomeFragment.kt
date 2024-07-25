@@ -6,12 +6,15 @@ import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,6 +26,7 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -171,6 +175,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 // Permission denied, show a message to the user
                 showSnackBar("Permission denied. Cannot make phone calls.")
             }
+        }
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerReceiver(
+                showMessageIndicatorBroadcastReceiver,
+                IntentFilter("newMsg"), Context.RECEIVER_NOT_EXPORTED
+            )
+        }
+        else {
+            requireActivity().registerReceiver(
+                showMessageIndicatorBroadcastReceiver,
+                IntentFilter("newMsg")
+            )
         }
     }
 
@@ -766,6 +784,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         startActivity(callIntent)
     }
 
+    private val showMessageIndicatorBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            binding.viewStartRide.ivChatIndicator.isVisible = true
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().unregisterReceiver(showMessageIndicatorBroadcastReceiver)
+    }
+
     private fun startRideDialog(context: Context, rideAlertUiState: RideVM.RideAlertUiState) {
         with(binding.viewStartRide) {
             clConnecting.visibility = View.VISIBLE
@@ -805,6 +834,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
 
             ivChat.setOnSingleClickListener {
+                ivChatIndicator.isVisible = false
 //                startActivity(
                 val intent = Intent(
                     (activity as BaseActivity<*>),
@@ -1565,9 +1595,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         engagementId: String
     ) {
         requireActivity().runOnUiThread {
-
             try {
-                Log.i("PUSHNOTI","IN TRY:: ON HOME IN RIDE END")
+                Log.i("PUSHNOTI", "IN TRY:: ON HOME IN RIDE END")
                 binding.clWhereMain.visibility = View.VISIBLE
                 binding.clMapMain.visibility = View.GONE
                 hideAllBottomSheets()
@@ -1585,7 +1614,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.i("PUSHNOTI","IN CATCH:: ON HOME IN RIDE END ${e.message}")
+                Log.i("PUSHNOTI", "IN CATCH:: ON HOME IN RIDE END ${e.message}")
             }
         }
         rideVM.fetchOngoingTrip()

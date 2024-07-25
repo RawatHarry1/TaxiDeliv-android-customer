@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.Build
@@ -117,7 +118,7 @@ class FirebaseNotification : FirebaseMessagingService() {
             ) {
                 HomeFragment.notificationInterface?.requestTimeout(notificationData.message ?: "")
             } else if ((notificationData.notificationType?.toIntOrNull()
-                    ?: 0) == NotificationStatus.RIDE_REJECTED_BY_DRIVER.type
+                    ?: 0) == NotificationStatus.RIDE_CANCELLED_BY_DRIVER.type
             ) {
                 HomeFragment.notificationInterface?.rideRejectedByDriver()
                 ChatActivity.notificationInterface?.rideRejectedByDriver()
@@ -162,6 +163,7 @@ class FirebaseNotification : FirebaseMessagingService() {
                             "PUSHNOTI",
                             "in notification type  ${notificationData.notificationType.orEmpty()}"
                         )
+                        sendBroadcast(Intent("newMsg"))
                         getPendingIntent(
                             destinationId = R.id.mobile_navigation, Bundle().apply {
                                 putString(
