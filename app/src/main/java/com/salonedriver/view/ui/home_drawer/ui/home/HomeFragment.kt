@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -107,28 +108,46 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             when (screenType) {
                 0 -> (activity as HomeActivity).openDrawer()
                 1 -> (activity as HomeActivity).openDrawer()
-                2 -> (activity as HomeActivity).startActivity(
-                    Intent(
-                        activity, ChatActivity::class.java
-                    ).putExtra("customerId", "${rideViewModel.newRideNotificationData.customerId}")
-                        .putExtra("driverId", "${userId}")
-                        .putExtra(
-                            "engagementId",
-                            "${rideViewModel.newRideNotificationData.tripId}"
+                2 -> {
+                    binding.ivMsgIndicator.isVisible = false
+                    (activity as HomeActivity).startActivity(
+                        Intent(
+                            activity, ChatActivity::class.java
+                        ).putExtra(
+                            "customerId",
+                            "${rideViewModel.newRideNotificationData.customerId}"
                         )
-                        .putExtra(
-                            "customerName",
-                            "${rideViewModel.newRideNotificationData.customerName}"
-                        )
-                        .putExtra(
-                            "customerImage",
-                            "${rideViewModel.newRideNotificationData.customerImage}"
-                        )
-                )
+                            .putExtra("driverId", "${userId}")
+                            .putExtra(
+                                "engagementId",
+                                "${rideViewModel.newRideNotificationData.tripId}"
+                            )
+                            .putExtra(
+                                "customerName",
+                                "${rideViewModel.newRideNotificationData.customerName}"
+                            )
+                            .putExtra(
+                                "customerImage",
+                                "${rideViewModel.newRideNotificationData.customerImage}"
+                            )
+                    )
+                }
             }
         }
         binding.swOnOff.setOnClickListener {
             viewModel.changeStatus(binding.swOnOff.isChecked)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerReceiver(
+                showMessageIndicatorBroadcastReceiver,
+                IntentFilter("newMsg"), Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            requireActivity().registerReceiver(
+                showMessageIndicatorBroadcastReceiver,
+                IntentFilter("newMsg")
+            )
         }
 
     }
@@ -195,6 +214,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     private fun setScreenType(context: Context) {
         when (screenType) {
             0 -> {
+                binding.ivMsgIndicator.isVisible = false
                 binding.clOffOn.visibility =
                     if (binding.swOnOff.isChecked) View.GONE else View.VISIBLE
                 binding.tvStatus.text =
@@ -210,6 +230,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             }
 
             1 -> {
+                binding.ivMsgIndicator.isVisible = false
                 binding.swOnOff.visibility = View.INVISIBLE
                 binding.clOffOn.visibility = View.GONE
                 binding.tvStatus.text = ""
@@ -307,6 +328,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         dialog?.show()
     }
 
+    private val showMessageIndicatorBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (screenType == 2)
+                binding.ivMsgIndicator.isVisible = true
+        }
+    }
 
     /**
      * Best Route
@@ -532,6 +559,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                     ?: 0) <= 0)
             binding.swOnOff.isEnabled = switchEnable
             if (!switchEnable) binding.swOnOff.isChecked = false
+            binding.tvStatus.text =
+                if (binding.swOnOff.isChecked) getString(R.string.txt_online) else getString(R.string.txt_offline)
             when {
                 this?.login?.driverDocumentStatus?.requiredDocStatus.orEmpty() == DriverDocumentStatusForApp.PENDING.type -> {
                     homePageAlerts(
@@ -771,14 +800,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         super.timeOutRide()
         requireActivity().runOnUiThread {
             try {
-                Log.i("PUSHNOTI","IN TIME OUT")
+                Log.i("PUSHNOTI", "IN TIME OUT")
                 AppUtils.tripId = ""
                 rideViewModel.newRideNotificationData = NewRideNotificationDC()
                 screenType = 0
                 SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.NEW_BOOKING)
                 dialog?.dismiss()
             } catch (e: Exception) {
-                Log.i("PUSHNOTI","IN TIME OUT:: ${e.message}")
+                Log.i("PUSHNOTI", "IN TIME OUT:: ${e.message}")
                 e.printStackTrace()
             }
         }
@@ -844,6 +873,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
 
     override fun onDestroy() {
         unregisterReceiver()
+        requireActivity().unregisterReceiver(showMessageIndicatorBroadcastReceiver)
         super.onDestroy()
     }
 

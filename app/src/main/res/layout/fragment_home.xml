@@ -14,22 +14,21 @@
 
 
         <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:id="@+id/map"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/bestRoute"
             android:layout_marginBottom="-40dp"
-            tools:context=".MapsActivity"
-            android:name="com.google.android.gms.maps.SupportMapFragment" />
+            app:layout_constraintBottom_toTopOf="@+id/bestRoute"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:context=".MapsActivity" />
 
         <include
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/bestRoute"
             layout="@layout/dialog_best_route"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivMenuBurg"
@@ -42,13 +41,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivMsgIndicator"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:visibility="gone"
+            android:elevation="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_20sdp"
+            app:tint="@color/red_text_color"
+            app:layout_constraintEnd_toEndOf="@id/ivMenuBurg"
+            android:src="@drawable/bg_round_outline_button"
+            app:layout_constraintTop_toTopOf="@id/ivMenuBurg" />
+
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="20dp"
             android:fontFamily="@font/sufi_semi_bold"
-            android:text="@string/offline"
             android:textColor="@color/walk_title_color"
             android:textSize="16sp"
             android:visibility="visible"
@@ -63,8 +75,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:elevation="20dp"
             android:checked="false"
+            android:elevation="20dp"
             android:thumb="@drawable/custom_thumb"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
@@ -117,10 +129,10 @@
             android:id="@+id/alertView"
             layout="@layout/home_page_alert"
             android:layout_width="match_parent"
-            android:elevation="@dimen/_5sdp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
+            android:elevation="@dimen/_5sdp"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

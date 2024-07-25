@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.media.RingtoneManager
@@ -197,6 +198,7 @@ class FirebaseNotification : FirebaseMessagingService() {
                     }
 
                     NotificationStatus.CHAT.type -> {
+                        sendBroadcast(Intent("newMsg"))
                         getPendingIntent(
                             destinationId = R.id.nav_home,
                             bundle = Bundle().apply { putString("notification_type", "600") })

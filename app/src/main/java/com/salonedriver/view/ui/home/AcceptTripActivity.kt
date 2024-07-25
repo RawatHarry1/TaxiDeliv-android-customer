@@ -2,15 +2,20 @@ package com.salonedriver.view.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.salonedriver.R
 import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
@@ -44,7 +49,11 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
     override fun getLayoutId(): Int {
         return R.layout.fragment_accept_trip
     }
-
+    val showMessageIndicatorBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+           binding.ivMsgIndicator.isVisible = true
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +79,23 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
                 showErrorMessage("Permission denied. Cannot make phone calls.")
             }
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(
+                showMessageIndicatorBroadcastReceiver,
+                IntentFilter("newMsg"), Context.RECEIVER_NOT_EXPORTED
+            )
+        }
+        else {
+            registerReceiver(
+                showMessageIndicatorBroadcastReceiver,
+                IntentFilter("newMsg")
+            )
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(showMessageIndicatorBroadcastReceiver)
     }
 
     @SuppressLint("SetTextI18n")
@@ -182,6 +208,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             finish()
         }
         binding.ivMsg.setOnClickListener {
+            binding.ivMsgIndicator.isVisible = false
             startActivity(
                 Intent(this, ChatActivity::class.java).apply {
                     flags =
