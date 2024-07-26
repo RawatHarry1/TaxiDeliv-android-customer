@@ -38,7 +38,7 @@ class OffersFragment : BaseFragment<FragmentOffersBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = getViewDataBinding()
-        adapter = OffersAdapter(requireContext())
+        adapter = OffersAdapter(requireActivity())
         binding.rvPromo.adapter = adapter
         observeData()
         viewModel.getCouponAndPromotions()
@@ -62,7 +62,7 @@ class OffersFragment : BaseFragment<FragmentOffersBinding>() {
         binding.shimmerLayout.shimmerLayout.isVisible = false
         binding.rvPromo.isVisible = true
         this?.let {
-          adapter.submitList(it.coupons)
+          adapter.submitList(it.promotions)
         }
         binding.tvNoData.isVisible = adapter.itemCount == 0
 //        hideProgressDialog()

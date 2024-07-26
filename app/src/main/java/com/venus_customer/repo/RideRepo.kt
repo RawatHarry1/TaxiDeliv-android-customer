@@ -53,6 +53,7 @@ class RideRepo @Inject constructor(
 //            if (isSchedule) {
             put("op_drop_latitude", opLatLng.latitude)
             put("op_drop_longitude", opLatLng.longitude)
+            put("promo_to_apply",VenusApp.offerApplied.toString())
 //            }
         }.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)

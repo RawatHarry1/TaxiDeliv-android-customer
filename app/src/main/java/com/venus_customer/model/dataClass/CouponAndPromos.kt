@@ -16,13 +16,51 @@ data class CouponAndPromos(
     val payCoupons: List<Any>,
     val payPromotions: List<Any>,
     val promoCodes: List<PromoCode>,
-    val promotions: List<Any>,
+    val promotions: List<Promotion>,
     val prosCoupons: List<Any>,
     val prosPromotions: List<Any>,
     val suryaCoupons: List<Any>,
     val suryaPromotions: List<Any>
 )
 
+
+
+data class Promotion(
+    val allowed_vehicles: List<Int>,
+    val amount: Any,
+    val benefit_type: Int,
+    val cashback_percentage: Int,
+    val city: Int,
+    val drop_latitude: Int,
+    val drop_longitude: Int,
+    val drop_radius: Int,
+    val end_on: String,
+    val end_time: String,
+    val is_active: Int,
+    val is_pass: Any,
+    val is_selected: Int,
+    val locations_coordinates: String,
+    val multiple_locations_allowed: Int,
+    val num_txns: Int,
+    val operator_id: Int,
+    val per_day_limit: Int,
+    val per_user_limit: Int,
+    val pickup_latitude: Int,
+    val pickup_longitude: Int,
+    val pickup_radius: Int,
+    val promo_id: Int,
+    val promo_provider: Int,
+    val promo_text: String,
+    val promo_type: Int,
+    val remove_coupons: Int,
+    val start_from: String,
+    val start_time: String,
+    val terms_n_conds: String,
+    val title: String,
+    val todays_txns: Int,
+    val validity: Any,
+    val validity_text: String
+)
 data class AutosCoupon(
     val account_id: Int,
     val allowed_vehicles: List<Int>,

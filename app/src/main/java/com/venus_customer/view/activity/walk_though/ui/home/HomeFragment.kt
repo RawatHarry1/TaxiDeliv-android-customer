@@ -26,7 +26,6 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -86,6 +85,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import nl.dionsegijn.konfetti.core.Party
+import nl.dionsegijn.konfetti.core.Position
+import nl.dionsegijn.konfetti.core.emitter.Emitter
+import nl.dionsegijn.konfetti.core.models.Shape
 import org.json.JSONObject
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -93,6 +96,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import java.util.concurrent.TimeUnit
 
 data class NearByDriverMarkers(val latLng: LatLng, val bearing: Float)
 
@@ -183,13 +187,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 showMessageIndicatorBroadcastReceiver,
                 IntentFilter("newMsg"), Context.RECEIVER_NOT_EXPORTED
             )
-        }
-        else {
+        } else {
             requireActivity().registerReceiver(
                 showMessageIndicatorBroadcastReceiver,
                 IntentFilter("newMsg")
             )
         }
+
     }
 
     private val activityResultLauncher = registerForActivityResult(
@@ -488,8 +492,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 tvPersonCount.text = it.totalCapacity.orEmpty().ifEmpty { "0" }
 //                tvPrice.text =
 //                    "${it.price.formatString()} ${rideVM.createRideData.currencyCode.orEmpty()}"
-                tvPrice.text =
-                    "${it.currency} ${it.fare}"
+                if ((it.discount ?: 0.0) > 0.0) {
+                    tvOriginalPrice.isVisible = true
+                    viewCross.isVisible = true
+                    tvOriginalPrice.text = "${it.currency} ${it.original_fare}"
+                    tvPrice.text =
+                        "${it.currency} ${it.fare}"
+                } else {
+                    tvOriginalPrice.isVisible = false
+                    viewCross.isVisible = false
+                    tvPrice.text =
+                        "${it.currency} ${it.fare}"
+                }
+
                 Glide.with(requireContext()).load(it.image.orEmpty()).error(R.mipmap.ic_launcher)
                     .into(ivCarImage)
             }
@@ -503,12 +518,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             tvConfirmBtn.setOnSingleClickListener {
                 carDetailAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                 if (schedule) {
+                    val notes = etNotes.text?.trim().toString()
                     rideVM.scheduleRideData(
-                        etNotes.text?.trim().toString(),
+                        notes,
                         selectedPickDateTimeForSchedule
                     )
-                } else
-                    rideVM.requestRideData(etNotes.text?.trim().toString())
+                    etNotes.clearFocus()
+                    etNotes.setText("")
+                } else {
+                    val notes = etNotes.text?.trim().toString()
+                    rideVM.requestRideData(notes)
+                    etNotes.clearFocus()
+                    etNotes.setText("")
+                }
             }
 
             tvPromoCode.setOnSingleClickListener {
@@ -850,10 +872,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //                )
                 activityResultLauncher.launch(intent)
             }
-            tvConnecting.setOnSingleClickListener {
-                clConnecting.visibility = View.GONE
-                clPickUpLocation.visibility = View.VISIBLE
-            }
+//            tvConnecting.setOnSingleClickListener {
+//                clConnecting.visibility = View.GONE
+//                clPickUpLocation.visibility = View.VISIBLE
+//            }
             ivCall.setOnSingleClickListener {
                 val phone = rideVM.createRideData.driverDetail?.driverPhoneNo ?: ""
                 if (phone.isEmpty())
@@ -1000,6 +1022,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
     private fun startCarTypesDialog() {
+        if ((VenusApp.offerApplied) > 0.0)
+            startConfettiAnimation()
+
         with(binding.viewCarType) {
             tvSelectTypeBtn.setOnSingleClickListener {
                 if (rideVM.createRideData.regionId.isNullOrEmpty()) {
@@ -1027,7 +1052,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     eta = it?.eta.orEmpty(),
                     fare = it?.region_fare?.fare.toString(),
                     currency = it?.region_fare?.currency,
-                    distance = rideVM.customerETA.rideDistance.toString()
+                    distance = rideVM.customerETA.rideDistance.toString(),
+                    discount = it?.region_fare?.discount ?: 0.0,
+                    original_fare = it?.region_fare?.original_fare ?: 0.0
                 )
             }
         }
@@ -1695,5 +1722,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 null
             }
         }
+    }
+
+
+    private fun startConfettiAnimation() {
+        binding.konfettiView.start(
+            Party(
+                speed = 10f,
+                maxSpeed = 20f,
+                damping = 0.95f,
+                spread = 360,
+                colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def, 0x70e8f8, 0xfffff),
+                shapes = listOf(Shape.Circle, Shape.Square),
+                size = listOf(
+                    nl.dionsegijn.konfetti.core.models.Size.SMALL,
+                    nl.dionsegijn.konfetti.core.models.Size.LARGE
+                ),
+                position = Position.Relative(0.5, 0.3),
+                emitter = Emitter(duration = 500, TimeUnit.MILLISECONDS).max(500)
+            )
+        )
     }
 }

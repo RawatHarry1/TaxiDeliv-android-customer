@@ -153,4 +153,9 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         hideProgressDialog()
         showToastShort(this)
     })
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        hideProgressDialog()
+    }
 }

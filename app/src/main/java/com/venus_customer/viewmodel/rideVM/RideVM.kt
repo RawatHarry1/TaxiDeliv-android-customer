@@ -140,6 +140,7 @@ class RideVM @Inject constructor(
                 put("ride_distance", createRideData.vehicleData?.eta)
                 put("fare", createRideData.vehicleData?.fare)
                 put("pickup_time", pickUpTime)
+
             }
         ).setApiState(_scheduleRideData)
     }

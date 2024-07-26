@@ -41,6 +41,8 @@ data class CreateRideData(
         var eta: String? = null,
         var distance: String? = null,
         var fare: String? = null,
+        var discount: Double? = null,
+        var original_fare: Double? = null,
         var currency: String? = null,
         var vehicleNumber: String? = null,
     )

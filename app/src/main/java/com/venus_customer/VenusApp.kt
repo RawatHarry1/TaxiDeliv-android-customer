@@ -28,6 +28,7 @@ class VenusApp: Application() {
         var latLng: LatLng = LatLng(0.0, 0.0)
         var onChatScreen = false
         var googleMapKey = ""
+        var offerApplied = 0
     }
 
     override fun onCreate() {

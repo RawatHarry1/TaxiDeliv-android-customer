@@ -1,10 +1,11 @@
 package com.venus_customer.view.activity.walk_though
 
-import com.venus_customer.customClasses.FloatingIconService
 import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -21,6 +22,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mukesh.photopicker.utils.checkPermissions
 import com.venus_customer.R
+import com.venus_customer.customClasses.FloatingIconService
 import com.venus_customer.databinding.ActivityHomeBinding
 import com.venus_customer.model.api.observeData
 import com.venus_customer.util.SharedPreferencesManager
@@ -42,6 +44,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
     private val rideVM by viewModels<RideVM>()
     private var hideNavView = false
     private lateinit var overlayPermissionLauncher: ActivityResultLauncher<Intent>
+
     companion object {
         var isFromMsgNotification = false
     }
@@ -79,6 +82,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
         )
         navView.setupWithNavController(navController)
 
+
         navController.addOnDestinationChangedListener(listener)
 
         observeData()
@@ -104,6 +108,24 @@ class Home : BaseActivity<ActivityHomeBinding>() {
 //
 //            startFloatingIconService()
 //        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(
+                offerAppliedBroadCast,
+                IntentFilter("offer"), Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            registerReceiver(
+                offerAppliedBroadCast,
+                IntentFilter("offer")
+            )
+        }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(offerAppliedBroadCast)
     }
 
     private fun startFloatingIconService() {
@@ -122,8 +144,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
             safeCall {
                 if (destination.id == R.id.navigation_home || destination.id == R.id.navigation_account || destination.id == R.id.navigation_trips || destination.id == R.id.navigation_notifications) {
                     binding.navView.visible()
-                }
-                else
+                } else
                     binding.navView.gone()
 //                rideVM.updateUiState(RideAlertUiState.HomeScreen)
             }
@@ -198,5 +219,16 @@ class Home : BaseActivity<ActivityHomeBinding>() {
             hideNavView = false
             binding.navView.visible()
         }
+    }
+
+    private val offerAppliedBroadCast = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            navigateToHome()
+        }
+    }
+
+    fun navigateToHome() {
+        binding.navView.selectedItemId = R.id.navigation_home
+        navController.navigate(R.id.navigation_home)
     }
 }

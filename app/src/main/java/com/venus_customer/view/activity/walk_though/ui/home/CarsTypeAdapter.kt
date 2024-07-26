@@ -47,6 +47,34 @@ class CarsTypeAdapter(
             } else {
                 itemBinding.clBackground.alpha = 1f
             }
+            if ((carTypeData?.region_fare?.discount ?: 0.0) > 0.0) {
+                itemBinding.tvOriginalPrice.isVisible = true
+                itemBinding.viewCross.isVisible = true
+                itemBinding.tvOriginalPrice.text =
+                    "${carTypeData?.region_fare?.currency ?: "INR"} ${
+                        String.format(
+                            "%.2f",
+                            carTypeData?.region_fare?.original_fare ?: 0.0
+                        )
+                    }"
+                itemBinding.tvActualPrice.text =
+                    "${carTypeData?.region_fare?.currency ?: "INR"} ${
+                        String.format(
+                            "%.2f",
+                            carTypeData?.region_fare?.fare ?: 0.0
+                        )
+                    }"
+            } else {
+                itemBinding.tvOriginalPrice.isVisible = false
+                itemBinding.viewCross.isVisible = false
+                itemBinding.tvActualPrice.text =
+                    "${carTypeData?.region_fare?.currency ?: "INR"} ${
+                        String.format(
+                            "%.2f",
+                            carTypeData?.region_fare?.fare ?: 0.0
+                        )
+                    }"
+            }
             Glide.with(itemBinding.root).load(carTypeData?.images?.rideNowNormal2x.orEmpty())
                 .error(R.mipmap.ic_launcher).into(itemBinding.ivCar)
             itemBinding.tvTitle.text = carTypeData?.regionName.orEmpty()
@@ -66,13 +94,7 @@ class CarsTypeAdapter(
 //            itemBinding.tvActualPrice.text =
 //                "${carTypeData?.vehicleAmount.formatString()} $currencyCode"
             itemBinding.tvPersonCount.text = carTypeData?.maxPeople ?: "0"
-            itemBinding.tvActualPrice.text =
-                "${carTypeData?.region_fare?.currency ?: "INR"} ${
-                    String.format(
-                        "%.2f",
-                        carTypeData?.region_fare?.fare ?: 0.0
-                    )
-                }"
+
 //            itemBinding.noDriverFound.isVisible = carTypeData?.distance.isNullOrEmpty()
 
             itemBinding.clBackground.setBackgroundResource(if (carTypeData?.isSelected == true) R.drawable.bg_select_round_where_to else R.drawable.bg_rounded_where_to)

@@ -22,13 +22,15 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
         android:layout_marginTop="@dimen/_24sdp"
         android:layout_marginBottom="@dimen/_20sdp"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/viewTop">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clCar"
                 android:layout_width="match_parent"
@@ -85,10 +87,10 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivCarImage"
                     android:layout_width="68dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_height="68dp"
-                    android:layout_marginBottom="10dp"
                     android:layout_margin="4dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -124,13 +126,38 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15dp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:lineSpacingExtra="4sp"
+                    android:fontFamily="@font/poppins_regular"
                     android:text="@string/txt__20_43"
                     android:textColor="@color/black_text_color_dark"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="@id/tvCustomerDetail"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tvCustomerDetail" />
+
+                <View
+                    android:id="@+id/viewCross"
+                    android:layout_width="0dp"
+                    android:visibility="gone"
+                    android:background="@color/black_text_color"
+                    app:layout_constraintEnd_toEndOf="@+id/tvOriginalPrice"
+                    app:layout_constraintStart_toStartOf="@+id/tvOriginalPrice"
+                    app:layout_constraintTop_toTopOf="@+id/tvOriginalPrice"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvOriginalPrice"
+                    android:layout_height="1dp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvOriginalPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="@string/txt__20_43"
+                    android:visibility="gone"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tvCustomerDetail"
+                    app:layout_constraintEnd_toStartOf="@+id/tvPrice"
                     app:layout_constraintTop_toTopOf="@id/tvCustomerDetail" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -194,8 +221,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:hint="@string/txt_notes"
-                    android:maxLines="1"
                     android:maxLength="150"
+                    android:maxLines="1"
                     android:singleLine="true"
                     android:textColor="@color/black_text_color"
                     android:textColorHint="@color/grey_text_color"

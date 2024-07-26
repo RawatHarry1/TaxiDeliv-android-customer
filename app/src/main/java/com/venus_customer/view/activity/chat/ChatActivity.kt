@@ -18,6 +18,7 @@ import com.venus_customer.model.dataClass.MessageData
 import com.venus_customer.socketSetup.SocketInterface
 import com.venus_customer.socketSetup.SocketSetup
 import com.venus_customer.util.AppUtils
+import com.venus_customer.util.AppUtils.isInternetAvailable
 import com.venus_customer.util.showSnackBar
 import com.venus_customer.view.activity.walk_though.Home
 import com.venus_customer.view.base.BaseActivity
@@ -109,26 +110,31 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface, Notif
             if (binding.etMessage.text.toString().trim().isEmpty())
                 showSnackBar("Please enter your message.")
             else {
-                SocketSetup.startMsgEmit(
-                    binding.etMessage.text.toString().trim(),
-                    senderId = customerId,
-                    receiverId = driverId,
-                    engagementId = tripId,
-                    type = "text"
-                )
-                chatArrayList.add(
-                    MessageData(
-                        message = binding.etMessage.text.toString().trim(),
-                        sender_id = customerId.toInt(),
-                        receiver_id = driverId.toInt(),
-                        attachment_type = "text",
-                        engagement_id = tripId.toInt(),
-                        created_at = AppUtils.convertUtcToLocal(AppUtils.currentUtcTimeAsString())
+                if (isInternetAvailable(this)) {
+                    SocketSetup.startMsgEmit(
+                        binding.etMessage.text.toString().trim(),
+                        senderId = customerId,
+                        receiverId = driverId,
+                        engagementId = tripId,
+                        type = "text"
                     )
-                )
-                binding.etMessage.setText("")
-                chatAdapter.notifyDataSetChanged()
-                binding.rvChat.smoothScrollToPosition(chatArrayList.size - 1)
+                    chatArrayList.add(
+                        MessageData(
+                            message = binding.etMessage.text.toString().trim(),
+                            sender_id = customerId.toInt(),
+                            receiver_id = driverId.toInt(),
+                            attachment_type = "text",
+                            engagement_id = tripId.toInt(),
+                            created_at = AppUtils.convertUtcToLocal(AppUtils.currentUtcTimeAsString())
+                        )
+                    )
+                    binding.etMessage.setText("")
+                    chatAdapter.notifyDataSetChanged()
+                    binding.rvChat.smoothScrollToPosition(chatArrayList.size - 1)
+                }
+                else{
+                    showSnackBar("No internet connection")
+                }
             }
         }
         binding.ivBack.setOnClickListener { finish() }
