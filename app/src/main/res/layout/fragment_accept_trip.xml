@@ -69,23 +69,23 @@
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/ivMsg"
-                            android:visibility="invisible"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="@dimen/_10sdp"
+                            android:visibility="invisible"
                             app:layout_constraintBottom_toBottomOf="@+id/ivCustomerPic"
                             app:layout_constraintEnd_toStartOf="@+id/ivCall"
                             app:layout_constraintTop_toTopOf="@+id/ivCustomerPic"
                             app:srcCompat="@drawable/ic_msg" />
 
                         <ImageView
-                            android:layout_width="14dp"
-                            android:visibility="gone"
                             android:id="@+id/ivMsgIndicator"
-                            app:layout_constraintTop_toTopOf="@id/ivMsg"
-                            app:layout_constraintEnd_toEndOf="@id/ivMsg"
-                            android:src="@drawable/bg_round_outline_button"
+                            android:layout_width="14dp"
                             android:layout_height="14dp"
+                            android:src="@drawable/bg_round_outline_button"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="@id/ivMsg"
+                            app:layout_constraintTop_toTopOf="@id/ivMsg"
                             app:tint="@color/red_text_color" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -306,15 +306,16 @@
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tvCustomerNoteValue"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="28dp"
+                            android:layout_marginEnd="@dimen/_20sdp"
                             android:layout_marginBottom="30dp"
                             android:fontFamily="@font/poppins_regular"
                             android:textColor="@color/black_text_color"
                             android:textSize="12sp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@id/tvCustomerNote"
                             app:layout_constraintTop_toBottomOf="@+id/tvCustomerNote" />
 
 

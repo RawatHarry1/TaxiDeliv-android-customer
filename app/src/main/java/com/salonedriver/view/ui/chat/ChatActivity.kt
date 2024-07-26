@@ -15,6 +15,7 @@ import com.salonedriver.model.dataclassses.MessageData
 import com.salonedriver.socketSetup.SocketInterface
 import com.salonedriver.socketSetup.SocketSetup
 import com.salonedriver.util.AppUtils
+import com.salonedriver.util.AppUtils.isInternetAvailable
 import com.salonedriver.view.base.BaseActivity
 import com.salonedriver.view.ui.home_drawer.HomeActivity
 
@@ -60,27 +61,34 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface {
             if (binding.etMessage.text.toString().trim().isEmpty())
                 showErrorMessage("Please enter your message.")
             else {
-                SocketSetup.startMsgEmit(
-                    binding.etMessage.text.toString().trim(),
-                    senderId = driverId,
-                    receiverId = customerId,
-                    engagementId = tripId,
-                    type = "text"
-                )
-                chatArrayList.add(
-                    MessageData(
-                        message = binding.etMessage.text.toString().trim(),
-                        sender_id = driverId.toInt(),
-                        receiver_id = customerId.toInt(),
-                        attachment_type = "text",
-                        engagement_id = tripId.toInt(),
-                        created_at = AppUtils.convertUtcToLocal(AppUtils.currentUtcTimeAsString())
+                if (isInternetAvailable(this)) {
+                    SocketSetup.startMsgEmit(
+                        binding.etMessage.text.toString().trim(),
+                        senderId = driverId,
+                        receiverId = customerId,
+                        engagementId = tripId,
+                        type = "text"
                     )
-                )
-                binding.etMessage.setText("")
-                chatAdapter.notifyDataSetChanged()
-                binding.rvChat.smoothScrollToPosition(chatArrayList.size - 1)
+                    chatArrayList.add(
+                        MessageData(
+                            message = binding.etMessage.text.toString().trim(),
+                            sender_id = driverId.toInt(),
+                            receiver_id = customerId.toInt(),
+                            attachment_type = "text",
+                            engagement_id = tripId.toInt(),
+                            created_at = AppUtils.convertUtcToLocal(AppUtils.currentUtcTimeAsString())
+                        )
+                    )
+                    binding.etMessage.setText("")
+                    chatAdapter.notifyDataSetChanged()
+                    binding.rvChat.smoothScrollToPosition(chatArrayList.size - 1)
+                }
+                else
+                {
+                  showErrorMessage("No Internet Connection")
+                }
             }
+
         }
         binding.ivBack.setOnClickListener { finish() }
     }

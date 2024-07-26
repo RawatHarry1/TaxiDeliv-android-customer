@@ -65,6 +65,12 @@ import java.util.Locale
 object AppUtils {
     const val DATE_yyyy_MM_dd_T_HH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss"
     var tripId = ""
+
+
+
+
+
+
     fun isAppRunning(context: Context, packageName: String): Boolean {
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val runningProcesses = activityManager.runningAppProcesses

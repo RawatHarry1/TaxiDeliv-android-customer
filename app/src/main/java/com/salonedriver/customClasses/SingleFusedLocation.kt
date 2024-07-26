@@ -2,33 +2,27 @@ package com.salonedriver.customClasses
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationManager
-import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
-import androidx.core.content.ContextCompat
 import com.birjuvachhani.locus.Locus
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.mukesh.photopicker.utils.checkPermissions
 import com.salonedriver.R
 import com.salonedriver.SaloneDriver
 import com.salonedriver.dialogs.CustomProgressDialog
-import com.salonedriver.util.ResourceUtils.getString
 import java.lang.ref.WeakReference
 
 
 object SingleFusedLocation {
-
+    var previousLatLong: LatLng = LatLng(0.0, 0.0)
     private var context: WeakReference<Context>? = null
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationResultHandler: LocationResultHandler? = null
@@ -48,12 +42,7 @@ object SingleFusedLocation {
     }
 
 
-
-
-
-
-
-        private fun checkPermissions() {
+    private fun checkPermissions() {
         context?.get()?.checkPermissions(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -63,7 +52,6 @@ object SingleFusedLocation {
 
         }
     }
-
 
 
     private fun requestSingleTimeLocation() {
@@ -90,9 +78,25 @@ object SingleFusedLocation {
                     it.location?.let { it1 ->
 //                    it1.latitude = 40.234926
 //                    it1.longitude = -75.287734
-                        Log.e("Location", "Latitude: ${it1.latitude}, Longitude: ${it1.longitude}")
-                        locationResultHandler?.updatedLocation(it1)
-                        locationResultHandler = null
+                        val currentLocation = it1
+                        // Set a threshold for considering significant location changes (in meters)
+                        val thresholdDistance = 10 // 10 meters
+                        val distance = FloatArray(1)
+                        Location.distanceBetween(
+                            previousLatLong.latitude, previousLatLong.longitude,
+                            currentLocation.latitude, currentLocation.longitude,
+                            distance
+                        )
+                        if (distance[0] < thresholdDistance) {
+                            // If the change in location is less than the threshold, ignore it
+                        } else {
+                            Log.e(
+                                "Location",
+                                "Latitude: ${it1.latitude}, Longitude: ${it1.longitude}"
+                            )
+                            locationResultHandler?.updatedLocation(it1)
+                            locationResultHandler = null
+                        }
                     } ?: run {
                         Toast.makeText(
                             context,
