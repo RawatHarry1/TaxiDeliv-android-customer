@@ -18,5 +18,9 @@ class UserRepo @Inject constructor(
         emit(apiInterface.getNotifications(offset = offset))
     }.flowOn(Dispatchers.IO)
 
+    suspend fun addCard(clientSecret: String) = flow {
+        emit(apiInterface.addCard(clientSecret))
+    }.flowOn(Dispatchers.IO)
+
 
 }

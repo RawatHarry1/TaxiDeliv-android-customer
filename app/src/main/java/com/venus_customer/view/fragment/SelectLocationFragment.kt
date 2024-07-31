@@ -426,6 +426,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                     showSnackBar(exception.localizedMessage.orEmpty())
                 }
                 try {
+                    if (activity != null)
                     requireActivity().runOnUiThread {
                         adapter.submitList(emptyList())
                         if (adapter.itemCount != 0)

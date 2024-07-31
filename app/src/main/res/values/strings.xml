@@ -287,6 +287,7 @@
     <string name="please_enter_pin_code">*Please enter pin code.</string>
     <string name="please_enter_otp">*Please enter otp.</string>
     <string name="please_enter_valid_otp">*Please enter valid otp.</string>
+    <string name="otp_has_been_resent">OTP has been resent again.</string>
     <string name="address">Address</string>
     <string name="enter_street_address">Enter street address</string>
     <string name="please_enter_username">*Please enter username.</string>
@@ -305,6 +306,7 @@
     <string name="choose_address">Choose Address</string>
     <string name="no_notifications_found">No Notifications Found</string>
     <string name="promo_code">Promo code</string>
+    <string name="remove">Remove</string>
 
 
 </resources>

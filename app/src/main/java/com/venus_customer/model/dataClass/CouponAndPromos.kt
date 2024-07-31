@@ -24,7 +24,7 @@ data class CouponAndPromos(
 )
 
 
-
+@Keep
 data class Promotion(
     val allowed_vehicles: List<Int>,
     val amount: Any,
@@ -61,6 +61,7 @@ data class Promotion(
     val validity: Any,
     val validity_text: String
 )
+
 data class AutosCoupon(
     val account_id: Int,
     val allowed_vehicles: List<Int>,
@@ -149,4 +150,13 @@ data class PromoCode(
     val promo_type: Int,
     val start_date: String,
     val user_type: Int
+)
+
+@Keep
+data class CouponResponse(
+    val action: String,
+    val codeId: Int,
+    val codeMessage: String,
+    val promo_code: String,
+    val referral_type: Int
 )

@@ -40,7 +40,7 @@ class ProfileViewModel @Inject constructor(
     var data: AboutAppDC? = null
     var needToUploadImage: Boolean = true
     var imagePath: String? = null
-
+    var type = 1
 
     private val _updateProfile by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
     val updateProfile: LiveData<ApiState<BaseResponse<Any>>> get() = _updateProfile
@@ -65,7 +65,7 @@ class ProfileViewModel @Inject constructor(
     val aboutApp: LiveData<ApiState<BaseResponse<AboutAppDC>>> get() = _aboutApp
 
     fun aboutApp() = viewModelScope.launch {
-        repository.aboutApp(operatorId = operatorId.toString(), cityId = cityId)
+        repository.aboutApp(operatorId = operatorId.toString(), cityId = cityId, type)
             .setApiState(_aboutApp)
     }
 

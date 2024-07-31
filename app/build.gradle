@@ -183,4 +183,7 @@ dependencies {
     /**/
     implementation 'nl.dionsegijn:konfetti-xml:2.0.2'
 
+    /*Stripe*/
+    implementation 'com.stripe:stripe-android:20.20.0'
+
 }

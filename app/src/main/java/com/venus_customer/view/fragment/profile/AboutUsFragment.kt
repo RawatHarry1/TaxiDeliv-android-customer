@@ -40,6 +40,7 @@ class AboutUsFragment : BaseFragment<FragmentAboutUsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = getViewDataBinding()
+        viewModel.type = 2
         viewModel.aboutApp()
         observeData()
         clickHandler()
@@ -59,7 +60,6 @@ class AboutUsFragment : BaseFragment<FragmentAboutUsBinding>() {
                         Uri.parse("https://play.google.com/store/apps/")
                     )
                 )
-
             }
         }
 

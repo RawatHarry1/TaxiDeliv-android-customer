@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.venus_customer.R
+import com.venus_customer.VenusApp
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.FragmentAccountBinding
 import com.venus_customer.dialogs.DialogUtils
@@ -21,6 +22,9 @@ import com.venus_customer.util.safeCall
 import com.venus_customer.view.activity.CreateProfile
 import com.venus_customer.view.activity.sign_in.SignIn
 import com.venus_customer.view.base.BaseFragment
+import com.venus_customer.view.fragment.cards.AddAndShowCardDialogFragment
+import com.venus_customer.view.fragment.cards.Card
+import com.venus_customer.view.fragment.cards.CardClickListener
 import com.venus_customer.viewmodel.HomeVM
 import com.venus_customer.viewmodel.base.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,6 +71,13 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
 
         binding.tvUserName.setOnSingleClickListener {
             binding.ivProfileImage.performClick()
+        }
+        binding.llCards.setOnSingleClickListener {
+            val dialog =AddAndShowCardDialogFragment()
+            dialog.onCardSelected = {
+
+            }
+            dialog.show(parentFragmentManager, "AddCardDialog")
         }
     }
 
@@ -131,13 +142,27 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         showProgressDialog()
     }, onSuccess = {
         hideProgressDialog()
+        VenusApp.offerApplied = 0
+        VenusApp.offerTitle = ""
         SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.USER_DATA)
-        startActivity(Intent(requireContext(), SignIn::class.java))
+        startActivity(
+            Intent(
+                requireContext(),
+                SignIn::class.java
+            ).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
         requireActivity().finishAffinity()
     }, onError = {
         hideProgressDialog()
+        VenusApp.offerApplied = 0
+        VenusApp.offerTitle = ""
         SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.USER_DATA)
-        startActivity(Intent(requireContext(), SignIn::class.java))
+        startActivity(
+            Intent(
+                requireContext(),
+                SignIn::class.java
+            ).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
         requireActivity().finishAffinity()
     })
 
@@ -147,15 +172,17 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         hideProgressDialog()
         SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.USER_DATA, this)
         if (activity != null)
-        binding.tvUserRating.text =
-            this?.login?.userRating.orEmpty().ifEmpty { "0.0" }.formatString(1)
+            binding.tvUserRating.text =
+                this?.login?.userRating.orEmpty().ifEmpty { "0.0" }.formatString(1)
     }, onError = {
         hideProgressDialog()
         showToastShort(this)
     })
 
+
     override fun onDestroyView() {
         super.onDestroyView()
         hideProgressDialog()
     }
+
 }

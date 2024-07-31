@@ -193,25 +193,30 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface, Notif
             fun bind(string: String) {
                 itemBinding.tvMsgName.text = string
                 itemBinding.root.setOnClickListener {
-                    SocketSetup.startMsgEmit(
-                        string,
-                        senderId = customerId,
-                        receiverId = driverId,
-                        engagementId = tripId,
-                        type = "text"
-                    )
-                    chatArrayList.add(
-                        MessageData(
-                            message = string,
-                            sender_id = customerId.toInt(),
-                            receiver_id = driverId.toInt(),
-                            attachment_type = "text",
-                            engagement_id = tripId.toInt(),
-                            created_at = AppUtils.convertUtcToLocal(AppUtils.currentUtcTimeAsString())
+                    if (isInternetAvailable(this@ChatActivity)) {
+                        SocketSetup.startMsgEmit(
+                            string,
+                            senderId = customerId,
+                            receiverId = driverId,
+                            engagementId = tripId,
+                            type = "text"
                         )
-                    )
-                    chatAdapter.notifyDataSetChanged()
-                    binding.rvChat.smoothScrollToPosition(chatArrayList.size - 1)
+                        chatArrayList.add(
+                            MessageData(
+                                message = string,
+                                sender_id = customerId.toInt(),
+                                receiver_id = driverId.toInt(),
+                                attachment_type = "text",
+                                engagement_id = tripId.toInt(),
+                                created_at = AppUtils.convertUtcToLocal(AppUtils.currentUtcTimeAsString())
+                            )
+                        )
+                        chatAdapter.notifyDataSetChanged()
+                        binding.rvChat.smoothScrollToPosition(chatArrayList.size - 1)
+                    }
+                    else{
+                        showSnackBar("No internet connection")
+                    }
                 }
             }
         }

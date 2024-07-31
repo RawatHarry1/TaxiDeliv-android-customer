@@ -70,7 +70,9 @@ data class UserDataDC(
         @SerializedName("city", alternate = ["city_id"])
         val city: String? = null,
         @SerializedName("user_ratings")
-        val userRating: String? = null
+        val userRating: String? = null,
+        @SerializedName("stripeCredentials")
+        val stripeCredentials: StripeCredentials? = null
     ) {
         @Keep
         data class DriverDocumentStatus(
@@ -78,6 +80,12 @@ data class UserDataDC(
             val error: String? = null,
             @SerializedName("requiredDocsStatus")
             val requiredDocsStatus: String? = null
+        )
+
+        @Keep
+        data class StripeCredentials(
+            @SerializedName("publishable_key")
+            val publishableKey: String? = null
         )
     }
 }

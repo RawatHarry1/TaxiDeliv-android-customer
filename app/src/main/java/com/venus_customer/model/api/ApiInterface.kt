@@ -5,6 +5,7 @@ import com.salonedriver.model.dataclassses.notificationDC.NotificationDC
 import com.venus_customer.BuildConfig
 import com.venus_customer.model.dataClass.AboutAppDC
 import com.venus_customer.model.dataClass.CouponAndPromos
+import com.venus_customer.model.dataClass.CouponResponse
 import com.venus_customer.model.dataClass.ScheduleList
 import com.venus_customer.model.dataClass.ShowMessage
 import com.venus_customer.model.dataClass.WalletTransaction
@@ -97,7 +98,8 @@ interface ApiInterface {
     @GET(APIEndPointsConstants.INFORMATION_URL)
     suspend fun aboutApp(
         @Query("operatorId") operatorId: String,
-        @Query("cityId") cityId: String
+        @Query("cityId") cityId: String,
+        @Query("pageType") type: Int
     ): Response<BaseResponse<AboutAppDC>>
 
     @POST(APIEndPointsConstants.GET_TRANSACTIONS)
@@ -137,7 +139,7 @@ interface ApiInterface {
     @POST(APIEndPointsConstants.ENTER_PROMO_CODE)
     suspend fun enterPromoCode(
         @Body requestBody: RequestBody
-    ): Response<BaseResponse<Any>>
+    ): Response<BaseResponse<CouponResponse>>
 
     @POST(APIEndPointsConstants.SOS)
     suspend fun hitSOS(
@@ -159,6 +161,12 @@ interface ApiInterface {
     suspend fun getAllRides(
         @Field("start_from") startFrom: String = "0"
     ): Response<BaseResponse<List<TripListDC>>>
+
+    @FormUrlEncoded
+    @POST(APIEndPointsConstants.ADD_CARD)
+    suspend fun addCard(
+        @Field("client_secret") secret: String = ""
+    ): Response<BaseResponse<Any>>
 
 
     @POST(APIEndPointsConstants.GET_ALL_SCHEDULE_RIDES)

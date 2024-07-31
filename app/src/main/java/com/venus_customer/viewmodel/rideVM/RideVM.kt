@@ -8,6 +8,7 @@ import com.venus_customer.VenusApp
 import com.venus_customer.model.api.ApiState
 import com.venus_customer.model.api.SingleLiveEvent
 import com.venus_customer.model.api.setApiState
+import com.venus_customer.model.dataClass.CouponResponse
 import com.venus_customer.model.dataClass.ScheduleList
 import com.venus_customer.model.dataClass.ShowMessage
 import com.venus_customer.model.dataClass.addedAddresses.AddedAddressData
@@ -40,7 +41,7 @@ class RideVM @Inject constructor(
     lateinit var customerETA: FindDriverDC.CustomerETA
     var createRideData = CreateRideData()
     val userData by lazy { SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA) }
-
+    var couponToApply = 0
 
     /**
      * Ride Alert UI State
@@ -111,6 +112,7 @@ class RideVM @Inject constructor(
                 put("customerNote", notes)
                 put("estimated_fare", createRideData.vehicleData?.fare ?: "")
                 put("estimated_trip_distance", createRideData.vehicleData?.distance ?: "")
+                put("coupon_to_apply", couponToApply)
             }
         ).setApiState(_requestRideData)
     }
@@ -123,23 +125,24 @@ class RideVM @Inject constructor(
     fun scheduleRideData(notes: String = "", pickUpTime: String = "") = viewModelScope.launch {
         rideRepo.requestSchedule(
             jsonObject = JSONObject().apply {
-//                put("currentLongitude", VenusApp.latLng.longitude)
-//                put("currentLatitude", VenusApp.latLng.latitude)
+                put("currentLongitude", VenusApp.latLng.longitude)
+                put("currentLatitude", VenusApp.latLng.latitude)
                 put("latitude", createRideData.pickUpLocation?.latitude)
                 put("longitude", createRideData.pickUpLocation?.longitude)
                 put("pickup_location_address", createRideData.pickUpLocation?.address)
                 put("drop_location_address", createRideData.dropLocation?.address)
-//                put("duplicateFlag", "0")
+                put("duplicateFlag", "0")
                 put("op_drop_longitude", createRideData.dropLocation?.longitude)
                 put("op_drop_latitude", createRideData.dropLocation?.latitude)
                 put("region_id", createRideData.regionId)
                 put("vehicle_type", createRideData.vehicleType)
-//                put("phoneNo", userData?.login?.phoneNo.orEmpty())
+                put("phoneNo", userData?.login?.phoneNo.orEmpty())
                 put("preferred_payment_mode", "1")
-//                put("customerNote", notes)
+                put("customerNote", notes)
                 put("ride_distance", createRideData.vehicleData?.eta)
                 put("fare", createRideData.vehicleData?.fare)
                 put("pickup_time", pickUpTime)
+                put("coupon_to_apply", couponToApply)
 
             }
         ).setApiState(_scheduleRideData)
@@ -163,8 +166,8 @@ class RideVM @Inject constructor(
     /**
      * Enter promo code
      * */
-    private val _enterPromoCode by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
-    val enterPromoCode: LiveData<ApiState<BaseResponse<Any>>> = _enterPromoCode
+    private val _enterPromoCode by lazy { SingleLiveEvent<ApiState<BaseResponse<CouponResponse>>>() }
+    val enterPromoCode: LiveData<ApiState<BaseResponse<CouponResponse>>> = _enterPromoCode
     fun enterPromoCode(
         promoCode: String,
         regionId: String,

@@ -53,8 +53,8 @@ class PreLoginRepo @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-    suspend fun aboutApp(operatorId: String, cityId: String) = flow {
-        emit(apiInterface.aboutApp(operatorId = operatorId, cityId = cityId))
+    suspend fun aboutApp(operatorId: String, cityId: String,type:Int) = flow {
+        emit(apiInterface.aboutApp(operatorId = operatorId, cityId = cityId, type = type))
     }.flowOn(Dispatchers.IO)
 
     suspend fun getTransactions(jsonObject: JSONObject) = flow {

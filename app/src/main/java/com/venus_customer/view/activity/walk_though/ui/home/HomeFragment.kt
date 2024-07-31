@@ -120,6 +120,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             ::addressAdapterClick
         )
     }
+    private var showOfferAnimationOnce = true
     private val stateHandle: SavedStateHandle by lazy {
         findNavController().currentBackStackEntry?.savedStateHandle
             ?: throw IllegalStateException("State Handle is null")
@@ -300,6 +301,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         rideVM.hideHomeNav(false)
+                        showOfferAnimationOnce = true
                         rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
                         // Bottom sheet is hidden, attempt to clear state
 //                        Handler(Looper.getMainLooper()).postDelayed({
@@ -498,11 +500,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     tvOriginalPrice.text = "${it.currency} ${it.original_fare}"
                     tvPrice.text =
                         "${it.currency} ${it.fare}"
+                    tvOfferTitle.text = VenusApp.offerTitle
+                    tvOfferTitle.isVisible = true
                 } else {
                     tvOriginalPrice.isVisible = false
                     viewCross.isVisible = false
                     tvPrice.text =
                         "${it.currency} ${it.fare}"
+                    tvOfferTitle.isVisible = false
                 }
 
                 Glide.with(requireContext()).load(it.image.orEmpty()).error(R.mipmap.ic_launcher)
@@ -531,6 +536,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     etNotes.clearFocus()
                     etNotes.setText("")
                 }
+            }
+            tvRemove.setOnSingleClickListener {
+                tvPromoCode.text = getString(R.string.txt_apply_promo_code)
+                rideVM.couponToApply = 0
+                tvRemove.isVisible = false
             }
 
             tvPromoCode.setOnSingleClickListener {
@@ -814,7 +824,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
     override fun onDestroy() {
         super.onDestroy()
-        requireActivity().unregisterReceiver(showMessageIndicatorBroadcastReceiver)
+        try {
+            requireActivity().unregisterReceiver(showMessageIndicatorBroadcastReceiver)
+        } catch (e: Exception) {
+        }
+
     }
 
     private fun startRideDialog(context: Context, rideAlertUiState: RideVM.RideAlertUiState) {
@@ -1022,10 +1036,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
     private fun startCarTypesDialog() {
-        if ((VenusApp.offerApplied) > 0.0)
-            startConfettiAnimation()
-
         with(binding.viewCarType) {
+            if ((VenusApp.offerApplied) > 0.0) {
+                tvOfferTitle.isVisible = true
+                tvOfferTitle.text = VenusApp.offerTitle
+                if (showOfferAnimationOnce) {
+                    startConfettiAnimation()
+                    showOfferAnimationOnce = false
+                }
+            } else {
+                tvOfferTitle.isVisible = false
+            }
             tvSelectTypeBtn.setOnSingleClickListener {
                 if (rideVM.createRideData.regionId.isNullOrEmpty()) {
                     showSnackBar(
@@ -1199,7 +1220,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     startCarTypesDialog()
                     carTypeAlertState?.isHideable = false
                     carTypeAlertState?.state = BottomSheetBehavior.STATE_EXPANDED
-
                     try {
                         findNavController().currentBackStackEntry?.savedStateHandle?.remove<CreateRideData.LocationData>(
                             "pickUpLocation"
@@ -1560,9 +1580,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             showProgressDialog()
         }, onError = {
             hideProgressDialog()
-            showToastShort(this)
+            showSnackBar(this, binding.viewCarDetail.tvConfirmBtn)
         }, onSuccess = {
             hideProgressDialog()
+            startConfettiAnimation()
+            binding.viewCarDetail.tvPromoCode.text = "Applied: ${this?.promo_code}"
+            binding.viewCarDetail.tvRemove.isVisible = true
+            rideVM.couponToApply = this?.codeId ?: 0
+            showSnackBar(this?.codeMessage ?: "", binding.viewCarDetail.tvConfirmBtn)
         })
 
 
@@ -1585,7 +1610,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     override fun acceptRide() {
         try {
             Log.i("fetchOngoingTrip", "acceptRide")
-
             rideVM.fetchOngoingTrip()
         } catch (e: Exception) {
             e.printStackTrace()

@@ -8,15 +8,12 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
-import android.widget.Toast
 import androidx.annotation.CheckResult
-import androidx.annotation.RequiresApi
 import com.venus_customer.R
 import com.venus_customer.VenusApp
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
@@ -28,9 +25,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.onStart
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.TimeZone
 
@@ -64,16 +58,22 @@ fun Activity.transparentStatusAndNavigation(
 }
 
 
-
 /**
  * Show Session Expire
  * */
 fun showSessionExpire() {
     try {
         VenusApp.appContext.let { context ->
+            VenusApp.offerApplied = 0
+            VenusApp.offerTitle = ""
             showSnackBar(context.getString(R.string.session_expire_due_to_security_purpose_please_sign_in_again))
             SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.USER_DATA)
-            (context as Activity).startActivity(Intent(context, SignIn::class.java))
+            (context as Activity).startActivity(
+                Intent(
+                    context,
+                    SignIn::class.java
+                ).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
         }
     } catch (e: Exception) {
         e.printStackTrace()
@@ -132,13 +132,11 @@ fun String?.getTime(
         } else {
             ""
         }
-    }catch (e:Exception){
+    } catch (e: Exception) {
         e.printStackTrace()
         return ""
     }
 }
-
-
 
 
 /**
@@ -146,10 +144,10 @@ fun String?.getTime(
  * */
 fun EditText.getValue() = text?.trim().toString()
 
- fun safeCall(block: () -> Unit){
+fun safeCall(block: () -> Unit) {
     try {
         block()
-    }catch (e:Exception){
+    } catch (e: Exception) {
         e.printStackTrace()
     }
 }
@@ -163,7 +161,7 @@ fun Context.composeEmail(email: String?, subject: String? = null) {
             intent.putExtra(Intent.EXTRA_SUBJECT, subject)
         }
         startActivity(intent)
-    }catch (e:Exception){
+    } catch (e: Exception) {
         e.printStackTrace()
     }
 }
@@ -175,9 +173,11 @@ fun EditText.textChanges(): Flow<CharSequence?> {
     return callbackFlow<CharSequence?> {
         val listener = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s?.trim()?.isNotEmpty() == true){
+                if (s?.trim()?.isNotEmpty() == true) {
                     trySend(s.trim())
                 }
             }

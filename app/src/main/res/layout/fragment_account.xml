@@ -9,63 +9,63 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ivProfileImage"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="86dp"
             android:layout_height="86dp"
-            android:src="@drawable/circleimage"
+            android:layout_marginStart="21dp"
             android:layout_marginTop="40dp"
-            android:layout_marginStart="21dp" />
+            android:src="@drawable/circleimage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@+id/ivProfileImage"
-            app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
             android:layout_marginStart="17dp"
             android:layout_marginTop="10dp"
             android:text="@string/patrick_cook"
-            android:textSize="22sp"
             android:textColor="@color/black_text_color"
+            android:textSize="22sp"
             app:fontFamily="@font/poppins_semibold"
+            app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
+            app:layout_constraintTop_toTopOf="@+id/ivProfileImage"
 
             />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivStar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_star"
+            android:layout_marginTop="5dp"
             app:layout_constraintStart_toStartOf="@+id/tvUserName"
             app:layout_constraintTop_toBottomOf="@+id/tvUserName"
-            android:layout_marginTop="5dp"
-            android:id="@+id/ivStar" />
+            app:srcCompat="@drawable/ic_star" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvUserRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/ivStar"
-            app:layout_constraintTop_toTopOf="@+id/ivStar"
             android:text="@string/_4_8"
+            android:textColor="@color/black_text_color"
             android:textSize="18sp"
             app:fontFamily="@font/poppins_regular"
-            android:textColor="@color/black_text_color" />
+            app:layout_constraintStart_toEndOf="@id/ivStar"
+            app:layout_constraintTop_toTopOf="@+id/ivStar" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="21dp"
             android:layout_marginTop="45dp"
-            app:layout_constraintTop_toBottomOf="@+id/ivProfileImage"
             android:orientation="vertical"
-            android:layout_marginHorizontal="21dp">
+            app:layout_constraintTop_toBottomOf="@+id/ivProfileImage">
 
             <LinearLayout
                 android:id="@+id/llChangePassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
@@ -76,22 +76,21 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fontFamily="@font/poppins_regular"
-                    android:text="@string/change_password"
                     android:layout_gravity="center_vertical"
-                    android:textSize="16sp"
                     android:layout_marginStart="17dp"
-                    android:textColor="@color/black_text_color" />
+                    android:text="@string/change_password"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/poppins_regular" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:visibility="gone"
+                android:layout_marginTop="18dp"
                 android:background="@color/stroke_light"
-                android:layout_marginTop="18dp" />
-
+                android:visibility="gone" />
 
 
             <LinearLayout
@@ -103,28 +102,60 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="14dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginVertical="14dp"
                     app:srcCompat="@drawable/ic_offer" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fontFamily="@font/poppins_regular"
-                    android:text="@string/offers"
-                    android:layout_marginVertical="14dp"
                     android:layout_gravity="center_vertical"
-                    android:textSize="16sp"
+                    android:layout_marginVertical="14dp"
                     android:layout_marginStart="17dp"
-                    android:textColor="@color/black_text_color" />
+                    android:text="@string/offers"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/poppins_regular" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="@color/stroke_light"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:background="@color/stroke_light" />
+
+            <LinearLayout
+                android:id="@+id/llCards"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginVertical="14dp"
+                    app:srcCompat="@drawable/ic_offer" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginVertical="14dp"
+                    android:layout_marginStart="17dp"
+                    android:text="Cards"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/poppins_regular" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/stroke_light" />
 
 
             <LinearLayout
@@ -136,28 +167,28 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="14dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginVertical="14dp"
                     app:srcCompat="@drawable/ic_wallet" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fontFamily="@font/poppins_regular"
-                    android:text="@string/wallet"
-                    android:layout_marginVertical="14dp"
                     android:layout_gravity="center_vertical"
-                    android:textSize="16sp"
+                    android:layout_marginVertical="14dp"
                     android:layout_marginStart="17dp"
-                    android:textColor="@color/black_text_color" />
+                    android:text="@string/wallet"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/poppins_regular" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="@color/stroke_light"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:background="@color/stroke_light" />
 
             <LinearLayout
                 android:id="@+id/llFaq"
@@ -168,20 +199,20 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="14dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginVertical="14dp"
                     app:srcCompat="@drawable/ic_faq" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fontFamily="@font/poppins_regular"
-                    android:text="@string/faq_s"
-                    android:layout_marginVertical="14dp"
                     android:layout_gravity="center_vertical"
-                    android:textSize="16sp"
+                    android:layout_marginVertical="14dp"
                     android:layout_marginStart="17dp"
-                    android:textColor="@color/black_text_color" />
+                    android:text="@string/faq_s"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/poppins_regular" />
 
             </LinearLayout>
 
@@ -189,10 +220,8 @@
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="@color/stroke_light"
-                android:layout_marginTop="8dp" />
-
-
+                android:layout_marginTop="8dp"
+                android:background="@color/stroke_light" />
 
 
             <LinearLayout
@@ -205,27 +234,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                     android:layout_marginVertical="14dp"
+                    android:layout_marginVertical="14dp"
                     app:srcCompat="@drawable/ic_about" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fontFamily="@font/poppins_regular"
-                    android:text="@string/about_app"
                     android:layout_gravity="center_vertical"
-                    android:textSize="16sp"
-                     android:layout_marginVertical="14dp"
+                    android:layout_marginVertical="14dp"
                     android:layout_marginStart="17dp"
-                    android:textColor="@color/black_text_color" />
+                    android:text="@string/about_app"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/poppins_regular" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="@color/stroke_light"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:background="@color/stroke_light" />
 
 
             <LinearLayout
@@ -238,60 +267,60 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                     android:layout_marginVertical="14dp"
+                    android:layout_marginVertical="14dp"
                     app:srcCompat="@drawable/ic_terms" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fontFamily="@font/poppins_regular"
-                    android:text="@string/terms_conditions"
                     android:layout_gravity="center_vertical"
-                    android:textSize="16sp"
-                     android:layout_marginVertical="14dp"
+                    android:layout_marginVertical="14dp"
                     android:layout_marginStart="17dp"
-                    android:textColor="@color/black_text_color" />
+                    android:text="@string/terms_conditions"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/poppins_regular" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="@color/stroke_light"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:background="@color/stroke_light" />
 
             <LinearLayout
                 android:id="@+id/llLogout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingBottom="4dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                     android:layout_marginVertical="14dp"
+                    android:layout_marginVertical="14dp"
                     app:srcCompat="@drawable/ic_logout" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fontFamily="@font/poppins_regular"
-                    android:text="@string/log_out"
                     android:layout_gravity="center_vertical"
-                    android:textSize="16sp"
-                     android:layout_marginVertical="14dp"
+                    android:layout_marginVertical="14dp"
                     android:layout_marginStart="17dp"
-                    android:textColor="@color/black_text_color" />
+                    android:text="@string/log_out"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/poppins_regular" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="@color/stroke_light"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:background="@color/stroke_light" />
 
 
         </LinearLayout>

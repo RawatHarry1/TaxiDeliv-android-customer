@@ -46,6 +46,7 @@ object APIEndPointsConstants {
     const val FETCH_USER_ADDRESS = "customer/fetch_user_address"
     const val FETCH_COUPON_PROMO = "getCouponsAndPromotions"
     const val ENTER_PROMO_CODE = "enter_code"
+    const val ADD_CARD = "stripe/add_card_3d"
 }
 
 object APIParams {

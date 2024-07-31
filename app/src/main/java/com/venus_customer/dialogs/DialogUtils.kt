@@ -133,6 +133,7 @@ object DialogUtils {
 
 
             tvResend.setOnSingleClickListener {
+                showSnackBar(mContext.getString(R.string.otp_has_been_resent),this)
                 resend(dialogView)
             }
             show()

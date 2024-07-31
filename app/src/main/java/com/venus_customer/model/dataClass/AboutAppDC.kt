@@ -15,5 +15,16 @@ data class AboutAppDC(
     @SerializedName("support_email")
     val supportEmail: String? = null,
     @SerializedName("who_we_are")
-    val whoWeAre: String? = null
+    val whoWeAre: String? = null,
+    @SerializedName("faq")
+    val faq: List<FaqX>? = null
+)
+@Keep
+data class FaqX(
+    @SerializedName("Ans")
+    val ans: String? = null,
+    @SerializedName("Ques")
+    val ques: String? = null,
+    @SerializedName("isShown")
+    var isShown: Boolean? = false
 )
