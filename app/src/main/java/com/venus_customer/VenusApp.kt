@@ -30,6 +30,8 @@ class VenusApp: Application() {
         var googleMapKey = ""
         var offerApplied = 0
         var offerTitle = ""
+        var isReferee = false
+        var referralMsg = ""
     }
 
     override fun onCreate() {

@@ -22,5 +22,13 @@ class UserRepo @Inject constructor(
         emit(apiInterface.addCard(clientSecret))
     }.flowOn(Dispatchers.IO)
 
+    suspend fun confirmCard(clientSecret: String, intentId: String) = flow {
+        emit(apiInterface.confirmCard(clientSecret, intentId))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getCards(type: Int) = flow {
+        emit(apiInterface.getCards(type))
+    }.flowOn(Dispatchers.IO)
+
 
 }

@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -51,6 +52,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
     private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            Log.i("onDownloadComplete","in receiver  ${id}")
             if (id == downloadID) {
                 showToastShort("Invoice downloaded successfully")
             }
@@ -95,7 +97,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requireActivity().registerReceiver(
                 onDownloadComplete,
-                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_NOT_EXPORTED
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_EXPORTED
             )
         } else {
             requireActivity().registerReceiver(
@@ -180,10 +182,6 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
         }
 
         binding.tvDownloadInvoice.setOnSingleClickListener {
-//            if (checkAndRequestPermissions()) {
-//                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
-//                downloadPdf(requireActivity(), url, "RideInvoice", "Downloading Invoice")
-//            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                 requestPermissionLauncher.launch(
                     arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
@@ -203,7 +201,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
         val request = DownloadManager.Request(Uri.parse(url))
             .setTitle(title) // Title of the Download Notification
             .setDescription(description) // Description of the Download Notification
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED) // Visibility of the download Notification
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED or DownloadManager.Request.VISIBILITY_VISIBLE) // Visibility of the download Notification
             .setAllowedOverMetered(true) // Set if download is allowed on Mobile network
             .setAllowedOverRoaming(true) // Set if download is allowed on roaming network
             .setDestinationInExternalPublicDir(
@@ -216,6 +214,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             ) // Add a user-agent header
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         downloadID = downloadManager.enqueue(request) // Enqueue the download
+        Log.i("onDownloadComplete","download  ${downloadID}")
     }
 
     private fun observeRideSummary() = viewModel.rideSummaryData.observeData(

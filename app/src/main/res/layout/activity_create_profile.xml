@@ -153,6 +153,7 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/etLastName"
                     android:layout_width="0dp"
+
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="@id/tvAccountDetails"
                     app:layout_constraintTop_toBottomOf="@id/tvLastName"
@@ -232,6 +233,36 @@
                     />
 
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvReferral"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/etEmailAddress"
+                    app:layout_constraintStart_toStartOf="@id/tvAccountDetails"
+                    android:text="Referral Code (Optional)"
+                    android:textColor="@color/walk_desc_color"
+                    android:textSize="14dp"
+                    android:layout_marginTop="15dp"
+                    />
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etReferral"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="@id/tvAccountDetails"
+                    app:layout_constraintTop_toBottomOf="@id/tvReferral"
+                    android:background="@drawable/shape_round_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginTop="10dp"
+                    android:padding="12dp"
+                    android:inputType="textCapCharacters"
+                    android:singleLine="true"
+                    android:maxLength="10"
+                    android:drawablePadding="10dp"
+                    android:hint="Enter referral code"
+                    android:textColorHint="@color/border_color_dark"
+                    />
+
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvPersonalDetails"
@@ -240,7 +271,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginStart="25dp"
                     android:visibility="visible"
-                    app:layout_constraintTop_toBottomOf="@id/etEmailAddress"
+                    app:layout_constraintTop_toBottomOf="@id/etReferral"
                     app:layout_constraintStart_toStartOf="parent"
                     android:text="@string/address"
                     android:textColor="@color/theme_button"

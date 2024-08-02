@@ -20,6 +20,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.Gson
 import com.mukesh.photopicker.utils.checkPermissions
 import com.venus_customer.R
 import com.venus_customer.customClasses.FloatingIconService
@@ -153,6 +154,8 @@ class Home : BaseActivity<ActivityHomeBinding>() {
 
     override fun onResume() {
         super.onResume()
+
+        Log.i("ONRESUME","HOME ${Gson().toJson(intent.extras)}")
         safeCall {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 checkPermissions(Manifest.permission.POST_NOTIFICATIONS) {}

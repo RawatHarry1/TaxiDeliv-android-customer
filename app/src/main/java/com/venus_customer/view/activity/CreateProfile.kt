@@ -3,10 +3,12 @@ package com.venus_customer.view.activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.matter.companion.util.ValidationUtils
 import com.mukesh.photopicker.utils.pickerDialog
 import com.venus_customer.R
+import com.venus_customer.VenusApp
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.ActivityCreateProfileBinding
 import com.venus_customer.model.api.getJsonRequestBody
@@ -40,6 +42,8 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
         observeData()
         observeProfileData()
         if (isEditProfile) {
+            binding.tvReferral.isVisible = false
+            binding.etReferral.isVisible = false
             homeViewModel.loginViaToken()
         }
     }
@@ -77,6 +81,7 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
                         binding.etEmailAddress.text.toString().getJsonRequestBody()
                     )
                     put("address", binding.etStreetName.text.toString().getJsonRequestBody())
+                    put("referral_code", binding.etReferral.text.toString().getJsonRequestBody())
                 })
             }
         }
@@ -145,6 +150,8 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
         if (isEditProfile) {
             finish()
         } else {
+            VenusApp.isReferee = this?.is_referee ?: false
+            VenusApp.referralMsg = this?.message ?: ""
             startActivity(Intent(this@CreateProfile, Welcome::class.java))
             finish()
         }

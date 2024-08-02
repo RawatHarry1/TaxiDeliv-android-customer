@@ -12,7 +12,8 @@ import com.venus_customer.databinding.ItemPromoCodesBinding
 import com.venus_customer.model.dataClass.Promotion
 import com.venus_customer.util.showSnackBar
 
-class OffersAdapter(private val mContext: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class OffersAdapter(private val mContext: Context) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val list by lazy { ArrayList<Promotion>() }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return OfferViewHolder(
@@ -36,25 +37,30 @@ class OffersAdapter(private val mContext: Context) : RecyclerView.Adapter<Recycl
     inner class OfferViewHolder(private val binding: ItemPromoCodesBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(coupon: Promotion) {
-
             if (VenusApp.offerApplied == coupon.promo_id) {
-                binding.tvApply.text = "Applied"
-                binding.tvApply.isEnabled = false
+                binding.tvApply.text = "Remove"
+//                binding.tvApply.isEnabled = false
 //                binding.tvApply.isClickable = false
             } else {
-                binding.tvApply.isEnabled = true
+//                binding.tvApply.isEnabled = true
                 binding.tvApply.text = "Apply"
             }
             binding.tvTitle.text = coupon.title
             binding.tvDesc.text = coupon.validity_text
 
             binding.tvApply.setOnSingleClickListener {
-                VenusApp.offerApplied = coupon.promo_id
-                VenusApp.offerTitle = coupon.title
-                notifyDataSetChanged()
-                mContext.sendBroadcast(Intent("offer"))
-                findNavController().popBackStack()
-                showSnackBar("*This offer will be automatically applied while creating the ride*")
+                if (VenusApp.offerApplied == coupon.promo_id) {
+                    VenusApp.offerApplied = 0
+                    VenusApp.offerTitle = ""
+                    notifyDataSetChanged()
+                } else {
+                    VenusApp.offerApplied = coupon.promo_id
+                    VenusApp.offerTitle = coupon.title
+                    notifyDataSetChanged()
+                    mContext.sendBroadcast(Intent("offer"))
+                    findNavController().popBackStack()
+                    showSnackBar("*This offer will be automatically applied while creating the ride*")
+                }
             }
         }
     }

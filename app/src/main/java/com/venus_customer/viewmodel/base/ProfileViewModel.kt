@@ -9,6 +9,7 @@ import com.venus_customer.model.api.getPartMap
 import com.venus_customer.model.api.setApiState
 import com.venus_customer.model.dataClass.AboutAppDC
 import com.venus_customer.model.dataClass.CouponAndPromos
+import com.venus_customer.model.dataClass.CreateProfileResponse
 import com.venus_customer.model.dataClass.WalletTransaction
 import com.venus_customer.model.dataClass.base.BaseResponse
 import com.venus_customer.model.dataClass.base.ClientConfig
@@ -42,8 +43,8 @@ class ProfileViewModel @Inject constructor(
     var imagePath: String? = null
     var type = 1
 
-    private val _updateProfile by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
-    val updateProfile: LiveData<ApiState<BaseResponse<Any>>> get() = _updateProfile
+    private val _updateProfile by lazy { SingleLiveEvent<ApiState<BaseResponse<CreateProfileResponse>>>() }
+    val updateProfile: LiveData<ApiState<BaseResponse<CreateProfileResponse>>> get() = _updateProfile
 
     fun updateProfile(hashMap: HashMap<String, RequestBody?>) = viewModelScope.launch {
         repository.updateProfile(

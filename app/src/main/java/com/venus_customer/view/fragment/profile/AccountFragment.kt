@@ -21,10 +21,8 @@ import com.venus_customer.util.formatString
 import com.venus_customer.util.safeCall
 import com.venus_customer.view.activity.CreateProfile
 import com.venus_customer.view.activity.sign_in.SignIn
+import com.venus_customer.view.activity.walk_though.PaymentActivity
 import com.venus_customer.view.base.BaseFragment
-import com.venus_customer.view.fragment.cards.AddAndShowCardDialogFragment
-import com.venus_customer.view.fragment.cards.Card
-import com.venus_customer.view.fragment.cards.CardClickListener
 import com.venus_customer.viewmodel.HomeVM
 import com.venus_customer.viewmodel.base.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,11 +71,12 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
             binding.ivProfileImage.performClick()
         }
         binding.llCards.setOnSingleClickListener {
-            val dialog =AddAndShowCardDialogFragment()
-            dialog.onCardSelected = {
-
-            }
-            dialog.show(parentFragmentManager, "AddCardDialog")
+//            val dialog =AddAndShowCardDialogFragment()
+//            dialog.onCardSelected = {
+//
+//            }
+//            dialog.show(parentFragmentManager, "AddCardDialog")
+            startActivity(Intent(requireActivity(), PaymentActivity::class.java))
         }
     }
 

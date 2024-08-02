@@ -4,9 +4,12 @@ import com.google.gson.JsonElement
 import com.salonedriver.model.dataclassses.notificationDC.NotificationDC
 import com.venus_customer.BuildConfig
 import com.venus_customer.model.dataClass.AboutAppDC
+import com.venus_customer.model.dataClass.CardData
 import com.venus_customer.model.dataClass.CouponAndPromos
 import com.venus_customer.model.dataClass.CouponResponse
+import com.venus_customer.model.dataClass.CreateProfileResponse
 import com.venus_customer.model.dataClass.ScheduleList
+import com.venus_customer.model.dataClass.SetUpIntentResponse
 import com.venus_customer.model.dataClass.ShowMessage
 import com.venus_customer.model.dataClass.WalletTransaction
 import com.venus_customer.model.dataClass.addedAddresses.AddedAddressData
@@ -83,7 +86,7 @@ interface ApiInterface {
     suspend fun updateProfile(
         @PartMap partMap: HashMap<String, RequestBody?>,
         @Part multipartBody: MultipartBody.Part? = null
-    ): Response<BaseResponse<Any>>
+    ): Response<BaseResponse<CreateProfileResponse>>
 
 
     @POST(APIEndPointsConstants.LOGIN_VIA_ACCESS_TOKEN)
@@ -166,6 +169,13 @@ interface ApiInterface {
     @POST(APIEndPointsConstants.ADD_CARD)
     suspend fun addCard(
         @Field("client_secret") secret: String = ""
+    ): Response<BaseResponse<SetUpIntentResponse>>
+
+    @FormUrlEncoded
+    @POST(APIEndPointsConstants.CONFIRM_CARD)
+    suspend fun confirmCard(
+        @Field("client_secret") secret: String = "",
+        @Field("setup_intent_id") id: String = ""
     ): Response<BaseResponse<Any>>
 
 
@@ -177,6 +187,11 @@ interface ApiInterface {
         @Query("tripId") tripId: String,
         @Query("driverId") driverId: String
     ): Response<BaseResponse<RideSummaryDC>>
+
+    @GET(APIEndPointsConstants.GET_CARDS)
+    suspend fun getCards(
+        @Query("payment_method_type") type: Int
+    ): Response<BaseResponse<List<CardData>>>
 
 
     @GET(GET_NOTIFICATIONS)

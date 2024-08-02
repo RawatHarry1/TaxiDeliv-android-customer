@@ -21,7 +21,7 @@ android {
         }
     }
     namespace 'com.venus_customer'
-    compileSdk 33
+    compileSdk 34
 
     dataBinding {
         enabled true
@@ -30,7 +30,7 @@ android {
     defaultConfig {
         applicationId "com.venus_customer"
         minSdk 23
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -184,6 +184,9 @@ dependencies {
     implementation 'nl.dionsegijn:konfetti-xml:2.0.2'
 
     /*Stripe*/
-    implementation 'com.stripe:stripe-android:20.20.0'
+    implementation 'com.stripe:stripe-android:20.48.2'
+
+//    implementation 'com.stripe:stripe-android:22.0.1'
+//    implementation 'com.stripe:stripe-android-core:22.0.1'
 
 }

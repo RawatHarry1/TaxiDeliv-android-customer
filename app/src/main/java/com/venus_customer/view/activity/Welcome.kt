@@ -16,8 +16,6 @@ class Welcome : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_welcome)
-
-
         Handler(Looper.getMainLooper()).postDelayed({
             startActivity(Intent(this,Home::class.java))
             finishAffinity()

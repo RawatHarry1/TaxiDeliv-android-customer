@@ -923,7 +923,9 @@ object AppUtils {
                 values
             )
             context.contentResolver?.openOutputStream(uri!!).use { output ->
-                bmp.compress(Bitmap.CompressFormat.JPEG, 100, output)
+                if (output != null) {
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, output)
+                }
             }
             return uri
         } catch (e: java.lang.Exception) {

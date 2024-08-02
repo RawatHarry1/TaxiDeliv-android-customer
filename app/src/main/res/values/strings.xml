@@ -162,7 +162,7 @@
     <string name="txt_gurman_kanda">Gurman Kanda</string>
     <string name="txt_1234567890">1234567890</string>
     <string name="txt_notes">Notes</string>
-    <string name="txt_add_new_card">Add new card</string>
+    <string name="txt_add_new_card">Pay by card</string>
     <string name="txt_apply_promo_code">Apply Promo Code</string>
     <string name="txt_1234">**** **** **** 1234</string>
     <string name="ride_completed">Ride Completed</string>
@@ -307,6 +307,10 @@
     <string name="no_notifications_found">No Notifications Found</string>
     <string name="promo_code">Promo code</string>
     <string name="remove">Remove</string>
+    <string name="add_new_card">Add new card</string>
+    <string name="cards">Cards</string>
+    <string name="no_cards_found">No cards found</string>
+    <string name="change">Change</string>
 
 
 </resources>

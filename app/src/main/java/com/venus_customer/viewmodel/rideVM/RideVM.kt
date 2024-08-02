@@ -42,6 +42,9 @@ class RideVM @Inject constructor(
     var createRideData = CreateRideData()
     val userData by lazy { SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA) }
     var couponToApply = 0
+    var paymentOption = 1
+    var cardId = ""
+    var last4 = ""
 
     /**
      * Ride Alert UI State
@@ -113,6 +116,11 @@ class RideVM @Inject constructor(
                 put("estimated_fare", createRideData.vehicleData?.fare ?: "")
                 put("estimated_trip_distance", createRideData.vehicleData?.distance ?: "")
                 put("coupon_to_apply", couponToApply)
+                if (paymentOption == 9) {
+                    put("stripe_token", cardId)
+                    put("preferred_payment_mode", "9")
+                    put("card_id", cardId)
+                }
             }
         ).setApiState(_requestRideData)
     }

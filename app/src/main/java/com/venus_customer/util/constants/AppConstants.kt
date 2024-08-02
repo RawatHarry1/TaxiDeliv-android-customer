@@ -47,7 +47,11 @@ object APIEndPointsConstants {
     const val FETCH_COUPON_PROMO = "getCouponsAndPromotions"
     const val ENTER_PROMO_CODE = "enter_code"
     const val ADD_CARD = "stripe/add_card_3d"
+    const val CONFIRM_CARD = "stripe/confirm_card_3d"
+    const val GET_CARDS = "fetch/cardDetails"
 }
+
+
 
 object APIParams {
     const val DEVICE_TYPE = "device_type"
