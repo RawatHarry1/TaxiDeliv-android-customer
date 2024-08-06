@@ -3,12 +3,15 @@ package com.venus_customer.dialogs
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.EditText
@@ -18,12 +21,15 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.card.MaterialCardView
 import com.mukesh.mukeshotpview.mukeshOtpView.MukeshOtpView
 import com.venus_customer.R
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.DialogEditProfilePictureBinding
+import com.venus_customer.util.NoSpaceInputFilter
+import com.venus_customer.util.safeCall
 import com.venus_customer.util.showSnackBar
 
 object DialogUtils {
@@ -77,6 +83,7 @@ object DialogUtils {
             setCancelable(true)
             val tvConfirm = findViewById<AppCompatTextView>(R.id.tvSubmit)
             val etPromoCode = findViewById<AppCompatEditText>(R.id.etEnterPromoCode)
+            etPromoCode.filters = arrayOf(NoSpaceInputFilter())
             tvConfirm.setOnSingleClickListener {
                 if (etPromoCode.text.toString().trim().isEmpty())
                     showSnackBar("Please Enter Promo Code", this)
@@ -84,6 +91,47 @@ object DialogUtils {
                     onClickNegativeResult(etPromoCode.text.toString().trim())
                     dismiss()
                 }
+            }
+            show()
+        }
+        return dialogView
+    }
+
+
+    fun getVersionUpdateDialog(
+        mContext: Activity,
+        forceUpdate: Int,
+        popUpDesc: String,
+        downloadLink:String,
+        onClickNegativeResult: (String) -> Unit?
+    ): Dialog {
+        val dialogView = Dialog(mContext)
+        with(dialogView) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.dialog_version_update)
+            setCancelable(false)
+            val tvUpdateNow = findViewById<AppCompatTextView>(R.id.tvUpdateNow)
+            val tvDesc = findViewById<AppCompatTextView>(R.id.tvDescription)
+            val tvLater = findViewById<AppCompatTextView>(R.id.tvLater)
+            val viewMiddle = findViewById<View>(R.id.viewMiddle)
+            tvDesc.text = popUpDesc
+            if (forceUpdate == 1) {
+                tvLater.isVisible = false
+                viewMiddle.isVisible = false
+            }
+            tvUpdateNow.setOnSingleClickListener {
+                safeCall {
+                    mContext.startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(downloadLink)
+                        )
+                    )
+                }
+            }
+            tvLater.setOnSingleClickListener {
+                dismiss()
             }
             show()
         }
@@ -133,7 +181,7 @@ object DialogUtils {
 
 
             tvResend.setOnSingleClickListener {
-                showSnackBar(mContext.getString(R.string.otp_has_been_resent),this)
+                showSnackBar(mContext.getString(R.string.otp_has_been_resent), this)
                 resend(dialogView)
             }
             show()

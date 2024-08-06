@@ -37,4 +37,12 @@ class CardViewModel @Inject constructor(
     fun getCardsData(type: Int) = viewModelScope.launch {
         userRepo.getCards(type).setApiState(_getCardsData)
     }
+
+    private var _deleteCardsData = MutableLiveData<ApiState<BaseResponse<Any>>>()
+    val deleteCardsData: LiveData<ApiState<BaseResponse<Any>>> = _deleteCardsData
+    fun deleteCardsData(cardId: String) {
+        viewModelScope.launch {
+            userRepo.deleteCard(cardId).setApiState(_deleteCardsData)
+        }
+    }
 }

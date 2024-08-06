@@ -30,5 +30,9 @@ class UserRepo @Inject constructor(
         emit(apiInterface.getCards(type))
     }.flowOn(Dispatchers.IO)
 
+    suspend fun deleteCard(cardId: String) = flow {
+        emit(apiInterface.deleteCard(cardId))
+    }.flowOn(Dispatchers.IO)
+
 
 }

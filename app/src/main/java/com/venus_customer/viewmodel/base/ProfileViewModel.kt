@@ -61,6 +61,13 @@ class ProfileViewModel @Inject constructor(
         repository.logout().setApiState(_logout)
     }
 
+    private val _deleteAccount by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
+    val deleteAccount: LiveData<ApiState<BaseResponse<Any>>> get() = _deleteAccount
+
+    fun deleteAccount() = viewModelScope.launch {
+        repository.deleteAccount().setApiState(_deleteAccount)
+    }
+
 
     private val _aboutApp by lazy { SingleLiveEvent<ApiState<BaseResponse<AboutAppDC>>>() }
     val aboutApp: LiveData<ApiState<BaseResponse<AboutAppDC>>> get() = _aboutApp

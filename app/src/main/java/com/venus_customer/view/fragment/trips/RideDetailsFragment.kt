@@ -52,12 +52,13 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
     private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-            Log.i("onDownloadComplete","in receiver  ${id}")
+            Log.i("onDownloadComplete", "in receiver  ${id}")
             if (id == downloadID) {
                 showToastShort("Invoice downloaded successfully")
             }
         }
     }
+
     override fun initialiseFragmentBaseViewModel() {
 
     }
@@ -106,6 +107,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             )
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         try {
@@ -214,7 +216,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             ) // Add a user-agent header
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         downloadID = downloadManager.enqueue(request) // Enqueue the download
-        Log.i("onDownloadComplete","download  ${downloadID}")
+        Log.i("onDownloadComplete", "download  ${downloadID}")
     }
 
     private fun observeRideSummary() = viewModel.rideSummaryData.observeData(
@@ -257,9 +259,15 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             binding.tvHowTrip.isVisible = (rideSummaryDC?.driverRating ?: -1) <= -1
             binding.tvRateDriver.isVisible = (rideSummaryDC?.driverRating ?: -1) <= -1
 
-            binding.tvPaymentCash.text = "${rideSummaryDC?.currency.orEmpty()} ${
-                rideSummaryDC?.fare.orEmpty().formatString()
-            }"
+            if (rideSummaryDC?.toPay.orEmpty().ifEmpty { "0" }.toInt() > 0) {
+                binding.rlPaymentCash.isVisible = true
+                binding.tvPaymentCash.text = "${rideSummaryDC?.currency.orEmpty()} ${
+                    rideSummaryDC?.toPay.orEmpty().formatString()
+                }"
+            }
+            else
+                binding.rlPaymentCash.isVisible = false
+
             binding.tvSubTotal.text = "${rideSummaryDC?.currency.orEmpty()} ${
                 rideSummaryDC?.fare.orEmpty().formatString()
             }"
@@ -272,6 +280,25 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             binding.tvTotalCharge.text = "${rideSummaryDC?.currency.orEmpty()} ${
                 rideSummaryDC?.tripTotal.orEmpty().formatString()
             }"
+
+            if (rideSummaryDC?.paidUsingStripe.orEmpty().ifEmpty { "0" }.toInt() > 0) {
+                binding.rlPaidUsingStripe.isVisible = true
+                binding.tvTotalCharge.text = "${rideSummaryDC?.currency.orEmpty()} ${
+                    rideSummaryDC?.paidUsingStripe.orEmpty().formatString()
+                }"
+            }
+            if (rideSummaryDC?.paidUsingWallet.orEmpty().ifEmpty { "0" }.toInt() > 0) {
+                binding.rlPaidUsingWallet.isVisible = true
+                binding.tvPaidUsingWallet.text = "${rideSummaryDC?.currency.orEmpty()} ${
+                    rideSummaryDC?.paidUsingWallet.orEmpty().formatString()
+                }"
+            }
+            if (rideSummaryDC?.paidUsingPaytm.orEmpty().ifEmpty { "0" }.toInt() > 0) {
+                binding.rlPaidUsingPaytm.isVisible = true
+                binding.tvPaidUsingPaytm.text = "${rideSummaryDC?.currency.orEmpty()} ${
+                    rideSummaryDC?.paidUsingPaytm.orEmpty().formatString()
+                }"
+            }
 
             Glide.with(this).load(rideSummaryDC?.driverImage.orEmpty())
                 .error(R.drawable.circleimage).into(binding.ivDriverImage)

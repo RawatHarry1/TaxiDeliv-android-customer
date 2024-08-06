@@ -49,34 +49,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:paddingTop="10dp"
-                android:paddingBottom="30dp"
-                >
+                android:paddingBottom="30dp">
 
-                <com.mukesh.mukeshcircleimageview.MukeshCircleImageView
-                    android:id="@+id/ivProfile"
-                    android:layout_width="132dp"
-                    android:layout_height="132dp"
-                    android:scaleType="centerCrop"
+                <RelativeLayout
+                    android:id="@+id/rvProfileImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_image_outline_stroke"
+                    android:gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="10dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:src="@drawable/ic_profile_bg"
-                    app:miv_border_color="@color/theme_light"
-                    app:miv_border_overlay="true"
-                    app:miv_border_width="5dp"
-                    app:miv_circle_background_color="@color/colorPrimary"
-                    />
+                    android:padding="2dp">
+
+                    <com.mukesh.mukeshcircleimageview.MukeshCircleImageView
+                        android:id="@+id/ivProfile"
+                        android:layout_width="132dp"
+                        android:layout_height="132dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_profile_bg"
+                        />
+                </RelativeLayout>
+
+
 
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivCamera"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    app:layout_constraintStart_toEndOf="@id/ivProfile"
-                    app:layout_constraintEnd_toEndOf="@id/ivProfile"
-                    app:layout_constraintTop_toTopOf="@id/ivProfile"
-                    app:layout_constraintBottom_toBottomOf="@id/ivProfile"
+                    app:layout_constraintStart_toEndOf="@id/rvProfileImage"
+                    app:layout_constraintEnd_toEndOf="@id/rvProfileImage"
+                    app:layout_constraintTop_toTopOf="@id/rvProfileImage"
+                    app:layout_constraintBottom_toBottomOf="@id/rvProfileImage"
                     app:srcCompat="@drawable/ic_camera"
                     />
 
@@ -85,9 +90,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    app:layout_constraintTop_toBottomOf="@id/ivProfile"
-                    app:layout_constraintStart_toStartOf="@id/ivProfile"
-                    app:layout_constraintEnd_toEndOf="@id/ivProfile"
+                    app:layout_constraintTop_toBottomOf="@id/rvProfileImage"
+                    app:layout_constraintStart_toStartOf="@id/rvProfileImage"
+                    app:layout_constraintEnd_toEndOf="@id/rvProfileImage"
                     android:text="@string/txt_upload_photo"
                     android:textColor="@color/theme_button"
                     android:textSize="16dp"

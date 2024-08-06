@@ -571,7 +571,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     requireActivity(), ::onDialogClick
                 )
             }
-            tvPayByCash.setOnSingleClickListener {
+            clPayByCash.setOnSingleClickListener {
                 changeSelection(1)
             }
             clPayByCard.setOnSingleClickListener {

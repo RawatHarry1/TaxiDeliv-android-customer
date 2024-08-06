@@ -25,6 +25,7 @@ import com.mukesh.photopicker.utils.checkPermissions
 import com.venus_customer.R
 import com.venus_customer.customClasses.FloatingIconService
 import com.venus_customer.databinding.ActivityHomeBinding
+import com.venus_customer.dialogs.DialogUtils
 import com.venus_customer.model.api.observeData
 import com.venus_customer.util.SharedPreferencesManager
 import com.venus_customer.util.gone
@@ -155,7 +156,7 @@ class Home : BaseActivity<ActivityHomeBinding>() {
     override fun onResume() {
         super.onResume()
 
-        Log.i("ONRESUME","HOME ${Gson().toJson(intent.extras)}")
+        Log.i("ONRESUME", "HOME ${Gson().toJson(intent.extras)}")
         safeCall {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 checkPermissions(Manifest.permission.POST_NOTIFICATIONS) {}
@@ -208,10 +209,28 @@ class Home : BaseActivity<ActivityHomeBinding>() {
     }, onSuccess = {
         hideProgressDialog()
         SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.USER_DATA, this)
+        if (this?.login?.popup != null) {
+            if (this.login.popup.is_force != null
+                && this.login.popup.popup_text != null
+                && this.login.popup.download_link != null
+            ) {
+                DialogUtils.getVersionUpdateDialog(
+                    this@Home,
+                    this.login.popup.is_force,
+                    this.login.popup.popup_text,
+                    this.login.popup.download_link,
+                    ::onDialogClick
+                )
+            }
+        }
     }, onError = {
         hideProgressDialog()
         showToastShort(this)
     })
+
+    private fun onDialogClick(promoCode: String) {
+
+    }
 
     private fun observeUiState() = rideVM.hideHomeNavigation.observe(this) {
         Log.i("RIDESTATE", "$it")

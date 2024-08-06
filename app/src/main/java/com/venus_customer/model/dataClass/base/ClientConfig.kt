@@ -39,7 +39,11 @@ data class ClientConfig(
     @SerializedName("google_map_keys")
     val googleMapKey: String? = null,
     @SerializedName("terms_of_use_url")
-    val termsOfUseUrl: String? = null
+    val termsOfUseUrl: String? = null,
+    @SerializedName("walk_through_title")
+    val walkThroughTitle: String? = null,
+    @SerializedName("walk_through_desc")
+    val walkThroughDesc: String? = null
 ) {
     @Keep
     data class City(

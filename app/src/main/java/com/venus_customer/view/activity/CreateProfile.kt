@@ -52,6 +52,7 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
     private fun clickListener() {
         viewModel.needToUploadImage = !isEditProfile
         binding.etUserName.filters = arrayOf(NoSpaceInputFilter())
+        binding.etReferral.filters = arrayOf(NoSpaceInputFilter())
         binding.tvCreateProfile.text =
             if (isEditProfile) getString(R.string.edit_your_nprofile) else getString(R.string.create_your_nprofile)
         binding.ivCamera.setOnSingleClickListener {
@@ -81,7 +82,11 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
                         binding.etEmailAddress.text.toString().getJsonRequestBody()
                     )
                     put("address", binding.etStreetName.text.toString().getJsonRequestBody())
-                    put("referral_code", binding.etReferral.text.toString().getJsonRequestBody())
+                    if (!isEditProfile)
+                        put(
+                            "referral_code",
+                            binding.etReferral.text.toString().getJsonRequestBody()
+                        )
                 })
             }
         }

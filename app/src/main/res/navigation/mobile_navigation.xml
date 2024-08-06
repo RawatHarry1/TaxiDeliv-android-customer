@@ -123,4 +123,8 @@
         android:id="@+id/navigation_wallet"
         android:name="com.venus_customer.view.fragment.profile.WalletFragment"
         tools:layout="@layout/fragment_wallet" />
+    <fragment
+        android:id="@+id/navigate_referral"
+        android:name="com.venus_customer.view.fragment.profile.ReferralCodeFragment"
+        tools:layout="@layout/fragment_referral_code" />
 </navigation>

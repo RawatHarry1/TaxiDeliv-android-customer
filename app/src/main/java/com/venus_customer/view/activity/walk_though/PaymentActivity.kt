@@ -15,6 +15,7 @@ import com.stripe.android.paymentsheet.PaymentSheetResult
 import com.venus_customer.R
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.DialogFragementShowAndAddCardsBinding
+import com.venus_customer.dialogs.DialogUtils
 import com.venus_customer.model.api.observeData
 import com.venus_customer.model.dataClass.CardData
 import com.venus_customer.model.dataClass.userData.UserDataDC
@@ -37,13 +38,15 @@ class PaymentActivity : BaseActivity<DialogFragementShowAndAddCardsBinding>(),
     private lateinit var paymentSheet: PaymentSheet
     private lateinit var setupIntentClientSecret: String
     private lateinit var setupIntentId: String
+    private var clientSecret = ""
     private val cardVM by viewModels<CardViewModel>()
     private lateinit var cardAdapter: CardAdapter
     private var cardArrayList = ArrayList<CardData>()
-    private var whileRide = false
+
 
     companion object {
         var cardId = ""
+        var whileRide = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,20 +56,24 @@ class PaymentActivity : BaseActivity<DialogFragementShowAndAddCardsBinding>(),
         cardId = intent.getStringExtra("cardId") ?: ""
         SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
             ?.let {
-                if (!it.login?.stripeCredentials?.publishableKey.isNullOrEmpty())
+                if (!it.login?.stripeCredentials?.publishableKey.isNullOrEmpty()) {
                     stripe = Stripe(
                         this,
                         it.login?.stripeCredentials?.publishableKey ?: ""
                     )
-                PaymentConfiguration.init(
-                    this,
-                    it.login?.stripeCredentials?.publishableKey ?: ""
-                )
+                    PaymentConfiguration.init(
+                        this,
+                        it.login?.stripeCredentials?.publishableKey ?: ""
+                    )
+                }
+                if (!it.login?.stripeCredentials?.clientSecret.isNullOrEmpty())
+                    clientSecret = it.login?.stripeCredentials?.clientSecret ?: ""
             }
 
         paymentSheet = PaymentSheet(activity = this, callback = ::onPaymentSheetResult)
         binding.tvAddNewCard.setOnSingleClickListener {
-            cardVM.addCard("gJJi0mlw2iVU5Syu58ImglbNYm0tJKyB")
+            binding.tvAddNewCard.isEnabled = false
+            cardVM.addCard(clientSecret)
         }
         binding.ivBack.setOnSingleClickListener { finish() }
         cardAdapter = CardAdapter(this, cardArrayList, this)
@@ -74,23 +81,25 @@ class PaymentActivity : BaseActivity<DialogFragementShowAndAddCardsBinding>(),
         observeCard()
         observeGetCards()
         observeConfirmCard()
+        observeDeleteCard()
         cardVM.getCardsData(1)
     }
 
     private fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
         when (paymentSheetResult) {
             is PaymentSheetResult.Canceled -> {
-                showSnackBar("CANCELED", binding.tvAddNewCard)
+                binding.tvAddNewCard.isEnabled = true
             }
 
             is PaymentSheetResult.Failed -> {
-                showSnackBar("FAILED", binding.tvAddNewCard)
+                binding.tvAddNewCard.isEnabled = true
+                showSnackBar("Something went wrong.", binding.tvAddNewCard)
             }
 
             is PaymentSheetResult.Completed -> {
                 // Display for example, an order confirmation screen
                 showSnackBar("Confirming your card please wait...", binding.tvAddNewCard)
-                cardVM.confirmCard("gJJi0mlw2iVU5Syu58ImglbNYm0tJKyB", setupIntentId)
+                cardVM.confirmCard(clientSecret, setupIntentId)
 //                lifecycleScope.launch {
 //                    delay(1000)
 //                    Log.i("PaymentSheetResult", "setupIntentClientSecret $setupIntentClientSecret")
@@ -155,6 +164,19 @@ class PaymentActivity : BaseActivity<DialogFragementShowAndAddCardsBinding>(),
             showProgressDialog()
         }, onSuccess = {
             hideProgressDialog()
+            binding.tvAddNewCard.isEnabled = true
+            cardVM.getCardsData(1)
+        }, onError = {
+            hideProgressDialog()
+            showSnackBar(this, binding.tvAddNewCard)
+        })
+
+
+    private fun observeDeleteCard() =
+        cardVM.deleteCardsData.observeData(this, onLoading = {
+            showProgressDialog()
+        }, onSuccess = {
+            hideProgressDialog()
             cardVM.getCardsData(1)
         }, onError = {
             hideProgressDialog()
@@ -187,13 +209,21 @@ class PaymentActivity : BaseActivity<DialogFragementShowAndAddCardsBinding>(),
             showSnackBar(this, binding.tvAddNewCard)
         })
 
-    override fun onCardClick(card: CardData) {
-        if (whileRide) {
-            val resultIntent = Intent()
-            resultIntent.putExtra("cardId", card.card_id ?: "")
-            resultIntent.putExtra("last4", card.last_4 ?: "")
-            setResult(Activity.RESULT_OK, resultIntent)
-            finish()
-        }
+    override fun onCardClick(card: CardData, isDelete: Boolean) {
+        if (isDelete) {
+            DialogUtils.getNegativeDialog(
+                this, "Remove Card?",
+                "Are you sure you want to remove *** ${card.last_4} card?"
+            ) {
+                cardVM.deleteCardsData(card.card_id)
+            }
+        } else
+            if (whileRide) {
+                val resultIntent = Intent()
+                resultIntent.putExtra("cardId", card.card_id ?: "")
+                resultIntent.putExtra("last4", card.last_4 ?: "")
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish()
+            }
     }
 }

@@ -81,6 +81,7 @@
     <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
     <string name="log_out">Log Out</string>
     <string name="are_you_sure_you_want_to_log_out">Are you sure you want\n to log out ?</string>
+    <string name="are_you_sure_you_want_to_delete_account">Are you sure you want\n to delete account?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="how_was_your_ride_with">How was your ride with</string>
@@ -311,6 +312,13 @@
     <string name="cards">Cards</string>
     <string name="no_cards_found">No cards found</string>
     <string name="change">Change</string>
+    <string name="referral">Referral</string>
+    <string name="refer_now">Refer Now</string>
+    <string name="update_now">Update Now</string>
+    <string name="your_referral_code">Your referral code:</string>
+    <string name="paid_using_stripe">Paid Using Stripe</string>
+    <string name="paid_using_wallet">Paid Using Wallet</string>
+    <string name="delete_account">Delete Account</string>
 
 
 </resources>

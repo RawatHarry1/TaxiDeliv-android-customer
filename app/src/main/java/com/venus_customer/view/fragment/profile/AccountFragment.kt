@@ -46,6 +46,7 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         super.onViewCreated(view, savedInstanceState)
         binding = getViewDataBinding()
         observeData()
+        observeDeleteData()
         observeProfileData()
         setData(view)
         homeViewModel.loginViaToken()
@@ -120,6 +121,9 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         binding.llWallet.setOnSingleClickListener {
             findNavController().navigate(R.id.navigation_wallet)
         }
+        binding.llReferral.setOnSingleClickListener {
+            findNavController().navigate(R.id.navigate_referral)
+        }
 
         binding.llLogout.setOnSingleClickListener {
             DialogUtils.getNegativeDialog(
@@ -129,6 +133,15 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
                 ::onDialogClick
             )
         }
+
+        binding.llDelete.setOnSingleClickListener {
+            DialogUtils.getNegativeDialog(
+                requireActivity(),
+                "Yes",
+                getString(R.string.are_you_sure_you_want_to_delete_account),
+                ::onDeleteAccountClick
+            )
+        }
     }
 
 
@@ -136,8 +149,40 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         viewModel.logout()
     }
 
+    private fun onDeleteAccountClick(position: Int) {
+        viewModel.deleteAccount()
+    }
+
 
     private fun observeData() = viewModel.logout.observeData(this, onLoading = {
+        showProgressDialog()
+    }, onSuccess = {
+        hideProgressDialog()
+        VenusApp.offerApplied = 0
+        VenusApp.offerTitle = ""
+        SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.USER_DATA)
+        startActivity(
+            Intent(
+                requireContext(),
+                SignIn::class.java
+            ).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
+        requireActivity().finishAffinity()
+    }, onError = {
+        hideProgressDialog()
+        VenusApp.offerApplied = 0
+        VenusApp.offerTitle = ""
+        SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.USER_DATA)
+        startActivity(
+            Intent(
+                requireContext(),
+                SignIn::class.java
+            ).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
+        requireActivity().finishAffinity()
+    })
+
+    private fun observeDeleteData() = viewModel.deleteAccount.observeData(this, onLoading = {
         showProgressDialog()
     }, onSuccess = {
         hideProgressDialog()

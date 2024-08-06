@@ -52,8 +52,12 @@ class PreLoginRepo @Inject constructor(
         emit(apiInterface.logout())
     }.flowOn(Dispatchers.IO)
 
+    suspend fun deleteAccount() = flow {
+        emit(apiInterface.deleteAccount())
+    }.flowOn(Dispatchers.IO)
 
-    suspend fun aboutApp(operatorId: String, cityId: String,type:Int) = flow {
+
+    suspend fun aboutApp(operatorId: String, cityId: String, type: Int) = flow {
         emit(apiInterface.aboutApp(operatorId = operatorId, cityId = cityId, type = type))
     }.flowOn(Dispatchers.IO)
 

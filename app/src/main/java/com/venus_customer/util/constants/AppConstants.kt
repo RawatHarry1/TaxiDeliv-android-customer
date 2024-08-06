@@ -49,6 +49,8 @@ object APIEndPointsConstants {
     const val ADD_CARD = "stripe/add_card_3d"
     const val CONFIRM_CARD = "stripe/confirm_card_3d"
     const val GET_CARDS = "fetch/cardDetails"
+    const val DELETE_CARD = "removeCard"
+    const val DELETE_ACCOUNT = "removeAccount"
 }
 
 

@@ -29,7 +29,7 @@ android {
 
     defaultConfig {
         applicationId "com.venus_customer"
-        minSdk 23
+        minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -93,7 +93,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
 */
     def preference_version = "1.2.0"
-    implementation 'androidx.core:core-ktx:1.7.0'
+//    implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -185,8 +185,5 @@ dependencies {
 
     /*Stripe*/
     implementation 'com.stripe:stripe-android:20.48.2'
-
-//    implementation 'com.stripe:stripe-android:22.0.1'
-//    implementation 'com.stripe:stripe-android-core:22.0.1'
 
 }

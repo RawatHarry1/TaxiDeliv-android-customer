@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingVertical="@dimen/_8sdp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingVertical="@dimen/_8sdp">
 
     <ImageView
         android:id="@+id/ivCard"
@@ -21,10 +21,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/_20sdp"
         android:layout_weight="1"
         android:fontFamily="@font/poppins_regular"
         android:text="VISA"
-        android:layout_marginStart="@dimen/_20sdp"
         android:textAppearance="?attr/textAppearanceBody1"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/tvCardNumber"
@@ -35,9 +35,9 @@
         android:id="@+id/tvCardNumber"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:fontFamily="@font/poppins_regular"
         android:layout_marginEnd="@dimen/_20sdp"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center"
         android:text="**** **** **** 123"
         android:textAppearance="?attr/textAppearanceBody1"
         android:textSize="12sp"
@@ -47,21 +47,30 @@
 
     <ImageView
         android:id="@+id/ivPayByCard"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginEnd="4dp"
         android:src="@drawable/bg_circular_stroke_black"
+        app:layout_constraintEnd_toStartOf="@id/ivDeleteCard"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivDeleteCard"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/delete"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:layout_width="0dp"
         android:layout_height="1dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/ivCard"
+        android:background="@color/grey_text_color"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@color/grey_text_color"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivCard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

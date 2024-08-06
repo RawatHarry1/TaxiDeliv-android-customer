@@ -71,8 +71,16 @@ data class UserDataDC(
         val city: String? = null,
         @SerializedName("user_ratings")
         val userRating: String? = null,
+        @SerializedName("referral_code")
+        val referralCode: String? = null,
+        @SerializedName("referral_link")
+        val referralLink: String? = null,
         @SerializedName("stripeCredentials")
-        val stripeCredentials: StripeCredentials? = null
+        val stripeCredentials: StripeCredentials? = null,
+        @SerializedName("referral_data")
+        val referralData: ReferralData? = null,
+        @SerializedName("popup")
+        val popup: Popup? = null
     ) {
         @Keep
         data class DriverDocumentStatus(
@@ -85,7 +93,38 @@ data class UserDataDC(
         @Keep
         data class StripeCredentials(
             @SerializedName("publishable_key")
-            val publishableKey: String? = null
+            val publishableKey: String? = null,
+            @SerializedName("client_secret")
+            val clientSecret: String? = null
+        )
+
+        @Keep
+        data class ReferralData(
+            val branch_android_url: String,
+            val branch_desktop_url: String,
+            val branch_fallback_url: String,
+            val branch_ios_url: String,
+            val fb_share_caption: String,
+            val fb_share_description: String,
+            val invite_earn_more_info: String,
+            val invite_earn_short_msg: String,
+            val referral_caption: String,
+            val referral_cashback_popup_text: String,
+            val referral_email_subject: String,
+            val referral_message: String,
+            val referral_sharing_message: String,
+            val referral_image_d2c: String? = null,
+            val referral_image_d2d: String? = null
+        )
+
+        @Keep
+        data class Popup(
+            val download_link: String?,
+            val force_to_version: Int?,
+            val is_force: Int?,
+            val popup_text: String?
         )
     }
 }
+
+

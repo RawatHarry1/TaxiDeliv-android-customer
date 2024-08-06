@@ -94,6 +94,9 @@ interface ApiInterface {
         @Body requestBody: RequestBody
     ): Response<BaseResponse<UserDataDC>>
 
+    @POST(APIEndPointsConstants.DELETE_ACCOUNT)
+    suspend fun deleteAccount(): Response<BaseResponse<Any>>
+
     @DELETE(APIEndPointsConstants.LOGOUT)
     suspend fun logout(): Response<BaseResponse<Any>>
 
@@ -176,6 +179,12 @@ interface ApiInterface {
     suspend fun confirmCard(
         @Field("client_secret") secret: String = "",
         @Field("setup_intent_id") id: String = ""
+    ): Response<BaseResponse<Any>>
+
+    @FormUrlEncoded
+    @POST(APIEndPointsConstants.DELETE_CARD)
+    suspend fun deleteCard(
+        @Field("card_id") id: String = ""
     ): Response<BaseResponse<Any>>
 
 

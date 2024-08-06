@@ -47,10 +47,10 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivCar"
-            app:layout_constraintEnd_toStartOf="@+id/tvActualPrice"
+            app:layout_constraintEnd_toStartOf="@+id/tvOriginalPrice"
             android:layout_marginStart="12dp"
             android:text="@string/txt_suv"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:fontFamily="@font/poppins_semibold"
             android:textColor="@color/black_text_color" />
         <View
@@ -68,13 +68,14 @@
             android:id="@+id/tvOriginalPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:visibility="gone"
+            android:layout_marginEnd="4dp"
+            android:maxWidth="@dimen/_80sdp"
             android:gravity="center_vertical"
             android:fontFamily="@font/poppins_medium"
             android:text="@string/txt_actual_price"
+            android:visibility="gone"
             android:textColor="@color/black_text_color"
-            android:textSize="14sp"
+            android:textSize="12sp"
             app:layout_constraintEnd_toStartOf="@+id/tvActualPrice"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -88,7 +89,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
             android:text="@string/txt_actual_price"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:fontFamily="@font/poppins_regular"
             android:textColor="@color/black_text_color" />
 
