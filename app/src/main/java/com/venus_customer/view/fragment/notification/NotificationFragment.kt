@@ -30,18 +30,11 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
         super.onViewCreated(view, savedInstanceState)
         binding = getViewDataBinding()
         binding.rvNotifications.adapter = adapter
-        viewModel.currentPage = 1
-        viewModel.isLastPage = false
         observeNotification()
 
         binding.ivBack.setOnClickListener {
             requireView().findNavController().popBackStack()
         }
-    }
-
-
-    override fun onResume() {
-        super.onResume()
 
         binding.rvNotifications.addOnScrollListener(object : PaginationScrollListener() {
             override fun loadMoreItems() {
@@ -59,6 +52,16 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
                 get() = viewModel.isLoading
 
         })
+        viewModel.currentPage = 1
+        viewModel.isLastPage = false
+        viewModel.getNotifications()
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+
 
     }
 

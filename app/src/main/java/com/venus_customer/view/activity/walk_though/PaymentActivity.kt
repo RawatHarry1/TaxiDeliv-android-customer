@@ -212,7 +212,7 @@ class PaymentActivity : BaseActivity<DialogFragementShowAndAddCardsBinding>(),
     override fun onCardClick(card: CardData, isDelete: Boolean) {
         if (isDelete) {
             DialogUtils.getNegativeDialog(
-                this, "Remove Card?",
+                this, "Remove Card",
                 "Are you sure you want to remove *** ${card.last_4} card?"
             ) {
                 cardVM.deleteCardsData(card.card_id)

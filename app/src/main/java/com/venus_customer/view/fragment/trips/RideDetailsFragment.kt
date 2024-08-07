@@ -274,16 +274,24 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             binding.tvVat.text = "${rideSummaryDC?.currency.orEmpty()} ${
                 rideSummaryDC?.netCustomerTax.orEmpty().formatString()
             }"
-            binding.tvDiscount.text = "${rideSummaryDC?.currency.orEmpty()} ${
-                rideSummaryDC?.fareDiscount.orEmpty().formatString()
-            }"
+
+            if (rideSummaryDC?.discountValue.orEmpty().ifEmpty { "0" }.toInt() > 0) {
+                binding.tvDiscount.text = "${rideSummaryDC?.currency.orEmpty()} ${
+                    rideSummaryDC?.discountValue.orEmpty().formatString()
+                }"
+            }
+            else
+            {
+                binding.rlDiscount.isVisible = false
+            }
+
             binding.tvTotalCharge.text = "${rideSummaryDC?.currency.orEmpty()} ${
                 rideSummaryDC?.tripTotal.orEmpty().formatString()
             }"
 
             if (rideSummaryDC?.paidUsingStripe.orEmpty().ifEmpty { "0" }.toInt() > 0) {
                 binding.rlPaidUsingStripe.isVisible = true
-                binding.tvTotalCharge.text = "${rideSummaryDC?.currency.orEmpty()} ${
+                binding.tvPaidUsingStripe.text = "${rideSummaryDC?.currency.orEmpty()} ${
                     rideSummaryDC?.paidUsingStripe.orEmpty().formatString()
                 }"
             }

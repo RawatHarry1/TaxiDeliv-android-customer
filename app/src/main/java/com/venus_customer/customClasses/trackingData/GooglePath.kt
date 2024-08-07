@@ -416,7 +416,9 @@ private fun Context.newAnimateCar(
     try {
         srcMarker?.let { marker ->
             val startPosition = marker.position
-
+            // Set anchor and flat properties
+            marker.isFlat = true
+            marker.setAnchor(0.5f, 0.5f) // Center of the marker
             // Use ValueAnimator for smooth marker movement
             val valueAnimator = ValueAnimator.ofFloat(0f, 1f)
             valueAnimator.duration = 1000 // Duration of animation in milliseconds
