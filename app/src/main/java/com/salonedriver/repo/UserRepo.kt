@@ -28,6 +28,10 @@ class UserRepo @Inject constructor(
         emit(apiInterface.logout())
     }.flowOn(Dispatchers.IO)
 
+    suspend fun deleteAccount() = flow {
+        emit(apiInterface.deleteAccount())
+    }.flowOn(Dispatchers.IO)
+
 
     suspend fun changeAvailability(status: Boolean) = flow {
         emit(apiInterface.changeAvailability(requestBody = JSONObject().apply {

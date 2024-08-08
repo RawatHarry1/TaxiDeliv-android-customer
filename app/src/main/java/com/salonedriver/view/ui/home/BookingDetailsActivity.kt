@@ -3,8 +3,10 @@ package com.salonedriver.view.ui.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -35,7 +37,24 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
     private val bookingId by lazy { intent.getStringExtra("bookingId").orEmpty() }
     private val viewModel by viewModels<BookingVM>()
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
+    private var downloadID: Long = 0
 
+    private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            if (id == downloadID) {
+                showToastShort("Invoice downloaded successfully")
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            unregisterReceiver(onDownloadComplete)
+        } catch (e: Exception) {
+        }
+    }
     /**
      * Get Layout Id
      * */
@@ -58,6 +77,17 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
                 handlePermissionResult(permissions)
             }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(
+                onDownloadComplete,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_EXPORTED
+            )
+        } else {
+            registerReceiver(
+                onDownloadComplete,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            )
+        }
     }
 
 
@@ -145,7 +175,7 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
             ) // Add a user-agent header
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        downloadManager.enqueue(request) // Enqueue the download
+        downloadID =  downloadManager.enqueue(request) // Enqueue the download
     }
 
     private fun handlePermissionResult(permissions: Map<String, Boolean>) {

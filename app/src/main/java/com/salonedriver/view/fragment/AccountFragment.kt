@@ -60,7 +60,6 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
             startActivity(Intent(requireContext(), CreateProfile::class.java).also {
                 it.putExtra("isEditProfile", true)
             })
-
         }
     }
 

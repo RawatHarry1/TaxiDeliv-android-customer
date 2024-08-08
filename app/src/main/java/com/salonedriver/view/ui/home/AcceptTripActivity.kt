@@ -49,7 +49,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
     override fun getLayoutId(): Int {
         return R.layout.fragment_accept_trip
     }
-    val showMessageIndicatorBroadcastReceiver = object : BroadcastReceiver() {
+   private val showMessageIndicatorBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
            binding.ivMsgIndicator.isVisible = true
         }

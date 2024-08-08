@@ -118,7 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_20sdp"
-            android:background="@drawable/shape_round_button"
+            android:background="@drawable/bg_round_enter_msg"
             android:backgroundTint="@color/pink_card"
             app:layout_constraintBottom_toBottomOf="parent">
 

@@ -82,10 +82,8 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface {
                     binding.etMessage.setText("")
                     chatAdapter.notifyDataSetChanged()
                     binding.rvChat.smoothScrollToPosition(chatArrayList.size - 1)
-                }
-                else
-                {
-                  showErrorMessage("No Internet Connection")
+                } else {
+                    showErrorMessage("No Internet Connection")
                 }
             }
 
@@ -146,25 +144,29 @@ class ChatActivity : BaseActivity<ActivityChatBinding>(), SocketInterface {
             fun bind(string: String) {
                 itemBinding.tvMsgName.text = string
                 itemBinding.root.setOnClickListener {
-                    SocketSetup.startMsgEmit(
-                        string,
-                        senderId = driverId,
-                        receiverId = customerId,
-                        engagementId = tripId,
-                        type = "text"
-                    )
-                    chatArrayList.add(
-                        MessageData(
-                            message = string,
-                            sender_id = driverId.toInt(),
-                            receiver_id = customerId.toInt(),
-                            attachment_type = "text",
-                            engagement_id = tripId.toInt(),
-                            created_at = AppUtils.convertUtcToLocal(AppUtils.currentUtcTimeAsString())
+                    if (isInternetAvailable(this@ChatActivity)) {
+                        SocketSetup.startMsgEmit(
+                            string,
+                            senderId = driverId,
+                            receiverId = customerId,
+                            engagementId = tripId,
+                            type = "text"
                         )
-                    )
-                    chatAdapter.notifyDataSetChanged()
-                    binding.rvChat.smoothScrollToPosition(chatArrayList.size - 1)
+                        chatArrayList.add(
+                            MessageData(
+                                message = string,
+                                sender_id = driverId.toInt(),
+                                receiver_id = customerId.toInt(),
+                                attachment_type = "text",
+                                engagement_id = tripId.toInt(),
+                                created_at = AppUtils.convertUtcToLocal(AppUtils.currentUtcTimeAsString())
+                            )
+                        )
+                        chatAdapter.notifyDataSetChanged()
+                        binding.rvChat.smoothScrollToPosition(chatArrayList.size - 1)
+                    } else {
+                        showErrorMessage("No internet connection")
+                    }
                 }
             }
         }

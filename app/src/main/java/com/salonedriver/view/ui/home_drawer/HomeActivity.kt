@@ -23,12 +23,14 @@ import com.salonedriver.SaloneDriver
 import com.salonedriver.customClasses.LocationResultHandler
 import com.salonedriver.customClasses.SingleFusedLocation
 import com.salonedriver.databinding.ActivityHomeBinding
+import com.salonedriver.firebaseSetup.FirebaseNotification
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
 import com.salonedriver.model.dataclassses.userData.UserDataDC
 import com.salonedriver.util.DriverDocumentStatusForApp
 import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.util.commonToast
+import com.salonedriver.util.deleteAlert
 import com.salonedriver.util.logoutAlert
 import com.salonedriver.view.base.BaseActivity
 import com.salonedriver.view.ui.SignUpInActivity
@@ -110,6 +112,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         drawerLayoutCallback()
         clickHandler()
         observeLogout()
+        observeDeleteAccount()
         observeVehicleData()
         addDrawerListener()
         startRepeatingJob()
@@ -238,7 +241,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         }
         binding.llRatings.setOnClickListener {
             navController.navigate(R.id.nav_ratings)
-
             drawerLayout.close()
         }
         binding.llNotifications.setOnClickListener {
@@ -260,7 +262,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         binding.llLogOut.setOnClickListener {
             drawerLayout.close()
             logoutAlert {
+                sendBroadcast(Intent(FirebaseNotification.ACTION_STOP_MEDIA))
                 userVM.logout()
+            }
+        }
+        binding.llDeleteAccount.setOnClickListener {
+            drawerLayout.close()
+            deleteAlert {
+                sendBroadcast(Intent(FirebaseNotification.ACTION_STOP_MEDIA))
+                userVM.deleteAccount()
             }
         }
     }
@@ -287,6 +297,18 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
      * Observe Logout
      * */
     private fun observeLogout() = userVM.logout.observeData(this, onLoading = {
+        showProgressDialog()
+    }, onSuccess = {
+        hideProgressDialog()
+        SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.USER_DATA)
+        startActivity(Intent(this@HomeActivity, SignUpInActivity::class.java))
+        finishAffinity()
+    }, onError = {
+        hideProgressDialog()
+        showToastShort(this)
+    })
+
+    private fun observeDeleteAccount() = userVM.deleteAccount.observeData(this, onLoading = {
         showProgressDialog()
     }, onSuccess = {
         hideProgressDialog()

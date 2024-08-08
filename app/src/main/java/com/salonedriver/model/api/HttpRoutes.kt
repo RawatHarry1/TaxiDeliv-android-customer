@@ -24,6 +24,8 @@ const val GET_PROFILE = "driver/profile"
 
 const val LOGOUT = "logout_driver"
 
+const val DELETE_ACCOUNT = "removeAccount"
+
 const val BOOKING_HISTORY = "driver/bookingHistory"
 
 const val RIDE_SUMMARY = "driver/getTripSummary"

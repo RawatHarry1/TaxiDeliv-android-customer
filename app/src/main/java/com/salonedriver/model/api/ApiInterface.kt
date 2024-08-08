@@ -95,6 +95,9 @@ interface ApiInterface {
         @Body requestBody: RequestBody
     ): Response<BaseResponse<Any>>
 
+    @POST(DELETE_ACCOUNT)
+    suspend fun deleteAccount(): Response<BaseResponse<Any>>
+
 
     @GET(GET_PROFILE)
     suspend fun getProfile(): Response<BaseResponse<Login>>
@@ -181,7 +184,8 @@ interface ApiInterface {
     @GET(ABOUT_US)
     suspend fun aboutUs(
         @Query("operatorId") operatorId: String,
-        @Query("cityId") cityId: String
+        @Query("cityId") cityId: String,
+        @Query("pageType") type: Int
     ): Response<BaseResponse<AboutUsDC>>
 
 

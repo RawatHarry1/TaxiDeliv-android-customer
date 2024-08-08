@@ -4,9 +4,14 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.BitmapFactory
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
@@ -33,6 +38,35 @@ import kotlin.random.Random
 
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 class FirebaseNotification : FirebaseMessagingService() {
+    companion object {
+        const val ACTION_STOP_MEDIA = "com.salonedriver.firebaseSetup.ACTION_STOP_MEDIA"
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            registerReceiver(
+                stopMediaReceiver,
+                IntentFilter(ACTION_STOP_MEDIA),
+                RECEIVER_NOT_EXPORTED
+            )
+        else
+            registerReceiver(stopMediaReceiver, IntentFilter(ACTION_STOP_MEDIA))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(stopMediaReceiver)
+    }
+
+    private val stopMediaReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == ACTION_STOP_MEDIA) {
+                Log.i("PUSHNOTI","IN stop media receiver")
+                releaseMediaPlayer()
+            }
+        }
+    }
 
     /**
      * Initialize Variables
@@ -206,7 +240,6 @@ class FirebaseNotification : FirebaseMessagingService() {
 
                     else -> {
                         Log.i("PUSHNOTI", "in home")
-
                         getPendingIntent(destinationId = R.id.nav_home)
                     }
                 }
@@ -344,13 +377,48 @@ class FirebaseNotification : FirebaseMessagingService() {
         try {
             // Release previous media player instance
             releaseMediaPlayer()
-
             // Create and configure the MediaPlayer instance with the custom sound file
-            mediaPlayer = MediaPlayer.create(this, R.raw.alert_for_new_ride).apply {
+            mediaPlayer = MediaPlayer.create(this, R.raw.ride_accept).apply {
                 start()
                 setOnCompletionListener {
                     releaseMediaPlayer()
                 }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun playCustomSoundInLoop() {
+        try {
+            // Release previous media player instance
+            releaseMediaPlayer()
+
+            // Request audio focus and set the volume to a desired level
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            val originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+            val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0)
+            val audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build()
+                )
+                .setAcceptsDelayedFocusGain(true)
+                .setWillPauseWhenDucked(false)
+                .setOnAudioFocusChangeListener { }
+                .build()
+
+            audioManager.requestAudioFocus(audioFocusRequest)
+
+
+            // Create and configure the MediaPlayer instance with the custom sound file
+            mediaPlayer = MediaPlayer.create(this, R.raw.ride_accept).apply {
+                isLooping = true
+                start()
             }
         } catch (e: Exception) {
             e.printStackTrace()

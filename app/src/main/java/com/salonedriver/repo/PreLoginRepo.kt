@@ -72,10 +72,10 @@ class PreLoginRepo @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-    suspend fun aboutUsData(operatorId: String, cityId: String) = flow {
+    suspend fun aboutUsData(operatorId: String, cityId: String,type:Int) = flow {
         emit(
             apiInterface.aboutUs(
-                operatorId, cityId
+                operatorId, cityId,type
             )
         )
     }.flowOn(Dispatchers.IO)

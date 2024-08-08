@@ -5,7 +5,7 @@
         android:width="1dp"
         android:color="@color/pink_card" />
     <corners
-        android:bottomRightRadius="50dp"
-        android:topLeftRadius="50dp"
-        android:topRightRadius="50dp" />
+        android:bottomRightRadius="20dp"
+        android:topLeftRadius="20dp"
+        android:topRightRadius="20dp" />
 </shape>

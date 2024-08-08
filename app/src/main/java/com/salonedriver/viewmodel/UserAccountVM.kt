@@ -30,12 +30,18 @@ class UserAccountVM @Inject constructor(
     }
 
 
-
     private val _logout by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
     val logout: LiveData<ApiState<BaseResponse<Any>>> get() = _logout
 
     fun logout() = viewModelScope.launch {
         repository.logout().setApiState(_logout)
+    }
+
+    private val _deleteAccount by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
+    val deleteAccount: LiveData<ApiState<BaseResponse<Any>>> get() = _deleteAccount
+
+    fun deleteAccount() = viewModelScope.launch {
+        repository.deleteAccount().setApiState(_deleteAccount)
     }
 
 

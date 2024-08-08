@@ -35,7 +35,7 @@ class AboutAppVM @Inject constructor(
     val aboutUsLinkData: LiveData<ApiState<BaseResponse<AboutUsDC>>> get() = _aboutUsLinksData
 
     fun getAboutUsData() = viewModelScope.launch {
-        repository.aboutUsData(operatorId, cityId).setApiState(_aboutUsLinksData)
+        repository.aboutUsData(operatorId, cityId,2).setApiState(_aboutUsLinksData)
     }
 
 }

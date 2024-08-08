@@ -35,6 +35,8 @@ import com.salonedriver.customClasses.LocationResultHandler
 import com.salonedriver.customClasses.SingleFusedLocation
 import com.salonedriver.databinding.DialogTripsBinding
 import com.salonedriver.databinding.FragmentHomeBinding
+import com.salonedriver.dialogs.DialogUtils
+import com.salonedriver.firebaseSetup.FirebaseNotification
 import com.salonedriver.firebaseSetup.NewRideNotificationDC
 import com.salonedriver.firebaseSetup.NotificationInterface
 import com.salonedriver.model.api.observeData
@@ -196,6 +198,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         try {
             LocalBroadcastManager.getInstance(requireContext())
                 .unregisterReceiver(locationUpdateBroadcast)
+            requireActivity().unregisterReceiver(showMessageIndicatorBroadcastReceiver)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -277,6 +280,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             .error(R.drawable.ic_profile_user).into(binding.ivUser)
 
         binding.tvAcceptBtn.setOnClickListener {
+            requireActivity().sendBroadcast(Intent(FirebaseNotification.ACTION_STOP_MEDIA))
             screenType = 2
             dialog?.dismiss()
             context.startActivity(
@@ -285,6 +289,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             )
         }
         binding.tvIgnoreBtn.setOnClickListener {
+            requireActivity().sendBroadcast(Intent(FirebaseNotification.ACTION_STOP_MEDIA))
             rideViewModel.rejectRide(data.tripId.orEmpty())
             AppUtils.tripId = ""
             rideViewModel.newRideNotificationData = NewRideNotificationDC()
@@ -542,7 +547,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         viewModel.loginViaAccessToken(location.latitude, location.longitude)
     }
 
+    private fun onDialogClick(promoCode: String) {
 
+    }
     //Login Via Access Token
     private fun observeLoginAccessToken() =
         viewModel.loginViaAccessToken.observeData(viewLifecycleOwner, onLoading = {
@@ -550,6 +557,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         }, onSuccess = {
             hideProgressDialog()
             SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.USER_DATA, this)
+            if (this?.login != null && this.login?.popup != null) {
+                if (this.login?.popup?.is_force != null
+                    && this.login?.popup?.popup_text != null
+                    && this.login?.popup?.download_link != null
+                ) {
+                    DialogUtils.getVersionUpdateDialog(
+                        requireActivity(),
+                        this.login?.popup?.is_force!!,
+                        this.login?.popup?.popup_text!!,
+                        this.login?.popup?.download_link!!,
+                        ::onDialogClick
+                    )
+                }
+            }
             val isLowWalletBalance =
                 (this?.login?.actualCreditBalance.orEmpty().ifEmpty { "0.0" }.toDoubleOrNull()
                     ?: 0.0) < (this?.login?.minDriverBalance.orEmpty().ifEmpty { "0.0" }
@@ -873,7 +894,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
 
     override fun onDestroy() {
         unregisterReceiver()
-        requireActivity().unregisterReceiver(showMessageIndicatorBroadcastReceiver)
+
         super.onDestroy()
     }
 

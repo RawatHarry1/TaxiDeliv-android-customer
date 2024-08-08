@@ -22,6 +22,7 @@ import com.salonedriver.R
 import com.salonedriver.SaloneDriver
 import com.salonedriver.databinding.DialogNegativeTwoButtonBinding
 import com.salonedriver.databinding.DocumentUnderProcessAlertBinding
+import com.salonedriver.firebaseSetup.FirebaseNotification
 import com.salonedriver.view.adapter.VehicleModelAdapter
 import com.salonedriver.view.ui.SignIn
 import java.lang.ref.WeakReference
@@ -112,6 +113,7 @@ fun Context.vehicleModelAdapter(
 fun showSessionExpire() {
     try {
         SaloneDriver.appContext.let { context ->
+            context.sendBroadcast(Intent(FirebaseNotification.ACTION_STOP_MEDIA))
             Toast.makeText(
                 context,
                 context.getString(R.string.session_expire_due_to_security_purpose_please_sign_in_again),
@@ -137,6 +139,32 @@ fun logoutAlert(callback: () -> Unit) = try {
                 DialogNegativeTwoButtonBinding.inflate(LayoutInflater.from(context), null, false)
             setView(binding.root)
             val dialog = create()
+
+            binding.tvCancel.setOnClickListener {
+                dialog.dismiss()
+            }
+
+            binding.tvConfirm.setOnClickListener {
+                dialog.dismiss()
+                callback()
+            }
+
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.show()
+        }
+    }
+} catch (e: Exception) {
+    e.printStackTrace()
+}
+
+fun deleteAlert(callback: () -> Unit) = try {
+    SaloneDriver.appContext.let { context ->
+        AlertDialog.Builder(context).apply {
+            val binding =
+                DialogNegativeTwoButtonBinding.inflate(LayoutInflater.from(context), null, false)
+            setView(binding.root)
+            val dialog = create()
+            binding.tvTitle.text = "Are you sure you want\n to delete account?"
 
             binding.tvCancel.setOnClickListener {
                 dialog.dismiss()

@@ -62,7 +62,7 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
             SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.WALKTHROUGH)
         SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
             ?.let {
-                if ((it.login?.registrationStepCompleted?.isVehicleInfoCompleted == true) && (it.accessToken?.isNotEmpty() == true)) {
+                if ((it.login?.registrationStepCompleted?.isVehicleInfoCompleted == true) && (it.login?.registrationStepCompleted?.isDocumentUploaded == true) && (it.accessToken?.isNotEmpty() == true)) {
                     changeIntent(HomeActivity::class.java)
                 } else {
                     if (walkThroughShown)

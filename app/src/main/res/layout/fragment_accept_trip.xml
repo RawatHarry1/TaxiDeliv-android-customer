@@ -90,13 +90,14 @@
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tvCustomerName"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
-                            android:text="@string/esther"
+                            android:layout_marginEnd="@dimen/_4sdp"
                             android:textColor="@color/black_text_color2"
-                            android:textSize="20sp"
-                            app:fontFamily="@font/proxima_bold"
+                            android:textSize="16sp"
+                            app:layout_constraintEnd_toStartOf="@+id/ivMsg"
+                            app:fontFamily="@font/proxima_semibold"
                             app:layout_constraintBottom_toBottomOf="@id/ivCustomerPic"
                             app:layout_constraintStart_toEndOf="@+id/ivCustomerPic"
                             app:layout_constraintTop_toTopOf="@+id/ivCustomerPic"

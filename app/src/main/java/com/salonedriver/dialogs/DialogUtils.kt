@@ -3,8 +3,10 @@ package com.salonedriver.dialogs
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
@@ -17,14 +19,15 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.mukesh.mukeshotpview.mukeshOtpView.MukeshOtpView
 import com.salonedriver.R
+import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.DialogEditProfilePictureBinding
 
 
 object DialogUtils {
-
 
     fun getNegativeDialog(
         mContext: Activity,
@@ -214,6 +217,43 @@ object DialogUtils {
         }
         return dialogView
 
+    }
+    fun getVersionUpdateDialog(
+        mContext: Activity,
+        forceUpdate: Int,
+        popUpDesc: String,
+        downloadLink:String,
+        onClickNegativeResult: (String) -> Unit?
+    ): Dialog {
+        val dialogView = Dialog(mContext)
+        with(dialogView) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.dialog_version_update)
+            setCancelable(false)
+            val tvUpdateNow = findViewById<AppCompatTextView>(R.id.tvUpdateNow)
+            val tvDesc = findViewById<AppCompatTextView>(R.id.tvDescription)
+            val tvLater = findViewById<AppCompatTextView>(R.id.tvLater)
+            val viewMiddle = findViewById<View>(R.id.viewMiddle)
+            tvDesc.text = popUpDesc
+            if (forceUpdate == 1) {
+                tvLater.isVisible = false
+                viewMiddle.isVisible = false
+            }
+            tvUpdateNow.setOnSingleClickListener {
+                    mContext.startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(downloadLink)
+                        )
+                    )
+            }
+            tvLater.setOnSingleClickListener {
+                dismiss()
+            }
+            show()
+        }
+        return dialogView
     }
 
 

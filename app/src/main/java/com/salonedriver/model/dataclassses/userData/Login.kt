@@ -1,6 +1,7 @@
 package com.salonedriver.model.dataclassses.userData
 
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 data class Login(
@@ -97,9 +98,17 @@ data class Login(
     @SerializedName("driver_document_status")
     var driverDocumentStatus: DriverDocumentStatus? = null,
     @SerializedName("driver_blocked_multiple_cancelation")
-    var driverBlockedMultipleCancellation: DriverBlockedMultipleCancellation? = null
+    var driverBlockedMultipleCancellation: DriverBlockedMultipleCancellation? = null,
+    @SerializedName("popup")
+    val popup: Popup? = null
 )
-
+@Keep
+data class Popup(
+    val download_link: String?,
+    val force_to_version: Int?,
+    val is_force: Int?,
+    val popup_text: String?
+)
 
 data class DriverDocumentStatus(
     @SerializedName("error")
