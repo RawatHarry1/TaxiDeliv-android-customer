@@ -295,12 +295,14 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                     rideSummaryDC?.paidUsingStripe.orEmpty().formatString()
                 }"
             }
+
             if (rideSummaryDC?.paidUsingWallet.orEmpty().ifEmpty { "0" }.toInt() > 0) {
                 binding.rlPaidUsingWallet.isVisible = true
                 binding.tvPaidUsingWallet.text = "${rideSummaryDC?.currency.orEmpty()} ${
                     rideSummaryDC?.paidUsingWallet.orEmpty().formatString()
                 }"
             }
+
             if (rideSummaryDC?.paidUsingPaytm.orEmpty().ifEmpty { "0" }.toInt() > 0) {
                 binding.rlPaidUsingPaytm.isVisible = true
                 binding.tvPaidUsingPaytm.text = "${rideSummaryDC?.currency.orEmpty()} ${

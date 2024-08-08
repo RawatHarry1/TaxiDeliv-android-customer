@@ -260,7 +260,7 @@
     <string name="choose_from_gallery">Choose from gallery</string>
     <string name="empty_string" />
     <string name="get_started">Get started</string>
-    <string name="session_expire_due_to_security_purpose_please_sign_in_again">Session e\nxpire due to security reasons.</string>
+    <string name="session_expire_due_to_security_purpose_please_sign_in_again">Session expire due to security reasons.</string>
     <string name="create_your_nprofile">Create Your Profile</string>
     <string name="edit_your_nprofile">Edit Your Profile</string>
     <string name="upload_photo">Upload Photo</string>

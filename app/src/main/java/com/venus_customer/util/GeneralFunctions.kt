@@ -74,6 +74,7 @@ fun showSessionExpire() {
                     SignIn::class.java
                 ).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
             )
+            (context as Activity).finishAffinity()
         }
     } catch (e: Exception) {
         e.printStackTrace()

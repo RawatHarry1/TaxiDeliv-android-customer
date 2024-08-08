@@ -319,6 +319,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                         showOfferAnimationOnce = true
                         rideVM.cardId = ""
                         rideVM.last4 = ""
+                        rideVM.couponToApply = 0
+                        rideVM.promoCode = ""
                         rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
                         // Bottom sheet is hidden, attempt to clear state
 //                        Handler(Looper.getMainLooper()).postDelayed({
@@ -1559,6 +1561,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             showToastShort(this)
             rideVM.cardId = ""
             rideVM.last4 = ""
+            rideVM.couponToApply = 0
+            rideVM.promoCode = ""
             binding.clWhereMain.visibility = View.VISIBLE
             binding.clMapMain.visibility = View.GONE
             rideVM.hideHomeNav(false)
@@ -1569,6 +1573,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.createRideData.status = 0
             rideVM.cardId = ""
             rideVM.last4 = ""
+            rideVM.couponToApply = 0
+            rideVM.promoCode = ""
             rideVM.updateUiState(RideVM.RideAlertUiState.FindDriverDialog)
         })
 
@@ -1582,6 +1588,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.createRideData.dropLocation = null
             binding.clWhereMain.visibility = View.VISIBLE
             binding.clMapMain.visibility = View.GONE
+            rideVM.cardId = ""
+            rideVM.last4 = ""
+            rideVM.couponToApply = 0
+            rideVM.promoCode = ""
             hideAllBottomSheets()
             rideVM.hideHomeNav(false)
         }, onSuccess = {
@@ -1592,6 +1602,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.createRideData.dropLocation = null
             binding.clWhereMain.visibility = View.VISIBLE
             binding.clMapMain.visibility = View.GONE
+            rideVM.cardId = ""
+            rideVM.last4 = ""
+            rideVM.couponToApply = 0
+            rideVM.promoCode = ""
             hideAllBottomSheets()
 //            rideVM.createRideData.sessionId = this?.sessionId.orEmpty()
 //            rideVM.updateUiState(RideVM.RideAlertUiState.FindDriverDialog)

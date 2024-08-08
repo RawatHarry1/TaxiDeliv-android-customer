@@ -43,6 +43,7 @@ class RideVM @Inject constructor(
     val userData by lazy { SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA) }
     var couponToApply = 0
     var paymentOption = 1
+    var promoCode = ""
     var cardId = ""
     var last4 = ""
 
