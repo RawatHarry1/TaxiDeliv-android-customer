@@ -456,6 +456,4 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             }
         }
     }
-
-
 }

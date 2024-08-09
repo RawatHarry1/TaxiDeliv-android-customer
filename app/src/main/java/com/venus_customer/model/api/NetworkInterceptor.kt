@@ -2,6 +2,7 @@ package com.venus_customer.model.api
 
 import android.os.Build
 import android.service.autofill.UserData
+import com.venus_customer.BuildConfig
 import com.venus_customer.model.dataClass.base.ClientConfig
 import com.venus_customer.model.dataClass.userData.UserDataDC
 import com.venus_customer.util.SharedPreferencesManager
@@ -17,7 +18,7 @@ class NetworkInterceptor : Interceptor {
         val request = chain.request()
         val fcmToken = runBlocking { fcmToken() }
         val newRequest = request.newBuilder().apply {
-            addHeader("appVersion", "550")
+            addHeader("appVersion", BuildConfig.VERSION_CODE.toString())
             addHeader("deviceName", Build.MODEL)
             addHeader("deviceToken", fcmToken)
             addHeader("deviceType", "0")
