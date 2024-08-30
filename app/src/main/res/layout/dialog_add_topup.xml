@@ -78,6 +78,7 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/bg_white_8_rad_1_stroke"
                     android:padding="16dp"
+                    android:inputType="number"
                     android:fontFamily="@font/poppins_regular"
                     android:textColor="@color/black_text_color2"
                     android:text="@string/_100" />

@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.salonedriver.BuildConfig
 import com.salonedriver.model.dataclassses.MessageData
 import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
 import com.salonedriver.model.dataclassses.userData.UserDataDC
@@ -47,7 +48,7 @@ object SocketSetup {
                     transports = arrayOf(WebSocket.NAME)
 //                    query = "token=$authToken"
                 }
-                socket = IO.socket("https://dev-rides-api.venustaxi.in", ioOptions)
+                socket = IO.socket(BuildConfig.SOCKET_BASE_URL, ioOptions)
                 listenerOn(Socket.EVENT_CONNECT, SOCKET_CONNECT)
                 listenerOn(Socket.EVENT_DISCONNECT, SOCKET_DISCONNECT)
                 listenerOn(Socket.EVENT_CONNECT_ERROR, SOCKET_ERROR)

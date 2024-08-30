@@ -51,6 +51,9 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
         super.onCreate(savedInstanceState)
         binding = getViewDataBinding()
         binding.etDesignation.filters = arrayOf(NoSpaceInputFilter())
+        if (isEditProfile)
+            binding.tvCreateTitle.text =  getText(R.string.edit_your_nprofile)
+
         fetchUserData()
         binding.tvSubmit.setOnSingleClickListener {
             if (checkValidation()) {

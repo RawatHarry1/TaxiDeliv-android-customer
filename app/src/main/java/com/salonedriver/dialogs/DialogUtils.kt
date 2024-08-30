@@ -25,6 +25,7 @@ import com.mukesh.mukeshotpview.mukeshOtpView.MukeshOtpView
 import com.salonedriver.R
 import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.DialogEditProfilePictureBinding
+import com.salonedriver.util.showSnackBar
 
 
 object DialogUtils {
@@ -196,33 +197,35 @@ object DialogUtils {
             setContentView(R.layout.dialog_add_topup)
             setCancelable(false)
 
-
-
-
             val etEnterAmount = findViewById<AppCompatEditText>(R.id.etEnterAmount)
             val btnAddAmount = findViewById<AppCompatTextView>(R.id.btnAddAmount1)
             val ivClose = findViewById<AppCompatImageView>(R.id.ivClose)
-
-
 
             ivClose.setOnClickListener {
                 dismiss()
             }
 
             btnAddAmount.setOnClickListener {
-                onClickDialogLambda("otp")
-                dismiss()
+                if (etEnterAmount.text.toString().trim().isEmpty())
+                    showSnackBar("Please enter amount", btnAddAmount)
+                else if (etEnterAmount.text.toString().startsWith("0"))
+                    showSnackBar("Please enter valid amount", btnAddAmount)
+                else {
+                    onClickDialogLambda(etEnterAmount.text.toString())
+                    dismiss()
+                }
             }
             show()
         }
         return dialogView
 
     }
+
     fun getVersionUpdateDialog(
         mContext: Activity,
         forceUpdate: Int,
         popUpDesc: String,
-        downloadLink:String,
+        downloadLink: String,
         onClickNegativeResult: (String) -> Unit?
     ): Dialog {
         val dialogView = Dialog(mContext)
@@ -241,12 +244,12 @@ object DialogUtils {
                 viewMiddle.isVisible = false
             }
             tvUpdateNow.setOnSingleClickListener {
-                    mContext.startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(downloadLink)
-                        )
+                mContext.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(downloadLink)
                     )
+                )
             }
             tvLater.setOnSingleClickListener {
                 dismiss()

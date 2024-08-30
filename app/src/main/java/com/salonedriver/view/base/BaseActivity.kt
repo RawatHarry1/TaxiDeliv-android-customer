@@ -1,5 +1,6 @@
 package com.salonedriver.view.base
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
@@ -17,7 +18,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.google.android.material.snackbar.Snackbar
 import com.salonedriver.R
+import com.salonedriver.SaloneDriver
 import com.salonedriver.dialogs.CustomProgressDialog
 import com.salonedriver.util.AppUtils
 import com.salonedriver.viewmodel.base.BaseViewModel
@@ -278,7 +281,21 @@ abstract class BaseActivity<MyDataBinding : ViewDataBinding> : AppCompatActivity
     fun showErrorMessage(message: String){
         showToastShort(message = message)
     }
-
+    fun showSnackBar(message: String, view: View? = null){
+        Log.e("dfsdfsdf", "sdfsdf  ${message}")
+        SaloneDriver.appContext.let { context ->
+            val snackbar = Snackbar.make(
+                view ?: (context as Activity).findViewById(android.R.id.content),
+                message,
+                Snackbar.LENGTH_SHORT
+            )
+            // Set the Snackbar's anchor view to ensure it appears above the BottomSheet
+            if (view != null && view is ViewGroup) {
+                snackbar.anchorView = view
+            }
+            snackbar.show()
+        }
+    }
 
     /**
      * function to get height of bottom navigation

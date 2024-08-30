@@ -78,5 +78,4 @@ class UploadDocuments : BaseActivity<ActivityUploadDocumentsBinding>() {
             hideProgressDialog()
             showErrorMessage(this)
         })
-
 }

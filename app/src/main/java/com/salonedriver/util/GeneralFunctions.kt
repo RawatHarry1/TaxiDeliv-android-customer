@@ -23,6 +23,7 @@ import com.salonedriver.SaloneDriver
 import com.salonedriver.databinding.DialogNegativeTwoButtonBinding
 import com.salonedriver.databinding.DocumentUnderProcessAlertBinding
 import com.salonedriver.firebaseSetup.FirebaseNotification
+import com.salonedriver.firebaseSetup.SoundService
 import com.salonedriver.view.adapter.VehicleModelAdapter
 import com.salonedriver.view.ui.SignIn
 import java.lang.ref.WeakReference
@@ -113,7 +114,7 @@ fun Context.vehicleModelAdapter(
 fun showSessionExpire() {
     try {
         SaloneDriver.appContext.let { context ->
-            context.sendBroadcast(Intent(FirebaseNotification.ACTION_STOP_MEDIA))
+            context.stopService(Intent(context,SoundService::class.java))
             Toast.makeText(
                 context,
                 context.getString(R.string.session_expire_due_to_security_purpose_please_sign_in_again),

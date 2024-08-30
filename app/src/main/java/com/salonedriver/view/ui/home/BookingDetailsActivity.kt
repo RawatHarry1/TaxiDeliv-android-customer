@@ -19,6 +19,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.salonedriver.BuildConfig
 import com.salonedriver.R
 import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.ActivityBookingDetailsBinding
@@ -182,7 +183,7 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (permissions[Manifest.permission.READ_MEDIA_IMAGES] == true
             ) {
-                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${bookingId}"
+                val url = "${BuildConfig.BASE_URL}ride/invoice?ride_id=${bookingId}"
                 downloadPdf(
                     this,
                     url,
@@ -204,7 +205,7 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
             if (permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true
                 && permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
             ) {
-                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${bookingId}"
+                val url = "${BuildConfig.BASE_URL}ride/invoice?ride_id=${bookingId}"
                 downloadPdf(
                     this,
                     url,
@@ -277,7 +278,7 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
                     )
                 )
             } else {
-                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${bookingId}"
+                val url = "${BuildConfig.BASE_URL}ride/invoice?ride_id=${bookingId}"
                 downloadPdf(
                     this,
                     url,
@@ -302,7 +303,7 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
                     )
                 )
             } else {
-                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${bookingId}"
+                val url = "${BuildConfig.BASE_URL}ride/invoice?ride_id=${bookingId}"
                 downloadPdf(
                     this,
                     url,

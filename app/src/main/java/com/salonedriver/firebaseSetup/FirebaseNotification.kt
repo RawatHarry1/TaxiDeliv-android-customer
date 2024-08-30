@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
@@ -38,35 +36,6 @@ import kotlin.random.Random
 
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 class FirebaseNotification : FirebaseMessagingService() {
-    companion object {
-        const val ACTION_STOP_MEDIA = "com.salonedriver.firebaseSetup.ACTION_STOP_MEDIA"
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            registerReceiver(
-                stopMediaReceiver,
-                IntentFilter(ACTION_STOP_MEDIA),
-                RECEIVER_NOT_EXPORTED
-            )
-        else
-            registerReceiver(stopMediaReceiver, IntentFilter(ACTION_STOP_MEDIA))
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(stopMediaReceiver)
-    }
-
-    private val stopMediaReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == ACTION_STOP_MEDIA) {
-                Log.i("PUSHNOTI","IN stop media receiver")
-                releaseMediaPlayer()
-            }
-        }
-    }
 
     /**
      * Initialize Variables
@@ -80,6 +49,7 @@ class FirebaseNotification : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         Log.i("PUSHNOTI", Gson().toJson(remoteMessage.data))
+        Log.i("PUSHNOTI", "ALL DATA::::    ${Gson().toJson(remoteMessage)}")
         remoteMessage.notification.let {
             notificationData.title = it?.title ?: getString(R.string.app_name)
             notificationData.message = it?.body ?: getString(R.string.app_name)
@@ -102,16 +72,17 @@ class FirebaseNotification : FirebaseMessagingService() {
             when {
                 (notificationData.notificationType?.toIntOrNull()
                     ?: -1) == NotificationStatus.NEW_RIDE.type -> {
-                    HomeFragment.notificationInterface?.newRide()
-                        ?: kotlin.run {
+                    HomeFragment.notificationInterface?.newRide() ?: kotlin.run {
 //                            sendNotification()
-                            playCustomSound()
-                        }
+//                            playCustomSound()
+//                            playCustomSoundInLoop()
+                    }
                 }
 
                 (notificationData.notificationType?.toIntOrNull()
                     ?: -1) == NotificationStatus.TIME_OUT_RIDE.type -> {
                     HomeFragment.notificationInterface?.timeOutRide()
+                    stopSoundService()
                 }
 
                 (notificationData.notificationType?.toIntOrNull()
@@ -135,15 +106,31 @@ class FirebaseNotification : FirebaseMessagingService() {
                             ?: -1) == NotificationStatus.TIME_OUT_RIDE.type
                     ) {
                         Log.i("PUSHNOTI", "on type 2")
-                    } else
-                        sendNotification()
-                    if ((notificationData.notificationType?.toIntOrNull()
-                            ?: -1) == 0
-                    )
-                        playCustomSound()
+                        stopSoundService()
+                    } else if ((notificationData.notificationType?.toIntOrNull() ?: -1) == 0) {
+                        startSoundService()
+//                        playCustomSoundInLoop()
+//                        playCustomSound()
+                    } else sendNotification()
+
                 }
             }
 
+    }
+
+    private fun startSoundService() {
+        stopSoundService()
+        startForegroundService(
+            Intent(this, SoundService::class.java).putExtra(
+                "title", "${notificationData.title}"
+            ).putExtra(
+                "message", "${notificationData.message}"
+            )
+        )
+    }
+
+    private fun stopSoundService() {
+        stopService(Intent(this, SoundService::class.java))
     }
 
 
@@ -212,19 +199,15 @@ class FirebaseNotification : FirebaseMessagingService() {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-            .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
-            .setSound(
+            .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL).setSound(
 //                if (notificationType == 0) {
 //                    soundUri
 //                } else {
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 //                }
-            )
-            .setVibrate(
-                if (notificationType == 0
-                ) hardVibrationPattern else normalVibrationPattern
-            )
-            .setContentIntent(
+            ).setVibrate(
+                if (notificationType == 0) hardVibrationPattern else normalVibrationPattern
+            ).setContentIntent(
                 when (notificationData.notificationType?.toIntOrNull() ?: -1) {
                     NotificationStatus.WALLET_UPDATE.type -> {
                         Log.i("PUSHNOTI", "in wallet")
@@ -233,8 +216,7 @@ class FirebaseNotification : FirebaseMessagingService() {
 
                     NotificationStatus.CHAT.type -> {
                         sendBroadcast(Intent("newMsg"))
-                        getPendingIntent(
-                            destinationId = R.id.nav_home,
+                        getPendingIntent(destinationId = R.id.nav_home,
                             bundle = Bundle().apply { putString("notification_type", "600") })
                     }
 
@@ -309,17 +291,13 @@ class FirebaseNotification : FirebaseMessagingService() {
 //                .createTaskStackBuilder()
 //                .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)!!
 //        else
-        NavDeepLinkBuilder(this)
-            .setComponentName(HomeActivity::class.java)
-            .setGraph(R.navigation.mobile_navigation)
-            .setDestination(destinationId)
+        NavDeepLinkBuilder(this).setComponentName(HomeActivity::class.java)
+            .setGraph(R.navigation.mobile_navigation).setDestination(destinationId)
             .setArguments(bundle).createPendingIntent()
 
     private fun createPendingIntent(destinationId: Int, bundle: Bundle? = null): PendingIntent? {
-        val navDeepLinkBuilder = NavDeepLinkBuilder(this)
-            .setComponentName(HomeActivity::class.java)
-            .setGraph(R.navigation.mobile_navigation)
-            .setDestination(destinationId)
+        val navDeepLinkBuilder = NavDeepLinkBuilder(this).setComponentName(HomeActivity::class.java)
+            .setGraph(R.navigation.mobile_navigation).setDestination(destinationId)
 
         if (bundle != null) {
             Log.d("NotificationRedirection", "Bundle is not null, setting arguments: $bundle")
@@ -330,8 +308,7 @@ class FirebaseNotification : FirebaseMessagingService() {
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             navDeepLinkBuilder.createTaskStackBuilder()
-                .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
-                .also { pendingIntent ->
+                .getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE).also { pendingIntent ->
                     if (pendingIntent == null) {
                         Log.e(
                             "NotificationRedirection",
@@ -345,20 +322,19 @@ class FirebaseNotification : FirebaseMessagingService() {
                     }
                 }
         } else {
-            navDeepLinkBuilder.createPendingIntent()
-                .also { pendingIntent ->
-                    if (pendingIntent == null) {
-                        Log.e(
-                            "NotificationRedirection",
-                            "Failed to create PendingIntent on Android < 31"
-                        )
-                    } else {
-                        Log.d(
-                            "NotificationRedirection",
-                            "Successfully created PendingIntent on Android < 31"
-                        )
-                    }
+            navDeepLinkBuilder.createPendingIntent().also { pendingIntent ->
+                if (pendingIntent == null) {
+                    Log.e(
+                        "NotificationRedirection",
+                        "Failed to create PendingIntent on Android < 31"
+                    )
+                } else {
+                    Log.d(
+                        "NotificationRedirection",
+                        "Successfully created PendingIntent on Android < 31"
+                    )
                 }
+            }
         }
     }
 
@@ -391,6 +367,8 @@ class FirebaseNotification : FirebaseMessagingService() {
 
     private fun playCustomSoundInLoop() {
         try {
+
+            Log.i("PLAYSOUND", "in try")
             // Release previous media player instance
             releaseMediaPlayer()
 
@@ -400,17 +378,13 @@ class FirebaseNotification : FirebaseMessagingService() {
             val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0)
-            val audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                .setAudioAttributes(
+            val audioFocusRequest =
+                AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setAudioAttributes(
                     AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build()
-                )
-                .setAcceptsDelayedFocusGain(true)
-                .setWillPauseWhenDucked(false)
-                .setOnAudioFocusChangeListener { }
-                .build()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()
+                ).setAcceptsDelayedFocusGain(true).setWillPauseWhenDucked(false)
+                    .setOnAudioFocusChangeListener { }.build()
 
             audioManager.requestAudioFocus(audioFocusRequest)
 
@@ -421,6 +395,7 @@ class FirebaseNotification : FirebaseMessagingService() {
                 start()
             }
         } catch (e: Exception) {
+            Log.i("PLAYSOUND", "${e.message}")
             e.printStackTrace()
         }
     }

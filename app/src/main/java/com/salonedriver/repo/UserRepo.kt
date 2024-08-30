@@ -61,4 +61,24 @@ class UserRepo @Inject constructor(
         emit(apiInterface.getTransactionHistory())
     }.flowOn(Dispatchers.IO)
 
+    suspend fun addMoney(jsonObject: JSONObject) = flow {
+        emit(apiInterface.addMoney(requestBody = jsonObject.getJsonRequestBody()))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun addCard(clientSecret: String) = flow {
+        emit(apiInterface.addCard(clientSecret))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun confirmCard(clientSecret: String, intentId: String) = flow {
+        emit(apiInterface.confirmCard(clientSecret, intentId))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getCards(type: Int) = flow {
+        emit(apiInterface.getCards(type))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun deleteCard(cardId: String) = flow {
+        emit(apiInterface.deleteCard(cardId))
+    }.flowOn(Dispatchers.IO)
+
 }

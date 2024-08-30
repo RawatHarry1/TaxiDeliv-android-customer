@@ -16,6 +16,8 @@ data class TransactionHistoryDC(
     val pageSize: String? = null,
     @SerializedName("user_name")
     val userName: String? = null,
+    @SerializedName("currency")
+    val currency: String? = null,
     @SerializedName("transactions")
     val transactions: List<Transaction>? = null
 ) {

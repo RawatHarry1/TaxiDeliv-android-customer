@@ -60,18 +60,14 @@ android {
             dimension "server"
             buildConfigField("String", "BASE_URL", '"https://dev-rides.venustaxi.in/"')
             buildConfigField("String", "VARIANT", '"dev"')
-            resValue "string", "map_api_key", "AIzaSyAK6809b_21d4H62yMZpIV9JcTVWcyDtPY"
-        }
-        qa {
-            dimension "server"
-            buildConfigField("String", "BASE_URL", '"https://orbitqa.matter.in/"')
-            buildConfigField("String", "VARIANT", '"qa"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://dev-rides-api.venustaxi.in"')
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }
-        prod {
+        live {
             dimension "server"
-            buildConfigField("String", "BASE_URL", '"https://trips-prod.venustaxi.in/"')
-            buildConfigField("String", "VARIANT", '"prod"')
+            buildConfigField("String", "BASE_URL", '"https://rides.venustaxi.in/"')
+            buildConfigField("String", "VARIANT", '"live"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://rides-api.venustaxi.in"')
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }
     }
@@ -169,4 +165,10 @@ dependencies {
     implementation 'com.beust:klaxon:5.5'
 
     implementation 'com.google.maps.android:android-maps-utils:3.8.0'
+    /*Stripe*/
+    implementation 'com.stripe:stripe-android:20.48.2'
+
+    /*Shimmer*/
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
+
 }

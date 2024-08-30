@@ -2,8 +2,6 @@ package com.salonedriver.util
 
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.service.autofill.UserData
-import android.util.Log
 import com.salonedriver.SaloneDriver
 import com.salonedriver.model.api.convertGsonString
 import com.salonedriver.model.api.convertStringIntoClass
@@ -77,7 +75,7 @@ object SharedPreferencesManager {
     }
 
 
-    fun <T> putModel(key: String, value: T){
+    fun <T> putModel(key: String, value: T) {
         val editor = getInstance().edit()
         editor.putString(key, value.convertGsonString())
         editor.apply()
@@ -103,7 +101,8 @@ object SharedPreferencesManager {
     }
 
 
-    fun getCurrencySymbol(): String = getModel<UserDataDC>(Keys.USER_DATA)?.login?.currencySymbol.orEmpty()
+    fun getCurrencySymbol(): String =
+        getModel<UserDataDC>(Keys.USER_DATA)?.login?.currencySymbol.orEmpty()
 
 
     object Keys {

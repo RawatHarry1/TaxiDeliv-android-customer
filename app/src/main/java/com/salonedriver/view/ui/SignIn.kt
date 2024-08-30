@@ -37,7 +37,6 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
     override fun getLayoutId(): Int {
         return R.layout.activity_sign_in
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -79,8 +78,6 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
                     enableGpsLauncher
                 )
             }
-
-
 //                viewModel.sendLoginOtp(
 //                binding.etEmail.getValue(),
 //                binding.ccp.selectedCountryCodeWithPlus
@@ -199,7 +196,6 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
                 binding.ccp.selectedCountryCodeWithPlus
             )
         }
-
     }
 
     /**
@@ -217,5 +213,4 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
         showErrorMessage(this)
         hideProgressDialog()
     })
-
 }

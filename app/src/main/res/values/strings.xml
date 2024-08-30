@@ -266,6 +266,7 @@
 
 
     <string name="create_your_nprofile">Create Your\nProfile</string>
+    <string name="edit_your_nprofile">Edit Your\nProfile</string>
     <string name="upload_photo">Upload Photo</string>
     <string name="account_details">Account Details</string>
     <string name="designation">Designation</string>
@@ -469,6 +470,10 @@
     <string name="enter_your_feedback">Enter your feedback</string>
     <string name="total_fare">Total Fare</string>
     <string name="update_now">Update Now</string>
+    <string name="cards">Cards</string>
+    <string name="no_cards_found">No Cards Found</string>
+    <string name="add_new_card">Add New Card</string>
+    <string name="select_a_card">Select a card</string>
 
 
 </resources>

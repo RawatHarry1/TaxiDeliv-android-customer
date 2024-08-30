@@ -3,6 +3,8 @@ package com.salonedriver.model.api
 import com.salonedriver.BuildConfig
 import com.salonedriver.firebaseSetup.NewRideNotificationDC
 import com.salonedriver.model.dataclassses.AboutUsDC
+import com.salonedriver.model.dataclassses.CardData
+import com.salonedriver.model.dataclassses.SetUpIntentResponse
 import com.salonedriver.model.dataclassses.VehicleListDC
 import com.salonedriver.model.dataclassses.base.BaseResponse
 import com.salonedriver.model.dataclassses.bookingHistory.BookingHistoryDC
@@ -26,6 +28,8 @@ import org.json.JSONObject
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -197,6 +201,34 @@ interface ApiInterface {
     @POST(TRANSACTION_HISTORY)
     suspend fun getTransactionHistory(): Response<BaseResponse<TransactionHistoryDC>>
 
+    @POST(ADD_MONEY)
+    suspend fun addMoney(
+        @Body requestBody: RequestBody
+    ): Response<BaseResponse<Any>>
+
+    @FormUrlEncoded
+    @POST(ADD_CARD)
+    suspend fun addCard(
+        @Field("client_secret") secret: String = ""
+    ): Response<BaseResponse<SetUpIntentResponse>>
+
+    @FormUrlEncoded
+    @POST(CONFIRM_CARD)
+    suspend fun confirmCard(
+        @Field("client_secret") secret: String = "",
+        @Field("setup_intent_id") id: String = ""
+    ): Response<BaseResponse<Any>>
+
+    @FormUrlEncoded
+    @POST(DELETE_CARD)
+    suspend fun deleteCard(
+        @Field("card_id") id: String = ""
+    ): Response<BaseResponse<Any>>
+
+    @GET(GET_CARDS)
+    suspend fun getCards(
+        @Query("payment_method_type") type: Int
+    ): Response<BaseResponse<List<CardData>>>
 
     @POST(CANCEL_TRIP)
     suspend fun cancelTrip(

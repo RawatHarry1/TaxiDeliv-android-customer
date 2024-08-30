@@ -23,7 +23,7 @@ import com.salonedriver.SaloneDriver
 import com.salonedriver.customClasses.LocationResultHandler
 import com.salonedriver.customClasses.SingleFusedLocation
 import com.salonedriver.databinding.ActivityHomeBinding
-import com.salonedriver.firebaseSetup.FirebaseNotification
+import com.salonedriver.firebaseSetup.SoundService
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
 import com.salonedriver.model.dataclassses.userData.UserDataDC
@@ -33,6 +33,7 @@ import com.salonedriver.util.commonToast
 import com.salonedriver.util.deleteAlert
 import com.salonedriver.util.logoutAlert
 import com.salonedriver.view.base.BaseActivity
+import com.salonedriver.view.ui.PaymentActivity
 import com.salonedriver.view.ui.SignUpInActivity
 import com.salonedriver.viewmodel.UserAccountVM
 import dagger.hilt.android.AndroidEntryPoint
@@ -230,6 +231,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             drawerLayout.close()
             navController.navigate(R.id.nav_earnings, bundleOf("isBookingTab" to false))
         }
+        binding.llCards.setOnClickListener {
+            drawerLayout.close()
+            startActivity(Intent(this, PaymentActivity::class.java))
+        }
         binding.llBooking.setOnClickListener {
             drawerLayout.close()
             navController.navigate(R.id.nav_earnings, bundleOf("isBookingTab" to true))
@@ -262,14 +267,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         binding.llLogOut.setOnClickListener {
             drawerLayout.close()
             logoutAlert {
-                sendBroadcast(Intent(FirebaseNotification.ACTION_STOP_MEDIA))
+                stopService(Intent(this, SoundService::class.java))
                 userVM.logout()
             }
         }
         binding.llDeleteAccount.setOnClickListener {
             drawerLayout.close()
             deleteAlert {
-                sendBroadcast(Intent(FirebaseNotification.ACTION_STOP_MEDIA))
+                stopService(Intent(this, SoundService::class.java))
                 userVM.deleteAccount()
             }
         }

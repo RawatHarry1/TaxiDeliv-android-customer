@@ -100,8 +100,19 @@ data class Login(
     @SerializedName("driver_blocked_multiple_cancelation")
     var driverBlockedMultipleCancellation: DriverBlockedMultipleCancellation? = null,
     @SerializedName("popup")
-    val popup: Popup? = null
+    val popup: Popup? = null,
+    @SerializedName("stripeCredentials")
+    val stripeCredentials: StripeCredentials? = null
 )
+
+@Keep
+data class StripeCredentials(
+    @SerializedName("publishable_key")
+    val publishableKey: String? = null,
+    @SerializedName("client_secret")
+    val clientSecret: String? = null
+)
+
 @Keep
 data class Popup(
     val download_link: String?,
@@ -155,6 +166,7 @@ data class MakeDetails(
     var vehicleImage: String? = null,
     @SerializedName("vehicle_type")
     var vehicleType: String? = null
+
 )
 
 

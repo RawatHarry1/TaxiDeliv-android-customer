@@ -1,13 +1,17 @@
 package com.salonedriver.view.fragment.wallet
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.salonedriver.R
 import com.salonedriver.databinding.FragmentWalletBinding
+import com.salonedriver.dialogs.CustomProgressDialog
 import com.salonedriver.dialogs.DialogUtils
 import com.salonedriver.firebaseSetup.NotificationInterface
 import com.salonedriver.model.api.observeData
@@ -17,10 +21,9 @@ import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.util.formatAmount
 import com.salonedriver.view.adapter.WalletAdapter
 import com.salonedriver.view.base.BaseFragment
+import com.salonedriver.view.ui.PaymentActivity
 import com.salonedriver.view.ui.home_drawer.HomeActivity
-import com.salonedriver.view.ui.home_drawer.ui.home.CheckOnGoingBooking
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.Exception
 
 @AndroidEntryPoint
 class WalletFragment : BaseFragment<FragmentWalletBinding>(), NotificationInterface {
@@ -28,6 +31,11 @@ class WalletFragment : BaseFragment<FragmentWalletBinding>(), NotificationInterf
     lateinit var binding: FragmentWalletBinding
     private val viewModel by viewModels<WalletVM>()
     private val adapter: WalletAdapter by lazy { WalletAdapter() }
+    private var cardId = ""
+    private var last4 = ""
+    private var amount = ""
+    private var cur = ""
+    private val progressBar by lazy { CustomProgressDialog() }
 
     companion object {
         var notificationInterface: NotificationInterface? = null
@@ -44,14 +52,16 @@ class WalletFragment : BaseFragment<FragmentWalletBinding>(), NotificationInterf
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = getViewDataBinding()
+        cur = SharedPreferencesManager.getCurrencySymbol()
         binding.rvWallet.adapter = adapter
         viewModel.getWalletTransactions()
         observeWalletData()
+        observeTopUpData()
     }
 
     override fun onResume() {
         super.onResume()
-        notificationInterface =  this
+        notificationInterface = this
         setClicks()
     }
 
@@ -65,20 +75,61 @@ class WalletFragment : BaseFragment<FragmentWalletBinding>(), NotificationInterf
         }
     }
 
-    private val onClickDialogLambda = { type: String ->
-
+    private val onClickDialogLambda = { amount: String ->
+        this.amount = amount
+        activityResultLauncherForPayment.launch(
+            Intent(
+                requireActivity(),
+                PaymentActivity::class.java
+            ).putExtra("whileRide", true)
+        )
     }
 
+    private val activityResultLauncherForPayment = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            try {
+                cardId = result.data?.getStringExtra("cardId") ?: ""
+                last4 = result.data?.getStringExtra("last4") ?: ""
+                DialogUtils.getNegativeDialog(
+                    requireActivity(), "Use Card",
+                    "Are you sure you want to use *** $last4 card for top up?"
+                ) {
+                    viewModel.addMoney(cardId = cardId, currency = cur, amount = amount)
+                }
+            } catch (_: Exception) {
+            }
+        }
+    }
+
+    private fun observeTopUpData() =
+        viewModel.addMoneyData.observeData(
+            requireActivity(),
+            onLoading = {
+                progressBar.show(requireActivity())
+            },
+            onSuccess = {
+                progressBar.dismiss()
+                viewModel.getWalletTransactions()
+            },
+            onError = {
+                progressBar.dismiss()
+                showToastLong(this)
+            })
 
     @SuppressLint("SetTextI18n")
     private fun observeWalletData() =
         viewModel.walletData.observeData(viewLifecycleOwner, onLoading = {
-            showProgressDialog()
+            binding.shimmerLayout.shimmerLayout.isVisible = true
+            binding.llWalletLayout.isVisible = false
         }, onSuccess = {
-            hideProgressDialog()
+            binding.shimmerLayout.shimmerLayout.isVisible = false
+            binding.llWalletLayout.isVisible = true
             setUpUi(this)
         }, onError = {
-            hideProgressDialog()
+            binding.shimmerLayout.shimmerLayout.isVisible = false
+            binding.llWalletLayout.isVisible = true
         })
 
 
@@ -88,18 +139,34 @@ class WalletFragment : BaseFragment<FragmentWalletBinding>(), NotificationInterf
             binding.tvTotalBalance.text = "${SharedPreferencesManager.getCurrencySymbol()} ${
                 transactionHistoryDC?.balance.orEmpty().ifEmpty { "0.0" }.formatAmount()
             }"
-            if ((transactionHistoryDC?.balance.orEmpty().ifEmpty { "0.0" }.toDoubleOrNull() ?: 0.0) < (SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)?.login?.minDriverBalance.orEmpty().ifEmpty { "0.0" }.toDoubleOrNull() ?: 0.0)){
-                binding.tvTotalBalance.setTextColor(ContextCompat.getColor(requireContext(), R.color.red_text_color))
+            if ((transactionHistoryDC?.balance.orEmpty().ifEmpty { "0.0" }.toDoubleOrNull()
+                    ?: 0.0) < (SharedPreferencesManager.getModel<UserDataDC>(
+                    SharedPreferencesManager.Keys.USER_DATA
+                )?.login?.minDriverBalance.orEmpty().ifEmpty { "0.0" }.toDoubleOrNull() ?: 0.0)
+            ) {
+                binding.tvTotalBalance.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.red_text_color
+                    )
+                )
                 binding.tvLowWalletAmount.isVisible = true
             } else {
-                binding.tvTotalBalance.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                binding.tvTotalBalance.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
                 binding.tvLowWalletAmount.isVisible = false
             }
-                binding.tvUserName.text = transactionHistoryDC?.userName.orEmpty()
+            binding.tvUserName.text = transactionHistoryDC?.userName.orEmpty()
             adapter.submitList(transactionHistoryDC?.transactions ?: emptyList())
-            binding.rvWallet.isVisible = (transactionHistoryDC?.transactions ?: emptyList()).isNotEmpty()
-            binding.tvNoData.isVisible = (transactionHistoryDC?.transactions ?: emptyList()).isEmpty()
-        }catch (e:Exception){
+            binding.rvWallet.isVisible =
+                (transactionHistoryDC?.transactions ?: emptyList()).isNotEmpty()
+            binding.tvNoData.isVisible =
+                (transactionHistoryDC?.transactions ?: emptyList()).isEmpty()
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -108,7 +175,6 @@ class WalletFragment : BaseFragment<FragmentWalletBinding>(), NotificationInterf
         super.onStop()
         notificationInterface = null
     }
-
 
 
     override fun walletUpdate() {

@@ -63,3 +63,8 @@ const val UPDATE_DRIVER_LOCATION = "update_driver_location"
 
 const val RATE_THE_CUSTOMER = "rate_the_customer"
 const val GENERATE_SUPPORT_TICKET = "generate_driver_support_ticket"
+const val ADD_CARD = "stripe/add_card_3d"
+const val CONFIRM_CARD = "stripe/confirm_card_3d"
+const val GET_CARDS = "fetch/cardDetails"
+const val DELETE_CARD = "removeCard"
+const val ADD_MONEY = "add_money_via_stripe"

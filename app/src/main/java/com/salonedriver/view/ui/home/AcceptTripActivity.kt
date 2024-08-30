@@ -135,7 +135,13 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             binding.tvCustomerNote.gone()
             binding.tvCustomerNoteValue.gone()
         }
-
+        if (rideData?.customerNote.isNullOrEmpty()) {
+            binding.tvCustomerNote.gone()
+            binding.tvCustomerNoteValue.gone()
+        } else {
+            binding.tvCustomerNote.visible()
+            binding.tvCustomerNoteValue.visible()
+        }
         binding.tvCustomerName.text = rideData?.customerName.orEmpty()
         binding.tvCustomerNoteValue.text = rideData?.customerNote ?: ""
         binding.tvFare.text =

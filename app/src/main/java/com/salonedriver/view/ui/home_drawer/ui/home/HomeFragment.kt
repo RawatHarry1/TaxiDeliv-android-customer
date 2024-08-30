@@ -1,12 +1,16 @@
 package com.salonedriver.view.ui.home_drawer.ui.home
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.location.Location
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +18,12 @@ import android.view.Window
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -36,9 +45,9 @@ import com.salonedriver.customClasses.SingleFusedLocation
 import com.salonedriver.databinding.DialogTripsBinding
 import com.salonedriver.databinding.FragmentHomeBinding
 import com.salonedriver.dialogs.DialogUtils
-import com.salonedriver.firebaseSetup.FirebaseNotification
 import com.salonedriver.firebaseSetup.NewRideNotificationDC
 import com.salonedriver.firebaseSetup.NotificationInterface
+import com.salonedriver.firebaseSetup.SoundService
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.userData.UserDataDC
 import com.salonedriver.socketSetup.SocketSetup
@@ -77,7 +86,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     private var googleMap: GoogleMap? = null
     private val viewModel by viewModels<HomeViewModel>()
     private val rideViewModel by viewModels<RideViewModel>()
-
+    private lateinit var locationPermissionLauncher: ActivityResultLauncher<Array<String>>
     override fun initialiseFragmentBaseViewModel() {
 
     }
@@ -152,6 +161,44 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             )
         }
 
+
+
+        locationPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true && permissions[Manifest.permission.ACCESS_BACKGROUND_LOCATION] == true -> {
+                    // Both foreground and background location permissions are granted
+                    Log.i("RequestPermission", "when 1")
+                    handleLocationPermissionGranted()
+                }
+
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true -> {
+                    // Foreground location permission granted, but background is not
+                    Log.i("RequestPermission", "when 2")
+                    showBackgroundLocationPermissionRationale()
+                }
+
+                else -> {
+                    // Permission denied
+                    Log.i("RequestPermission", "when 3")
+                    handleLocationPermissionDenied()
+                }
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Log.i("RequestPermission", "onCreate home fragment")
+            if (ContextCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            )
+                showBackgroundLocationRequired()
+        }
+
+
+
+
     }
 
 
@@ -206,6 +253,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
 
     override fun onResume() {
         super.onResume()
+        screenType = 0
         notificationInterface = this
         initializeMap()
     }
@@ -228,8 +276,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                     )
                 )
                 binding.swOnOff.visibility = View.VISIBLE
-
-
             }
 
             1 -> {
@@ -280,7 +326,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             .error(R.drawable.ic_profile_user).into(binding.ivUser)
 
         binding.tvAcceptBtn.setOnClickListener {
-            requireActivity().sendBroadcast(Intent(FirebaseNotification.ACTION_STOP_MEDIA))
+            requireActivity().stopService(Intent(requireActivity(), SoundService::class.java))
             screenType = 2
             dialog?.dismiss()
             context.startActivity(
@@ -289,7 +335,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             )
         }
         binding.tvIgnoreBtn.setOnClickListener {
-            requireActivity().sendBroadcast(Intent(FirebaseNotification.ACTION_STOP_MEDIA))
+            requireActivity().stopService(Intent(requireActivity(), SoundService::class.java))
             rideViewModel.rejectRide(data.tripId.orEmpty())
             AppUtils.tripId = ""
             rideViewModel.newRideNotificationData = NewRideNotificationDC()
@@ -495,7 +541,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         mapFragment.getMapAsync {
             googleMap = it
             googleMap?.clear()
-            SingleFusedLocation.initialize(requireContext(), this)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (ContextCompat.checkSelfPermission(
+                        requireActivity(),
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                )
+                    SingleFusedLocation.initialize(requireContext(), this)
+                else {
+                    if (showBackgroundLocationPermissionRationaleClicked) {
+                        showBackgroundLocationPermissionRationaleClicked = false
+                        showBackgroundLocationPermissionRationale()
+                    }
+                }
+            } else
+                SingleFusedLocation.initialize(requireContext(), this)
         }
     }
 
@@ -550,6 +610,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     private fun onDialogClick(promoCode: String) {
 
     }
+
     //Login Via Access Token
     private fun observeLoginAccessToken() =
         viewModel.loginViaAccessToken.observeData(viewLifecycleOwner, onLoading = {
@@ -821,6 +882,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         super.timeOutRide()
         requireActivity().runOnUiThread {
             try {
+                requireActivity().stopService(Intent(requireActivity(), SoundService::class.java))
                 Log.i("PUSHNOTI", "IN TIME OUT")
                 AppUtils.tripId = ""
                 rideViewModel.newRideNotificationData = NewRideNotificationDC()
@@ -851,6 +913,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                 rideViewModel.newRideNotificationData = it
                 callTripsDialog(requireContext(), it)
             } ?: run {
+            requireActivity().stopService(Intent(requireActivity(), SoundService::class.java))
             rideViewModel.ongoingTrip()
         }
     }
@@ -866,7 +929,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             clRoot.isVisible = true
             ivImage.setImageResource(image)
             tvText.text = message
-
             tvButton.isVisible = btnText.orEmpty().isNotEmpty()
             tvButton.text = btnText.orEmpty()
             tvButton.setOnClickListener {
@@ -907,6 +969,154 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             e.printStackTrace()
         }
     }
+
+    private fun checkAndRequestLocationPermissions() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Foreground location permission granted
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    if (ContextCompat.checkSelfPermission(
+                            requireActivity(),
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        // Background location permission granted
+                        handleLocationPermissionGranted()
+                    } else {
+                        // Request background location permission
+                        locationPermissionLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                            )
+                        )
+                    }
+                } else {
+                    // No need for background permission on older versions
+                    handleLocationPermissionGranted()
+                }
+            }
+
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                // Show rationale for foreground location permission
+                showLocationPermissionRationale()
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION) -> {
+                // Show rationale for foreground location permission
+                showBackgroundLocationPermissionRationale()
+            }
+
+            else -> {
+                // Request foreground and background location permissions
+                locationPermissionLauncher.launch(
+                    arrayOf(
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Manifest.permission.ACCESS_BACKGROUND_LOCATION else Manifest.permission.ACCESS_FINE_LOCATION
+                    )
+                )
+            }
+        }
+    }
+
+    private fun handleLocationPermissionGranted() {
+        // Location permission granted, proceed with location-related tasks
+//        Toast.makeText(requireActivity(), "Location permission granted", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleLocationPermissionDenied() {
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(
+                requireActivity(),
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            )
+        ) {
+            // Permission denied permanently, redirect to settings
+            AlertDialog.Builder(requireActivity())
+                .setTitle("Permission Denied")
+                .setMessage("All time location permission is denied permanently. Please go to settings to enable it.")
+                .setPositiveButton("Settings") { dialog, _ ->
+                    dialog.dismiss()
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", requireActivity().packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
+                }
+                .setCancelable(false)
+//                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+//                .create()
+//                .show()
+        } else {
+            // Permission denied temporarily
+
+        }
+    }
+
+
+    private fun showLocationPermissionRationale() {
+        AlertDialog.Builder(requireActivity())
+            .setTitle("Location Permission Required")
+            .setMessage("This app requires location access to function properly.")
+            .setCancelable(false)
+            .setPositiveButton("Allow") { dialog, _ ->
+                dialog.dismiss()
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                val uri = Uri.fromParts("package", requireActivity().packageName, null)
+                intent.data = uri
+                startActivity(intent)
+            }
+//            .setNegativeButton("Deny") { dialog, _ ->
+//                dialog.dismiss()
+//                handleLocationPermissionDenied()
+//            }
+            .create()
+            .show()
+    }
+
+    private var showBackgroundLocationPermissionRationaleClicked = false
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun showBackgroundLocationPermissionRationale() {
+        AlertDialog.Builder(requireActivity())
+            .setTitle("All Time Location Permission Required")
+            .setMessage("Allow all time location permission in permissions section from settings of this app")
+            .setPositiveButton("Setting") { dialog, _ ->
+                dialog.dismiss()
+                showBackgroundLocationPermissionRationaleClicked = true
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                val uri = Uri.fromParts("package", requireActivity().packageName, null)
+                intent.data = uri
+                startActivity(intent)
+            }
+            .setCancelable(false)
+//            .setNegativeButton("Deny") { dialog, _ ->
+//                dialog.dismiss()
+//                handleLocationPermissionDenied()
+//            }
+            .create()
+            .show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun showBackgroundLocationRequired() {
+        AlertDialog.Builder(requireActivity())
+            .setTitle("Background Location Permission Required")
+            .setMessage("This app required all time location access to provide continuous location updates.")
+            .setPositiveButton("Allow") { dialog, _ ->
+                dialog.dismiss()
+                checkAndRequestLocationPermissions()
+            }
+            .setCancelable(false)
+//            .setNegativeButton("Deny") { dialog, _ ->
+//                dialog.dismiss()
+//                handleLocationPermissionDenied()
+//            }
+            .create()
+            .show()
+    }
+
+
+
+
 }
 
 interface CheckOnGoingBooking {
