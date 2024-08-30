@@ -113,6 +113,11 @@ interface ApiInterface {
         @Body requestBody: RequestBody
     ): Response<BaseResponse<WalletTransaction>>
 
+    @POST(APIEndPointsConstants.ADD_MONEY)
+    suspend fun addMoney(
+        @Body requestBody: RequestBody
+    ): Response<BaseResponse<Any>>
+
 
     @POST(APIEndPointsConstants.FIND_DRIVER)
     suspend fun findDriver(

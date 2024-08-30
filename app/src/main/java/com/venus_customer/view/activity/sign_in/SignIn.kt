@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -19,7 +18,6 @@ import com.venus_customer.util.SharedPreferencesManager
 import com.venus_customer.util.showSnackBar
 import com.venus_customer.view.activity.CreateProfile
 import com.venus_customer.view.activity.ForgotPassword
-import com.venus_customer.view.activity.verifyOtp.VerifyOtp
 import com.venus_customer.view.activity.walk_though.Home
 import com.venus_customer.view.base.BaseActivity
 import com.venus_customer.viewmodel.base.SignInViewModel
@@ -40,14 +38,14 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = getViewDataBinding()
-        if (intent.hasExtra("type")){
+        if (intent.hasExtra("type")) {
             screenType = intent.getStringExtra("type") ?: ""
         }
         clicks()
         setVisibility()
         observeSignIn()
         observerOtpData()
-       Log.i("DEFAULTCODE","${ binding.ccp.defaultCountryCode}")
+        Log.i("DEFAULTCODE", binding.ccp.defaultCountryCode)
     }
 
     private fun clicks() {
@@ -73,10 +71,11 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
 //                showSnackBar("*Please enter valid mobile number.")
 //            }
             else {
+                binding.etEmail.clearFocus()
                 viewModel.signIn(jsonObject = JSONObject().apply {
                     put("countryCode", binding.ccp.selectedCountryCodeWithPlus)
                     put("phoneNo", binding.etEmail.text.toString())
-                    put("loginType",  if (screenType == "sign_in") "2" else "1")
+                    put("loginType", if (screenType == "sign_in") "2" else "1")
                 })
             }
         }
@@ -89,7 +88,9 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
         binding.tvWelcome.text =
             if (screenType == "sign_in") getString(R.string.txt_welcome_back) else getString(R.string.txt_create_account)
         binding.tvThanksForGreen.text =
-            if (screenType == "sign_in") getString(R.string.txt_thanks_for_going_green) else getString(R.string.txt_enter_email_phone)
+            if (screenType == "sign_in") getString(R.string.txt_thanks_for_going_green) else getString(
+                R.string.txt_enter_email_phone
+            )
         binding.tvSignIn.setTextColor(
             ContextCompat.getColorStateList(
                 this,
@@ -133,7 +134,7 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
                 binding.ccp.selectedCountryCodeWithPlus,
                 binding.etEmail.text.toString(),
                 dismissDialog = { dialog ->
-                                dialog.dismiss()
+                    dialog.dismiss()
                     this@SignIn.dialog = null
                 },
                 verify = { otp, dialog ->
@@ -150,7 +151,7 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
                     viewModel.signIn(jsonObject = JSONObject().apply {
                         put("countryCode", binding.ccp.selectedCountryCodeWithPlus)
                         put("phoneNo", binding.etEmail.text.toString())
-                        put("loginType",  if (screenType == "sign_in") "2" else "1")
+                        put("loginType", if (screenType == "sign_in") "2" else "1")
                     })
                 }
             )
@@ -161,7 +162,6 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
     })
 
 
-
     private fun observerOtpData() = viewModel.verifyOtp.observeData(this, onLoading = {
         showProgressDialog()
     }, onSuccess = {
@@ -169,10 +169,10 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
         SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.USER_DATA, this)
         dialog?.dismiss()
         dialog = null
-        if (this?.login?.isCustomerProfileComplete == 1){
+        if (this?.login?.isCustomerProfileComplete == 1) {
             startActivity(Intent(this@SignIn, Home::class.java))
             finishAffinity()
-        }else {
+        } else {
             startActivity(Intent(this@SignIn, CreateProfile::class.java))
             finish()
         }
@@ -181,7 +181,7 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
         if (dialog != null) {
             showSnackBar(this, dialog?.findViewById<TextView>(R.id.tvResend))
         } else
-        showToastShort(this)
+            showToastShort(this)
     })
 
 

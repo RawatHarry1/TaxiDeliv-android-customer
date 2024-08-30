@@ -41,17 +41,19 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
-            buildConfigField("String", "BASE_URL", '"https://dev-rides.venustaxi.in/"')
-            buildConfigField("String", "SOCKET_BASE_URL", '"https://dev-rides.venustaxi.in:4012/"')
+            /*Dev*/
+//            buildConfigField("String", "BASE_URL", '"https://dev-rides.venustaxi.in/"')
+//            buildConfigField("String", "SOCKET_BASE_URL", '"https://dev-rides-api.venustaxi.in"')
+            /*Live*/
+            buildConfigField("String", "BASE_URL", '"https://rides.venustaxi.in/"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://rides-api.venustaxi.in"')
         }
         release {
             minifyEnabled false
             _isDebuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
-            buildConfigField("String", "BASE_URL", '"https://trips-prod.venustaxi.in/"')
-            buildConfigField("String", "SOCKET_BASE_URL", '"https://dev-rides.venustaxi.in:4012/"')
+            buildConfigField("String", "BASE_URL", '"https://rides.venustaxi.in/"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://rides-api.venustaxi.in"')
             signingConfig signingConfigs.debug
         }
     }
@@ -173,11 +175,10 @@ dependencies {
 
     //Socket
     implementation("io.socket:socket.io-client:2.1.0")
-
     implementation 'com.beust:klaxon:5.5'
-
     implementation 'com.google.maps.android:android-maps-utils:3.8.0'
-     /*Shimmer*/
+
+    /*Shimmer*/
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
     /**/

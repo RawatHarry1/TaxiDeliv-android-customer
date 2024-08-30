@@ -102,7 +102,7 @@ object DialogUtils {
         mContext: Activity,
         forceUpdate: Int,
         popUpDesc: String,
-        downloadLink:String,
+        downloadLink: String,
         onClickNegativeResult: (String) -> Unit?
     ): Dialog {
         val dialogView = Dialog(mContext)
@@ -191,7 +191,6 @@ object DialogUtils {
 
     lateinit var dialogView: Dialog
 
-
     fun dismissView() {
         if (this::dialogView.isInitialized) dialogView.dismiss()
     }
@@ -200,31 +199,31 @@ object DialogUtils {
         val dialogView = Dialog(mContext)
         with(dialogView) {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setContentView(R.layout.dialog_add_topup)
             setCancelable(false)
 
-
             val etEnterAmount = findViewById<AppCompatEditText>(R.id.etEnterAmount)
             val btnAddAmount = findViewById<AppCompatTextView>(R.id.btnAddAmount1)
             val ivClose = findViewById<AppCompatImageView>(R.id.ivClose)
-
-
 
             ivClose.setOnSingleClickListener {
                 dismiss()
             }
 
             btnAddAmount.setOnSingleClickListener {
-                onClickDialogLambda("otp")
-                dismiss()
+                if (etEnterAmount.text.toString().trim().isEmpty())
+                    showSnackBar("Please enter amount", btnAddAmount)
+                else if (etEnterAmount.text.toString().startsWith("0"))
+                    showSnackBar("Please enter valid amount", btnAddAmount)
+                else {
+                    onClickDialogLambda(etEnterAmount.text.toString())
+                    dismiss()
+                }
             }
             show()
         }
         return dialogView
-
     }
 
     private fun changeFocus(editTextArray: Array<AppCompatEditText>) {
@@ -275,10 +274,6 @@ object DialogUtils {
                 ),
                 R.layout.dialog_edit_profile_picture, null, false
             )
-
-
-
-
 
             dialogBinding.tvTakePicture.setOnSingleClickListener {
                 clickListener.onTakePictureListener()

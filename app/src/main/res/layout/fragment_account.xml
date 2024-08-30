@@ -371,6 +371,38 @@
                             app:fontFamily="@font/poppins_regular" />
 
                     </LinearLayout>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/stroke_light" />
+
+                    <LinearLayout
+                        android:id="@+id/llDelete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginVertical="14dp"
+                            app:srcCompat="@drawable/delete"
+                            app:tint="#3e4958" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginVertical="14dp"
+                            android:layout_marginStart="17dp"
+                            android:text="@string/delete_account"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="18sp"
+                            app:fontFamily="@font/poppins_regular" />
+
+                    </LinearLayout>
 
                     <View
                         android:layout_width="wrap_content"
@@ -382,6 +414,7 @@
                         android:id="@+id/llLogout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingBottom="4dp"
                         android:orientation="horizontal">
 
                         <androidx.appcompat.widget.AppCompatImageView
@@ -404,39 +437,7 @@
 
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@color/stroke_light" />
 
-                    <LinearLayout
-                        android:id="@+id/llDelete"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingBottom="4dp">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginVertical="14dp"
-                            app:srcCompat="@drawable/delete"
-                            app:tint="#3e4958" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginVertical="14dp"
-                            android:layout_marginStart="17dp"
-                            android:text="@string/delete_account"
-                            android:textColor="@color/black_text_color"
-                            android:textSize="18sp"
-                            app:fontFamily="@font/poppins_regular" />
-
-                    </LinearLayout>
 
                     <View
                         android:layout_width="wrap_content"

@@ -1,5 +1,6 @@
 package com.venus_customer.customClasses
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.Service
 import android.content.Context
@@ -16,17 +17,21 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
 import com.venus_customer.R
+import com.venus_customer.Splash
 
 class FloatingIconService : Service() {
 
     private lateinit var windowManager: WindowManager
     private lateinit var overlayView: View
+    private lateinit var removeIconView: View
     private var xOffset = 0
     private var yOffset = 0
     private var initialX = 0
     private var initialY = 0
     private var isDragging = false
+    private var isRemoveIconVisible = false
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate() {
         super.onCreate()
         Log.d("FloatingIconService", "Service Created")
@@ -34,6 +39,21 @@ class FloatingIconService : Service() {
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         overlayView = inflater.inflate(R.layout.layout_floating_icon, null)
+        // Inflate the remove icon layout
+        removeIconView = LayoutInflater.from(this).inflate(R.layout.remove_icon_layout, null)
+        val removeParams = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT
+        )
+        removeParams.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+        removeParams.y = 100
+        windowManager.addView(removeIconView, removeParams)
+        // Initially hide the remove icon
+        removeIconView.visibility = View.GONE
+
         val button = overlayView.findViewById<ImageView>(R.id.floating_icon)
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -83,16 +103,47 @@ class FloatingIconService : Service() {
                     initialX = event.rawX.toInt()
                     initialY = event.rawY.toInt()
                     isDragging = true
+                    // Show the remove icon if the overlay is dragged downwards
+                    if (params.y > removeParams.y - overlayView.height) {
+                        removeIconView.visibility = View.VISIBLE
+                        isRemoveIconVisible = true
+                    } else {
+                        removeIconView.visibility = View.GONE
+                        isRemoveIconVisible = false
+                    }
                     true
                 }
 
                 MotionEvent.ACTION_UP -> {
+                    // Get the position of the remove icon on the screen
+                    val removeLocation = IntArray(2)
+                    removeIconView.getLocationOnScreen(removeLocation)
+                    val removeIconX = removeLocation[0]
+                    val removeIconY = removeLocation[1]
+
+                    // Calculate the bounds of the remove icon
+                    val removeIconRight = removeIconX + removeIconView.width
+                    val removeIconBottom = removeIconY + removeIconView.height
+
+                    // Calculate the center position of the overlay
+                    val overlayCenterX = params.x + overlayView.width / 2
+                    val overlayCenterY = params.y + overlayView.height / 2
+
+                    // Check if the center of the overlay is within the bounds of the remove icon
+                    val isInRemoveArea = (overlayCenterX >= removeIconX && overlayCenterX <= removeIconRight
+                            && overlayCenterY >= removeIconY && overlayCenterY <= removeIconBottom)
+
+                    if (isRemoveIconVisible && isInRemoveArea) {
+                        stopSelf()
+                    }
+
+                    removeIconView.visibility = View.GONE
                     if (!isDragging) {
                         // Handle button click here
-                        Toast.makeText(this, "Overlay button clicked!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Overlay button clicked! in dragging....", Toast.LENGTH_SHORT).show()
                         bringAppToForeground()
                     }
-                    false
+                    true
                 }
 
                 else -> false
@@ -105,6 +156,7 @@ class FloatingIconService : Service() {
 
     private fun bringAppToForeground() {
         sendBroadcast(Intent("bring_app_to_foreground"))
+        Log.d("FloatingIconService", "In bring app to foreground")
     }
 
     override fun onDestroy() {

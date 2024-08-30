@@ -1,5 +1,6 @@
 package com.venus_customer.view.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -37,22 +38,25 @@ class WalletAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.Vi
 
     inner class WalletViewHolder(private val binding: ItemWalletBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
         fun onBind(data: TransactionData) {
-            if (data.txn_type == 1)
-                binding.tvAmountAdded.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.green_text_color
-                    )
-                )
-            else
+            binding.titleAmountAdded.text = "Amount ${data.txn_type}"
+            if (data.txn_type.equals("Debited", true))
                 binding.tvAmountAdded.setTextColor(
                     ContextCompat.getColor(
                         context,
                         R.color.cancel_btn_red_color
                     )
                 )
-            binding.tvAmountAdded.text = "$currency ${data.amount?: 0.0}"
+            else
+                binding.tvAmountAdded.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.green_text_color
+                    )
+                )
+
+            binding.tvAmountAdded.text = "$currency ${data.amount ?: 0.0}"
             binding.tvDate.text = "${data.txn_date ?: ""}"
             binding.tvTime.text = "${data.txn_time ?: ""}"
             binding.tvProcessNo.text = "${data.txn_id ?: ""}"

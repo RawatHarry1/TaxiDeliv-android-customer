@@ -5,6 +5,7 @@ import android.preference.PreferenceManager
 import com.venus_customer.VenusApp
 import com.venus_customer.model.api.convertGsonString
 import com.venus_customer.model.api.convertStringIntoClass
+import com.venus_customer.model.dataClass.userData.UserDataDC
 import com.venus_customer.view.activity.walk_though.WalkThrough
 
 object SharedPreferencesManager {
@@ -101,7 +102,8 @@ object SharedPreferencesManager {
         editor.apply()
     }
 
-
+    fun getCurrencySymbol(): String =
+        getModel<UserDataDC>(Keys.USER_DATA)?.login?.currencySymbol.orEmpty()
 
 
     object Keys {

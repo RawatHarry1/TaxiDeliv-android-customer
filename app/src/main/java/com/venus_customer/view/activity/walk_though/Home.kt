@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -24,6 +25,7 @@ import com.google.gson.Gson
 import com.mukesh.photopicker.utils.checkPermissions
 import com.venus_customer.R
 import com.venus_customer.customClasses.FloatingIconService
+import com.venus_customer.customClasses.FloatingOverlayService
 import com.venus_customer.databinding.ActivityHomeBinding
 import com.venus_customer.dialogs.DialogUtils
 import com.venus_customer.model.api.observeData
@@ -91,23 +93,23 @@ class Home : BaseActivity<ActivityHomeBinding>() {
         observeUiState()
         handleIntent(intent)
 
-        overlayPermissionLauncher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) {
-            if (Settings.canDrawOverlays(this)) {
-                startFloatingIconService()
-            } else {
-                // Permission is not granted. Show a message to the user.
-                Toast.makeText(this, "Overlay permission is required", Toast.LENGTH_SHORT).show()
-            }
-        }
 
-        // Check and request permission
+//        overlayPermissionLauncher = registerForActivityResult(
+//            ActivityResultContracts.StartActivityForResult()
+//        ) {
+//            if (Settings.canDrawOverlays(this)) {
+//                startFloatingIconService()
+//            } else {
+//                // Permission is not granted. Show a message to the user.
+//                Toast.makeText(this, "Overlay permission is required", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//
+//        // Check and request permission
 //        if (!Settings.canDrawOverlays(this)) {
 //            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
 //            overlayPermissionLauncher.launch(intent)
 //        } else {
-//
 //            startFloatingIconService()
 //        }
 

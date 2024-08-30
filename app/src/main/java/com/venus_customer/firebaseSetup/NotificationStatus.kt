@@ -3,7 +3,7 @@ package com.venus_customer.firebaseSetup
 enum class NotificationStatus(val type: Int) {
     NEW_RIDE(0),
     TIME_OUT_RIDE(2),
-    WALLET_UPDATE(120),
+    WALLET_UPDATE(21),
     REQUEST(0), //Driver
     REQUEST_TIMEOUT(1), //Customer
     RIDE_CANCELLED_BY_DRIVER(11), //Driver

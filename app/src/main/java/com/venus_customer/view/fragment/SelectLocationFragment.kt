@@ -99,7 +99,7 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
         observeSearchPlaces()
         observeAddAddress()
 //        placesInitializer()
-        countryCode = getCountryCode(VenusApp.latLng) ?: "IN"
+//        countryCode = getCountryCode(VenusApp.latLng) ?: "IN"
         val type = args.selectLocationType
         if (type == "add_address") {
             setPickDropAdapter(binding.rvAddAddressPickDrop, view.context)
@@ -663,12 +663,17 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
     }
 
     private fun getCountryCode(latLng: LatLng): String? {
-        val geocoder = Geocoder(requireActivity(), Locale.getDefault())
-        val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
-        return if (!addresses.isNullOrEmpty()) {
-            addresses[0].countryCode
-        } else {
-            null
+        try {
+            val geocoder = Geocoder(requireActivity(), Locale.getDefault())
+            val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+            return if (!addresses.isNullOrEmpty()) {
+                addresses[0].countryCode
+            } else {
+                null
+            }
+        }catch (e:Exception)
+        {
+           return null
         }
     }
 

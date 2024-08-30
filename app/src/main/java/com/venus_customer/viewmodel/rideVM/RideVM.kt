@@ -152,7 +152,11 @@ class RideVM @Inject constructor(
                 put("fare", createRideData.vehicleData?.fare)
                 put("pickup_time", pickUpTime)
                 put("coupon_to_apply", couponToApply)
-
+                if (paymentOption == 9) {
+                    put("stripe_token", cardId)
+                    put("preferred_payment_mode", "9")
+                    put("card_id", cardId)
+                }
             }
         ).setApiState(_scheduleRideData)
     }

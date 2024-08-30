@@ -68,7 +68,7 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
             })
         }
 
-        binding.tvUserName.setOnSingleClickListener {
+        binding.clUserName.setOnSingleClickListener {
             binding.ivProfileImage.performClick()
         }
         binding.llCards.setOnSingleClickListener {

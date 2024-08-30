@@ -93,7 +93,8 @@ class PaymentActivity : BaseActivity<DialogFragementShowAndAddCardsBinding>(),
 
             is PaymentSheetResult.Failed -> {
                 binding.tvAddNewCard.isEnabled = true
-                showSnackBar("Something went wrong.", binding.tvAddNewCard)
+                Log.i("StripePayment", "FAILED::: ${paymentSheetResult.error.localizedMessage}")
+                showSnackBar("Something went wrong please try again later.", binding.tvAddNewCard)
             }
 
             is PaymentSheetResult.Completed -> {
@@ -155,6 +156,7 @@ class PaymentActivity : BaseActivity<DialogFragementShowAndAddCardsBinding>(),
             setupIntentId = this?.setupIntent?.id ?: ""
             presentPaymentSheet()
         }, onError = {
+            binding.tvAddNewCard.isEnabled = true
             hideProgressDialog()
             showSnackBar(this, binding.tvAddNewCard)
         })

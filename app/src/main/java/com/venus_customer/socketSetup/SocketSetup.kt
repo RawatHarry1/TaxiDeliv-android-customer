@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.venus_customer.BuildConfig
 import com.venus_customer.model.dataClass.MessageData
 import com.venus_customer.model.dataClass.base.ClientConfig
 import com.venus_customer.model.dataClass.userData.UserDataDC
@@ -46,7 +47,7 @@ object SocketSetup {
                     timeout = 10000
                     transports = arrayOf(WebSocket.NAME)
                 }
-                socket = IO.socket("https://dev-rides-api.venustaxi.in", ioOptions)
+                socket = IO.socket(BuildConfig.SOCKET_BASE_URL, ioOptions)
                 listenerOn(Socket.EVENT_CONNECT, SOCKET_CONNECT)
                 listenerOn(Socket.EVENT_DISCONNECT, SOCKET_DISCONNECT)
                 listenerOn(Socket.EVENT_CONNECT_ERROR, SOCKET_ERROR)
@@ -95,7 +96,8 @@ object SocketSetup {
                     bearing = json.optString("direction").toFloatOrNull() ?: 0.0F,
                     eta = json.optString("eta").toIntOrNull() ?: 0
                 )
-            } catch (e: Exception) {
+            }
+            catch (e: Exception) {
                 e.printStackTrace()
             }
         }

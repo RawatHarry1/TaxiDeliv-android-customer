@@ -25,6 +25,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.venus_customer.BuildConfig
 import com.venus_customer.R
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.FragmentRideDetailsBinding
@@ -324,7 +325,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (permissions[Manifest.permission.READ_MEDIA_IMAGES] == true
             ) {
-                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
+                val url = "${BuildConfig.BASE_URL}ride/invoice?ride_id=${navArgs.tripId}"
                 downloadPdf(
                     requireActivity(),
                     url,
@@ -346,7 +347,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             if (permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true
                 && permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
             ) {
-                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
+                val url = "${BuildConfig.BASE_URL}ride/invoice?ride_id=${navArgs.tripId}"
                 downloadPdf(
                     requireActivity(),
                     url,
@@ -421,7 +422,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                     )
                 )
             } else {
-                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
+                val url = "${BuildConfig.BASE_URL}ride/invoice?ride_id=${navArgs.tripId}"
                 downloadPdf(
                     requireActivity(),
                     url,
@@ -446,7 +447,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                     )
                 )
             } else {
-                val url = "https://dev-rides.venustaxi.in/ride/invoice?ride_id=${navArgs.tripId}"
+                val url = "${BuildConfig.BASE_URL}ride/invoice?ride_id=${navArgs.tripId}"
                 downloadPdf(
                     requireActivity(),
                     url,

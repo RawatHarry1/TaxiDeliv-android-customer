@@ -51,8 +51,8 @@ object APIEndPointsConstants {
     const val GET_CARDS = "fetch/cardDetails"
     const val DELETE_CARD = "removeCard"
     const val DELETE_ACCOUNT = "removeAccount"
+    const val ADD_MONEY = "add_money_via_stripe"
 }
-
 
 
 object APIParams {

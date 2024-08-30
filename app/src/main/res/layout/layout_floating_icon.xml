@@ -5,8 +5,8 @@
 
     <ImageView
         android:id="@+id/floating_icon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:src="@drawable/app_logo_image" />
 
 </FrameLayout>

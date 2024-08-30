@@ -84,6 +84,21 @@ class ProfileViewModel @Inject constructor(
             .setApiState(_transactionHistoryData)
     }
 
+    private val _addMoneyData by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
+    val addMoneyData: LiveData<ApiState<BaseResponse<Any>>> get() = _addMoneyData
+    fun addMoney(cardId: String, currency: String, amount: String) {
+        viewModelScope.launch {
+            repository.addMoney(
+                jsonObject = JSONObject().apply {
+                    put("stripe_3d_enabled", "1")
+                    put("card_id", cardId)
+                    put("amount", amount)
+                    put("currency", currency)
+                }
+            ).setApiState(_addMoneyData)
+        }
+    }
+
     private val _promoData by lazy { SingleLiveEvent<ApiState<BaseResponse<CouponAndPromos>>>() }
     val promoData: LiveData<ApiState<BaseResponse<CouponAndPromos>>> get() = _promoData
     fun getCouponAndPromotions() = viewModelScope.launch {

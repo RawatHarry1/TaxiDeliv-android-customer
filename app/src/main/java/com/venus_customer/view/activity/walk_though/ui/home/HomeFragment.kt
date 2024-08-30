@@ -128,7 +128,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
     companion object {
         var notificationInterface: NotificationInterface? = null
-
     }
 
     var rideStatus = AppConstants.DRIVER_PICKUP

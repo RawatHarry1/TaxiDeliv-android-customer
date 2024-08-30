@@ -13,7 +13,7 @@ data class WalletTransaction(
 
 data class TransactionData(
     val txn_id: Int,
-    val txn_type: Int,
+    val txn_type: String,
     val amount: Double?,
     val txn_date: String,
     val txn_time: String,
