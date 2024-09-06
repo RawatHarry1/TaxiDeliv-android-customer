@@ -139,6 +139,30 @@ object DialogUtils {
         })
     }
 
+    fun getPermissionDeniedDialog(
+        mContext: Activity,
+        denied: Int,
+        title: String,
+        onClickNegativeResult: (Int) -> Unit?
+    ): Dialog {
+        val dialogView = Dialog(mContext)
+        with(dialogView) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.dialog_permission_denied)
+            setCancelable(false)
+            val tvTitle = findViewById<AppCompatTextView>(R.id.tvPermissionTitle)
+            val tvConfirm = findViewById<AppCompatTextView>(R.id.tvAllowPermission)
+            tvTitle.text = title
+            tvConfirm.setOnClickListener {
+                onClickNegativeResult(denied)
+                dismiss()
+            }
+            show()
+        }
+        return dialogView
+    }
+
     fun editProfilePictureDialog(
         context: Context,
         clickListener: EditProfileListener
@@ -191,8 +215,6 @@ object DialogUtils {
         val dialogView = Dialog(mContext)
         with(dialogView) {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setContentView(R.layout.dialog_add_topup)
             setCancelable(false)

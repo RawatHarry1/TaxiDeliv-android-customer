@@ -36,8 +36,8 @@ class UserRepo @Inject constructor(
     suspend fun changeAvailability(status: Boolean) = flow {
         emit(apiInterface.changeAvailability(requestBody = JSONObject().apply {
             put("flag", if (status) 1 else 0)
-            put("latitude", SaloneDriver.latLng?.latitude)
-            put("longitude", SaloneDriver.latLng?.longitude)
+            put("latitude", SaloneDriver.latLng?.latitude ?: 0.0)
+            put("longitude", SaloneDriver.latLng?.longitude?: 0.0)
         }.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
 

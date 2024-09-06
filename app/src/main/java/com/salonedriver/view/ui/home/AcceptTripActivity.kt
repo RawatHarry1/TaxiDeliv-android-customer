@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.salonedriver.R
 import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.FragmentAcceptTripBinding
+import com.salonedriver.dialogs.DialogUtils
 import com.salonedriver.firebaseSetup.NewRideNotificationDC
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.userData.UserDataDC
@@ -49,9 +51,10 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
     override fun getLayoutId(): Int {
         return R.layout.fragment_accept_trip
     }
-   private val showMessageIndicatorBroadcastReceiver = object : BroadcastReceiver() {
+
+    private val showMessageIndicatorBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-           binding.ivMsgIndicator.isVisible = true
+            binding.ivMsgIndicator.isVisible = true
         }
     }
 
@@ -75,8 +78,12 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
                     rideData?.userPhoneNo ?: ""
                 ) // Replace with the phone number you want to call
             } else {
-                // Permission denied, show a message to the user
-                showErrorMessage("Permission denied. Cannot make phone calls.")
+                DialogUtils.getPermissionDeniedDialog(
+                    this,
+                    1,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
             }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -84,12 +91,22 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
                 showMessageIndicatorBroadcastReceiver,
                 IntentFilter("newMsg"), Context.RECEIVER_NOT_EXPORTED
             )
-        }
-        else {
+        } else {
             registerReceiver(
                 showMessageIndicatorBroadcastReceiver,
                 IntentFilter("newMsg")
             )
+        }
+    }
+
+    private fun onDialogCallPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
         }
     }
 
@@ -172,13 +189,22 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE) -> {
                 // Show rationale and request permission
                 // You can show a dialog explaining why you need this permission
-                showErrorMessage("Permission denied. Cannot make phone calls.")
-                requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+                DialogUtils.getPermissionDeniedDialog(
+                    this,
+                    0,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
             }
 
             else -> {
                 // Directly request the permission
-                requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+                DialogUtils.getPermissionDeniedDialog(
+                    this,
+                    1,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
             }
         }
     }

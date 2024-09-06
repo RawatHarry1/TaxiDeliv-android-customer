@@ -210,9 +210,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             }
         })
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            checkPermissions(Manifest.permission.POST_NOTIFICATIONS) {}
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            checkPermissions(Manifest.permission.POST_NOTIFICATIONS) {}
+//        }
     }
 
 
@@ -294,7 +294,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     override fun onResume() {
         super.onResume()
-        getLocationResult()
+//        getLocationResult()
     }
 
 

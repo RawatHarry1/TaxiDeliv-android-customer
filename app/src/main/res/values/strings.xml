@@ -474,6 +474,10 @@
     <string name="no_cards_found">No Cards Found</string>
     <string name="add_new_card">Add New Card</string>
     <string name="select_a_card">Select a card</string>
-
-
+    <string name="allow">Allow</string>
+    <string name="allow_notifications">Enable notifications for Venus? Stay updated with ride requests, customer details, and important trip alerts to ensure seamless service.</string>
+    <string name="allow_location">Enable all time location to receive ride requests from nearby customers and navigate easily to pick-up and drop-off locations.</string>
+    <string name="allow_location_precise">Enable location to receive ride requests from nearby customers and navigate easily to pick-up and drop-off locations.</string>
+    <string name="allow_camera_and_gallery">Enable camera and gallery access for Venus? Capture and upload photos for ride verification, document incidents, or share important visuals seamlessly.</string>
+    <string name="allow_call_permission">Enable call access for Venus? Call customer and support.</string>
 </resources>

@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import com.salonedriver.R
 import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.ActivitySignInBinding
+import com.salonedriver.dialogs.DialogUtils
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
 import com.salonedriver.util.AppUtils
@@ -131,10 +132,33 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 )
             ) {
-                showSettingsDialog(this)
+//                showPermissionRationaleDialog(this)
+                DialogUtils.getPermissionDeniedDialog(
+                    this,
+                    0,
+                    getString(R.string.allow_location_precise),
+                    ::onDialogPermissionAllowClick
+                )
             } else {
-                showPermissionRationaleDialog(this)
+//                showSettingsDialog(this)
+                DialogUtils.getPermissionDeniedDialog(
+                    this,
+                    1,
+                    getString(R.string.allow_location_precise),
+                    ::onDialogPermissionAllowClick
+                )
             }
+        }
+    }
+
+    private fun onDialogPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            checkPermissions()
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
         }
     }
 

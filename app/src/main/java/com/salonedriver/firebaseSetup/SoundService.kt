@@ -43,6 +43,8 @@ class SoundService : Service() {
             .setContentTitle(intent.getStringExtra("title") ?: "You have 1 new ride request")
             .setContentText(intent.getStringExtra("message") ?: "You have 1 new ride request")
             .setSmallIcon(R.drawable.ic_notification)
+            .setPriority(NotificationCompat.PRIORITY_HIGH) // Set notification priority to high
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC) // Ensure visibility
             .setContentIntent(getPendingIntent(destinationId = R.id.nav_home))
             .build()
         // Start the service in the foreground

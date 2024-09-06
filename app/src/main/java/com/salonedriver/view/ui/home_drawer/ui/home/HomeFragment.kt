@@ -73,6 +73,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     NotificationInterface, CheckOnGoingBooking {
+    private lateinit var notificationPermissionLauncher: ActivityResultLauncher<String>
 
     companion object {
         var notificationInterface: NotificationInterface? = null
@@ -176,31 +177,137 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                 permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true -> {
                     // Foreground location permission granted, but background is not
                     Log.i("RequestPermission", "when 2")
-                    showBackgroundLocationPermissionRationale()
+                    showPermissionAreNotAllowed(true)
                 }
 
                 else -> {
                     // Permission denied
                     Log.i("RequestPermission", "when 3")
-                    handleLocationPermissionDenied()
+                    showPermissionAreNotAllowed(true)
                 }
             }
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            Log.i("RequestPermission", "onCreate home fragment")
-            if (ContextCompat.checkSelfPermission(
-                    requireActivity(),
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            )
-                showBackgroundLocationRequired()
+
+        // Initialize the permission launcher
+        notificationPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted
+                Log.i("Permission", "Notification permission granted")
+
+            } else {
+                // Permission denied
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                        // Denied once, show rationale
+                        Log.i(
+                            "Permission",
+                            "Notification permission denied once, showing rationale"
+                        )
+                        DialogUtils.getPermissionDeniedDialog(
+                            requireActivity(),
+                            0,
+                            getString(R.string.allow_notifications),
+                            ::onDialogPermissionAllowClick
+                        )
+                    } else {
+                        // Denied multiple times or "Don't ask again"
+                        Log.i("Permission", "Notification permission denied multiple times")
+                        DialogUtils.getPermissionDeniedDialog(
+                            requireActivity(),
+                            1,
+                            getString(R.string.allow_notifications),
+                            ::onDialogPermissionAllowClick
+                        )
+                    }
+                }
+            }
         }
 
 
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//            Log.i("RequestPermission", "onCreate home fragment")
+//            if (ContextCompat.checkSelfPermission(
+//                    requireActivity(),
+//                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+//                ) != PackageManager.PERMISSION_GRANTED
+//            )
+//                showBackgroundLocationRequired()
+//        }
 
 
     }
 
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Permission already granted
+                    Log.i("Permission", "Notification permission granted")
+
+                }
+
+                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                    // Denied once, show rationale dialog
+                    Log.i("Permission", "Notification permission denied once")
+                    DialogUtils.getPermissionDeniedDialog(
+                        requireActivity(),
+                        0,
+                        getString(R.string.allow_notifications),
+                        ::onDialogPermissionAllowClick
+                    )
+                }
+
+                else -> {
+                    // First-time request or denied with "Don't ask again"
+                    Log.i("Permission", "Requesting notification permission")
+                    DialogUtils.getPermissionDeniedDialog(
+                        requireActivity(),
+                        1,
+                        getString(R.string.allow_notifications),
+                        ::onDialogPermissionAllowClick
+                    )
+                }
+            }
+        } else {
+
+        }
+    }
+
+    private fun showPermissionAreNotAllowed(isDeniedMultipleTimes: Boolean) {
+        binding.swOnOff.isEnabled = false
+        binding.swOnOff.isChecked = false
+        viewModel.changeStatus(binding.swOnOff.isChecked)
+        homePageAlerts(
+            image = R.drawable.app_logo_image,
+            message = getString(R.string.allow_location),
+            btnText = getString(R.string.allow),
+        ) {
+            if (!isDeniedMultipleTimes)
+                checkAndRequestLocationPermissions()
+            else {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                val uri = Uri.fromParts("package", requireActivity().packageName, null)
+                intent.data = uri
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun onDialogPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", requireActivity().packageName, null)
+            }
+            startActivity(intent)
+        }
+    }
 
     private val locationUpdateBroadcast = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -255,6 +362,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         super.onResume()
         screenType = 0
         notificationInterface = this
+        checkAndRequestNotificationPermission()
         initializeMap()
     }
 
@@ -546,13 +654,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                         requireActivity(),
                         Manifest.permission.ACCESS_BACKGROUND_LOCATION
                     ) == PackageManager.PERMISSION_GRANTED
-                )
+                ) {
+                    binding.swOnOff.isEnabled = true
                     SingleFusedLocation.initialize(requireContext(), this)
-                else {
-                    if (showBackgroundLocationPermissionRationaleClicked) {
-                        showBackgroundLocationPermissionRationaleClicked = false
-                        showBackgroundLocationPermissionRationale()
-                    }
+                } else {
+                    showPermissionAreNotAllowed(true)
+//                    if (showBackgroundLocationPermissionRationaleClicked) {
+//                        showBackgroundLocationPermissionRationaleClicked = false
+//                        showBackgroundLocationPermissionRationale()
+//                    }
                 }
             } else
                 SingleFusedLocation.initialize(requireContext(), this)
@@ -710,7 +820,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             )
             binding.swOnOff.isChecked = (this?.autosAvailable == 1)
             if (this?.docStatus.orEmpty() != "APPROVED") {
-                documentNotVerifiedBottomSheet()
+                try {
+                    documentNotVerifiedBottomSheet()
+                } catch (e: Exception) {
+                }
             }
             fetchNewNotification()
         }, onError = {
@@ -1001,11 +1114,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
 
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
                 // Show rationale for foreground location permission
-                showLocationPermissionRationale()
+                showPermissionAreNotAllowed(true)
             }
+
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION) -> {
                 // Show rationale for foreground location permission
-                showBackgroundLocationPermissionRationale()
+                showPermissionAreNotAllowed(true)
             }
 
             else -> {
@@ -1113,8 +1227,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             .create()
             .show()
     }
-
-
 
 
 }

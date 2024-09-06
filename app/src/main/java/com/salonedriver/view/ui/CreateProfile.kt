@@ -18,12 +18,12 @@ import com.mukesh.photopicker.utils.pickerDialog
 import com.salonedriver.R
 import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.ActivityCreateProfileBinding
+import com.salonedriver.dialogs.DialogUtils
 import com.salonedriver.model.api.getJsonRequestBody
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.updateDriverInfo.UpdateDriverInfo
 import com.salonedriver.model.dataclassses.userData.UserDataDC
 import com.salonedriver.util.NoSpaceInputFilter
-import com.salonedriver.util.ResourceUtils
 import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.util.ValidationUtils
 import com.salonedriver.util.getValue
@@ -52,7 +52,7 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
         binding = getViewDataBinding()
         binding.etDesignation.filters = arrayOf(NoSpaceInputFilter())
         if (isEditProfile)
-            binding.tvCreateTitle.text =  getText(R.string.edit_your_nprofile)
+            binding.tvCreateTitle.text = getText(R.string.edit_your_nprofile)
 
         fetchUserData()
         binding.tvSubmit.setOnSingleClickListener {
@@ -232,9 +232,19 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
                         Manifest.permission.CAMERA
                     )
                 ) {
-                    showPermissionRationaleDialog(this)
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        0,
+                        getString(R.string.allow_camera_and_gallery),
+                        ::onDialogPermissionAllowClick
+                    )
                 } else
-                    showSettingsDialog(this)
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        1,
+                        getString(R.string.allow_camera_and_gallery),
+                        ::onDialogPermissionAllowClick
+                    )
             }
         } else {
             if (permissions[Manifest.permission.CAMERA] == true
@@ -254,11 +264,34 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
                 ) {
-                    showPermissionRationaleDialog(this)
+//                    showPermissionRationaleDialog(this)
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        0,
+                        getString(R.string.allow_camera_and_gallery),
+                        ::onDialogPermissionAllowClick
+                    )
                 } else {
-                    showSettingsDialog(this)
+//                    showSettingsDialog(this)
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        1,
+                        getString(R.string.allow_camera_and_gallery),
+                        ::onDialogPermissionAllowClick
+                    )
                 }
             }
+        }
+    }
+
+    private fun onDialogPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            checkPermissions()
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
         }
     }
 
