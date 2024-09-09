@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.venus_customer.customClasses.LocationResultHandler
 import com.venus_customer.customClasses.SingleFusedLocation
 import com.venus_customer.databinding.ActivitySplashBinding
+import com.venus_customer.dialogs.DialogUtils
 import com.venus_customer.model.api.observeData
 import com.venus_customer.model.dataClass.userData.UserDataDC
 import com.venus_customer.util.AppUtils
@@ -65,12 +66,17 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
                     onGPSDenied()
                 }
             }
-        AppUtils.checkAndEnableGPS(
-            this,
-            ::onGPSEnabled,
-            ::onGPSDenied,
-            enableGpsLauncher
-        )
+        val userData =
+            SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+        if (userData?.login?.isCustomerProfileComplete == 1) {
+            AppUtils.checkAndEnableGPS(
+                this,
+                ::onGPSEnabled,
+                ::onGPSDenied,
+                enableGpsLauncher
+            )
+        } else
+            callGetOperatorToken()
     }
 
     private fun onGPSEnabled() {
@@ -107,12 +113,37 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 )
             ) {
-                showSettingsDialog(this)
+//                showSettingsDialog(this)
+                DialogUtils.getPermissionDeniedDialog(
+                    this,
+                    0,
+                    getString(R.string.allow_location_precise),
+                    ::onDialogPermissionAllowClick
+                )
             } else {
-                showPermissionRationaleDialog(this)
+//                showPermissionRationaleDialog(this)
+                DialogUtils.getPermissionDeniedDialog(
+                    this,
+                    1,
+                    getString(R.string.allow_location_precise),
+                    ::onDialogPermissionAllowClick
+                )
             }
         }
     }
+
+    private fun onDialogPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            checkPermissions()
+        } else {
+            finish()
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
+        }
+    }
+
 
     private fun showSettingsDialog(context: Context) {
         AlertDialog.Builder(context).apply {

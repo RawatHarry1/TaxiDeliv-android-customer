@@ -18,6 +18,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -84,6 +85,8 @@ import com.venus_customer.viewmodel.rideVM.CreateRideData
 import com.venus_customer.viewmodel.rideVM.RideVM
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import nl.dionsegijn.konfetti.core.Party
@@ -115,6 +118,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private var nearByDriverMap: GoogleMap? = null
     private var nearByDriverLatLanArrayList = ArrayList<NearByDriverMarkers>()
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var notificationPermissionLauncher: ActivityResultLauncher<String>
     private val addressAdapter by lazy {
         AddedAddressAdapter(
             requireActivity(), ::addressAdapterClick
@@ -143,8 +147,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.i("HOMEFRAGMENT", "onViewCreated")
-        SocketSetup.initializeInterface(this)
-        SocketSetup.connectSocket()
         binding = getViewDataBinding()
 //        rideVM.createRideData = CreateRideData()
         setBannerAdapter(view.context)
@@ -152,6 +154,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         getSavedStateData()
         observeUiState()
         observeFindDriver()
+        observeFindDriverInLoop()
         observeRequestRide()
         observeRequestSchedule()
         observeFareEstimate()
@@ -175,8 +178,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 if (phone.isEmpty()) showSnackBar("There is some issue in call. Please try after sometimes.")
                 else makePhoneCall(phone) // Replace with the phone number you want to call
             } else {
-                // Permission denied, show a message to the user
-                showSnackBar("Permission denied. Cannot make phone calls.")
+                DialogUtils.getPermissionDeniedDialog(
+                    requireActivity(),
+                    1,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
             }
         }
 
@@ -199,6 +206,94 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         if (VenusApp.referralMsg.isNotEmpty()) {
             showSnackBar(VenusApp.referralMsg)
             VenusApp.referralMsg = ""
+        }
+
+
+        // Initialize the permission launcher
+        notificationPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted
+                Log.i("Permission", "Notification permission granted")
+
+            } else {
+                // Permission denied
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                        // Denied once, show rationale
+                        Log.i(
+                            "Permission",
+                            "Notification permission denied once, showing rationale"
+                        )
+                        DialogUtils.getPermissionDeniedDialog(
+                            requireActivity(),
+                            0,
+                            getString(R.string.allow_notifications),
+                            ::onDialogPermissionAllowClick
+                        )
+                    } else {
+                        // Denied multiple times or "Don't ask again"
+                        Log.i("Permission", "Notification permission denied multiple times")
+                        DialogUtils.getPermissionDeniedDialog(
+                            requireActivity(),
+                            1,
+                            getString(R.string.allow_notifications),
+                            ::onDialogPermissionAllowClick
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun onDialogPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", requireActivity().packageName, null)
+            }
+            startActivity(intent)
+        }
+    }
+
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Permission already granted
+                    Log.i("Permission", "Notification permission granted")
+
+                }
+
+                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                    // Denied once, show rationale dialog
+                    Log.i("Permission", "Notification permission denied once")
+                    DialogUtils.getPermissionDeniedDialog(
+                        requireActivity(),
+                        0,
+                        getString(R.string.allow_notifications),
+                        ::onDialogPermissionAllowClick
+                    )
+                }
+
+                else -> {
+                    // First-time request or denied with "Don't ask again"
+                    Log.i("Permission", "Requesting notification permission")
+                    DialogUtils.getPermissionDeniedDialog(
+                        requireActivity(),
+                        1,
+                        getString(R.string.allow_notifications),
+                        ::onDialogPermissionAllowClick
+                    )
+                }
+            }
+        } else {
+
         }
     }
 
@@ -293,9 +388,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
     override fun onResume() {
         super.onResume()
+        checkAndRequestNotificationPermission()
         notificationInterface = this
+        SocketSetup.initializeInterface(this)
+        SocketSetup.connectSocket()
     }
 
+    private fun startRepeatingJob() {
+        lifecycleScope.launch {
+            while (true) {
+                withContext(Dispatchers.IO) {
+                    Log.i("CarType", "Api hit")
+                    rideVM.findDriverInLoop(schedule)
+                }
+                delay(10000) // 15 seconds
+            }
+        }
+    }
 
     private fun hideAllBottomSheets() {
         Log.i("SavedStateData", "in hideAllBottomSheets")
@@ -309,6 +418,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         carDetailAlertState =
             binding.viewCarDetail.clRootView.getBottomSheetBehaviour(isDraggableAlert = false)
         startRideAlertState = binding.viewStartRide.clRootView.getBottomSheetBehaviour()
+        carTypeAlertState?.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        lifecycleScope.coroutineContext.cancelChildren()
+                    }
+
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        // Bottom sheet is collapsed
+                        Log.i("CarType", "in STATE_COLLAPSED")
+                    }
+
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+                        // User is dragging the bottom sheet down
+                        Log.i("CarType", "in STATE_DRAGGING")
+                    }
+
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        // Bottom sheet is expanded
+                        Log.i("CarType", "in STATE_EXPANDED")
+                        startRepeatingJob()
+                    }
+
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+                        Log.i("CarType", "in STATE_HALF_EXPANDED")
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+        })
         locationAlertState?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -321,12 +464,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                         rideVM.couponToApply = 0
                         rideVM.promoCode = ""
                         rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
-                        // Bottom sheet is hidden, attempt to clear state
-//                        Handler(Looper.getMainLooper()).postDelayed({
-//                            clearSavedStateData()
-//                            Log.i("SavedStateData", "State cleared after STATE_HIDDEN")
-//                        }, 200) // Adding a delay to ensure state changes have completed
-//                        rideVM.createRideData = CreateRideData()
                     }
 
                     BottomSheetBehavior.STATE_COLLAPSED -> {
@@ -551,7 +688,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     etNotes.setText("")
                 } else {
                     if (rideVM.paymentOption == 9 && rideVM.cardId.isEmpty())
-                        showSnackBar("*Please select card for payment*",tvConfirmBtn)
+                        showSnackBar("*Please select card for payment*", tvConfirmBtn)
                     else {
                         carDetailAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                         val notes = etNotes.text?.trim().toString()
@@ -750,7 +887,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         Log.i("SelectedDateWithYear", dateTimeWithYear)
 
         // Define the input format
-        val inputFormat = SimpleDateFormat("E, MMM dd hh:mm a yyyy", Locale.US)
+        val inputFormat = SimpleDateFormat("E, MMM dd hh:mm a yyyy", Locale.getDefault())
         inputFormat.timeZone = TimeZone.getDefault() // Ensure the time zone is set correctly
 
         // Parse the input date string to a Date object
@@ -866,14 +1003,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE) -> {
                 // Show rationale and request permission
                 // You can show a dialog explaining why you need this permission
-                showSnackBar("Permission denied. Cannot make phone calls.")
-                requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+                DialogUtils.getPermissionDeniedDialog(
+                    requireActivity(),
+                    0,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
             }
 
             else -> {
                 // Directly request the permission
-                requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+                DialogUtils.getPermissionDeniedDialog(
+                    requireActivity(),
+                    1,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
             }
+        }
+    }
+
+    private fun onDialogCallPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", requireActivity().packageName, null)
+            }
+            startActivity(intent)
         }
     }
 
@@ -1088,6 +1245,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }
     }
 
+    private lateinit var carTypeAdapter: CarsTypeAdapter
     private fun startCarTypesDialog() {
         with(binding.viewCarType) {
             if ((VenusApp.offerApplied) > 0.0) {
@@ -1111,7 +1269,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 carTypeAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                 rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailPaymentDialog)
             }
-            rvCarsType.adapter = CarsTypeAdapter(
+            carTypeAdapter = CarsTypeAdapter(
                 rideVM.regionsList,
                 currencyCode = rideVM.createRideData.currencyCode.orEmpty(),
                 rideVM.customerETA
@@ -1130,6 +1288,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     original_fare = it?.region_fare?.original_fare ?: 0.0
                 )
             }
+            rvCarsType.adapter = carTypeAdapter
         }
 
     }
@@ -1549,6 +1708,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //            }, onError = {
 //                hideProgressDialog()
 //            })
+        })
+
+
+    private fun observeFindDriverInLoop() =
+        rideVM.findDriverDataInLoop.observeData(lifecycle = viewLifecycleOwner, onLoading = {
+//            showProgressDialog()
+        }, onError = {
+//            hideProgressDialog()
+//            showToastShort(this)
+        }, onSuccess = {
+//            hideProgressDialog()
+            rideVM.createRideData.currencyCode = this?.currency.orEmpty()
+            rideVM.regionsList.clear()
+            rideVM.fareStructureList.clear()
+            rideVM.customerETA = this?.customerETA ?: FindDriverDC.CustomerETA()
+            rideVM.fareStructureList.addAll(this?.fareStructure ?: emptyList())
+            rideVM.regionsList.addAll(this?.regions ?: emptyList())
+            rideVM.createRideData.regionId = ""
+            carTypeAdapter.changeCustomerETA(rideVM.customerETA)
+            carTypeAdapter.notifyDataSetChanged()
         })
 
 

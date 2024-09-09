@@ -1,5 +1,6 @@
 package com.venus_customer.view.activity.walk_though.ui.home
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -38,6 +39,7 @@ class CarsTypeAdapter(
 
     inner class CarsTypeAdapter(private val itemBinding: ItemCarsTypeBinding) :
         RecyclerView.ViewHolder(itemBinding.root) {
+        @SuppressLint("DefaultLocale", "SetTextI18n")
         fun bind(
             carTypeData: FindDriverDC.Region?,
             onClick: (region: FindDriverDC.Region?) -> Unit
@@ -122,6 +124,15 @@ class CarsTypeAdapter(
             it.isSelected = it == carTypeData
         }
         notifyDataSetChanged()
+    }
+
+    fun changeCustomerETA(customerETA: FindDriverDC.CustomerETA) {
+        this.customerETA = customerETA
+
+    }
+
+    fun changeCurrency() {
+
     }
 
 }

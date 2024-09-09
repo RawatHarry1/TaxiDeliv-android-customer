@@ -319,6 +319,10 @@
     <string name="paid_using_stripe">Paid Using Stripe</string>
     <string name="paid_using_wallet">Paid Using Wallet</string>
     <string name="delete_account">Delete Account</string>
-
+    <string name="allow">Allow</string>
+    <string name="allow_notifications">Enable notifications for Venus? Stay informed about your ride details, driver updates, and promotions with timely alerts.</string>
+    <string name="allow_location_precise">Allow precise location access to get nearby drivers, track your ride in real-time, and provide accurate pick-up and drop-off points</string>
+    <string name="allow_camera_and_gallery">Enable camera and gallery access for Venus? Capture and upload photos for ride verification, document incidents, or share important visuals seamlessly.</string>
+    <string name="allow_call_permission">Enable call access for Venus? Call driver and support for better ride experience.</string>
 
 </resources>

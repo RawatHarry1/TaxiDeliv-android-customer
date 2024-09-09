@@ -29,6 +29,7 @@ import com.venus_customer.BuildConfig
 import com.venus_customer.R
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.FragmentRideDetailsBinding
+import com.venus_customer.dialogs.DialogUtils
 import com.venus_customer.model.api.observeData
 import com.venus_customer.model.dataClass.tripsDC.RideSummaryDC
 import com.venus_customer.util.formatString
@@ -91,8 +92,12 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                 else
                     makePhoneCall(supportNumber) // Replace with the phone number you want to call
             } else {
-                // Permission denied, show a message to the user
-                showSnackBar("Permission denied. Cannot make phone calls.")
+                DialogUtils.getPermissionDeniedDialog(
+                    requireActivity(),
+                    1,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
             }
         }
 
@@ -106,6 +111,19 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                 onDownloadComplete,
                 IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
             )
+        }
+
+
+    }
+
+    private fun onDialogCallPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            requestPermissionLauncherForCall.launch(Manifest.permission.CALL_PHONE)
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", requireActivity().packageName, null)
+            }
+            startActivity(intent)
         }
     }
 
@@ -130,13 +148,22 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE) -> {
                 // Show rationale and request permission
                 // You can show a dialog explaining why you need this permission
-                showSnackBar("Permission denied. Cannot make phone calls.")
-                requestPermissionLauncherForCall.launch(Manifest.permission.CALL_PHONE)
+                DialogUtils.getPermissionDeniedDialog(
+                    requireActivity(),
+                    0,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
             }
 
             else -> {
                 // Directly request the permission
-                requestPermissionLauncherForCall.launch(Manifest.permission.CALL_PHONE)
+                DialogUtils.getPermissionDeniedDialog(
+                    requireActivity(),
+                    1,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
             }
         }
     }
@@ -265,8 +292,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                 binding.tvPaymentCash.text = "${rideSummaryDC?.currency.orEmpty()} ${
                     rideSummaryDC?.toPay.orEmpty().formatString()
                 }"
-            }
-            else
+            } else
                 binding.rlPaymentCash.isVisible = false
 
             binding.tvSubTotal.text = "${rideSummaryDC?.currency.orEmpty()} ${
@@ -280,9 +306,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                 binding.tvDiscount.text = "${rideSummaryDC?.currency.orEmpty()} ${
                     rideSummaryDC?.discountValue.orEmpty().formatString()
                 }"
-            }
-            else
-            {
+            } else {
                 binding.rlDiscount.isVisible = false
             }
 

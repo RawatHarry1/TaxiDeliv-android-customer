@@ -160,9 +160,9 @@ class Home : BaseActivity<ActivityHomeBinding>() {
 
         Log.i("ONRESUME", "HOME ${Gson().toJson(intent.extras)}")
         safeCall {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                checkPermissions(Manifest.permission.POST_NOTIFICATIONS) {}
-            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                checkPermissions(Manifest.permission.POST_NOTIFICATIONS) {}
+//            }
             viewModel.loginViaToken()
         }
     }

@@ -82,6 +82,24 @@ class RideVM @Inject constructor(
         ).setApiState(_findDriverData)
     }
 
+    /**
+     * Find Drive in loop
+     * */
+    private val _findDriverDataInLoop by lazy { SingleLiveEvent<ApiState<BaseResponse<FindDriverDC>>>() }
+    val findDriverDataInLoop: LiveData<ApiState<BaseResponse<FindDriverDC>>> = _findDriverDataInLoop
+    fun findDriverInLoop(isSchedule: Boolean = false) = viewModelScope.launch {
+        rideRepo.findDriver(
+            latLng = LatLng(
+                createRideData.pickUpLocation?.latitude.convertDouble(),
+                createRideData.pickUpLocation?.longitude.convertDouble()
+            ),
+            opLatLng = LatLng(
+                createRideData.dropLocation?.latitude.convertDouble(),
+                createRideData.dropLocation?.longitude.convertDouble()
+            ), isSchedule
+        ).setApiState(_findDriverDataInLoop)
+    }
+
 
     /**
      * Find Near Driver
@@ -117,6 +135,7 @@ class RideVM @Inject constructor(
                 put("estimated_fare", createRideData.vehicleData?.fare ?: "")
                 put("estimated_trip_distance", createRideData.vehicleData?.distance ?: "")
                 put("coupon_to_apply", couponToApply)
+                put("promo_to_apply", VenusApp.offerApplied.toString())
                 if (paymentOption == 9) {
                     put("stripe_token", cardId)
                     put("preferred_payment_mode", "9")
@@ -152,6 +171,7 @@ class RideVM @Inject constructor(
                 put("fare", createRideData.vehicleData?.fare)
                 put("pickup_time", pickUpTime)
                 put("coupon_to_apply", couponToApply)
+                put("promo_to_apply", VenusApp.offerApplied.toString())
                 if (paymentOption == 9) {
                     put("stripe_token", cardId)
                     put("preferred_payment_mode", "9")

@@ -1,8 +1,18 @@
 package com.venus_customer.view.activity
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.matter.companion.util.ValidationUtils
@@ -11,6 +21,7 @@ import com.venus_customer.R
 import com.venus_customer.VenusApp
 import com.venus_customer.customClasses.singleClick.setOnSingleClickListener
 import com.venus_customer.databinding.ActivityCreateProfileBinding
+import com.venus_customer.dialogs.DialogUtils
 import com.venus_customer.model.api.getJsonRequestBody
 import com.venus_customer.model.api.observeData
 import com.venus_customer.util.NoSpaceInputFilter
@@ -29,7 +40,7 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
     private val viewModel by viewModels<ProfileViewModel>()
     private val homeViewModel by viewModels<HomeVM>()
     private val isEditProfile by lazy { intent.getBooleanExtra("isEditProfile", false) }
-
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
 
     override fun getLayoutId(): Int {
         return R.layout.activity_create_profile
@@ -46,6 +57,11 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
             binding.etReferral.isVisible = false
             homeViewModel.loginViaToken()
         }
+        // Setup the permission launcher
+        requestPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                handlePermissionResult(permissions)
+            }
     }
 
 
@@ -56,11 +72,21 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
         binding.tvCreateProfile.text =
             if (isEditProfile) getString(R.string.edit_your_nprofile) else getString(R.string.create_your_nprofile)
         binding.ivCamera.setOnSingleClickListener {
-            pickerDialog().setPickerCloseListener { _, uris ->
-                viewModel.needToUploadImage = true
-                Glide.with(this).load(uris).into(binding.ivProfile)
-                viewModel.imagePath = uris
-            }.show()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    )
+                )
+            else
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                )
         }
 
         binding.tvUploadPhoto.setOnSingleClickListener {
@@ -184,4 +210,176 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
         showToastShort(this)
     })
 
+    private fun handlePermissionResult(permissions: Map<String, Boolean>) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (permissions[Manifest.permission.CAMERA] == true
+                && permissions[Manifest.permission.READ_MEDIA_IMAGES] == true
+            ) {
+                pickerDialog().setPickerCloseListener { _, uris ->
+                    viewModel.needToUploadImage = true
+                    Glide.with(this).load(uris).into(binding.ivProfile)
+                    viewModel.imagePath = uris
+                }.show()
+            } else {
+                if (shouldShowRequestPermissionRationale(
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    ) || shouldShowRequestPermissionRationale(
+                        Manifest.permission.CAMERA
+                    )
+                ) {
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        0,
+                        getString(R.string.allow_camera_and_gallery),
+                        ::onDialogPermissionAllowClick
+                    )
+                } else {
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        1,
+                        getString(R.string.allow_camera_and_gallery),
+                        ::onDialogPermissionAllowClick
+                    )
+                }
+            }
+        } else {
+            if (permissions[Manifest.permission.CAMERA] == true
+                && permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true
+                && permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
+            ) {
+                pickerDialog().setPickerCloseListener { _, uris ->
+                    viewModel.needToUploadImage = true
+                    Glide.with(this).load(uris).into(binding.ivProfile)
+                    viewModel.imagePath = uris
+                }.show()
+            } else {
+                if (shouldShowRequestPermissionRationale(
+                        Manifest.permission.CAMERA
+                    ) || shouldShowRequestPermissionRationale(
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) || shouldShowRequestPermissionRationale(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                ) {
+//                    showPermissionRationaleDialog(this)
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        0,
+                        getString(R.string.allow_camera_and_gallery),
+                        ::onDialogPermissionAllowClick
+                    )
+                } else {
+//                    showSettingsDialog(this)
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        1,
+                        getString(R.string.allow_camera_and_gallery),
+                        ::onDialogPermissionAllowClick
+                    )
+                }
+            }
+        }
+    }
+
+    private fun onDialogPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            checkPermissions()
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
+        }
+    }
+
+    private fun showSettingsDialog(context: Context) {
+        AlertDialog.Builder(context).apply {
+            setTitle("Permissions")
+            setMessage("Please turn on camera and gallery permissions")
+            setPositiveButton("Settings") { _, _ ->
+                val intent = Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.fromParts("package", context.packageName, null)
+                )
+                context.startActivity(intent)
+            }
+            setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            create()
+            show()
+        }
+    }
+
+    private fun showPermissionRationaleDialog(context: Context) {
+        AlertDialog.Builder(context).apply {
+            setTitle("Permissions")
+            setMessage("Please turn on camera and gallery permissions")
+            setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                checkPermissions()
+            }
+            setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            create()
+            show()
+        }
+    }
+
+
+    private fun checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.CAMERA
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.READ_MEDIA_IMAGES
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    )
+                )
+            } else {
+                pickerDialog().setPickerCloseListener { _, uris ->
+                    viewModel.needToUploadImage = true
+                    Glide.with(this).load(uris).into(binding.ivProfile)
+                    viewModel.imagePath = uris
+                }.show()
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.CAMERA
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                )
+            } else {
+                pickerDialog().setPickerCloseListener { _, uris ->
+                    viewModel.needToUploadImage = true
+                    Glide.with(this).load(uris).into(binding.ivProfile)
+                    viewModel.imagePath = uris
+                }.show()
+            }
+        }
+    }
 }
