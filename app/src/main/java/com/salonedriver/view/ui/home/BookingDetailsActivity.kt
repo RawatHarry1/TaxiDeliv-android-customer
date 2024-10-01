@@ -23,6 +23,7 @@ import com.salonedriver.BuildConfig
 import com.salonedriver.R
 import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.ActivityBookingDetailsBinding
+import com.salonedriver.dialogs.DialogUtils
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.bookingHistory.RideSummaryDC
 import com.salonedriver.util.SharedPreferencesManager
@@ -91,6 +92,16 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
         }
     }
 
+    private fun onDialogDownloadPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            checkPermissions()
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
+        }
+    }
 
     /**
      * Click Handler
@@ -129,6 +140,12 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
         )
         binding.tvRideFare.text = "${SharedPreferencesManager.getCurrencySymbol()} ${
             dataClass.rideFare.orEmpty().ifEmpty { "0.0" }.formatAmount()
+        }"
+        binding.tvVatValue.text = "${SharedPreferencesManager.getCurrencySymbol()} ${
+            dataClass.netCustomerTax.orEmpty().ifEmpty { "0.0" }.formatAmount()
+        }"
+        binding.tvCommissionValue.text = "${SharedPreferencesManager.getCurrencySymbol()} ${
+            dataClass.venusCommission.orEmpty().ifEmpty { "0.0" }.formatAmount()
         }"
         binding.tvSubtotal.text = "${SharedPreferencesManager.getCurrencySymbol()} ${
             dataClass.subTotalRideFare.orEmpty().ifEmpty { "0.0" }.formatAmount()
@@ -197,9 +214,19 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
                         Manifest.permission.CAMERA
                     )
                 ) {
-                    showPermissionRationaleDialog(this)
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        0,
+                        getString(R.string.allow_download_permission),
+                        ::onDialogDownloadPermissionAllowClick
+                    )
                 } else
-                    showSettingsDialog(this)
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        1,
+                        getString(R.string.allow_download_permission),
+                        ::onDialogDownloadPermissionAllowClick
+                    )
             }
         } else {
             if (permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true
@@ -214,16 +241,24 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
                 )
             } else {
                 if (shouldShowRequestPermissionRationale(
-                        Manifest.permission.CAMERA
-                    ) || shouldShowRequestPermissionRationale(
                         Manifest.permission.READ_EXTERNAL_STORAGE
                     ) || shouldShowRequestPermissionRationale(
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
                 ) {
-                    showPermissionRationaleDialog(this)
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        0,
+                        getString(R.string.allow_download_permission),
+                        ::onDialogDownloadPermissionAllowClick
+                    )
                 } else {
-                    showSettingsDialog(this)
+                    DialogUtils.getPermissionDeniedDialog(
+                        this,
+                        1,
+                        getString(R.string.allow_download_permission),
+                        ::onDialogDownloadPermissionAllowClick
+                    )
                 }
             }
         }

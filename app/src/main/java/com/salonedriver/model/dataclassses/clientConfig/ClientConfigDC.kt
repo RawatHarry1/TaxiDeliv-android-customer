@@ -1,6 +1,7 @@
 package com.salonedriver.model.dataclassses.clientConfig
 
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 data class ClientConfigDC(
@@ -32,10 +33,33 @@ data class ClientConfigDC(
     val operatorId: String? = null,
     @SerializedName("google_map_keys")
     val googleMapKey: String? = null,
+    @SerializedName("mandatory_registration_steps")
+    val mandatoryRegistrationSteps: MandatoryRegistrationSteps? = null,
     @SerializedName("city_list")
-    val cityList: ArrayList<CountryList>? = ArrayList()
+    val cityList: ArrayList<CountryList>? = ArrayList(),
+    @SerializedName("operator_availablity")
+    val operatorAvailablity: List<OperatorAvailablity>? = null
 )
 
+@Keep
+data class OperatorAvailablity(
+    @SerializedName("description")
+    val description: String? = null,
+    @SerializedName("id")
+    val id: Int? = null,
+    @SerializedName("image")
+    val image: String? = null,
+    @SerializedName("name")
+    val name: String? = null
+)
+
+@Keep
+data class MandatoryRegistrationSteps(
+    val is_bank_details_mandatory: Boolean,
+    val is_document_upload_mandatory: Boolean,
+    val is_profile_mandatory: Boolean,
+    val is_vehicle_info_mandatory: Boolean
+)
 
 data class CountryList(
     @SerializedName("city_id")
@@ -49,5 +73,7 @@ data class CountryList(
     @SerializedName("vehicle_model_enabled")
     val vehicleModelEnabled: String? = null,
     @SerializedName("is_gender_enabled")
-    val isGenderEnabled: String? = null
+    val isGenderEnabled: String? = null,
+    @SerializedName("operator_available")
+    val operatorAvailable: List<Int>? = null
 )

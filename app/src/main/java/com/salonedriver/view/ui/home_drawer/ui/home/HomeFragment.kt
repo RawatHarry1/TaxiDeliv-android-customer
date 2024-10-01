@@ -512,6 +512,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             viewLayout.ivRideComplete,
             viewLayout.tvBestRoute
         )
+
+        viewLayout.clReceiver.isVisible =
+            (rideViewModel.newRideNotificationData.serviceType ?: "0").toInt() == 2
+        viewLayout.tvReceiverNameValue.text =
+            rideViewModel.newRideNotificationData.recipientName ?: ""
+        viewLayout.tvReceiverPhoneValue.text =
+            rideViewModel.newRideNotificationData.recipientPhoneNo ?: ""
+
         viewLayout.tvSlideTrip.onSlideCompleteListener =
             object : SlideToActView.OnSlideCompleteListener {
                 override fun onSlideComplete(view: SlideToActView) {
@@ -542,7 +550,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                         dialog?.dismiss()
                     }
                 }
-
             }
         viewLayout.tvArrivePickup.setOnClickListener {
             when (routeType) {
@@ -583,6 +590,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
 //                tvSlideTrip.backgroundTintList = context.getColorStateList(R.color.theme_button)
                 tvSlideTrip.textColor = ContextCompat.getColor(context, R.color.white)
                 tvSlideTrip.text = getString(R.string.txt_slide_to_mark_arrive)
+                tvArrivePickup.setTextColor(context.getColorStateList(R.color.text_color))
+                tvOnDestination.setTextColor(context.getColorStateList(R.color.text_color))
+                ivArrivePickup.setImageDrawable(context.getDrawable(R.drawable.ic_location_pin_faded))
+                ivOnDestination.setImageDrawable(context.getDrawable(R.drawable.ic_location_pin_faded))
                 requireContext().showPath(
                     srcLat = LatLng(
                         SaloneDriver.latLng?.latitude ?: 0.0, SaloneDriver.latLng?.longitude ?: 0.0
@@ -742,6 +753,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                     )
                 }
             }
+            SharedPreferencesManager.put(
+                SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID,
+                this?.login?.serviceType ?: 0
+            )
             val isLowWalletBalance =
                 (this?.login?.actualCreditBalance.orEmpty().ifEmpty { "0.0" }.toDoubleOrNull()
                     ?: 0.0) < (this?.login?.minDriverBalance.orEmpty().ifEmpty { "0.0" }
@@ -1066,10 +1081,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         }
     }
 
+    override fun scheduleRide() {
+        super.scheduleRide()
+        rideViewModel.ongoingTrip()
+    }
+
 
     override fun onDestroy() {
         unregisterReceiver()
-
         super.onDestroy()
     }
 

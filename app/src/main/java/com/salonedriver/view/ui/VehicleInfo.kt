@@ -2,12 +2,19 @@ package com.salonedriver.view.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.salonedriver.R
 import com.salonedriver.customClasses.singleClick.setOnSingleClickListener
 import com.salonedriver.databinding.ActivityVehicleInfoBinding
+import com.salonedriver.databinding.ItemAppTypesBinding
 import com.salonedriver.model.api.observeData
 import com.salonedriver.model.dataclassses.clientConfig.ClientConfigDC
+import com.salonedriver.model.dataclassses.clientConfig.OperatorAvailablity
 import com.salonedriver.model.dataclassses.userData.UserDataDC
 import com.salonedriver.util.SharedPreferencesManager
 import com.salonedriver.util.arrayAdapter
@@ -21,11 +28,10 @@ import org.json.JSONObject
 
 @AndroidEntryPoint
 class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
-
-
     lateinit var binding: ActivityVehicleInfoBinding
     private val viewModel by viewModels<OnBoardingVM>()
-
+    private val appTypeArrayList = ArrayList<OperatorAvailablity>()
+    private lateinit var appTypeAdapter: AppTypeAdapter
     override fun getLayoutId(): Int {
         return R.layout.activity_vehicle_info
     }
@@ -34,13 +40,29 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
         super.onCreate(savedInstanceState)
         binding = getViewDataBinding()
         clickHandler()
-        setVehicleName()
+//        setVehicleName()
         observeCityVehicles()
         observeVehicleUpdate()
+        appTypeAdapter = AppTypeAdapter()
+
+        SharedPreferencesManager.getModel<ClientConfigDC>(SharedPreferencesManager.Keys.CLIENT_CONFIG)
+            ?.let {
+                appTypeArrayList.clear()
+                appTypeArrayList.addAll(it.operatorAvailablity.orEmpty())
+                if (appTypeArrayList.isNotEmpty()) {
+                    SharedPreferencesManager.put(
+                        SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID,
+                        appTypeArrayList[0].id ?: 0
+                    )
+                }
+                binding.rvDriverType.adapter = appTypeAdapter
+            }
         viewModel.getCityVehicles(
             SharedPreferencesManager.getModel<UserDataDC>(
                 SharedPreferencesManager.Keys.USER_DATA
-            )?.login?.city.orEmpty()
+            )?.login?.city.orEmpty(), rideType = SharedPreferencesManager.getInt(
+                SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID
+            ) ?: 0
         )
     }
 
@@ -80,6 +102,10 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
                         "colorId", viewModel.colorList.find { it.isSelected == true }?.id.toString()
                     )
                     put("city_id", viewModel.cityId)
+                    put(
+                        "request_ride_type",
+                        SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID)
+                    )
                 })
             }
         }
@@ -89,13 +115,22 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
             val cityList =
                 SharedPreferencesManager.getModel<ClientConfigDC>(SharedPreferencesManager.Keys.CLIENT_CONFIG)?.cityList
                     ?: ArrayList()
+            val filteredCityList = cityList.filter { city ->
+                city.operatorAvailable?.contains(
+                    SharedPreferencesManager.getInt(
+                        SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID
+                    )
+                ) == true
+            } ?: emptyList()
             arrayAdapter(autoCompleteTextView = binding.etVehicleCountry,
-                list = cityList.map { it.cityName.orEmpty() }) {
-                viewModel.cityId = cityList[it].cityId.orEmpty()
+                list = filteredCityList.map { it.cityName.orEmpty() }) {
+                viewModel.cityId = filteredCityList[it].cityId.orEmpty()
                 binding.etVehicleType.setText("")
                 binding.etVehicleModel.setText("")
                 viewModel.getCityVehicles(
-                    viewModel.cityId
+                    viewModel.cityId, SharedPreferencesManager.getInt(
+                        SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID
+                    ) ?: 0
                 )
             }
         }
@@ -146,10 +181,16 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
 
 
     private fun validations(): Boolean = when {
+        binding.etVehicleCountry.getValue().isEmpty() -> {
+            showErrorMessage(getString(R.string.please_select_vehicle_country))
+            false
+        }
+
         binding.etVehicleType.getValue().isEmpty() -> {
             showErrorMessage(getString(R.string.please_select_vehicle_type))
             false
         }
+
         binding.etVehicleMake.getValue().isEmpty() -> {
             showErrorMessage(getString(R.string.please_select_vehicle_make))
             false
@@ -214,5 +255,59 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
             hideProgressDialog()
             showErrorMessage(this)
         })
+
+    inner class AppTypeAdapter : RecyclerView.Adapter<AppTypeAdapter.AppTypeViewHolder>() {
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+        ): AppTypeAdapter.AppTypeViewHolder {
+            return AppTypeViewHolder(
+                ItemAppTypesBinding.inflate(
+                    LayoutInflater.from(this@VehicleInfo),
+                    parent,
+                    false
+                )
+            )
+        }
+
+        override fun onBindViewHolder(holder: AppTypeAdapter.AppTypeViewHolder, position: Int) {
+            holder.bind(appTypeArrayList[position])
+        }
+
+        override fun getItemCount(): Int {
+            return appTypeArrayList.size
+        }
+
+        inner class AppTypeViewHolder(private val bindingItem: ItemAppTypesBinding) :
+            RecyclerView.ViewHolder(bindingItem.root) {
+
+            fun bind(data: OperatorAvailablity) {
+                if (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == data.id) {
+                    bindingItem.cardViewRoot.strokeWidth =
+                        4 // Set stroke width to highlight the selected card
+                    bindingItem.cardViewRoot.strokeColor =
+                        ContextCompat.getColor(this@VehicleInfo, R.color.theme)
+                } else {
+                    bindingItem.cardViewRoot.strokeWidth = 0 // Remove stroke for unselected cards
+                }
+
+                bindingItem.tvTaxiBooking.text = data.name
+                Glide.with(this@VehicleInfo).load(data.image)
+                    .error(R.drawable.taxi_icon).into(bindingItem.ivAppImage)
+
+                bindingItem.cardViewRoot.setOnSingleClickListener {
+                    binding.etVehicleCountry.setText("")
+                    binding.etVehicleType.setText("")
+                    binding.etVehicleModel.setText("")
+                    binding.etVehicleColor.setText("")
+                    SharedPreferencesManager.put(
+                        SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID,
+                        data.id ?: 0
+                    )
+                    notifyDataSetChanged()
+                }
+            }
+        }
+    }
 
 }

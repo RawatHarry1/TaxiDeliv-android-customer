@@ -49,8 +49,8 @@ class PreLoginRepo @Inject constructor(
         }.flowOn(Dispatchers.IO)
 
 
-    suspend fun getCityVehicle(cityId: String) = flow {
-        emit(apiInterface.getCityVehicles(cityId))
+    suspend fun getCityVehicle(cityId: String,rideType:Int) = flow {
+        emit(apiInterface.getCityVehicles(cityId,rideType))
     }.flowOn(Dispatchers.IO)
 
 

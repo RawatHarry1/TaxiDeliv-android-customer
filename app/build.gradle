@@ -49,18 +49,12 @@ android {
             dimension "product"
             applicationId "com.venusdriver"
             resValue "string", "app_name", "Venus Driver"
-
-        }
-        salon {
-            dimension "product"
-            applicationId "com.salonedriver"
-            resValue "string", "app_name", "Salone Ride"
         }
         dev {
             dimension "server"
-            buildConfigField("String", "BASE_URL", '"https://dev-rides.venustaxi.in/"')
+            buildConfigField("String", "BASE_URL", '"https://chuki-rides.venustaxi.in/"')
             buildConfigField("String", "VARIANT", '"dev"')
-            buildConfigField("String", "SOCKET_BASE_URL", '"https://dev-rides-api.venustaxi.in"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://chuki-rides-api.venustaxi.in"')
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }
         live {

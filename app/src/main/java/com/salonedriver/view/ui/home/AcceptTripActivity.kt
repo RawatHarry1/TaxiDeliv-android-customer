@@ -76,7 +76,8 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             if (isGranted) {
                 makePhoneCall(
                     rideData?.userPhoneNo ?: ""
-                ) // Replace with the phone number you want to call
+                )
+            // Replace with the phone number you want to call
             } else {
                 DialogUtils.getPermissionDeniedDialog(
                     this,
@@ -152,6 +153,10 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             binding.tvCustomerNote.gone()
             binding.tvCustomerNoteValue.gone()
         }
+        binding.tvCustomerNote.text = if ((rideData?.serviceType
+                ?: "1").ifEmpty { "1" }.toInt() == 1
+        ) "Customer Note: " else "Customer Goods: "
+
         if (rideData?.customerNote.isNullOrEmpty()) {
             binding.tvCustomerNote.gone()
             binding.tvCustomerNoteValue.gone()
@@ -227,6 +232,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
                 }
             }
         }
+
         binding.tvRateCustomer.setOnSingleClickListener {
             startActivity(
                 Intent(
@@ -239,6 +245,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
         binding.ivBack.setOnClickListener {
             finish()
         }
+
         binding.ivMsg.setOnClickListener {
             binding.ivMsgIndicator.isVisible = false
             startActivity(
@@ -251,13 +258,13 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
                     putExtra("customerName", "${rideData?.customerName}")
                     putExtra("customerImage", "${rideData?.customerImage}")
                 }
-
-
             )
         }
+
         binding.ivCall.setOnSingleClickListener {
             checkPermissionAndMakeCall(rideData?.userPhoneNo ?: "")
         }
+
         binding.tvCancel.setOnClickListener {
             cancelTrip {
                 Intent(this, CancelTrip::class.java).apply {

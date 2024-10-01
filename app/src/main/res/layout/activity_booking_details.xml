@@ -250,6 +250,52 @@
                     app:layout_constraintTop_toBottomOf="@+id/tvRideFare" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvVat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/vat"
+                    android:textColor="@color/black_text_color2"
+                    android:textSize="12sp"
+                    app:fontFamily="@font/poppins_regular"
+                    app:layout_constraintStart_toStartOf="@+id/view3"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSubtotal" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvVatValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/black_text_color2"
+                    android:textSize="12sp"
+                    app:fontFamily="@font/poppins_regular"
+                    app:layout_constraintEnd_toEndOf="@+id/view3"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSubtotal" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvCommission"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/platform_fee"
+                    android:textColor="@color/black_text_color2"
+                    android:textSize="12sp"
+                    app:fontFamily="@font/poppins_regular"
+                    app:layout_constraintStart_toStartOf="@+id/view3"
+                    app:layout_constraintTop_toBottomOf="@+id/tvVat" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvCommissionValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/black_text_color2"
+                    android:textSize="12sp"
+                    app:fontFamily="@font/poppins_regular"
+                    app:layout_constraintEnd_toEndOf="@+id/view3"
+                    app:layout_constraintTop_toBottomOf="@+id/tvVat" />
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/titleTotalFare"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -259,7 +305,7 @@
                     android:textSize="12sp"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintStart_toStartOf="@+id/view3"
-                    app:layout_constraintTop_toBottomOf="@+id/titleSubtotal" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvCommission" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvTotalFare"
@@ -270,7 +316,7 @@
                     android:textSize="12sp"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintEnd_toEndOf="@+id/view3"
-                    app:layout_constraintTop_toBottomOf="@+id/tvSubtotal" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvCommission" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -301,16 +347,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="30dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="@dimen/_20sdp"
                     android:background="@drawable/bg_outline_circular"
                     android:fontFamily="@font/poppins_regular"
                     android:gravity="center"
                     android:padding="@dimen/_10sdp"
-                    android:layout_marginTop="20dp"
                     android:text="Download Invoice"
-                    app:layout_constraintTop_toBottomOf="@id/tvWaitingTime"
                     android:textColor="@color/black_text_color"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvWaitingTime" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.core.widget.NestedScrollView>

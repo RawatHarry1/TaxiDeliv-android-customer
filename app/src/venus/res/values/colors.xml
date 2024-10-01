@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="purple_200">#FFBB86FC</color>
-    <color name="theme">#0054A5</color>
-    <color name="theme1">#007700</color>
-    <color name="theme_light">#8fc4fd</color>
+    <color name="theme">#003C6E</color>
+    <color name="theme1">#1A955E</color>
+    <color name="theme_light">#330054A5</color>
     <color name="theme_light_document">#338FC4FD</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -19,7 +19,7 @@
     <color name="walk_desc_color">#5c6660</color>
     <color name="sign_up_underline">#538957</color>
     <color name="via_phone_underline">#1b1c3c</color>
-    <color name="pink_card">#f0fbff</color>
+    <color name="pink_card">#EAF5FF</color>
     <color name="grey_text_color">#595757</color>
     <color name="grey_text_color_light">#9A9A9A</color>
     <color name="black_text_color">#222b45</color>
@@ -41,7 +41,7 @@
     <color name="green_text_color">#2bc763</color>
     <color name="red_text_color">#ED0B0B</color>
     <color name="grey_text_color3">#acb1c0</color>
-
+    <color name="cancel_btn_color">#E9F0FC</color>
     <color name="_0054A5">#0054A5</color>
     <color name="_242134">#242134</color>
 

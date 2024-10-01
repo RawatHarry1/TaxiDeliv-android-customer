@@ -63,7 +63,8 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="20dp"
                         android:contentDescription="@string/title_home"
-                        android:src="@drawable/ic_home_icon" />
+                        android:src="@drawable/ic_home_icon"
+                        app:tint="@color/theme" />
 
                     <TextView
                         android:id="@+id/tvHome"

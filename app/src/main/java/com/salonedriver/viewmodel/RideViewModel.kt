@@ -23,7 +23,6 @@ class RideViewModel @Inject constructor(
 ) : ViewModel() {
 
     var newRideNotificationData = NewRideNotificationDC()
-
     private val _rejectRideData by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
     val rejectRideData: LiveData<ApiState<BaseResponse<Any>>> get() = _rejectRideData
     fun rejectRide(tripId: String) = viewModelScope.launch {

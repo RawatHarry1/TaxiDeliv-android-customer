@@ -90,6 +90,11 @@ class FirebaseNotification : FirebaseMessagingService() {
                     WalletFragment.notificationInterface?.walletUpdate()
                     HomeFragment.notificationInterface?.walletUpdate()
                 }
+
+                (notificationData.notificationType?.toIntOrNull()
+                    ?: -1) == NotificationStatus.SCHEDULE_RIDE.type -> {
+                    HomeFragment.notificationInterface?.scheduleRide()
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -112,10 +117,8 @@ class FirebaseNotification : FirebaseMessagingService() {
 //                        playCustomSoundInLoop()
 //                        playCustomSound()
                     } else sendNotification()
-
                 }
             }
-
     }
 
     private fun startSoundService() {
@@ -140,7 +143,6 @@ class FirebaseNotification : FirebaseMessagingService() {
     private fun fetchNotificationData(data: MutableMap<String, String>) {
         try {
             val jsonData = JSONObject(data["notificationDetails"].orEmpty())
-            Log.i("PUSHNOTI", "in notification detail")
             when (notificationData.notificationType?.toIntOrNull() ?: -1) {
                 NotificationStatus.NEW_RIDE.type -> {
                     NewRideNotificationDC(
@@ -159,7 +161,8 @@ class FirebaseNotification : FirebaseMessagingService() {
                         date = jsonData.optString("date"),
                         customerNote = jsonData.optString("customer_notes"),
                         distanceUnit = jsonData.optString("distanceUnit"),
-                        userPhoneNo = jsonData.optString("user_phone_no")
+                        userPhoneNo = jsonData.optString("user_phone_no"),
+                        serviceType = jsonData.optString("service_type")
                     ).apply {
                         SharedPreferencesManager.putModel(
                             SharedPreferencesManager.Keys.NEW_BOOKING, this

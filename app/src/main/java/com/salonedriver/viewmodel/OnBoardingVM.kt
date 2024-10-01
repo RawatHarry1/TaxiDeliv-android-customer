@@ -127,8 +127,8 @@ class OnBoardingVM @Inject constructor(
     private val _cityVehicles by lazy { SingleLiveEvent<ApiState<BaseResponse<CityVehicleDC>>>() }
     val cityVehicles: LiveData<ApiState<BaseResponse<CityVehicleDC>>> get() = _cityVehicles
 
-    fun getCityVehicles(cityId: String) = viewModelScope.launch {
-        repository.getCityVehicle(cityId).setApiState(_cityVehicles)
+    fun getCityVehicles(cityId: String,rideType:Int) = viewModelScope.launch {
+        repository.getCityVehicle(cityId,rideType).setApiState(_cityVehicles)
     }
 
 

@@ -14,6 +14,10 @@ data class RideSummaryDC(
     val actualFare: String? = null,
     @SerializedName("ride_fare")
     val rideFare: String? = null,
+    @SerializedName("net_customer_tax")
+    val netCustomerTax: String? = null,
+    @SerializedName("venus_commission")
+    val venusCommission: String? = null,
     @SerializedName("sub_total_ride_fare")
     val subTotalRideFare: String? = null,
     @SerializedName("arrived_at")

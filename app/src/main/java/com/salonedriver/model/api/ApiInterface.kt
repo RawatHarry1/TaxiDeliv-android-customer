@@ -84,7 +84,8 @@ interface ApiInterface {
 
     @GET(GET_CITY_VEHICLES)
     suspend fun getCityVehicles(
-        @Query("city_id") cityId: String
+        @Query("city_id") cityId: String,
+        @Query("request_ride_type") rideType: Int
     ): Response<BaseResponse<CityVehicleDC>>
 
 

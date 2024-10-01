@@ -112,5 +112,6 @@ object SharedPreferencesManager {
         const val NEW_BOOKING = "newBooking"
         const val DOCUMENT_APPROVED = "documentApproved"
         const val DRIVER_ONLINE = "driverOnline"
+        const val SELECTED_OPERATOR_ID = "operator_id"
     }
 }

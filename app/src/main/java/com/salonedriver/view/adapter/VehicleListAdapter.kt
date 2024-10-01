@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.salonedriver.R
 import com.salonedriver.databinding.ItemVehicleListingBinding
 import com.salonedriver.model.dataclassses.VehicleListDC
+import com.salonedriver.util.SharedPreferencesManager
 
 class VehicleListAdapter() : RecyclerView.Adapter<VehicleListAdapter.VehicleViewHolder>() {
 
@@ -32,17 +33,23 @@ class VehicleListAdapter() : RecyclerView.Adapter<VehicleListAdapter.VehicleView
         RecyclerView.ViewHolder(itemBinding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(data: VehicleListDC.VehicleArray) {
+            itemBinding.tvSeats.text =
+                if (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == 2) "Capacity" else "Seats"
             itemBinding.tvCarName.text = data.modelName.orEmpty()
-            itemBinding.tvCarSeats.text = "${data.noOfSeats.orEmpty().ifEmpty { "0" }} Seater"
+            itemBinding.tvCarSeats.text = "${data.noOfSeats.orEmpty().ifEmpty { "0" }} ${
+                if (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == 2) "Kg" else "Seater"
+            } "
             itemBinding.tvCarNo.text = data.vehicleNo.orEmpty()
             itemBinding.tvInsuranceDeatils.text = data.color.orEmpty()
             itemBinding.tvVehicleType.text = data.vehicleTypeName.orEmpty()
-            Glide.with(itemBinding.ivCarImage).load(data.makeImage).placeholder(R.drawable.ic_car_round).error(R.drawable.ic_car_round).into(itemBinding.ivCarImage)
+            Glide.with(itemBinding.ivCarImage).load(data.makeImage)
+                .placeholder(R.drawable.ic_car_round).error(R.drawable.ic_car_round)
+                .into(itemBinding.ivCarImage)
         }
     }
 
 
-    fun submitList(list: List<VehicleListDC.VehicleArray>){
+    fun submitList(list: List<VehicleListDC.VehicleArray>) {
         this.list.clear()
         this.list.addAll(list)
         notifyDataSetChanged()

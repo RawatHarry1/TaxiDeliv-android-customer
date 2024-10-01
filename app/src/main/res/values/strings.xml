@@ -420,6 +420,7 @@
     <string name="upload">Upload</string>
     <string name="complete_text">Complete</string>
     <string name="please_upload_all_documents">*Please upload all documents.</string>
+    <string name="please_select_vehicle_country">*Please select vehicle country.</string>
     <string name="please_select_vehicle_type">*Please select vehicle type.</string>
     <string name="please_select_vehicle_make">*Please select vehicle year.</string>
     <string name="please_select_vehicle_model">*Please select vehicle model.</string>
@@ -480,4 +481,8 @@
     <string name="allow_location_precise">Enable location to receive ride requests from nearby customers and navigate easily to pick-up and drop-off locations.</string>
     <string name="allow_camera_and_gallery">Enable camera and gallery access for Venus? Capture and upload photos for ride verification, document incidents, or share important visuals seamlessly.</string>
     <string name="allow_call_permission">Enable call access for Venus? Call customer and support.</string>
+    <string name="allow_download_permission">Enable download access for Venus? For downloading invoice please allow permissions.</string>
+    <string name="select_driver_type">Select Driver Type</string>
+    <string name="platform_fee">Platform Fee</string>
+
 </resources>

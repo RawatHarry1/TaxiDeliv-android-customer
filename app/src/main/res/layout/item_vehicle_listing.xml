@@ -85,6 +85,7 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
+                        android:id="@+id/tvSeats"
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/ic_car_seats"
                         android:drawablePadding="6dp"

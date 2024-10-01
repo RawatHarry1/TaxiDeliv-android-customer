@@ -7,4 +7,6 @@ interface NotificationInterface {
 
     fun walletUpdate(){}
 
+    fun scheduleRide(){}
+
 }

@@ -102,7 +102,9 @@ data class Login(
     @SerializedName("popup")
     val popup: Popup? = null,
     @SerializedName("stripeCredentials")
-    val stripeCredentials: StripeCredentials? = null
+    val stripeCredentials: StripeCredentials? = null,
+    @SerializedName("service_type")
+    val serviceType: Int? = null
 )
 
 @Keep
