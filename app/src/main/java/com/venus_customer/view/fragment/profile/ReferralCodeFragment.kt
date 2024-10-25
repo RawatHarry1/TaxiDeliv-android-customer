@@ -52,11 +52,11 @@ class ReferralCodeFragment : BaseFragment<FragmentReferralCodeBinding>() {
         binding.tvReferralCode.setOnClickListener { copyTextToClipboard(referralCode) }
     }
 
-    fun shareInvite() {
+    private fun shareInvite() {
         val inviteMessage = """
         Hey, join ${resources.getString(R.string.app_name)} app using this referral code: $referralCode.
         Click here to download the app: $referralLink
-    """.trimIndent()
+      """.trimIndent()
 
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
@@ -67,7 +67,7 @@ class ReferralCodeFragment : BaseFragment<FragmentReferralCodeBinding>() {
         startActivity(Intent.createChooser(shareIntent, "Share invitation via"))
     }
 
-    fun copyTextToClipboard(text: String) {
+    private fun copyTextToClipboard(text: String) {
         val clipboard = requireActivity().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Referral code: ", text)
         clipboard.setPrimaryClip(clip)

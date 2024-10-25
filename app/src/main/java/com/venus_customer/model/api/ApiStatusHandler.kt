@@ -1,5 +1,6 @@
 package com.venus_customer.model.api
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -46,8 +47,10 @@ fun <T> LiveData<ApiState<BaseResponse<T>>>.observeData(
             Status.ERROR -> {
                 if (it.errorModel?.statusCode == "503")
                     onError.invoke("Something went wrong")
-                else
+                else {
+                    Log.d("resp", "observeData: ${it.errorModel?.message.orEmpty()}")
                     onError.invoke(it.errorModel?.message.orEmpty())
+                }
             }
 
             //No Status

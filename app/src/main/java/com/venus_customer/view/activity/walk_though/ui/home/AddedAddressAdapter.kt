@@ -46,9 +46,9 @@ class AddedAddressAdapter( val context: Context,private val onClick: (SavedAddre
         notifyDataSetChanged()
     }
     fun removeItem(position: Int) {
+        onClick(list[position],true)
         list.removeAt(position)
         notifyItemRemoved(position)
-        onClick(list[position],true)
     }
     fun setDeleteVisible(position: Int, visible: Boolean) {
         if (visible) {

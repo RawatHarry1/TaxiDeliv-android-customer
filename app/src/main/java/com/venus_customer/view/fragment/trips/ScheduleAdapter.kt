@@ -39,7 +39,8 @@ class ScheduleAdapter(
     inner class TripsViewHolder(private val binding: ItemTripsBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(data: ScheduleList) {
-            if (data.status == 3) {
+            if (data.status == 3 || data.status == 1 || data.status == 2
+                ) {
                 binding.tvCancelSchedule.isEnabled = false
                 binding.tvCancelSchedule.isClickable = false
                 binding.tvCancelSchedule.alpha = .5f

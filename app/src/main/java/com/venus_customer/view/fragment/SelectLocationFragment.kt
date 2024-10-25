@@ -13,6 +13,7 @@ import android.view.Window
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -115,6 +116,22 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                 )
             }
         } else {
+            val drawableStart =
+                binding.tvSelectPickDrop.compoundDrawablesRelative[0]
+            drawableStart?.let { drawable ->
+                val tintedDrawable = drawable.mutate()
+                DrawableCompat.setTint(
+                    tintedDrawable,
+                    ContextCompat.getColor(requireActivity(), R.color.black)
+                )
+                binding.tvSelectPickDrop.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    tintedDrawable,
+                    null,
+                    null,
+                    null
+                )
+            }
+
             isSearchEnable = true
         }
         binding.tvConfirmBtn.setOnSingleClickListener {
@@ -427,15 +444,15 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
                 }
                 try {
                     if (activity != null)
-                    requireActivity().runOnUiThread {
-                        adapter.submitList(emptyList())
-                        if (adapter.itemCount != 0)
-                            binding.rvAddAddressPickDrop.isVisible = true
-                        if (args.selectLocationType == "add_address")
-                            binding.addAddressProgress.isVisible = false
-                        else
-                            binding.progress.isVisible = false
-                    }
+                        requireActivity().runOnUiThread {
+                            adapter.submitList(emptyList())
+                            if (adapter.itemCount != 0)
+                                binding.rvAddAddressPickDrop.isVisible = true
+                            if (args.selectLocationType == "add_address")
+                                binding.addAddressProgress.isVisible = false
+                            else
+                                binding.progress.isVisible = false
+                        }
                 } catch (e: Exception) {
 
                 }
@@ -671,9 +688,8 @@ class SelectLocationFragment : BaseFragment<FragmentSelectLocationBinding>() {
             } else {
                 null
             }
-        }catch (e:Exception)
-        {
-           return null
+        } catch (e: Exception) {
+            return null
         }
     }
 

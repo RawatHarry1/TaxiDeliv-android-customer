@@ -76,7 +76,7 @@
         <activity
             android:name=".view.activity.CreateProfile"
             android:exported="true"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".view.activity.ForgotPassword"
             android:exported="false"
@@ -150,5 +150,6 @@
                 <action android:name="bring_app_to_foreground" />
             </intent-filter>
         </receiver>
+
     </application>
 </manifest>

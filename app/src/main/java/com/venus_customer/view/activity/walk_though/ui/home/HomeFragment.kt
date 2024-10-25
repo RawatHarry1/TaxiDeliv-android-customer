@@ -11,6 +11,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.net.Uri
@@ -22,6 +24,7 @@ import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -38,6 +41,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -46,6 +51,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
 import com.ncorti.slidetoact.SlideToActView
 import com.venus_customer.R
@@ -59,6 +65,7 @@ import com.venus_customer.customClasses.trackingData.showPath
 import com.venus_customer.customClasses.trackingData.vectorToBitmap
 import com.venus_customer.databinding.DialogDateTimeBinding
 import com.venus_customer.databinding.FragmentHomeBinding
+import com.venus_customer.databinding.ItemBannersBinding
 import com.venus_customer.dialogs.DialogUtils
 import com.venus_customer.firebaseSetup.NotificationInterface
 import com.venus_customer.model.api.getJsonRequestBody
@@ -106,7 +113,6 @@ data class NearByDriverMarkers(val latLng: LatLng, val bearing: Float)
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface, SocketInterface {
-
     lateinit var binding: FragmentHomeBinding
     private val rideVM by activityViewModels<RideVM>()
     private val searchLocationVM by viewModels<SearchLocationVM>()
@@ -129,6 +135,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         findNavController().currentBackStackEntry?.savedStateHandle
             ?: throw IllegalStateException("State Handle is null")
     }
+    private val bannerArrayList = ArrayList<Drawable>()
+
+    //    private val rideTypeArrayList = ArrayList<RideTypes>()
+    private lateinit var bannerAdapter: BannerAdapter
+
+    //    private lateinit var rideTypeAdapter: RideTypeAdapter
+    private var currentPage = 0
+    private val handler = Handler(Looper.getMainLooper())
+    private val slideRunnable = object : Runnable {
+        override fun run() {
+            currentPage = (currentPage + 1) % bannerArrayList.size
+            binding.bannerViewPager.setCurrentItem(currentPage, true)
+            handler.postDelayed(this, 3000) // 3 seconds
+        }
+    }
+
 
     companion object {
         var notificationInterface: NotificationInterface? = null
@@ -167,6 +189,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         addAdapterSetupAndApiHit()
         getNearByDrivers()
         observeSOS()
+        setupBanners()
 //        rideVM.rideAlertUiState.value?.let { uiStateHandler(it) }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
@@ -245,7 +268,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
             }
         }
+
+        Glide.with(requireActivity()).asGif().load(R.drawable.promotional_gif).into(binding.ivGif)
+
+        lifecycleScope.launch {
+            getLocationDataFromLatLng(VenusApp.latLng)
+        }
     }
+
 
     private fun onDialogPermissionAllowClick(type: Int) {
         if (type == 0) {
@@ -376,6 +406,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //                getSavedStateData()
 //            }
 //        })
+        handler.removeCallbacks(slideRunnable)
     }
 
     private fun addAdapterSetupAndApiHit() {
@@ -535,23 +566,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //        hideAllBottomSheets()
     }
 
-    private fun clickHandler() {
-        binding.tvNow.setOnSingleClickListener {
-            binding.tvNow.text = requireContext().getString(R.string.schedule)
-            hideAllBottomSheets()
-            startTimeDialog(requireContext())
-        }
 
-        binding.rlSchedule.setOnSingleClickListener {
-            binding.tvNow.text = requireContext().getString(R.string.schedule)
+    private fun clickHandler() {
+        binding.rlRideSchedule.setOnSingleClickListener {
+//            binding.tvNow.text = requireContext().getString(R.string.schedule)
             hideAllBottomSheets()
             startTimeDialog(requireContext())
         }
-        binding.tvWhereTo.setOnSingleClickListener {
-            rideVM.createRideData = CreateRideData()
-            schedule = false
-            rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
-        }
+//
+//        binding.rlSchedule.setOnSingleClickListener {
+//            binding.tvNow.text = requireContext().getString(R.string.schedule)
+//            hideAllBottomSheets()
+//            startTimeDialog(requireContext())
+//        }
+//        binding.tvWhereTo.setOnSingleClickListener {
+//            rideVM.createRideData = CreateRideData()
+//            schedule = false
+//            rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+//        }
         binding.rlRide.setOnSingleClickListener {
             rideVM.createRideData = CreateRideData()
             schedule = false
@@ -828,7 +860,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             showTimePickerDialog(binding.tvTimeValue)
         }
         binding.tvSubmitBtn.setOnSingleClickListener {
-            this@HomeFragment.binding.tvNow.text = context.getString(R.string.schedule)
+//            this@HomeFragment.binding.tvNow.text = context.getString(R.string.schedule)
             val past =
                 isDateTimeInPast(binding.tvDateValue.text.toString() + " " + binding.tvTimeValue.text.toString())
             if (past) {
@@ -1316,7 +1348,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         listData.add(BannerData(ContextCompat.getDrawable(context, R.drawable.ic_banner_image)))
         listData.add(BannerData(ContextCompat.getDrawable(context, R.drawable.ic_banner_image)))
         listData.add(BannerData(ContextCompat.getDrawable(context, R.drawable.ic_banner_image)))
-        binding.vpBanners.adapter = BannerAdapter(listData)
+//        binding.vpBanners.adapter = BannerAdapter(listData)
     }
 
 
@@ -1725,7 +1757,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.customerETA = this?.customerETA ?: FindDriverDC.CustomerETA()
             rideVM.fareStructureList.addAll(this?.fareStructure ?: emptyList())
             rideVM.regionsList.addAll(this?.regions ?: emptyList())
-            rideVM.createRideData.regionId = ""
+            rideVM.regionsList.forEach { region ->
+                if (region.regionId == rideVM.createRideData.regionId) {
+                    // Check if eta is null, if yes, clear selectedRegionId
+                    if (region.eta == null) {
+                        rideVM.createRideData.regionId = ""
+                    }
+                    // Set isSelected based on regionId match and eta not being null
+                    region.isSelected = region.eta != null
+                } else {
+                    // For other regions, ensure isSelected is false
+                    region.isSelected = false
+                }
+            }
             carTypeAdapter.changeCustomerETA(rideVM.customerETA)
             carTypeAdapter.notifyDataSetChanged()
         })
@@ -1771,6 +1815,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.couponToApply = 0
             rideVM.promoCode = ""
             hideAllBottomSheets()
+            rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
             rideVM.hideHomeNav(false)
         }, onSuccess = {
             hideProgressDialog()
@@ -1785,6 +1830,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.couponToApply = 0
             rideVM.promoCode = ""
             hideAllBottomSheets()
+            rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
 //            rideVM.createRideData.sessionId = this?.sessionId.orEmpty()
 //            rideVM.updateUiState(RideVM.RideAlertUiState.FindDriverDialog)
         })
@@ -1930,7 +1976,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             try {
                 val apiKey = VenusApp.googleMapKey
                 val url =
-                    "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=$apiKey"
+                    "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=$apiKey&language=en"
                 val result = URL(url).readText()
                 val jsonObject = JSONObject(result)
                 val status = jsonObject.getString("status")
@@ -1950,6 +1996,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                         withContext(Dispatchers.Main) {
                             rideVM.createRideData.pickUpLocation?.address?.let {
                                 binding.viewLocation.tvPickUpValue.text = it
+                                binding.tvPickUpAddress.text = it
                             }
                         }
                     } else {
@@ -1986,5 +2033,112 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 emitter = Emitter(duration = 500, TimeUnit.MILLISECONDS).max(500)
             )
         )
+    }
+
+    inner class BannerAdapter : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
+
+        inner class BannerViewHolder(private val binding: ItemBannersBinding) :
+            RecyclerView.ViewHolder(binding.root) {
+            fun bind(banners: Drawable) {
+                Glide.with(requireActivity()).load(banners ?: "")
+                    .error(R.drawable.ic_banner_image_new).into(binding.ivBannerImage)
+
+//                binding.ivBannerImage.setOnClickListener {
+//                    if (!banners.actionUrl.isNullOrEmpty())
+//                        safeCall {
+//                            CustomTabsIntent.Builder().build()
+//                                .launchUrl(requireContext(), Uri.parse(banners.actionUrl))
+//                        }
+//                }
+            }
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BannerViewHolder {
+            return BannerViewHolder(ItemBannersBinding.inflate(layoutInflater, parent, false))
+        }
+
+        override fun onBindViewHolder(holder: BannerViewHolder, position: Int) {
+            holder.bind(bannerArrayList[position])
+        }
+
+        override fun getItemCount(): Int = bannerArrayList.size
+    }
+
+    private fun setupBanners() {
+        bannerArrayList.clear()
+        ContextCompat.getDrawable(requireActivity(), R.drawable.ride_banner)
+            ?.let { bannerArrayList.add(it) }
+        ContextCompat.getDrawable(requireActivity(), R.drawable.ride_banner)
+            ?.let { bannerArrayList.add(it) }
+
+        bannerAdapter = BannerAdapter()
+        binding.bannerViewPager.adapter = bannerAdapter
+        binding.tabLayoutDots.setSelectedTabIndicatorColor(Color.WHITE)
+        TabLayoutMediator(
+            binding.tabLayoutDots, binding.bannerViewPager
+        ) { tab, position ->
+            val unselectedIcon =
+                ContextCompat.getDrawable(requireContext(), R.drawable.banner_indicator_unselected)
+            unselectedIcon?.setTintMode(PorterDuff.Mode.SRC_IN)
+            tab.setIcon(unselectedIcon)
+            tab.icon?.setTint(ContextCompat.getColor(requireContext(), R.color.white))
+        }.attach()
+        // Customize dot appearance based on selection
+        binding.bannerViewPager.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                for (i in 0 until binding.tabLayoutDots.tabCount) {
+                    val unselectedIcon = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.banner_indicator_unselected
+                    )
+                    unselectedIcon?.setTintMode(PorterDuff.Mode.SRC_IN)
+                    val selectedIcon = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.banner_indicator_selected
+                    )
+                    selectedIcon?.setTintMode(PorterDuff.Mode.SRC_IN)
+                    binding.tabLayoutDots.getTabAt(i)?.setIcon(
+                        if (i == position) selectedIcon else unselectedIcon
+                    )
+                    binding.tabLayoutDots.getTabAt(i)?.icon?.setTint(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                }
+            }
+
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                for (i in 0 until binding.tabLayoutDots.tabCount) {
+                    val unselectedIcon = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.banner_indicator_unselected
+                    )
+                    unselectedIcon?.setTintMode(PorterDuff.Mode.SRC_IN)
+                    val selectedIcon = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.banner_indicator_selected
+                    )
+                    selectedIcon?.setTintMode(PorterDuff.Mode.SRC_IN)
+                    binding.tabLayoutDots.getTabAt(i)?.setIcon(
+                        if (i == position) selectedIcon else unselectedIcon
+                    )
+                    binding.tabLayoutDots.getTabAt(i)?.icon?.setTint(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                }
+            }
+        })
+        handler.post(slideRunnable)
     }
 }

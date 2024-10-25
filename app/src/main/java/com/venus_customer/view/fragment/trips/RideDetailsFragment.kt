@@ -260,7 +260,16 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             setUpUI(this)
         }
     )
-
+    private fun onDialogDownloadPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            checkPermissions()
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", requireActivity().packageName, null)
+            }
+            startActivity(intent)
+        }
+    }
 
     private fun setUpUI(rideSummaryDC: RideSummaryDC?) {
         try {
@@ -359,13 +368,21 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             } else {
                 if (shouldShowRequestPermissionRationale(
                         Manifest.permission.READ_MEDIA_IMAGES
-                    ) || shouldShowRequestPermissionRationale(
-                        Manifest.permission.CAMERA
                     )
                 ) {
-                    showPermissionRationaleDialog(requireActivity())
+                    DialogUtils.getPermissionDeniedDialog(
+                        requireActivity(),
+                        0,
+                        getString(R.string.allow_download_permission),
+                        ::onDialogDownloadPermissionAllowClick
+                    )
                 } else
-                    showSettingsDialog(requireActivity())
+                    DialogUtils.getPermissionDeniedDialog(
+                        requireActivity(),
+                        1,
+                        getString(R.string.allow_download_permission),
+                        ::onDialogDownloadPermissionAllowClick
+                    )
             }
         } else {
             if (permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true
@@ -380,16 +397,24 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                 )
             } else {
                 if (shouldShowRequestPermissionRationale(
-                        Manifest.permission.CAMERA
-                    ) || shouldShowRequestPermissionRationale(
                         Manifest.permission.READ_EXTERNAL_STORAGE
                     ) || shouldShowRequestPermissionRationale(
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
                 ) {
-                    showPermissionRationaleDialog(requireActivity())
+                    DialogUtils.getPermissionDeniedDialog(
+                        requireActivity(),
+                        0,
+                        getString(R.string.allow_download_permission),
+                        ::onDialogDownloadPermissionAllowClick
+                    )
                 } else {
-                    showSettingsDialog(requireActivity())
+                    DialogUtils.getPermissionDeniedDialog(
+                        requireActivity(),
+                        1,
+                        getString(R.string.allow_download_permission),
+                        ::onDialogDownloadPermissionAllowClick
+                    )
                 }
             }
         }
