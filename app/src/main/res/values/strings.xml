@@ -30,7 +30,7 @@
     <string name="txt_skip">Skip</string>
 
     <!--sign in/up-->
-    <string name="txt_venus">Venus</string>
+    <string name="txt_venus">Smart App</string>
     <string name="txt_clear_air_ride">Clean Air Ride share</string>
     <string name="txt_sign_in">Sign In</string>
     <string name="txt_have_an_account">Don’t have an account? <font color='#1b1c3c'>Sign up</font></string>
@@ -81,6 +81,7 @@
     <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
     <string name="log_out">Log Out</string>
     <string name="are_you_sure_you_want_to_log_out">Are you sure you want\n to log out ?</string>
+    <string name="are_you_sure_you_want_to_exist_the_app">Are you sure you want\n to exist the app?</string>
     <string name="are_you_sure_you_want_to_delete_account">Are you sure you want\n to delete account?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -116,9 +117,12 @@
     <string name="title_activity_home">Home</string>
     <string name="title_home">Home</string>
     <string name="title_trips">Trips</string>
+    <string name="title_delivery">Deliveries</string>
+    <string name="delivery">Delivery</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_account">Account</string>
     <string name="trip_history">Trip History</string>
+    <string name="delivery_history">Delivery History</string>
     <string name="schedule_history">Schedule History</string>
     <string name="completed">Completed</string>
     <string name="_8_june_2019_18_39">8 June 2019, 18:39</string>
@@ -313,16 +317,50 @@
     <string name="no_cards_found">No cards found</string>
     <string name="change">Change</string>
     <string name="referral">Referral</string>
-    <string name="refer_now">Refer Now</string>
+    <string name="refer_now">Refer now</string>
     <string name="update_now">Update Now</string>
     <string name="your_referral_code">Your referral code:</string>
     <string name="paid_using_stripe">Paid Using Stripe</string>
     <string name="paid_using_wallet">Paid Using Wallet</string>
     <string name="delete_account">Delete Account</string>
     <string name="allow">Allow</string>
-    <string name="allow_notifications">Enable notifications for Venus? Stay informed about your ride details, driver updates, and promotions with timely alerts.</string>
+    <string name="allow_notifications">Enable notifications for Smart App? Stay informed about your ride details, driver updates, and promotions with timely alerts.</string>
     <string name="allow_location_precise">Allow precise location access to get nearby drivers, track your ride in real-time, and provide accurate pick-up and drop-off points</string>
-    <string name="allow_camera_and_gallery">Enable camera and gallery access for Venus? Capture and upload photos for ride verification, document incidents, or share important visuals seamlessly.</string>
-    <string name="allow_call_permission">Enable call access for Venus? Call driver and support for better ride experience.</string>
-
+    <string name="allow_camera_and_gallery">Enable camera and gallery access for Smart App? Capture and upload photos for ride verification, document incidents, or share important visuals seamlessly.</string>
+    <string name="allow_call_permission">Enable call access for Smart App? Call driver and support for better ride experience.</string>
+    <string name="allow_download_permission">Enable download access for Smart App? For downloading invoice please allow permissions.</string>
+    <string name="refer_to_your_friends">Refer a friend</string>
+    <string name="fetching_address">Fetching Address...</string>
+    <string name="welcome_to_taxi_booking">Start Your Taxi Booking!</string>
+    <string name="welcome_to_delivery_booking">Start Your Delivery Booking!</string>
+    <string name="coming_nsoon">Coming\nSoon</string>
+    <string name="services">Services</string>
+    <string name="vehicle_type">Vehicle Type</string>
+    <string name="continue_">Continue</string>
+    <string name="package_list">Package List</string>
+    <string name="start_adding_your_npackage">Start adding your\npackage</string>
+    <string name="add_package">Add Package</string>
+    <string name="update_package">Update Package</string>
+    <string name="add_package_size">Add Package Size</string>
+    <string name="package_type">Package Type</string>
+    <string name="select_package_type">Select Package Type</string>
+    <string name="item_description">Item Description</string>
+    <string name="enter_item_name">Enter Item Name</string>
+    <string name="quantity">Quantity</string>
+    <string name="enter_quantity">Enter Quantity</string>
+    <string name="length">Length</string>
+    <string name="enter_length">Enter Length (In meters)</string>
+    <string name="width">Width</string>
+    <string name="enter_width">Enter Width (In meters)</string>
+    <string name="height">Height</string>
+    <string name="enter_height">Enter Height (In meters)</string>
+    <string name="weight">Weight</string>
+    <string name="enter_weight">Enter Weight</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="review_details">Review Details</string>
+    <string name="package_details">Package Details</string>
+    <string name="vehicle_details">Vehicle Details</string>
+    <string name="confirm_and_request_booking">Confirm And Request Booking</string>
+    <string name="estimated_cost">Estimated Cost</string>
+    <string name="delivery_details">Delivery Details</string>
 </resources>

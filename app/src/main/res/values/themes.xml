@@ -15,6 +15,21 @@
         <item name="mukeshOtpStyle">@style/OtpWidget.OtpView</item>
     </style>
 
+    <style name="Theme.Delivery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/theme_red</item>
+        <item name="colorPrimaryVariant">@color/theme_red</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/theme_red</item>
+        <item name="colorSecondaryVariant">@color/theme_red</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <item name="mukeshOtpStyle">@style/OtpWidget.OtpView</item>
+    </style>
+
     <style name="OtpWidget.OtpView" parent="Widget.AppCompat.EditText">
         <item name="android:background">@null</item>
         <item name="android:minHeight">0dp</item>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/_10sdp"
+    android:layout_marginTop="@dimen/_10sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <RelativeLayout
+        android:id="@+id/rlRide"
+        android:layout_width="74dp"
+        android:layout_height="64dp"
+        android:background="@drawable/bg_suggestions"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.3">
+
+        <ImageView
+            android:id="@+id/ivSuggestions"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_ride_now" />
+
+    </RelativeLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvRide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppins_medium"
+        android:text="Now"
+        android:textColor="@color/black_text_color"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@id/rlRide"
+        app:layout_constraintStart_toStartOf="@id/rlRide"
+        app:layout_constraintTop_toBottomOf="@id/rlRide" />
+    <TextView
+        android:id="@+id/tvComingSoon"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="@string/coming_nsoon"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/rlRide"
+        app:layout_constraintBottom_toBottomOf="@id/rlRide"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

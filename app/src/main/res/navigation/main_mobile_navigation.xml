@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.superapp_customer.view.activity.walk_though.ui.home.MainHomeFragment"
+        tools:layout="@layout/fragment_main_home" />
+
+    <fragment
+        android:id="@+id/navigation_ride"
+        android:name="com.superapp_customer.view.activity.walk_though.ui.home.HomeFragment"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/navigation_delivery"
+        android:name="com.superapp_customer.view.activity.walk_though.ui.home.HomeFragment"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/navigation_trips"
+        android:name="com.superapp_customer.view.fragment.trips.TripsFragment"
+        tools:layout="@layout/fragment_trips" />
+
+    <fragment
+        android:id="@+id/navigation_notifications"
+        android:name="com.superapp_customer.view.fragment.notification.NotificationFragment"
+        tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_account"
+        android:name="com.superapp_customer.view.fragment.profile.AccountFragment"
+        tools:layout="@layout/fragment_account" />
+
+    <fragment
+        android:id="@+id/navigation_faq"
+        android:name="com.superapp_customer.view.fragment.FAQFragment"
+        tools:layout="@layout/fragment_f_a_q" />
+
+    <fragment
+        android:id="@+id/navigation_change_password"
+        android:name="com.superapp_customer.view.fragment.profile.ChangePasswordFragment"
+        tools:layout="@layout/fragment_change_password" />
+
+    <fragment
+        android:id="@+id/navigation_ride_details"
+        android:name="com.superapp_customer.view.fragment.trips.RideDetailsFragment"
+        tools:layout="@layout/fragment_ride_details">
+        <argument
+            android:name="tripId"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="driverId"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="fromTrip"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_rate_driver"
+        android:name="com.superapp_customer.view.fragment.feedback.FeedbackFragment"
+        tools:layout="@layout/fragment_feed_bacl">
+        <argument
+            android:name="engagementId"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="driverName"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="driverId"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="tripId"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_ride_complete"
+        android:name="com.superapp_customer.view.fragment.RideCompleteFragment"
+        tools:layout="@layout/fragment_ride_complete">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_select_location"
+        android:name="com.superapp_customer.view.fragment.SelectLocationFragment"
+        tools:layout="@layout/fragment_select_location">
+        <argument
+            android:name="selectLocationType"
+            android:defaultValue="pickUp"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_cancel_ride"
+        android:name="com.superapp_customer.view.fragment.cancelRideFragment.CancelRideFragment"
+        tools:layout="@layout/fragment_cancel_ride">
+        <argument
+            android:name="sessionId"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_terms_conditions"
+        android:name="com.superapp_customer.view.fragment.profile.TermsConditionsFragment"
+        tools:layout="@layout/fragment_terms_conditions" />
+
+    <fragment
+        android:id="@+id/navigation_about_us"
+        android:name="com.superapp_customer.view.fragment.profile.AboutUsFragment"
+        tools:layout="@layout/fragment_about_us" />
+
+    <fragment
+        android:id="@+id/navigation_offers"
+        android:name="com.superapp_customer.view.fragment.profile.OffersFragment"
+        tools:layout="@layout/fragment_offers" />
+
+    <fragment
+        android:id="@+id/navigation_wallet"
+        android:name="com.superapp_customer.view.fragment.profile.WalletFragment"
+        tools:layout="@layout/fragment_wallet" />
+    <fragment
+        android:id="@+id/navigate_referral"
+        android:name="com.superapp_customer.view.fragment.profile.ReferralCodeFragment"
+        tools:layout="@layout/fragment_referral_code" />
+
+    <fragment
+        android:id="@+id/navigate_services"
+        android:name="com.superapp_customer.view.activity.walk_though.ui.home.ServicesFragment"
+        tools:layout="@layout/fragment_services" />
+</navigation>

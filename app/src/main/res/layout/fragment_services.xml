@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_15sdp"
+            android:text="@string/services"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            app:fontFamily="@font/poppins_semibold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/_15sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- ViewPager2 for banners -->
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/bannerViewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="172dp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- TabLayout for dots -->
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayoutDots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintBottom_toBottomOf="@id/bannerViewPager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabPaddingEnd="-1dp"
+                    app:tabPaddingStart="-1dp"
+                    app:tabRippleColor="@android:color/transparent" />
+
+
+                <TextView
+                    android:id="@+id/tvRideBooking"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="Ride Booking"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/poppins_regular"
+                    app:layout_constraintTop_toBottomOf="@+id/bannerViewPager" />
+
+                <LinearLayout
+                    android:id="@+id/llRideTypes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/tvRideBooking">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <RelativeLayout
+                            android:id="@+id/rlRide"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:background="@drawable/bg_suggestions"
+                            app:layout_constraintHeight_default="wrap"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
+
+                            <ImageView
+                                android:id="@+id/ivSuggestions"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_ride_now" />
+
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvRide"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="Now"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="@id/rlRide"
+                            app:layout_constraintStart_toStartOf="@id/rlRide"
+                            app:layout_constraintTop_toBottomOf="@id/rlRide" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="0dp" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <RelativeLayout
+                            android:id="@+id/rlRideSchedule"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:background="@drawable/bg_suggestions"
+                            app:layout_constraintHeight_default="wrap"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
+
+                            <ImageView
+                                android:id="@+id/ivRideSchedule"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_ride_schedule" />
+
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvRideSchedule"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="@string/schedule"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="@id/rlRideSchedule"
+                            app:layout_constraintStart_toStartOf="@id/rlRideSchedule"
+                            app:layout_constraintTop_toBottomOf="@id/rlRideSchedule" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="0dp" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <RelativeLayout
+                            android:id="@+id/rlRideOutStation"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:alpha=".3"
+                            android:background="@drawable/bg_suggestions"
+                            app:layout_constraintHeight_default="wrap"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
+
+                            <ImageView
+                                android:id="@+id/ivRideOutStation"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_outstation" />
+
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvRideOutStation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:alpha=".5"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="Outstation"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="@id/rlRideOutStation"
+                            app:layout_constraintStart_toStartOf="@id/rlRideOutStation"
+                            app:layout_constraintTop_toBottomOf="@id/rlRideOutStation" />
+
+                        <TextView
+                            android:id="@+id/tvComingSoon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="@string/coming_nsoon"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@id/rlRideOutStation"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/rlRideOutStation" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="0dp" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <RelativeLayout
+                            android:id="@+id/rlRideRental"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:alpha=".3"
+                            android:background="@drawable/bg_suggestions"
+                            app:layout_constraintHeight_default="wrap"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
+
+                            <ImageView
+                                android:id="@+id/ivRideRental"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_rental" />
+
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvRideRental"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:alpha=".5"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="Rental"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="@id/rlRideRental"
+                            app:layout_constraintStart_toStartOf="@id/rlRideRental"
+                            app:layout_constraintTop_toBottomOf="@id/rlRideRental" />
+
+                        <TextView
+                            android:id="@+id/tvRideRentalComingSoon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="@string/coming_nsoon"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@id/rlRideRental"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/rlRideRental" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/tvDeliveryBooking"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:text="Delivery Booking"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/poppins_regular"
+                    app:layout_constraintTop_toBottomOf="@id/llRideTypes" />
+
+                <LinearLayout
+                    android:id="@+id/llDeliveryTypes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/tvDeliveryBooking">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <RelativeLayout
+                            android:id="@+id/rlDelivery"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:background="@drawable/bg_suggestions"
+                            app:layout_constraintHeight_default="wrap"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
+
+                            <ImageView
+                                android:id="@+id/ivDeliverySuggestions"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_delivery_now" />
+
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvDelivery"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="Now"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="@id/rlDelivery"
+                            app:layout_constraintStart_toStartOf="@id/rlDelivery"
+                            app:layout_constraintTop_toBottomOf="@id/rlDelivery" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="0dp" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <RelativeLayout
+                            android:id="@+id/rlDeliverySchedule"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:background="@drawable/bg_suggestions"
+                            app:layout_constraintHeight_default="wrap"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
+
+                            <ImageView
+                                android:id="@+id/ivDeliverySchedule"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_delivery_schedule" />
+
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvDeliverySchedule"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="@string/schedule"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="@id/rlDeliverySchedule"
+                            app:layout_constraintStart_toStartOf="@id/rlDeliverySchedule"
+                            app:layout_constraintTop_toBottomOf="@id/rlDeliverySchedule" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="0dp" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <RelativeLayout
+                            android:id="@+id/rlDeliveryOutStation"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:alpha=".3"
+                            android:background="@drawable/bg_suggestions"
+                            app:layout_constraintHeight_default="wrap"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
+
+                            <ImageView
+                                android:id="@+id/ivDeliveryOutStation"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_delivery_outstation" />
+
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvDeliveryOutStation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:alpha=".5"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="Outstation"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="@id/rlDeliveryOutStation"
+                            app:layout_constraintStart_toStartOf="@id/rlDeliveryOutStation"
+                            app:layout_constraintTop_toBottomOf="@id/rlDeliveryOutStation" />
+
+                        <TextView
+                            android:id="@+id/tvDeliveryComingSoon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="@string/coming_nsoon"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@id/rlDeliveryOutStation"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/rlDeliveryOutStation" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="0dp" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <RelativeLayout
+                            android:id="@+id/rlDeliveryRental"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:alpha=".3"
+                            android:background="@drawable/bg_suggestions"
+                            app:layout_constraintHeight_default="wrap"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
+
+                            <ImageView
+                                android:id="@+id/ivDeliveryRental"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_delivery_truck" />
+
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvDeliveryRental"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:alpha=".5"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="Truck"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="@id/rlDeliveryRental"
+                            app:layout_constraintStart_toStartOf="@id/rlDeliveryRental"
+                            app:layout_constraintTop_toBottomOf="@id/rlDeliveryRental" />
+
+                        <TextView
+                            android:id="@+id/tvDeliveryRentalComingSoon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="@string/coming_nsoon"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@id/rlDeliveryRental"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/rlDeliveryRental" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

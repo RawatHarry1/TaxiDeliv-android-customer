@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/clBackground"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/_6sdp"
+    app:cardCornerRadius="@dimen/_6sdp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_10sdp">
+
+        <ImageView
+            android:id="@+id/ivVehicleImage"
+            android:layout_width="68dp"
+            android:layout_height="42dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_backpack"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvVehicleName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Small"
+            android:textColor="@color/black_text_color"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/ivVehicleImage"
+            app:layout_constraintStart_toStartOf="@id/ivVehicleImage"
+            app:layout_constraintTop_toBottomOf="@id/ivVehicleImage" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:text="20*20"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/ivVehicleImage"
+            app:layout_constraintStart_toStartOf="@id/ivVehicleImage"
+            app:layout_constraintTop_toBottomOf="@id/tvVehicleName" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

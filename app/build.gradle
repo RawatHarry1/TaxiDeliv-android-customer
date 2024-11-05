@@ -20,7 +20,7 @@ android {
             keyPassword '123456'
         }
     }
-    namespace 'com.venus_customer'
+    namespace 'com.superapp_customer'
     compileSdk 34
 
     dataBinding {
@@ -28,26 +28,29 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.venus_customer"
+        applicationId "com.superapp_customer"
         minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
 
     buildTypes {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             /*Dev*/
-//            buildConfigField("String", "BASE_URL", '"https://dev-rides.venustaxi.in/"')
-//            buildConfigField("String", "SOCKET_BASE_URL", '"https://dev-rides-api.venustaxi.in"')
+//            https://chuki-rides.venustaxi.in
+//            https://chuki-rides-api.venustaxi.in
+            buildConfigField("String", "BASE_URL", '"https://super-app-rides.venustaxi.in/"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://super-app-rides-api.venustaxi.in"')
             /*Live*/
-            buildConfigField("String", "BASE_URL", '"https://rides.venustaxi.in/"')
-            buildConfigField("String", "SOCKET_BASE_URL", '"https://rides-api.venustaxi.in"')
+//            buildConfigField("String", "BASE_URL", '"https://rides.venustaxi.in/"')
+//            buildConfigField("String", "SOCKET_BASE_URL", '"https://rides-api.venustaxi.in"')
         }
+
         release {
             minifyEnabled false
             _isDebuggable true
@@ -70,16 +73,8 @@ android {
         venus {
             dimension "product"
             buildConfigField("String", "VARIANT", '"dev"')
-            resValue "string", "app_name", "Venus Taxi"
+            resValue "string", "app_name", "Smart App"
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
-        }
-        salon {
-            dimension "product"
-            applicationId "com.saloneCustomer"
-            buildConfigField("String", "VARIANT", '"salon"')
-            resValue "string", "app_name", "Salone Ride"
-            resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
-            signingConfig signingConfigs.release
         }
     }
     buildFeatures {

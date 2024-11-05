@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clToolBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivBack"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:padding="2dp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_back" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/review_details"
+                android:textColor="@color/black_text_color2"
+                android:textSize="15sp"
+                app:fontFamily="@font/poppins_semibold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/clToolBar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/_15sdp">
+
+                <RelativeLayout
+                    android:id="@+id/rlDeliveryDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="@string/delivery_details"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/ivArrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_drop_down_theme" />
+                </RelativeLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:visibility="gone"
+                    android:id="@+id/clDeliveryDetails"
+                    app:layout_constraintTop_toBottomOf="@id/rlDeliveryDetails">
+
+                    <ImageView
+                        android:id="@+id/ivAtStore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_dot_circle"
+                        app:layout_constraintBottom_toBottomOf="@id/tvPickUpAddress"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tvPickUpAddress" />
+
+                    <TextView
+                        android:id="@+id/tvPickUpAddress"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/poppins_medium"
+                        android:maxLines="2"
+                        android:text="Store"
+                        android:textColor="@color/theme"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/ivAtStore"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <ImageView
+                        android:id="@+id/ivAtYourPlace"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_dot_circle"
+                        app:layout_constraintBottom_toBottomOf="@id/tvDropOffAddress"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tvDropOffAddress"
+                        app:tint="#CD3E36" />
+
+                    <TextView
+                        android:id="@+id/tvDropOffAddress"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/poppins_medium"
+                        android:maxLines="2"
+                        android:text="Your place"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/ivAtYourPlace"
+                        app:layout_constraintTop_toBottomOf="@+id/viewHorizontalLine" />
+
+
+                    <View
+                        android:id="@+id/viewVerticalLine"
+                        android:layout_width="4dp"
+                        android:layout_height="0dp"
+                        android:background="@drawable/tracking_dash_line"
+                        android:layerType="software"
+                        app:layout_constraintBottom_toTopOf="@id/ivAtYourPlace"
+                        app:layout_constraintEnd_toEndOf="@id/ivAtStore"
+                        app:layout_constraintStart_toStartOf="@id/ivAtStore"
+                        app:layout_constraintTop_toBottomOf="@id/ivAtStore" />
+
+                    <View
+                        android:id="@+id/viewHorizontalLine"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:background="@color/grey_line_color"
+                        app:layout_constraintStart_toStartOf="@id/viewVerticalLine"
+                        app:layout_constraintTop_toBottomOf="@+id/tvPickUpAddress" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="@color/grey_line" />
+
+                <RelativeLayout
+                    android:id="@+id/rlPackage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="@string/package_details"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/ivArrowPackage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_drop_down_theme" />
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAddedPackages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:listitem="@layout/item_package_list" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="@color/grey_line" />
+
+
+                <RelativeLayout
+                    android:id="@+id/rlVehicle"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="@string/vehicle_details"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/ivArrowVehicle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_drop_down_theme" />
+                </RelativeLayout>
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvVehicleDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:visibility="gone"
+                    app:cardCornerRadius="@dimen/_6sdp"
+                    app:cardUseCompatPadding="true">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_10sdp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="@string/vehicle_details"
+                                android:textColor="@color/theme"
+                                android:textSize="14sp" />
+
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:background="@color/grey_line" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_8sdp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Vehicle Type"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Truck"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:background="@color/grey_line" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_8sdp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Fare"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="$20"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
+                        </RelativeLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="@color/grey_line" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="@string/estimated_cost"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/poppins_regular"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="$20"
+                    android:visibility="gone"
+                    android:textSize="20sp"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/theme"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvConfirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:background="@drawable/bg_button"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/confirm_and_request_booking"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintTop_toBottomOf="@id/clMain" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/clBackground"
+    android:layout_marginEnd="@dimen/_6sdp"
+    app:cardCornerRadius="@dimen/_6sdp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:padding="@dimen/_10sdp"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivVehicleImage"
+            android:layout_width="68dp"
+            android:layout_height="42dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_delivery_truck" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="2 Wheeler"
+            android:gravity="center"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeMaxTextSize="16sp"
+            android:autoSizeStepGranularity="1sp"
+            android:id="@+id/tvVehicleName"
+            android:textColor="@color/black_text_color"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/ivVehicleImage"
+            app:layout_constraintStart_toStartOf="@id/ivVehicleImage"
+            app:layout_constraintTop_toBottomOf="@id/ivVehicleImage" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

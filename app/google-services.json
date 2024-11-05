@@ -1,40 +1,21 @@
 {
   "project_info": {
-    "project_number": "268001307117",
-    "project_id": "saloneridecustomer",
-    "storage_bucket": "saloneridecustomer.appspot.com"
+    "project_number": "152682101202",
+    "project_id": "superapp-5a3ad",
+    "storage_bucket": "superapp-5a3ad.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:268001307117:android:bdbdd9bbb0403f71391fe4",
+        "mobilesdk_app_id": "1:152682101202:android:02b5d3ff5be9ddf3c2b00b",
         "android_client_info": {
-          "package_name": "com.saloneCustomer"
+          "package_name": "com.superapp_customer"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBZmNi72VouZs4bbbsTe6mDM_U6dPoYT8Q"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:268001307117:android:94aa92977c923d0a391fe4",
-        "android_client_info": {
-          "package_name": "com.venus_customer"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBZmNi72VouZs4bbbsTe6mDM_U6dPoYT8Q"
+          "current_key": "AIzaSyDo8GYhr8dd90hpKmTMPjC5bEezXJYMYSs"
         }
       ],
       "services": {

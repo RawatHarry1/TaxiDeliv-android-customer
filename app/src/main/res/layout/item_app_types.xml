@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/cardViewRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/_10sdp"
+        app:cardUseCompatPadding="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clRoot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_ride_gradient"
+            android:paddingHorizontal="@dimen/_6sdp"
+            android:paddingVertical="@dimen/_10sdp">
+
+            <TextView
+                android:id="@+id/tvTaxiBooking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="TAXI BOOKING"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_marginTop="@dimen/_4sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivAppImage" />
+
+            <TextView
+                android:id="@+id/tvTaxiBookingDesc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:fontFamily="@font/poppins_regular"
+                android:text="Betae Vitae Dicta Sunt Explicabo"
+                android:textColor="@color/grey_text_color"
+                android:textSize="10sp"
+                android:layout_marginTop="@dimen/_4sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvTaxiBooking" />
+
+            <ImageView
+                android:id="@+id/ivAppImage"
+                android:layout_width="0dp"
+                android:layout_height="72dp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:src="@drawable/taxi_booking"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivNextRide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:src="@drawable/ic_next_ride"
+                android:layout_marginTop="@dimen/_4sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvTaxiBookingDesc" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>

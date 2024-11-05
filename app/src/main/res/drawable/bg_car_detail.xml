@@ -5,7 +5,7 @@
         android:topRightRadius="@dimen/_8sdp" />
     <gradient
         android:angle="0"
-        android:endColor="#007700"
+        android:endColor="@color/theme1"
         android:startColor="@color/theme"
         android:type="linear" />
 </shape>

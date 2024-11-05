@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Define the rectangle shape -->
+    <solid android:color="@android:color/transparent" />
+
+    <!-- Outline with dashed stroke -->
+    <stroke
+        android:width="2dp"
+        android:color="@color/theme"
+        android:dashWidth="8dp"
+        android:dashGap="4dp" />
+
+    <!-- Define corner radius if you want rounded corners -->
+    <corners android:radius="20dp" />
+</shape>

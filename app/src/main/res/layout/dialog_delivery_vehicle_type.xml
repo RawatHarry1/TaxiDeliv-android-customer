@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_top_rounded"
+    app:behavior_hideable="true"
+    android:id="@+id/clRootView"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+
+    <ImageView
+        android:id="@+id/ivAtStore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:src="@drawable/ic_dot_circle"
+        app:layout_constraintBottom_toBottomOf="@id/tvPickUpAddress"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvPickUpAddress" />
+
+    <TextView
+        android:id="@+id/tvPickUpAddress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:fontFamily="@font/poppins_medium"
+        android:text="Store"
+        android:textColor="@color/theme"
+        android:textSize="14sp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivAtStore"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/ivAtYourPlace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:src="@drawable/ic_dot_circle"
+        app:layout_constraintBottom_toBottomOf="@id/tvDropOffAddress"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvDropOffAddress"
+        app:tint="#CD3E36" />
+
+    <TextView
+        android:id="@+id/tvDropOffAddress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:fontFamily="@font/poppins_medium"
+        android:text="Your place"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:layout_marginEnd="@dimen/_10sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivAtYourPlace"
+        app:layout_constraintTop_toBottomOf="@+id/viewHorizontalLine" />
+
+
+    <View
+        android:id="@+id/viewVerticalLine"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:background="@drawable/tracking_dash_line"
+        android:layerType="software"
+        app:layout_constraintBottom_toTopOf="@id/ivAtYourPlace"
+        app:layout_constraintEnd_toEndOf="@id/ivAtStore"
+        app:layout_constraintStart_toStartOf="@id/ivAtStore"
+        app:layout_constraintTop_toBottomOf="@id/ivAtStore" />
+
+    <View
+        android:id="@+id/viewHorizontalLine"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:background="@color/grey_line_color"
+        app:layout_constraintStart_toStartOf="@id/viewVerticalLine"
+        app:layout_constraintTop_toBottomOf="@+id/tvPickUpAddress" />
+
+    <TextView
+        android:id="@+id/tvVehicleType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="@string/vehicle_type"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDropOffAddress" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvVehicleType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_11sdp"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@+id/tvVehicleType"
+        tools:listitem="@layout/item_delivery_vehicle_type" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvConfirmBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:background="@drawable/bg_button"
+        android:fontFamily="@font/poppins"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:text="@string/continue_"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rvVehicleType" />
+</androidx.constraintlayout.widget.ConstraintLayout>

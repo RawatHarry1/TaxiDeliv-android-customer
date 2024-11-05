@@ -5,7 +5,7 @@
 
         <variable
             name="walkViewModel"
-            type="com.venus_customer.view.activity.walk_though.WalkThroughViewModel" />
+            type="com.superapp_customer.view.activity.walk_though.WalkThroughViewModel" />
 
     </data>
 

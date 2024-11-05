@@ -60,23 +60,34 @@
             android:name=".view.activity.verifyOtp.VerifyOtp"
             android:exported="false"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".view.activity.walk_though.Home"
             android:exported="false"
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".view.activity.walk_though.MainHome"
+            android:exported="false"
+            android:label="@string/title_activity_home"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".view.activity.Welcome"
             android:exported="false"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".view.activity.walk_though.PaymentActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".view.activity.CreateProfile"
             android:exported="true"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".view.activity.ForgotPassword"
             android:exported="false"

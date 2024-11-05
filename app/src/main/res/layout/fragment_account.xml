@@ -84,6 +84,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toEndOf="@id/tvUserName"
                         android:src="@drawable/edit"
+                        android:tint="@color/theme"
                         android:layout_height="20dp" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -158,6 +159,7 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:tint="@color/theme"
                             android:layout_gravity="center_vertical"
                             android:layout_marginVertical="14dp"
                             app:srcCompat="@drawable/ic_offer" />
@@ -190,6 +192,7 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:tint="@color/theme"
                             android:layout_gravity="center_vertical"
                             android:layout_marginVertical="14dp"
                             app:srcCompat="@drawable/ic_credit_card" />
@@ -223,6 +226,7 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:tint="@color/theme"
                             android:layout_gravity="center_vertical"
                             android:layout_marginVertical="14dp"
                             app:srcCompat="@drawable/ic_wallet" />
@@ -256,6 +260,7 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:tint="@color/theme"
                             android:layout_gravity="center_vertical"
                             android:layout_marginVertical="14dp"
                             app:srcCompat="@drawable/ic_referral" />
@@ -288,6 +293,7 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:tint="@color/theme"
                             android:layout_gravity="center_vertical"
                             android:layout_marginVertical="14dp"
                             app:srcCompat="@drawable/ic_faq" />
@@ -322,6 +328,7 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:tint="@color/theme"
                             android:layout_gravity="center_vertical"
                             android:layout_marginVertical="14dp"
                             app:srcCompat="@drawable/ic_about" />
@@ -355,6 +362,7 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:tint="@color/theme"
                             android:layout_gravity="center_vertical"
                             android:layout_marginVertical="14dp"
                             app:srcCompat="@drawable/ic_terms" />
@@ -386,10 +394,10 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:tint="@color/theme"
                             android:layout_gravity="center_vertical"
                             android:layout_marginVertical="14dp"
-                            app:srcCompat="@drawable/delete"
-                            app:tint="#3e4958" />
+                            app:srcCompat="@drawable/delete" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"

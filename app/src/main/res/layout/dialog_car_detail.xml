@@ -9,7 +9,6 @@
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
 
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -169,75 +168,145 @@
                     app:layout_constraintEnd_toStartOf="@+id/tvPrice"
                     app:layout_constraintTop_toTopOf="@id/tvCustomerDetail" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvCustomerName"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clDetails"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="@font/poppins"
-                    android:text="@string/txt_customer_name"
-                    android:textColor="@color/grey_text_color"
-                    android:textSize="12sp"
-                    android:textStyle="normal"
-                    app:layout_constraintEnd_toStartOf="@+id/tvContactDetails"
-                    app:layout_constraintStart_toStartOf="@id/tvCustomerDetail"
-                    app:layout_constraintTop_toBottomOf="@id/tvCustomerDetail" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvContactDetails"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="@font/poppins"
-                    android:text="@string/txt_contact_details"
-                    android:textColor="@color/grey_text_color"
-                    android:textSize="12sp"
-                    android:textStyle="normal"
                     app:layout_constraintEnd_toEndOf="@id/tvPrice"
-                    app:layout_constraintTop_toBottomOf="@id/tvCustomerDetail" />
+                    app:layout_constraintStart_toStartOf="@id/tvCustomerDetail"
+                    app:layout_constraintTop_toBottomOf="@id/tvCustomerDetail">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvCustomerName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/poppins"
+                        android:text="@string/txt_customer_name"
+                        android:textColor="@color/grey_text_color"
+                        android:textSize="12sp"
+                        android:textStyle="normal"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvContactDetails"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/poppins"
+                        android:text="@string/txt_contact_details"
+                        android:textColor="@color/grey_text_color"
+                        android:textSize="12sp"
+                        android:textStyle="normal"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvCustomerNameValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineSpacingExtra="-1sp"
+                        android:text="@string/txt_gurman_kanda"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="15sp"
+                        android:textStyle="normal"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="@id/tvCustomerName"
+                        app:layout_constraintTop_toBottomOf="@id/tvCustomerName" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineSpacingExtra="-1sp"
+                        android:text="@string/txt_1234567890"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="15sp"
+                        android:textStyle="normal"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@id/tvContactDetails"
+                        app:layout_constraintTop_toBottomOf="@id/tvContactDetails" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/etNotes"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="@string/txt_notes"
+                        android:maxLength="150"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/black_text_color"
+                        android:textColorHint="@color/grey_text_color"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@id/tvNumber"
+                        app:layout_constraintStart_toStartOf="@id/tvCustomerNameValue"
+                        app:layout_constraintTop_toBottomOf="@id/tvCustomerNameValue" />
 
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvCustomerNameValue"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_medium"
-                    android:lineSpacingExtra="-1sp"
-                    android:text="@string/txt_gurman_kanda"
-                    android:textColor="@color/black_text_color"
-                    android:textSize="15sp"
-                    android:textStyle="normal"
-                    app:layout_constraintEnd_toStartOf="@+id/tvNumber"
-                    app:layout_constraintStart_toStartOf="@id/tvCustomerName"
-                    app:layout_constraintTop_toBottomOf="@id/tvCustomerName" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvNumber"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_medium"
-                    android:lineSpacingExtra="-1sp"
-                    android:text="@string/txt_1234567890"
-                    android:textColor="@color/black_text_color"
-                    android:textSize="15sp"
-                    android:textStyle="normal"
-                    app:layout_constraintEnd_toEndOf="@id/tvContactDetails"
-                    app:layout_constraintTop_toBottomOf="@id/tvContactDetails" />
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/etNotes"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:hint="@string/txt_notes"
-                    android:maxLength="150"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@color/black_text_color"
-                    android:textColorHint="@color/grey_text_color"
-                    app:layout_constraintEnd_toEndOf="@id/tvNumber"
-                    app:layout_constraintStart_toStartOf="@id/tvCustomerNameValue"
-                    app:layout_constraintTop_toBottomOf="@id/tvCustomerNameValue" />
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/etReceiverName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Receiver's Name"
+                        android:inputType="text"
+                        android:maxLength="150"
+                        android:maxLines="1"
+                        android:visibility="gone"
+                        android:singleLine="true"
+                        android:textColor="@color/black_text_color"
+                        android:textColorHint="@color/grey_light_text"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/etReceiverNumber"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Receiver's Mobile Number"
+                        android:inputType="number"
+                        android:maxLength="150"
+                        android:maxLines="1"
+                        android:visibility="gone"
+                        android:singleLine="true"
+                        android:textColor="@color/black_text_color"
+                        android:textColorHint="@color/grey_light_text"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/etReceiverName"
+                        app:layout_constraintTop_toBottomOf="@id/etReceiverName" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/etSelectGoods"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:fontFamily="@font/poppins_regular"
+                        android:hint="Select Goods Type"
+                        android:maxLength="150"
+                        android:maxLines="1"
+                        android:visibility="gone"
+                        android:singleLine="true"
+                        android:textColor="@color/black_text_color"
+                        android:textColorHint="@color/grey_light_text"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/etReceiverNumber"
+                        app:layout_constraintTop_toBottomOf="@id/etReceiverNumber" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvPayByCash"
@@ -302,7 +371,7 @@
                     app:cardUseCompatPadding="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/etNotes">
+                    app:layout_constraintTop_toBottomOf="@id/clDetails">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -406,14 +475,14 @@
                                 android:id="@+id/tvChangeCard"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_medium"
                                 android:paddingStart="20dp"
                                 android:paddingEnd="10dp"
                                 android:paddingBottom="2dp"
-                                android:fontFamily="@font/poppins_medium"
                                 android:text="@string/change"
-                                android:visibility="gone"
                                 android:textColor="@color/theme"
                                 android:textSize="12sp"
+                                android:visibility="gone"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/tvSelectedCard"
                                 app:layout_constraintTop_toBottomOf="@+id/tvNewCard" />
