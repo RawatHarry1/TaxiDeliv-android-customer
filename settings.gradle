@@ -15,6 +15,6 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
-rootProject.name = "Venus Driver Merged"
+rootProject.name = "Superapp Driver"
 include ':app'
 include ':photoPicker'

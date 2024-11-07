@@ -96,9 +96,9 @@
                             android:layout_marginEnd="@dimen/_4sdp"
                             android:textColor="@color/black_text_color2"
                             android:textSize="16sp"
-                            app:layout_constraintEnd_toStartOf="@+id/ivMsg"
                             app:fontFamily="@font/proxima_semibold"
                             app:layout_constraintBottom_toBottomOf="@id/ivCustomerPic"
+                            app:layout_constraintEnd_toStartOf="@+id/ivMsg"
                             app:layout_constraintStart_toEndOf="@+id/ivCustomerPic"
                             app:layout_constraintTop_toTopOf="@+id/ivCustomerPic"
 
@@ -326,13 +326,72 @@
                 </com.google.android.material.card.MaterialCardView>
 
 
+                <View
+                    android:id="@+id/viewLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:visibility="gone"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:background="@color/grey_line"
+                    app:layout_constraintTop_toBottomOf="@+id/card" />
+
+                <RelativeLayout
+                    android:id="@+id/rlPackage"
+                    android:visibility="gone"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    app:layout_constraintTop_toBottomOf="@+id/viewLine">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="@string/package_details"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/ivArrowPackage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_drop_down_theme" />
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAddedPackages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:orientation="vertical"
+                    tools:itemCount="3"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/rlPackage"
+                    tools:listitem="@layout/item_package_list" />
+                <View
+                    android:id="@+id/viewLine1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:background="@color/grey_line"
+                    app:layout_constraintTop_toBottomOf="@+id/rvAddedPackages" />
+
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="30dp"
                     android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/card">
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    app:layout_constraintTop_toBottomOf="@id/viewLine1">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvCancel"

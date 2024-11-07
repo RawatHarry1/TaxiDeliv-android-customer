@@ -1,79 +1,45 @@
 {
   "project_info": {
-    "project_number": "473774154132",
-    "project_id": "saloneride-faca9",
-    "storage_bucket": "saloneride-faca9.appspot.com"
+    "project_number": "152682101202",
+    "project_id": "superapp-5a3ad",
+    "storage_bucket": "superapp-5a3ad.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:473774154132:android:47b82315db00433cc3af81",
+        "mobilesdk_app_id": "1:152682101202:android:02b5d3ff5be9ddf3c2b00b",
         "android_client_info": {
-          "package_name": "com.salonedriver"
+          "package_name": "com.superapp_customer"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "473774154132-upaj7bugsn6acg6mqlm2ohed7vvrjhhp.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA9MuRazdzKtkgKoM1XZkfTVsD1AA27i5o"
+          "current_key": "AIzaSyDo8GYhr8dd90hpKmTMPjC5bEezXJYMYSs"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "473774154132-upaj7bugsn6acg6mqlm2ohed7vvrjhhp.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "473774154132-8ee8kdthohhpt1nvqapmlh905h261e40.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.saloneride.driver"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:473774154132:android:47b82315db00433cc3af81",
+        "mobilesdk_app_id": "1:152682101202:android:9c1f05efb933d39ec2b00b",
         "android_client_info": {
-          "package_name": "com.venusdriver"
+          "package_name": "com.superapp_driver"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "473774154132-upaj7bugsn6acg6mqlm2ohed7vvrjhhp.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA9MuRazdzKtkgKoM1XZkfTVsD1AA27i5o"
+          "current_key": "AIzaSyDo8GYhr8dd90hpKmTMPjC5bEezXJYMYSs"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "473774154132-upaj7bugsn6acg6mqlm2ohed7vvrjhhp.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "473774154132-8ee8kdthohhpt1nvqapmlh905h261e40.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.venusride.driver"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

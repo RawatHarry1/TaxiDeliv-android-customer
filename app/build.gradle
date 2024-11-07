@@ -12,7 +12,7 @@ plugins {
 }
 
 android {
-    namespace 'com.salonedriver'
+    namespace 'com.superapp_driver'
     compileSdk 34
 
     dataBinding {
@@ -20,12 +20,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.salonedriver"
+        applicationId "com.superapp_driver"
         minSdk 26
         targetSdk 33
         versionCode 2
         versionName "1.0.1"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -47,16 +46,18 @@ android {
     productFlavors {
         venus {
             dimension "product"
-            applicationId "com.venusdriver"
-            resValue "string", "app_name", "Venus Driver"
+            applicationId "com.superapp_driver"
+            resValue "string", "app_name", "Smart Driver"
         }
+
         dev {
             dimension "server"
-            buildConfigField("String", "BASE_URL", '"https://chuki-rides.venustaxi.in/"')
+            buildConfigField("String", "BASE_URL", '"https://super-app-rides.venustaxi.in/"')
             buildConfigField("String", "VARIANT", '"dev"')
-            buildConfigField("String", "SOCKET_BASE_URL", '"https://chuki-rides-api.venustaxi.in"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://super-app-rides-api.venustaxi.in"')
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }
+
         live {
             dimension "server"
             buildConfigField("String", "BASE_URL", '"https://rides.venustaxi.in/"')
@@ -64,6 +65,7 @@ android {
             buildConfigField("String", "SOCKET_BASE_URL", '"https://rides-api.venustaxi.in"')
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }
+
     }
     buildFeatures {
         viewBinding true
@@ -148,6 +150,7 @@ dependencies {
     implementation "androidx.browser:browser:1.5.0"
 
     implementation 'com.github.BirjuVachhani:locus-android:4.1.2'
+
     //Location Services
     implementation 'com.google.android.gms:play-services-location:21.0.1'
 
@@ -159,6 +162,7 @@ dependencies {
     implementation 'com.beust:klaxon:5.5'
 
     implementation 'com.google.maps.android:android-maps-utils:3.8.0'
+
     /*Stripe*/
     implementation 'com.stripe:stripe-android:20.48.2'
 

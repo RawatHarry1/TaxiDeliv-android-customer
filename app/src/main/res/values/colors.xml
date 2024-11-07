@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="purple_200">#FFBB86FC</color>
-    <color name="theme">#0054A5</color>
-    <color name="theme1">#007700</color>
+    <color name="theme">#043662</color>
+    <color name="theme1">#043662</color>
     <color name="theme_light">#8fc4fd</color>
     <color name="theme_light_document">#338FC4FD</color>
     <color name="purple_500">#FF6200EE</color>
@@ -44,5 +44,5 @@
     <color name="cancel_btn_color">#E9F0FC</color>
     <color name="_0054A5">#0054A5</color>
     <color name="_242134">#242134</color>
-
+    <color name="black_transparent">#80000000</color>
 </resources>

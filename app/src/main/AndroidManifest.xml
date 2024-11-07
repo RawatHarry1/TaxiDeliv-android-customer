@@ -37,7 +37,7 @@
     </queries>
 
     <application
-        android:name="com.salonedriver.SaloneDriver"
+        android:name="com.superapp_driver.SaloneDriver"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -55,80 +55,83 @@
 <!--            android:name="com.salonedriver.view.ui.CancelTripActivity"-->
 <!--            android:exported="false" />-->
         <activity
-            android:name="com.salonedriver.view.ui.ChangePasswordActivity"
+            android:name="com.superapp_driver.view.ui.ChangePasswordActivity"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.PaymentActivity"
+            android:name="com.superapp_driver.view.ui.PaymentActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.UploadMuniciple"
+            android:name="com.superapp_driver.view.ui.UploadMuniciple"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.UploadDriverLicense"
+            android:name="com.superapp_driver.view.ui.UploadDriverLicense"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.Verify"
+            android:name="com.superapp_driver.view.ui.Verify"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.home.BookingDetailsActivity"
+            android:name="com.superapp_driver.view.ui.home.BookingDetailsActivity"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.Welcome"
+            android:name="com.superapp_driver.view.ui.Welcome"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.home_drawer.HomeActivity"
+            android:name="com.superapp_driver.view.ui.home_drawer.HomeActivity"
             android:exported="false"
             android:label="@string/title_activity_home"
             android:theme="@style/Theme.SaloneDriver.NoActionBar" />
         <activity
-            android:name="com.salonedriver.view.ui.PayoutInformation"
+            android:name="com.superapp_driver.view.ui.PayoutInformation"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.VehicleInfo"
+            android:name="com.superapp_driver.view.ui.VehicleInfo"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.UploadDocuments"
+            android:name="com.superapp_driver.view.ui.UploadDocuments"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.CreateProfile"
+            android:name="com.superapp_driver.view.ui.CreateProfile"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.home.AcceptTripActivity"
+            android:name="com.superapp_driver.view.ui.home.AcceptTripActivity"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.home.cancelTrip.CancelTrip"
+            android:name="com.superapp_driver.view.ui.home.cancelTrip.CancelTrip"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.SignUp"
+            android:name="com.superapp_driver.view.ui.SignUp"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.chat.ChatActivity"
+            android:name="com.superapp_driver.view.ui.chat.ChatActivity"
             android:exported="false"
             android:launchMode="singleTop"/>
         <activity
-            android:name="com.salonedriver.view.ui.ForgotPassword"
+            android:name="com.superapp_driver.view.ui.ForgotPassword"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.SignIn"
+            android:name="com.superapp_driver.view.ui.SignIn"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.SignUpInActivity"
+            android:name="com.superapp_driver.view.ui.SignUpInActivity"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.WalkThrough"
+            android:name="com.superapp_driver.view.ui.WalkThrough"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.MainActivity"
+            android:name="com.superapp_driver.MainActivity"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.home.RateCustomerActivity"
+            android:name="com.superapp_driver.view.ui.home.RateCustomerActivity"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.home.NeedHelpActivity"
+            android:name=".view.ui.home.PackageListActivity"
             android:exported="false" />
         <activity
-            android:name="com.salonedriver.view.ui.Splash"
+            android:name="com.superapp_driver.view.ui.home.NeedHelpActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.superapp_driver.view.ui.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

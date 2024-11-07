@@ -11,24 +11,27 @@
         android:layout_height="match_parent"
         android:padding="20dp">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBackElectric"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toTopOf="@+id/tvSubmitVehicle"
+            app:layout_constraintTop_toBottomOf="@id/ivBackElectric">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ivBackElectric"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="10dp"
-                    android:src="@drawable/ic_back"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvElectricInfo"
@@ -41,14 +44,15 @@
                     android:textColor="@color/walk_title_color"
                     android:textSize="22sp"
                     android:textStyle="normal"
-                    app:layout_constraintTop_toBottomOf="@+id/ivBackElectric" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvSelectDriverType"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
-                    android:layout_marginVertical="10dp"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_marginBottom="10dp"
                     android:fontFamily="@font/sufi_reg"
                     android:text="@string/select_driver_type"
                     android:textColor="@color/walk_title_color"
@@ -194,24 +198,25 @@
                     app:layout_constraintTop_toBottomOf="@+id/etVehicleColor" />
 
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvSubmitVehicle"
-                    android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_marginVertical="20dp"
-                    android:background="@drawable/bg_theme_shape_round_button"
-                    android:fontFamily="@font/poppins_regular"
-                    android:gravity="center"
-                    android:paddingVertical="7dp"
-                    android:text="@string/submit"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:textStyle="normal"
-                    app:layout_constraintTop_toBottomOf="@id/etVehiclePlate" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.core.widget.NestedScrollView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSubmitVehicle"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="20dp"
+            android:background="@drawable/bg_theme_shape_round_button"
+            android:fontFamily="@font/poppins_regular"
+            android:gravity="center"
+            android:paddingVertical="7dp"
+            android:text="@string/submit"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
