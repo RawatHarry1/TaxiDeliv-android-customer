@@ -328,5 +328,10 @@
     <string name="refer_to_your_friends">Refer a friend</string>
     <string name="fetching_address">Fetching Address...</string>
     <string name="coming_nsoon">Coming\nSoon</string>
-
+    <string name="review_details">Review Details</string>
+    <string name="vehicle_details">Vehicle Details</string>
+    <string name="apply">APPLY</string>
+    <string name="have_a_promo_code_type_here">Have a Promo Code? Type Here</string>
+    <string name="remove_c">REMOVE</string>
+    <string name="notes">Notes</string>
 </resources>

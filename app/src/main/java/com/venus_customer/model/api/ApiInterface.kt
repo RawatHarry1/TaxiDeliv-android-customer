@@ -173,6 +173,8 @@ interface ApiInterface {
         @Field("start_from") startFrom: String = "0"
     ): Response<BaseResponse<List<TripListDC>>>
 
+    //    ,
+//    @Field("request_ride_type") serviceType: Int = 1
     @FormUrlEncoded
     @POST(APIEndPointsConstants.ADD_CARD)
     suspend fun addCard(
@@ -192,9 +194,11 @@ interface ApiInterface {
         @Field("card_id") id: String = ""
     ): Response<BaseResponse<Any>>
 
-
+//    @FormUrlEncoded
     @POST(APIEndPointsConstants.GET_ALL_SCHEDULE_RIDES)
-    suspend fun getAllScheduleRides(): Response<BaseResponse<List<ScheduleList>>>
+    suspend fun getAllScheduleRides(
+//        @Field("request_ride_type") serviceType: Int = 1
+    ): Response<BaseResponse<List<ScheduleList>>>
 
     @GET(APIEndPointsConstants.GET_TRIP_SUMMARY)
     suspend fun getTripSummary(

@@ -55,6 +55,10 @@ class RideRepo @Inject constructor(
             put("op_drop_longitude", opLatLng.longitude)
             put("promo_to_apply",VenusApp.offerApplied.toString())
 //            }
+//            put(
+//                "request_ride_type",
+//                1
+//            )
         }.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
 
@@ -148,6 +152,10 @@ class RideRepo @Inject constructor(
                 JSONObject().apply {
                     put("latitude", VenusApp.latLng.latitude)
                     put("longitude", VenusApp.latLng.longitude)
+//                    put(
+//                        "request_ride_type",
+//                        1
+//                    )
                 }.getJsonRequestBody()
             )
         )

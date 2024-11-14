@@ -157,7 +157,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
     var rideStatus = AppConstants.DRIVER_PICKUP
-    var schedule = false
+
 
     override fun initialiseFragmentBaseViewModel() {
     }
@@ -430,7 +430,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             while (true) {
                 withContext(Dispatchers.IO) {
                     Log.i("CarType", "Api hit")
-                    rideVM.findDriverInLoop(schedule)
+                    rideVM.findDriverInLoop(rideVM.schedule)
                 }
                 delay(10000) // 15 seconds
             }
@@ -570,10 +570,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private fun clickHandler() {
         binding.rlRideSchedule.setOnSingleClickListener {
 //            binding.tvNow.text = requireContext().getString(R.string.schedule)
+            rideVM.createRideData = CreateRideData()
             hideAllBottomSheets()
             startTimeDialog(requireContext())
         }
-//
+
 //        binding.rlSchedule.setOnSingleClickListener {
 //            binding.tvNow.text = requireContext().getString(R.string.schedule)
 //            hideAllBottomSheets()
@@ -586,7 +587,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //        }
         binding.rlRide.setOnSingleClickListener {
             rideVM.createRideData = CreateRideData()
-            schedule = false
+            rideVM.schedule = false
             rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
         }
 
@@ -636,7 +637,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     showSnackBar("*Please select drop location.", clLocationAlert)
                 } else {
                     locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
-                    rideVM.findDriver(schedule)
+                    rideVM.findDriver(rideVM.schedule)
                 }
             }
 
@@ -710,11 +711,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
             tvConfirmBtn.setOnSingleClickListener {
 
-                if (schedule) {
+                if (rideVM.schedule) {
                     carDetailAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
                     val notes = etNotes.text?.trim().toString()
                     rideVM.scheduleRideData(
-                        notes, selectedPickDateTimeForSchedule
+                        notes, rideVM.selectedPickDateTimeForSchedule
                     )
                     etNotes.clearFocus()
                     etNotes.setText("")
@@ -832,7 +833,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //        }
     }
 
-    private var selectedPickDateTimeForSchedule = ""
+    //    private var selectedPickDateTimeForSchedule = ""
     private fun startTimeDialog(context: Context) {
         val dialog = BottomSheetDialog(context, R.style.SheetDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -868,8 +869,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     "Time must be at least 30 minutes from the current time", binding.clRoot
                 )
             } else {
-                schedule = true
-                selectedPickDateTimeForSchedule =
+                rideVM.schedule = true
+                rideVM.selectedPickDateTimeForSchedule =
                     convertToUTC(binding.tvDateValue.text.toString() + " " + binding.tvTimeValue.text.toString())
                 dialog.dismiss()
                 rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
@@ -1299,7 +1300,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
                 carTypeAlertState?.isHideable = true
                 carTypeAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
-                rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailPaymentDialog)
+                findNavController().navigate(R.id.paymentFragment)
+//                rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailPaymentDialog)
             }
             carTypeAdapter = CarsTypeAdapter(
                 rideVM.regionsList,

@@ -127,4 +127,10 @@
         android:id="@+id/navigate_referral"
         android:name="com.venus_customer.view.fragment.profile.ReferralCodeFragment"
         tools:layout="@layout/fragment_referral_code" />
+
+    <fragment
+        android:id="@+id/paymentFragment"
+        android:name="com.venus_customer.view.fragment.PaymentFragment"
+        android:label="PaymentFragmentFragment"
+        tools:layout="@layout/fragment_payment" />
 </navigation>

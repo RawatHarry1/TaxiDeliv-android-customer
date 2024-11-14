@@ -46,6 +46,8 @@ class RideVM @Inject constructor(
     var promoCode = ""
     var cardId = ""
     var last4 = ""
+    var schedule = false
+    var selectedPickDateTimeForSchedule = ""
 
     /**
      * Ride Alert UI State
@@ -63,6 +65,17 @@ class RideVM @Inject constructor(
         updateUiState(RideAlertUiState.HomeScreen)
     }
 
+    private val _delivery by lazy { SingleLiveEvent<Boolean>() }
+    val delivery: LiveData<Boolean> = _delivery
+
+    fun delivery(boolean: Boolean) {
+        try {
+//            if (rideAlertUiState == _rideAlertUiState.value) return
+            _delivery.value = boolean
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     /**
      * Find Drive
@@ -133,9 +146,14 @@ class RideVM @Inject constructor(
                 put("phoneNo", userData?.login?.phoneNo.orEmpty())
                 put("customerNote", notes)
                 put("estimated_fare", createRideData.vehicleData?.fare ?: "")
+                put("customer_base_fare", createRideData.vehicleData?.original_fare.toString() ?: "")
                 put("estimated_trip_distance", createRideData.vehicleData?.distance ?: "")
                 put("coupon_to_apply", couponToApply)
                 put("promo_to_apply", VenusApp.offerApplied.toString())
+//                put(
+//                    "request_ride_type",
+//                    1
+//                )
                 if (paymentOption == 9) {
                     put("stripe_token", cardId)
                     put("preferred_payment_mode", "9")
@@ -169,9 +187,14 @@ class RideVM @Inject constructor(
                 put("customerNote", notes)
                 put("ride_distance", createRideData.vehicleData?.eta)
                 put("fare", createRideData.vehicleData?.fare)
+                put("customer_base_fare", createRideData.vehicleData?.original_fare.toString() ?: "")
                 put("pickup_time", pickUpTime)
                 put("coupon_to_apply", couponToApply)
                 put("promo_to_apply", VenusApp.offerApplied.toString())
+//                put(
+//                    "request_ride_type",
+//                    1
+//                )
                 if (paymentOption == 9) {
                     put("stripe_token", cardId)
                     put("preferred_payment_mode", "9")
