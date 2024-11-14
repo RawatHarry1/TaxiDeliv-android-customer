@@ -1,12 +1,15 @@
 package com.superapp_customer.view.fragment.trips
 
 import android.Manifest
+import android.app.Dialog
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +17,10 @@ import android.os.Environment
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,9 +36,12 @@ import com.superapp_customer.BuildConfig
 import com.superapp_customer.R
 import com.superapp_customer.customClasses.singleClick.setOnSingleClickListener
 import com.superapp_customer.databinding.FragmentRideDetailsBinding
+import com.superapp_customer.databinding.ItemPackageImagesBinding
+import com.superapp_customer.databinding.ItemPackageListBinding
 import com.superapp_customer.dialogs.DialogUtils
 import com.superapp_customer.model.api.observeData
 import com.superapp_customer.model.dataClass.tripsDC.RideSummaryDC
+import com.superapp_customer.util.GenericAdapter
 import com.superapp_customer.util.formatString
 import com.superapp_customer.util.getTime
 import com.superapp_customer.util.showSnackBar
@@ -42,7 +52,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
-
+    private lateinit var packagesAdapter: GenericAdapter<RideSummaryDC.OngoingPackages>
     lateinit var binding: FragmentRideDetailsBinding
     private val navArgs by navArgs<RideDetailsFragmentArgs>()
     private val viewModel by viewModels<RideVM>()
@@ -72,6 +82,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = getViewDataBinding()
+        setAdapter()
         observeRideSummary()
         viewModel.rideSummary(
             tripId = navArgs.tripId,
@@ -111,6 +122,26 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                 onDownloadComplete,
                 IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
             )
+        }
+
+        binding.rlPackage.setOnSingleClickListener {
+            if (binding.rvAddedPackages.isVisible) {
+                binding.ivArrowPackage.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.ic_drop_down_theme
+                    )
+                )
+                binding.rvAddedPackages.isVisible = false
+            } else {
+                binding.ivArrowPackage.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.ic_arrow_up_theme
+                    )
+                )
+                binding.rvAddedPackages.isVisible = true
+            }
         }
 
 
@@ -260,6 +291,7 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
             setUpUI(this)
         }
     )
+
     private fun onDialogDownloadPermissionAllowClick(type: Int) {
         if (type == 0) {
             checkPermissions()
@@ -348,6 +380,23 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                 .error(R.drawable.circleimage).into(binding.ivDriverImage)
             Glide.with(this).load(rideSummaryDC?.trackingImage.orEmpty()).into(binding.mapImage)
             binding.nsvScrollView.isVisible = true
+
+            if (rideSummaryDC?.serviceType == 2) {
+                binding.ivArrowPackage.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.ic_drop_down_theme
+                    )
+                )
+                binding.rlPackage.isVisible = true
+                binding.rvAddedPackages.isVisible = true
+                binding.viewLine1.isVisible = true
+                binding.viewLine2.isVisible = true
+            }
+            packagesAdapter.submitList(
+                rideSummaryDC?.deliveryPackages.orEmpty()
+            )
+            packagesAdapter.refreshAdapter()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -505,5 +554,106 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                 )
             }
         }
+    }
+
+    private fun setAdapter() {
+        packagesAdapter =
+            object : GenericAdapter<RideSummaryDC.OngoingPackages>(R.layout.item_package_list) {
+                override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                    val binding = ItemPackageListBinding.bind(holder.itemView)
+                    val data = getItem(position)
+                    binding.tvPackageSize.text = data.package_size
+                    binding.tvPackageType.text = data.package_type
+                    binding.tvPackageQuantity.text = data.package_quantity.toString()
+                    binding.llCustomerImages.isVisible = true
+                    binding.llPickupImages.isVisible = true
+                    binding.llDropImages.isVisible = true
+                    binding.ivEdit.isVisible = false
+                    binding.ivDelete.isVisible = false
+                    when (data.delivery_status) {
+                        5 -> {
+                            binding.rlStatus.isVisible = true
+                            binding.statusViewLine.isVisible = true
+                            binding.llPickupImages.isVisible = false
+                            binding.llDropImages.isVisible = false
+                        }
+
+                        3 -> {
+                            binding.rlStatus.isVisible = true
+                            binding.statusViewLine.isVisible = true
+                            binding.tvStatus.text = "Not Delivered"
+                            binding.llDropImages.isVisible = false
+                        }
+                    }
+                    val adapterCustomer =
+                        object : GenericAdapter<String>(R.layout.item_package_images) {
+                            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                                val bindingM = ItemPackageImagesBinding.bind(holder.itemView)
+                                Glide.with(requireActivity())
+                                    .load(getItem(position).toString())
+                                    .into(bindingM.ivUploadedImage)
+                                bindingM.root.setOnClickListener {
+                                    fullImagesDialog(getItem(position))
+                                }
+                            }
+                        }
+
+                    val adapterPick =
+                        object : GenericAdapter<String>(R.layout.item_package_images) {
+                            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                                val bindingM = ItemPackageImagesBinding.bind(holder.itemView)
+                                Glide.with(requireActivity()).load(getItem(position).toString())
+                                    .into(bindingM.ivUploadedImage)
+                                bindingM.root.setOnClickListener {
+                                    fullImagesDialog(getItem(position))
+                                }
+                            }
+                        }
+                    val adapterDrop =
+                        object : GenericAdapter<String>(R.layout.item_package_images) {
+                            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                                val bindingM = ItemPackageImagesBinding.bind(holder.itemView)
+                                Glide.with(requireActivity()).load(getItem(position).toString())
+                                    .into(bindingM.ivUploadedImage)
+                                bindingM.root.setOnClickListener {
+                                    fullImagesDialog(getItem(position))
+                                }
+                            }
+                        }
+                    adapterCustomer.submitList(data.package_images_by_customer)
+                    binding.rvCustomerImages.adapter = adapterCustomer
+
+                    adapterPick.submitList(data.package_image_while_pickup)
+                    binding.rvPickupImages.adapter = adapterPick
+
+                    adapterDrop.submitList(data.package_image_while_drop_off)
+                    binding.rvDropImages.adapter = adapterDrop
+                }
+            }
+        binding.rvAddedPackages.adapter = packagesAdapter
+    }
+
+    fun fullImagesDialog(
+        string: String
+    ): Dialog {
+        val dialogView = Dialog(requireActivity())
+        with(dialogView) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.dialog_full_image)
+            setCancelable(false)
+            val rlDismiss = findViewById<RelativeLayout>(R.id.rlDismiss)
+            rlDismiss.setOnClickListener { dismiss() }
+            val ivPackageImage = findViewById<ImageView>(R.id.ivPackageImage)
+            Glide.with(requireActivity()).load(string)
+                .into(ivPackageImage)
+            // Set width to full screen
+            window?.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            show()
+        }
+        return dialogView
     }
 }

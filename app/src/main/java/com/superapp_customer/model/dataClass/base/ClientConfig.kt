@@ -44,6 +44,8 @@ data class ClientConfig(
     val walkThroughTitle: String? = null,
     @SerializedName("walk_through_desc")
     val walkThroughDesc: String? = null,
+    @SerializedName("enabled_service")
+    val enabledService: Int? = null,
     @SerializedName("operator_availablity")
     val operatorAvailablity: List<OperatorAvailablity>? = null
 ) {

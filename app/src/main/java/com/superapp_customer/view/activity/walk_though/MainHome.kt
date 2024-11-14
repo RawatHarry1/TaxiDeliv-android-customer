@@ -74,7 +74,6 @@ class MainHome : BaseActivity<ActivityMainHomeBinding>() {
         navController.addOnDestinationChangedListener(listener)
 //        binding.navView.menu.findItem(R.id.navigation_ride).isVisible = false
 
-
         // Register back press callback
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {

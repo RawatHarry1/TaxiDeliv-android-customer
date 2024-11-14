@@ -312,6 +312,7 @@
     <string name="no_notifications_found">No Notifications Found</string>
     <string name="promo_code">Promo code</string>
     <string name="remove">Remove</string>
+    <string name="remove_c">REMOVE</string>
     <string name="add_new_card">Add new card</string>
     <string name="cards">Cards</string>
     <string name="no_cards_found">No cards found</string>
@@ -363,4 +364,8 @@
     <string name="confirm_and_request_booking">Confirm And Request Booking</string>
     <string name="estimated_cost">Estimated Cost</string>
     <string name="delivery_details">Delivery Details</string>
+    <string name="delivered_images">Delivered Images</string>
+    <string name="customer_side_images">Customer Side Images</string>
+    <string name="have_a_promo_code_type_here">Have a Promo Code? Type Here</string>
+    <string name="apply">APPLY</string>
 </resources>

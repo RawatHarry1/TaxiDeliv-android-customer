@@ -27,6 +27,8 @@ class RideRepo @Inject constructor(
             emit(apiInterface.uploadDocument(multipartBody = part))
         }.flowOn(Dispatchers.IO)
 
+
+
     suspend fun searchPlaces(
         search: String
     ) = flow {

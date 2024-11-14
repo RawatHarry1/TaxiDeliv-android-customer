@@ -50,6 +50,8 @@ class RideVM @Inject constructor(
     var promoCode = ""
     var cardId = ""
     var last4 = ""
+    var schedule = false
+    var selectedPickDateTimeForSchedule = ""
 
     /**
      * Ride Alert UI State
@@ -165,16 +167,18 @@ class RideVM @Inject constructor(
 //                    put("customerNote", notes)
                     // Convert list of packages to JSONArray
                     val packageArray = JSONArray()
-                    SharedPreferencesManager.getAddPackageList(SharedPreferencesManager.Keys.ADD_PACKAGE)?.forEach {
-                        val packageObject = JSONObject().apply {
-                            put("id", it.id.toString())
-                            put("image", JSONArray().put(it.image))
-                            put("quantity", it.quantity)
-                            put("description", it.itemDescription)
-                            put("type", it.packageType)
+                    SharedPreferencesManager.getAddPackageList(SharedPreferencesManager.Keys.ADD_PACKAGE)
+                        ?.forEach {
+                            val packageObject = JSONObject().apply {
+                                put("id", it.id.toString())
+                                put("package_size", it.packageSize.toString())
+                                put("image", JSONArray().put(it.image))
+                                put("quantity", it.quantity)
+                                put("description", it.itemDescription)
+                                put("type", it.packageType)
+                            }
+                            packageArray.put(packageObject)
                         }
-                        packageArray.put(packageObject)
-                    }
                     put("package_details", packageArray)
                 }
 
@@ -230,16 +234,18 @@ class RideVM @Inject constructor(
                     put("recipient_phone_no", receiverNumber)
                     // Convert list of packages to JSONArray
                     val packageArray = JSONArray()
-                    SharedPreferencesManager.getAddPackageList(SharedPreferencesManager.Keys.ADD_PACKAGE)?.forEach {
-                        val packageObject = JSONObject().apply {
-                            put("id", it.id.toString())
-                            put("image", JSONArray().put(it.image))
-                            put("quantity", it.quantity)
-                            put("description", it.itemDescription)
-                            put("type", it.packageType)
+                    SharedPreferencesManager.getAddPackageList(SharedPreferencesManager.Keys.ADD_PACKAGE)
+                        ?.forEach {
+                            val packageObject = JSONObject().apply {
+                                put("id", it.id.toString())
+                                put("package_size", it.packageSize.toString())
+                                put("image", JSONArray().put(it.image))
+                                put("quantity", it.quantity)
+                                put("description", it.itemDescription)
+                                put("type", it.packageType)
+                            }
+                            packageArray.put(packageObject)
                         }
-                        packageArray.put(packageObject)
-                    }
                     put("package_details", packageArray)
                 }
                 if (paymentOption == 9) {
@@ -498,7 +504,7 @@ class RideVM @Inject constructor(
         object ShowCustomerDetailPaymentDialog : RideAlertUiState()
         object FindDriverDialog : RideAlertUiState()
         object ShowCustomerDetailDialog : RideAlertUiState()
-        object ShowDeliveryVehicleTypeDialog : RideAlertUiState()
+//        object ShowDeliveryVehicleTypeDialog : RideAlertUiState()
     }
 
 }

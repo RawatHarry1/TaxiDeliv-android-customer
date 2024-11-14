@@ -277,6 +277,7 @@
                         android:inputType="number"
                         android:maxLength="150"
                         android:maxLines="1"
+                        android:imeOptions="actionDone"
                         android:visibility="gone"
                         android:singleLine="true"
                         android:textColor="@color/black_text_color"

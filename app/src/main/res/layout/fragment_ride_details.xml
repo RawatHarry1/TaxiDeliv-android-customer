@@ -287,6 +287,64 @@
                     app:layout_constraintStart_toStartOf="@+id/tvCarNo"
                     app:layout_constraintTop_toBottomOf="@+id/tvCarNo" />
 
+                <View
+                    android:id="@+id/viewLine2"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:background="@color/grey_line"
+                    app:layout_constraintTop_toBottomOf="@+id/ivDriverImage" />
+
+                <RelativeLayout
+                    android:id="@+id/rlPackage"
+                    android:visibility="gone"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    app:layout_constraintTop_toBottomOf="@+id/viewLine2">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="@string/package_details"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/ivArrowPackage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_drop_down_theme" />
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAddedPackages"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:orientation="vertical"
+                    tools:itemCount="1"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/rlPackage"
+                    tools:listitem="@layout/item_package_list" />
+                <View
+                    android:id="@+id/viewLine1"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:background="@color/grey_line"
+                    app:layout_constraintTop_toBottomOf="@+id/rvAddedPackages" />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvPaymentSummary"
                     android:layout_width="wrap_content"
@@ -298,7 +356,7 @@
                     android:textSize="18sp"
                     app:fontFamily="@font/poppins_semibold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ivDriverImage" />
+                    app:layout_constraintTop_toBottomOf="@+id/viewLine1" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardPaymentHistory"

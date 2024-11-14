@@ -788,6 +788,7 @@
 
         <include
             android:id="@+id/viewDeliveryVehicleType"
+            android:visibility="gone"
             layout="@layout/dialog_delivery_vehicle_type" />
 
         <include

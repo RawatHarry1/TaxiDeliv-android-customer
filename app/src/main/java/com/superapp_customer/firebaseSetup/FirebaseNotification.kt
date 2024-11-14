@@ -20,6 +20,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.superapp_customer.R
 import com.superapp_customer.VenusApp
+import com.superapp_customer.util.SharedPreferencesManager
 import com.superapp_customer.view.activity.chat.ChatActivity
 import com.superapp_customer.view.activity.walk_though.Home
 import com.superapp_customer.view.activity.walk_though.MainHome
@@ -151,8 +152,12 @@ class FirebaseNotification : FirebaseMessagingService() {
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setContentIntent(
                 when (notificationData.notificationType?.toIntOrNull() ?: -1) {
-                    NotificationStatus.WALLET_UPDATE.type ->
-                        getPendingIntentForMain(destinationId = R.id.navigation_wallet)
+                    NotificationStatus.WALLET_UPDATE.type -> {
+                        if (!SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.ONLY_FOR_ONE_TYPE))
+                            getPendingIntentForMain(destinationId = R.id.navigation_wallet)
+                        else
+                            getPendingIntent(destinationId = R.id.navigation_wallet)
+                    }
 
                     NotificationStatus.RIDE_ENDED.type ->
                         getPendingIntent(

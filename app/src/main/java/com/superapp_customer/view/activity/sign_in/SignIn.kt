@@ -18,6 +18,7 @@ import com.superapp_customer.util.SharedPreferencesManager
 import com.superapp_customer.util.showSnackBar
 import com.superapp_customer.view.activity.CreateProfile
 import com.superapp_customer.view.activity.ForgotPassword
+import com.superapp_customer.view.activity.walk_though.Home
 import com.superapp_customer.view.activity.walk_though.MainHome
 import com.superapp_customer.view.base.BaseActivity
 import com.superapp_customer.viewmodel.base.SignInViewModel
@@ -170,7 +171,10 @@ class SignIn : BaseActivity<ActivitySignInBinding>() {
         dialog?.dismiss()
         dialog = null
         if (this?.login?.isCustomerProfileComplete == 1) {
-            startActivity(Intent(this@SignIn, MainHome::class.java))
+            if (!SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.ONLY_FOR_ONE_TYPE))
+                startActivity(Intent(this@SignIn, MainHome::class.java))
+            else
+                startActivity(Intent(this@SignIn, Home::class.java))
             finishAffinity()
         } else {
             startActivity(Intent(this@SignIn, CreateProfile::class.java))

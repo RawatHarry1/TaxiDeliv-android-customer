@@ -165,14 +165,16 @@ class Home : BaseActivity<ActivityHomeBinding>() {
                 } else
                     binding.navView.gone()
 //                rideVM.updateUiState(RideAlertUiState.HomeScreen)
-                if (destination.id == R.id.navigation_home) {
-                    val menuItem = binding.navView.menu.findItem(R.id.navigation_home)
-                    menuItem.title = "Back"
-                    menuItem.setIcon(R.drawable.go_back)
-                } else {
-                    val menuItem = binding.navView.menu.findItem(R.id.navigation_home)
-                    menuItem.title = "Home"
-                    menuItem.setIcon(R.drawable.ic_home_address)
+                if (!SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.ONLY_FOR_ONE_TYPE)) {
+                    if (destination.id == R.id.navigation_home) {
+                        val menuItem = binding.navView.menu.findItem(R.id.navigation_home)
+                        menuItem.title = "Back"
+                        menuItem.setIcon(R.drawable.go_back)
+                    } else {
+                        val menuItem = binding.navView.menu.findItem(R.id.navigation_home)
+                        menuItem.title = "Home"
+                        menuItem.setIcon(R.drawable.ic_home_address)
+                    }
                 }
             }
         }

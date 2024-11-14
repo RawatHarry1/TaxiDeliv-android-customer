@@ -8,6 +8,8 @@ import android.os.Looper
 import androidx.databinding.DataBindingUtil
 import com.superapp_customer.R
 import com.superapp_customer.databinding.ActivityWelcomeBinding
+import com.superapp_customer.util.SharedPreferencesManager
+import com.superapp_customer.view.activity.walk_though.Home
 import com.superapp_customer.view.activity.walk_though.MainHome
 
 class Welcome : AppCompatActivity() {
@@ -17,7 +19,10 @@ class Welcome : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_welcome)
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this,MainHome::class.java))
+            if (!SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.ONLY_FOR_ONE_TYPE))
+                startActivity(Intent(this, MainHome::class.java))
+            else
+                startActivity(Intent(this, Home::class.java))
             finishAffinity()
         }, 2000)
     }

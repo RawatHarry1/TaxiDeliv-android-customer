@@ -11,6 +11,7 @@ import com.superapp_customer.databinding.VerifyOtpBinding
 import com.superapp_customer.model.api.observeData
 import com.superapp_customer.util.SharedPreferencesManager
 import com.superapp_customer.view.activity.CreateProfile
+import com.superapp_customer.view.activity.walk_though.Home
 import com.superapp_customer.view.activity.walk_though.MainHome
 import com.superapp_customer.view.base.BaseActivity
 import com.superapp_customer.viewmodel.base.SignInViewModel
@@ -67,16 +68,18 @@ class VerifyOtp : BaseActivity<VerifyOtpBinding>() {
     }
 
 
-
     private fun observerOtpData() = viewModel.verifyOtp.observeData(this, onLoading = {
         showProgressDialog()
     }, onSuccess = {
         hideProgressDialog()
         SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.USER_DATA, this)
-        if (this?.login?.isCustomerProfileComplete == 1){
-            startActivity(Intent(this@VerifyOtp, MainHome::class.java))
+        if (this?.login?.isCustomerProfileComplete == 1) {
+            if (!SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.ONLY_FOR_ONE_TYPE))
+                startActivity(Intent(this@VerifyOtp, MainHome::class.java))
+            else
+                startActivity(Intent(this@VerifyOtp, Home::class.java))
             finishAffinity()
-        }else {
+        } else {
             startActivity(Intent(this@VerifyOtp, CreateProfile::class.java))
             finish()
         }

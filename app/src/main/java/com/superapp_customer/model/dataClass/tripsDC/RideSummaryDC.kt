@@ -170,6 +170,8 @@ data class RideSummaryDC(
     val skipRatingByCustomer: String? = null,
     @SerializedName("status")
     val status: Int? = null,
+    @SerializedName("service_type")
+    val serviceType: Int? = null,
     @SerializedName("sub_region_id")
     val subRegionId: String? = null,
     @SerializedName("tip_amount")
@@ -199,7 +201,9 @@ data class RideSummaryDC(
     @SerializedName("tracking_image")
     val trackingImage: String? = null,
     @SerializedName("support_number")
-    val supportNumber: String? = null
+    val supportNumber: String? = null,
+    @SerializedName("delivery_packages")
+    val deliveryPackages: List<OngoingPackages>? = null
 ) {
     @Keep
     data class Discount(
@@ -223,5 +227,18 @@ data class RideSummaryDC(
         val title: String? = null,
         @SerializedName("url")
         val url: String? = null
+    )
+
+    @Keep
+    data class OngoingPackages(
+        val notes: Any,
+        val package_id: Int,
+        val package_image_while_drop_off: List<String>,
+        val package_image_while_pickup: List<String>,
+        val package_images_by_customer: List<String>,
+        val package_size: String,
+        val package_type: String,
+        val package_quantity: Int,
+        val delivery_status: Int
     )
 }

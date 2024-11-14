@@ -2,8 +2,11 @@ package com.superapp_customer.view.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +16,7 @@ import android.view.View
 import android.view.Window
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -46,6 +50,7 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
     private val rideVM by activityViewModels<RideVM>()
     private var packageImageUrl = ""
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
+    private var isImageChanged = false
     override fun initialiseFragmentBaseViewModel() {
     }
 
@@ -61,12 +66,16 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
         binding.tvAddPackage.setOnSingleClickListener {
             showAddPackageBottomSheet()
         }
+        binding.llAddPackage.setOnSingleClickListener {
+            showAddPackageBottomSheet()
+        }
         binding.ivBack.setOnSingleClickListener { findNavController().popBackStack() }
         binding.tvContinue.setOnSingleClickListener {
             if (addedPackagesArrayList.isEmpty())
                 showSnackBar("Please add package to continue.")
             else
-            findNavController().navigate(R.id.packageReviewDetailsFragment) }
+                findNavController().navigate(R.id.packageReviewDetailsFragment)
+        }
         // Setup the permission launcher
         requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -84,7 +93,9 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
                 pickerDialog().setPickerCloseListener { _, uris ->
                     bindingM.ivPackageImage.isVisible = true
                     bindingM.llUploadImage.isVisible = false
+                    bindingM.ivDelete.isVisible = true
                     Glide.with(this).load(uris).into(bindingM.ivPackageImage)
+                    isImageChanged = true
                     packageImageUrl = uris
                 }.show()
             } else {
@@ -117,7 +128,9 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
                 pickerDialog().setPickerCloseListener { _, uris ->
                     bindingM.ivPackageImage.isVisible = true
                     bindingM.llUploadImage.isVisible = false
+                    bindingM.ivDelete.isVisible = true
                     Glide.with(this).load(uris).into(bindingM.ivPackageImage)
+                    isImageChanged = true
                     packageImageUrl = uris
                 }.show()
             } else {
@@ -171,20 +184,7 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
                 bindingM.tvPackageQuantity.text = data.quantity
 
                 bindingM.ivDelete.setOnSingleClickListener {
-                    addedPackagesArrayList.removeAt(position)
-                    SharedPreferencesManager.putAddPackageList(
-                        SharedPreferencesManager.Keys.ADD_PACKAGE,
-                        addedPackagesArrayList
-                    )
-                    submitList(addedPackagesArrayList)
-                    refreshAdapter()
-                    if (packagesAdapter.itemCount == 0) {
-                        binding.llAddPackage.isVisible = true
-                        binding.rvAddedPackages.isVisible = false
-                    } else {
-                        binding.llAddPackage.isVisible = false
-                        binding.rvAddedPackages.isVisible = true
-                    }
+                    getNegativeDialog(position)
                 }
                 bindingM.ivEdit.setOnSingleClickListener {
                     showAddPackageBottomSheet(true, position)
@@ -203,15 +203,19 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
         if (packagesAdapter.itemCount == 0) {
             binding.llAddPackage.isVisible = true
             binding.rvAddedPackages.isVisible = false
+            binding.tvContinue.isVisible = false
         } else {
             binding.llAddPackage.isVisible = false
             binding.rvAddedPackages.isVisible = true
+            binding.tvContinue.isVisible = true
         }
     }
 
     private lateinit var packagesTypeAdapter: GenericAdapter<UserDataDC.Login.PackageDetail>
     var packageId = 0
     var packageSize = ""
+    var isEditPackage = false
+    var editPackagePosition = 0
     private lateinit var bindingM: BottomSheetAddPackageBinding
     private lateinit var dialog: BottomSheetDialog
     private fun showAddPackageBottomSheet(isEdit: Boolean = false, position: Int = 0) {
@@ -233,8 +237,19 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
                     }
                 }
         }
+        isEditPackage = isEdit
+        isImageChanged = false
+        bindingM.ivDelete.setOnSingleClickListener {
+            bindingM.ivPackageImage.isVisible = false
+            bindingM.ivDelete.isVisible = false
+            bindingM.llUploadImage.isVisible = true
+            packageImageUrl = ""
+        }
         if (isEdit) {
+            editPackagePosition = position
             bindingM.tvAddPackage.text = getString(R.string.update_package)
+            bindingM.ivDelete.isVisible = true
+
             addedPackagesArrayList[position].let {
                 packageId = it.id
                 bindingM.ivPackageImage.isVisible = true
@@ -287,6 +302,7 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
         bindingM.rlDismiss.setOnClickListener {
             dialog.dismiss()
             packageId = 0
+            isImageChanged = false
             packageImageUrl = ""
         }
 
@@ -316,37 +332,41 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
                 showSnackBar("Please enter item description.", bindingM.clRootView)
             else if (bindingM.etQuantity.text.toString().trim().isEmpty())
                 showSnackBar("Please add item quantity.", bindingM.clRootView)
+            else if (bindingM.etQuantity.text.toString().trim().toInt() > 100)
+                showSnackBar("Quantity should be less than 100.", bindingM.clRootView)
             else if (packageImageUrl.isEmpty())
                 showSnackBar("Please upload package image.", bindingM.clRootView)
             else {
-                if (isEdit)
-                {
-                    dialog.dismiss()
-                    addedPackagesArrayList[position].apply {
-                        this.id = packageId
-                        this.packageSize = this@AddPackageFragment.packageSize
-                        this.packageType = bindingM.tvSelectPackageType.text.toString()
-                        this.itemDescription =  bindingM.etItemName.text.toString()
-                        this.quantity = bindingM.etQuantity.text.toString()
-                        this.length = bindingM.etLength.text.toString()
-                        this.width = bindingM.etWidth.text.toString()
-                        this.height = bindingM.etHeight.text.toString()
-                        this.weight = bindingM.etWeight.text.toString()
-                        this.image = packageImageUrl
+                if (isEditPackage) {
+                    if (isImageChanged)
+                        rideVM.uploadDocument(part = File(packageImageUrl).getPartMap("image"))
+                    else {
+                        dialog.dismiss()
+                        addedPackagesArrayList[editPackagePosition].apply {
+                            this.id = packageId
+                            this.packageSize = this@AddPackageFragment.packageSize
+                            this.packageType = bindingM.tvSelectPackageType.text.toString()
+                            this.itemDescription = bindingM.etItemName.text.toString()
+                            this.quantity = bindingM.etQuantity.text.toString()
+                            this.length = bindingM.etLength.text.toString()
+                            this.width = bindingM.etWidth.text.toString()
+                            this.height = bindingM.etHeight.text.toString()
+                            this.weight = bindingM.etWeight.text.toString()
+                            this.image = packageImageUrl
+                        }
+                        SharedPreferencesManager.putAddPackageList(
+                            SharedPreferencesManager.Keys.ADD_PACKAGE,
+                            addedPackagesArrayList
+                        )
+                        packagesAdapter.submitList(
+                            addedPackagesArrayList
+                        )
+                        packagesAdapter.refreshAdapter()
+                        packageId = 0
+                        packageImageUrl = ""
                     }
-                    SharedPreferencesManager.putAddPackageList(
-                        SharedPreferencesManager.Keys.ADD_PACKAGE,
-                        addedPackagesArrayList
-                    )
-                    packagesAdapter.submitList(
-                        addedPackagesArrayList
-                    )
-                    packagesAdapter.refreshAdapter()
-                    packageId = 0
-                    packageImageUrl = ""
-                }
-                else
-                rideVM.uploadDocument(part = File(packageImageUrl).getPartMap("image"))
+                } else
+                    rideVM.uploadDocument(part = File(packageImageUrl).getPartMap("image"))
             }
         }
         dialog.setCancelable(true)
@@ -374,6 +394,8 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
                 pickerDialog().setPickerCloseListener { _, uris ->
                     bindingM.ivPackageImage.isVisible = true
                     bindingM.llUploadImage.isVisible = false
+                    bindingM.ivDelete.isVisible = true
+                    isImageChanged = true
                     Glide.with(this).load(uris).into(bindingM.ivPackageImage)
                     packageImageUrl = uris
                 }.show()
@@ -403,6 +425,8 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
                 pickerDialog().setPickerCloseListener { _, uris ->
                     bindingM.ivPackageImage.isVisible = true
                     bindingM.llUploadImage.isVisible = false
+                    bindingM.ivDelete.isVisible = true
+                    isImageChanged = true
                     Glide.with(this).load(uris).into(bindingM.ivPackageImage)
                     packageImageUrl = uris
                 }.show()
@@ -416,20 +440,46 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
     }, onSuccess = {
         hideProgressDialog()
         dialog.dismiss()
-        addedPackagesArrayList.add(
-            AddPackage(
-                packageId,
-                packageSize,
-                bindingM.tvSelectPackageType.text.toString(),
-                bindingM.etItemName.text.toString(),
-                bindingM.etQuantity.text.toString(),
-                bindingM.etLength.text.toString(),
-                bindingM.etWidth.text.toString(),
-                bindingM.etHeight.text.toString(),
-                bindingM.etWeight.text.toString(),
-                this?.file_path.orEmpty()
+        isImageChanged = false
+        if (isEditPackage) {
+            val file = this?.file_path.orEmpty()
+            addedPackagesArrayList[editPackagePosition].apply {
+                this.id = packageId
+                this.packageSize = this@AddPackageFragment.packageSize
+                this.packageType = bindingM.tvSelectPackageType.text.toString()
+                this.itemDescription = bindingM.etItemName.text.toString()
+                this.quantity = bindingM.etQuantity.text.toString()
+                this.length = bindingM.etLength.text.toString()
+                this.width = bindingM.etWidth.text.toString()
+                this.height = bindingM.etHeight.text.toString()
+                this.weight = bindingM.etWeight.text.toString()
+                this.image = file
+            }
+            SharedPreferencesManager.putAddPackageList(
+                SharedPreferencesManager.Keys.ADD_PACKAGE,
+                addedPackagesArrayList
             )
-        )
+            packagesAdapter.submitList(
+                addedPackagesArrayList
+            )
+            packagesAdapter.refreshAdapter()
+            packageId = 0
+            packageImageUrl = ""
+        } else
+            addedPackagesArrayList.add(
+                AddPackage(
+                    packageId,
+                    packageSize,
+                    bindingM.tvSelectPackageType.text.toString(),
+                    bindingM.etItemName.text.toString(),
+                    bindingM.etQuantity.text.toString(),
+                    bindingM.etLength.text.toString(),
+                    bindingM.etWidth.text.toString(),
+                    bindingM.etHeight.text.toString(),
+                    bindingM.etWeight.text.toString(),
+                    this?.file_path.orEmpty()
+                )
+            )
         SharedPreferencesManager.putAddPackageList(
             SharedPreferencesManager.Keys.ADD_PACKAGE,
             addedPackagesArrayList
@@ -440,10 +490,52 @@ class AddPackageFragment : BaseFragment<FragmentAddPackageBinding>() {
         packagesAdapter.refreshAdapter()
         binding.llAddPackage.isVisible = false
         binding.rvAddedPackages.isVisible = true
+        binding.tvContinue.isVisible = true
         packageId = 0
         packageImageUrl = ""
     }, onError = {
         hideProgressDialog()
         showToastShort(this)
     })
+
+    fun getNegativeDialog(position: Int): Dialog {
+        val dialogView = Dialog(requireActivity())
+        with(dialogView) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.dialog_negative_two_button)
+            setCancelable(false)
+            val tvCancel = findViewById<AppCompatTextView>(R.id.tvCancel)
+            val tvTitle = findViewById<AppCompatTextView>(R.id.tvTitle)
+            val tvConfirm = findViewById<AppCompatTextView>(R.id.tvConfirm)
+            tvTitle.text = "Are you sure you want to remove package?"
+            tvConfirm.text = "Remove"
+
+            tvCancel.setOnSingleClickListener {
+                dismiss()
+            }
+
+            tvConfirm.setOnSingleClickListener {
+                addedPackagesArrayList.removeAt(position)
+                SharedPreferencesManager.putAddPackageList(
+                    SharedPreferencesManager.Keys.ADD_PACKAGE,
+                    addedPackagesArrayList
+                )
+                packagesAdapter.submitList(addedPackagesArrayList)
+                packagesAdapter.refreshAdapter()
+                if (packagesAdapter.itemCount == 0) {
+                    binding.llAddPackage.isVisible = true
+                    binding.rvAddedPackages.isVisible = false
+                    binding.tvContinue.isVisible = false
+                } else {
+                    binding.llAddPackage.isVisible = false
+                    binding.rvAddedPackages.isVisible = true
+                    binding.tvContinue.isVisible = true
+                }
+                dismiss()
+            }
+            show()
+        }
+        return dialogView
+    }
 }

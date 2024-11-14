@@ -122,7 +122,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private var carTypeAlertState: BottomSheetBehavior<View>? = null
     private var carDetailAlertState: BottomSheetBehavior<View>? = null
     private var startRideAlertState: BottomSheetBehavior<View>? = null
-    private var deliveryVehicleTypeAlertState: BottomSheetBehavior<View>? = null
+
+    //    private var deliveryVehicleTypeAlertState: BottomSheetBehavior<View>? = null
     private var googleMap: GoogleMap? = null
     private var nearByDriverMap: GoogleMap? = null
     private var isVehicleShowing = false
@@ -160,7 +161,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
     var rideStatus = AppConstants.DRIVER_PICKUP
-    var schedule = false
 
     override fun initialiseFragmentBaseViewModel() {
     }
@@ -173,9 +173,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         Log.i("RIDESTATE", "$it")
         if (it) {
             hideAllBottomSheets()
-            rideVM.updateUiState(RideVM.RideAlertUiState.ShowVehicleTypesDialog)
-            isVehicleShowing = true
-            startRepeatingJob()
+            rideVM.updateUiState(RideVM.RideAlertUiState.FindDriverDialog)
+//            isVehicleShowing = true
+//            startRepeatingJob()
         } else {
 
         }
@@ -624,7 +624,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             while (true) {
                 withContext(Dispatchers.IO) {
                     Log.i("CarType", "Api hit")
-                    rideVM.findDriverInLoop(schedule)
+                    rideVM.findDriverInLoop(rideVM.schedule)
                 }
                 delay(10000) // 15 seconds
             }
@@ -641,10 +641,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         )
 
         carDetailAlertState =
-            binding.viewCarDetail.clRootView.getBottomSheetBehaviour(isDraggableAlert = false)
+            binding.viewCarDetail.clRootView.getBottomSheetBehaviour(isDraggableAlert = false, true)
         startRideAlertState = binding.viewStartRide.clRootView.getBottomSheetBehaviour()
-        deliveryVehicleTypeAlertState =
-            binding.viewDeliveryVehicleType.clRootView.getBottomSheetBehaviour()
+//        deliveryVehicleTypeAlertState =
+//            binding.viewDeliveryVehicleType.clRootView.getBottomSheetBehaviour()
         carTypeAlertState?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -788,7 +788,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         binding.rlRide.setOnSingleClickListener {
 //            binding.tvNow.text = requireContext().getString(R.string.txt_now)
             rideVM.createRideData = CreateRideData()
-            schedule = false
+            rideVM.schedule = false
             rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
         }
 
@@ -841,7 +841,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     showSnackBar("*Please select drop location.", clLocationAlert)
                 } else {
                     locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
-                    rideVM.findDriver(schedule)
+                    rideVM.findDriver(rideVM.schedule)
                 }
             }
 
@@ -930,7 +930,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
 
             tvConfirmBtn.setOnSingleClickListener {
-                if (schedule) {
+                if (rideVM.schedule) {
                     val operatorId =
                         SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID)
                     if (operatorId == 2 && etReceiverName.text.toString().trim().isEmpty())
@@ -949,7 +949,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                             receiverName = etReceiverName.text.toString().trim(),
                             receiverNumber = etReceiverNumber.text.toString().trim(),
                             notes,
-                            selectedPickDateTimeForSchedule
+                            rideVM.selectedPickDateTimeForSchedule
                         )
                         etNotes.clearFocus()
                         etNotes.setText("")
@@ -1104,7 +1104,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //        }
     }
 
-    private var selectedPickDateTimeForSchedule = ""
+    //    private var selectedPickDateTimeForSchedule = ""
     private fun startTimeDialog(context: Context) {
         val dialog = BottomSheetDialog(context, R.style.SheetDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -1140,8 +1140,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     "Time must be at least 30 minutes from the current time", binding.clRoot
                 )
             } else {
-                schedule = true
-                selectedPickDateTimeForSchedule =
+                rideVM.schedule = true
+                rideVM.selectedPickDateTimeForSchedule =
                     convertToUTC(binding.tvDateValue.text.toString() + " " + binding.tvTimeValue.text.toString())
                 dialog.dismiss()
                 rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
@@ -1573,7 +1573,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 lifecycleScope.coroutineContext.cancelChildren()
                 carTypeAlertState?.isHideable = true
                 carTypeAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
-                rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailPaymentDialog)
+                if (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == 1) {
+//                    rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailPaymentDialog)
+                    findNavController().navigate(R.id.packageReviewDetailsFragment)
+                } else {
+                    findNavController().navigate(R.id.addPackageFragment)
+                }
             }
             carTypeAdapter = CarsTypeAdapter(
                 requireActivity(),
@@ -1668,13 +1673,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             carTypeAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
             carDetailAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
             startRideAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
-            deliveryVehicleTypeAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
+//            deliveryVehicleTypeAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
             when (rideVM.rideAlertUiState.value) {
                 RideVM.RideAlertUiState.ShowVehicleTypesDialog -> {
-                    if (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == 1)
-                        rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
-                    else
-                        rideVM.updateUiState(RideVM.RideAlertUiState.ShowDeliveryVehicleTypeDialog)
+//                    if (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == 1)
+//                        rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+//                    else
+//                        rideVM.updateUiState(RideVM.RideAlertUiState.ShowDeliveryVehicleTypeDialog)
+
+                    rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
                 }
 
                 RideVM.RideAlertUiState.ShowCustomerDetailPaymentDialog -> {
@@ -1689,9 +1696,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     rideVM.updateUiState(RideVM.RideAlertUiState.ShowCustomerDetailPaymentDialog)
                 }
 
-                RideVM.RideAlertUiState.ShowDeliveryVehicleTypeDialog -> {
-                    rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
-                }
+//                RideVM.RideAlertUiState.ShowDeliveryVehicleTypeDialog -> {
+//                    rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+//                }
 
                 else -> Unit
             }
@@ -1716,6 +1723,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     setPositiveButton("Okay") { _, _ ->
                         findNavController().navigate(
                             R.id.navigation_cancel_ride,
+
                             bundleOf("sessionId" to rideVM.createRideData.sessionId)
                         )
                     }
@@ -1832,39 +1840,39 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     startRideAlertState?.state = BottomSheetBehavior.STATE_EXPANDED
                 }
 
-                RideVM.RideAlertUiState.ShowDeliveryVehicleTypeDialog -> {
-                    rideVM.hideHomeNav(true)
-                    binding.clWhereMain.visibility = View.GONE
-                    binding.clMapMain.visibility = View.VISIBLE
-                    try {
-                        findNavController().currentBackStackEntry?.savedStateHandle?.remove<CreateRideData.LocationData>(
-                            "pickUpLocation"
-                        )
-                        findNavController().currentBackStackEntry?.savedStateHandle?.remove<CreateRideData.LocationData>(
-                            "dropLocation"
-                        )
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                    startDeliveryVehicleTypeDialog()
-                    deliveryVehicleTypeAlertState?.state = BottomSheetBehavior.STATE_EXPANDED
-                    binding.viewStartRide.llDistanceTime.isVisible = false
-                    requireContext().showPath(
-                        srcLat = LatLng(
-                            rideVM.createRideData.pickUpLocation?.latitude?.toDouble() ?: 0.0,
-                            rideVM.createRideData.pickUpLocation?.longitude?.toDouble() ?: 0.0
-                        ), desLat = LatLng(
-                            rideVM.createRideData.dropLocation?.latitude?.toDouble() ?: 0.0,
-                            rideVM.createRideData.dropLocation?.longitude?.toDouble() ?: 0.0
-                        ), mMap = googleMap, isTracking = false
-                    ) {
-//                        setPathTimeAndDistance(
-//                            durationDistance = it.distanceText.orEmpty(),
-//                            durationTime = it.durationText.orEmpty()
+//                RideVM.RideAlertUiState.ShowDeliveryVehicleTypeDialog -> {
+//                    rideVM.hideHomeNav(true)
+//                    binding.clWhereMain.visibility = View.GONE
+//                    binding.clMapMain.visibility = View.VISIBLE
+//                    try {
+//                        findNavController().currentBackStackEntry?.savedStateHandle?.remove<CreateRideData.LocationData>(
+//                            "pickUpLocation"
 //                        )
-                        googleMap?.let { setNearByDriverMarkersOnMainMap(it) }
-                    }
-                }
+//                        findNavController().currentBackStackEntry?.savedStateHandle?.remove<CreateRideData.LocationData>(
+//                            "dropLocation"
+//                        )
+//                    } catch (e: Exception) {
+//                        e.printStackTrace()
+//                    }
+//                    startDeliveryVehicleTypeDialog()
+////                    deliveryVehicleTypeAlertState?.state = BottomSheetBehavior.STATE_EXPANDED
+//                    binding.viewStartRide.llDistanceTime.isVisible = false
+//                    requireContext().showPath(
+//                        srcLat = LatLng(
+//                            rideVM.createRideData.pickUpLocation?.latitude?.toDouble() ?: 0.0,
+//                            rideVM.createRideData.pickUpLocation?.longitude?.toDouble() ?: 0.0
+//                        ), desLat = LatLng(
+//                            rideVM.createRideData.dropLocation?.latitude?.toDouble() ?: 0.0,
+//                            rideVM.createRideData.dropLocation?.longitude?.toDouble() ?: 0.0
+//                        ), mMap = googleMap, isTracking = false
+//                    ) {
+////                        setPathTimeAndDistance(
+////                            durationDistance = it.distanceText.orEmpty(),
+////                            durationTime = it.durationText.orEmpty()
+////                        )
+//                        googleMap?.let { setNearByDriverMarkersOnMainMap(it) }
+//                    }
+//                }
 
                 else -> {}
 
@@ -2079,10 +2087,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.customerETA = this?.customerETA ?: FindDriverDC.CustomerETA()
             rideVM.fareStructureList.addAll(this?.fareStructure ?: emptyList())
             rideVM.regionsList.addAll(this?.regions ?: emptyList())
-            if (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == 1)
-                rideVM.updateUiState(RideVM.RideAlertUiState.ShowVehicleTypesDialog)
-            else
-                rideVM.updateUiState(RideVM.RideAlertUiState.ShowDeliveryVehicleTypeDialog)
+//            if (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == 1)
+            rideVM.updateUiState(RideVM.RideAlertUiState.ShowVehicleTypesDialog)
+//            else
+//                rideVM.updateUiState(RideVM.RideAlertUiState.ShowDeliveryVehicleTypeDialog)
 //            rideVM.getDistanceFromGoogle(isLoading = {
 //                showProgressDialog()
 //            }, onSuccess = { distance, time ->
@@ -2191,8 +2199,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.promoCode = ""
             hideAllBottomSheets()
             rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
-//            rideVM.createRideData.sessionId = this?.sessionId.orEmpty()
-//            rideVM.updateUiState(RideVM.RideAlertUiState.FindDriverDialog)
+            SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.ADD_PACKAGE)
         })
 
 
@@ -2467,7 +2474,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
         override fun getItemCount(): Int = rideTypeArrayList.size
     }
-
 
 
 }

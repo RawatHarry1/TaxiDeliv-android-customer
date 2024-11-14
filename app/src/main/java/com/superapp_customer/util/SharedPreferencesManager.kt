@@ -132,6 +132,7 @@ object SharedPreferencesManager {
         const val TRIP_ID = "tripId"
         const val SESSION_ID = "session_id"
         const val SELECTED_OPERATOR_ID = "operator_id"
+        const val ONLY_FOR_ONE_TYPE = "only_for_one_type"
         const val ADD_PACKAGE = "add_package"
     }
 }

@@ -28,6 +28,7 @@ import com.superapp_customer.util.ResourceUtils
 import com.superapp_customer.util.SharedPreferencesManager
 import com.superapp_customer.util.showSnackBar
 import com.superapp_customer.view.activity.SignUpInActivity
+import com.superapp_customer.view.activity.walk_though.Home
 import com.superapp_customer.view.activity.walk_though.MainHome
 import com.superapp_customer.view.activity.walk_though.WalkThrough
 import com.superapp_customer.view.base.BaseActivity
@@ -228,6 +229,14 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
                 hideProgressDialog()
                 SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.CLIENT_CONFIG, this)
                 VenusApp.googleMapKey = this?.googleMapKey ?: ""
+                SharedPreferencesManager.put(
+                    SharedPreferencesManager.Keys.ONLY_FOR_ONE_TYPE,
+                    (this?.enabledService ?: 3) != 3
+                )
+                SharedPreferencesManager.put(
+                    SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID,
+                    this?.enabledService ?: 1
+                )
                 callWalkThrough()
             }, onError = {
                 hideProgressDialog()
@@ -240,8 +249,10 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
         val userData =
             SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
         if (userData?.login?.isCustomerProfileComplete == 1) {
-            val intent = Intent(this, MainHome::class.java)
-            startActivity(intent)
+            if (!SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.ONLY_FOR_ONE_TYPE))
+                startActivity(Intent(this, MainHome::class.java))
+            else
+                startActivity(Intent(this, Home::class.java))
         } else {
             val walkThroughShown =
                 SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.WALKTHROUGH)
