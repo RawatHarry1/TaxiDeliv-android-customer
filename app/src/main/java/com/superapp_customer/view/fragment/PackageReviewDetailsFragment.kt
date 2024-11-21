@@ -63,6 +63,8 @@ class PackageReviewDetailsFragment : BaseFragment<FragmentPackageReviewBinding>(
             SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) != 1
         binding.viewLinePackages.isVisible =
             SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) != 1
+        binding.cvNotes.isVisible =
+            SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == 1
         rideVM.createRideData.vehicleData?.let {
             binding.tvVehicleName.text = it.name.orEmpty()
             binding.tvWaitingTime.text = it.eta.orEmpty().ifEmpty { "0" }.plus(" min away")
@@ -84,14 +86,14 @@ class PackageReviewDetailsFragment : BaseFragment<FragmentPackageReviewBinding>(
                 binding.viewCross.isVisible = true
                 binding.tvOriginalPrice.text = "${it.currency} ${it.original_fare}"
                 binding.tvPrice.text = "${it.currency} ${it.fare}"
-                binding.tvConfirm.text = "Swipe to pay | ${it.currency} ${it.fare}"
+//                binding.tvConfirm.text = "Swipe to pay | ${it.currency} ${it.fare}"
                 binding.tvOfferTitle.text = VenusApp.offerTitle
                 binding.tvOfferTitle.isVisible = true
             } else {
                 binding.tvOriginalPrice.isVisible = false
                 binding.viewCross.isVisible = false
                 binding.tvPrice.text = "${it.currency} ${it.fare}"
-                binding.tvConfirm.text = "Swipe to pay | ${it.currency} ${it.fare}"
+//                binding.tvConfirm.text = "Swipe to pay | ${it.currency} ${it.fare}"
                 binding.tvOfferTitle.isVisible = false
             }
         }
@@ -157,17 +159,18 @@ class PackageReviewDetailsFragment : BaseFragment<FragmentPackageReviewBinding>(
                                 rideVM.scheduleRideData(
                                     receiverName = binding.etRecieverName.text.toString(),
                                     receiverNumber = binding.etRecieverName.text.toString(),
-                                    "",
+                                    if (operatorId == 1) binding.etNotes.text.toString()
+                                        .trim() else "",
                                     rideVM.selectedPickDateTimeForSchedule
                                 )
                             else
                                 rideVM.requestRideData(
                                     receiverName = binding.etRecieverName.text.toString(),
-                                    receiverNumber = binding.etRecieverName.text.toString(), ""
+                                    receiverNumber = binding.etRecieverPhone.text.toString(),
+                                    if (operatorId == 1) binding.etNotes.text.toString()
+                                        .trim() else ""
                                 )
                         }
-
-
                     }
                 }
             }

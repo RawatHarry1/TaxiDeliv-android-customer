@@ -306,6 +306,48 @@
                     android:background="@color/grey_line"
                     android:visibility="gone" />
 
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvNotes"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    app:cardCornerRadius="@dimen/_6sdp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_10sdp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="@string/note"
+                            android:textColor="@color/theme"
+                            android:textSize="14sp" />
+
+
+                        <EditText
+                            android:id="@+id/etNotes"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:maxLines="2"
+                            android:maxLength="100"
+                            android:imeOptions="actionDone"
+                            android:layout_marginTop="@dimen/_6sdp"
+                            android:background="@drawable/bg_outline_gray_4dp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:inputType="textPersonName"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvReciever"
@@ -648,7 +690,7 @@
                     app:outer_color="@color/theme"
                     app:slider_height="60dp"
                     app:slider_locked="false"
-                    app:text="Swipe to pay | $20"
+                    app:text="Confirm Booking"
                     app:text_size="16sp" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
