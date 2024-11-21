@@ -143,7 +143,8 @@ object DialogUtils {
         mContext: Activity,
         denied: Int,
         title: String,
-        onClickNegativeResult: (Int) -> Unit?
+        onClickNegativeResult: (Int) -> Unit?,
+        buttonText: String = ""
     ): Dialog {
         val dialogView = Dialog(mContext)
         with(dialogView) {
@@ -154,6 +155,8 @@ object DialogUtils {
             val tvTitle = findViewById<AppCompatTextView>(R.id.tvPermissionTitle)
             val tvConfirm = findViewById<AppCompatTextView>(R.id.tvAllowPermission)
             tvTitle.text = title
+            if (buttonText != "")
+                tvConfirm.text = buttonText
             tvConfirm.setOnClickListener {
                 onClickNegativeResult(denied)
                 dismiss()

@@ -365,7 +365,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
                 binding.tvPackageSize.text = data.package_size
                 binding.tvPackageType.text = data.type
                 binding.tvPackageQuantity.text = data.quantity
-                binding.llPreviousImages.isVisible = true
+                binding.llCustomerImages.isVisible = true
                 val adapter = object : GenericAdapter<String>(R.layout.item_package_images) {
                     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
                         val bindingM = ItemPackageImagesBinding.bind(holder.itemView)
@@ -377,7 +377,7 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
                     }
                 }
                 adapter.submitList(data.image)
-                binding.rvPreviousImages.adapter = adapter
+                binding.rvCustomerImages.adapter = adapter
             }
         }
         packagesAdapter.submitList(

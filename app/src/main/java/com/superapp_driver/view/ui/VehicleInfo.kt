@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.superapp_driver.R
@@ -45,15 +46,26 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
         appTypeAdapter = AppTypeAdapter()
         SharedPreferencesManager.getModel<ClientConfigDC>(SharedPreferencesManager.Keys.CLIENT_CONFIG)
             ?.let {
-                appTypeArrayList.clear()
-                appTypeArrayList.addAll(it.operatorAvailablity.orEmpty())
-                if (appTypeArrayList.isNotEmpty()) {
+                if(it.enabledService == 3) {
+                    appTypeArrayList.clear()
+                    appTypeArrayList.addAll(it.operatorAvailablity.orEmpty())
+                    if (appTypeArrayList.isNotEmpty()) {
+                        SharedPreferencesManager.put(
+                            SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID,
+                            appTypeArrayList[0].id ?: 1
+                        )
+                    }
+                    binding.rvDriverType.adapter = appTypeAdapter
+                }
+                else
+                {
+                    binding.rvDriverType.isVisible = false
+                    binding.tvSelectDriverType.isVisible = false
                     SharedPreferencesManager.put(
                         SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID,
-                        appTypeArrayList[0].id ?: 0
+                        it.enabledService ?: 1
                     )
                 }
-                binding.rvDriverType.adapter = appTypeAdapter
             }
 
         if (SharedPreferencesManager.getModel<UserDataDC>(

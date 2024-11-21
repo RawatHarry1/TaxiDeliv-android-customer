@@ -2,6 +2,8 @@ package com.superapp_driver.model.dataclassses.bookingHistory
 
 
 import com.google.gson.annotations.SerializedName
+import com.superapp_driver.firebaseSetup.PackageDetails
+import com.superapp_driver.model.dataclassses.rideModels.OngoingPackages
 
 data class RideSummaryDC(
     @SerializedName("tracking_image")
@@ -56,6 +58,10 @@ data class RideSummaryDC(
     val totalFare: String? = null,
     @SerializedName("customer_name")
     val customerName: String? = null,
+    @SerializedName("service_type")
+    val serviceType: Int? = null,
     @SerializedName("created_at")
-    val createdAt: String? = null
+    val createdAt: String? = null,
+    @SerializedName("delivery_packages")
+    val deliveryPackages: List<OngoingPackages>? = null
 )

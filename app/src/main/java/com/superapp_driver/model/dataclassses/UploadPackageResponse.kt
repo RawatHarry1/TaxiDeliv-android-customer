@@ -8,5 +8,6 @@ data class UploadPackageResponse(
 
 data class PackageStatus(
     val can_end: Int,
-    val can_start: Int
+    val can_start: Int,
+    val message:String? = null
 )

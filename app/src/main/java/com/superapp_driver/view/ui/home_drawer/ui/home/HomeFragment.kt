@@ -77,7 +77,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     NotificationInterface, CheckOnGoingBooking {
     private lateinit var notificationPermissionLauncher: ActivityResultLauncher<String>
-
     companion object {
         var notificationInterface: NotificationInterface? = null
         var checkOnGoingBooking: CheckOnGoingBooking? = null
@@ -553,6 +552,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                     } else {
                         if ((rideViewModel.newRideNotificationData.serviceType ?: "0").toInt() == 2) {
                             dialog?.dismiss()
+                            screenType = 0
+                            routeType = 1
+                            setScreenType(requireContext())
+                            viewLayout.clParent.isVisible = false
                             startActivity(
                                 Intent(
                                     requireActivity(),

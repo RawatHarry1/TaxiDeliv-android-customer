@@ -38,7 +38,9 @@ data class ClientConfigDC(
     @SerializedName("city_list")
     val cityList: ArrayList<CountryList>? = ArrayList(),
     @SerializedName("operator_availablity")
-    val operatorAvailablity: List<OperatorAvailablity>? = null
+    val operatorAvailablity: List<OperatorAvailablity>? = null,
+    @SerializedName("enabled_service")
+    val enabledService: Int? = null
 )
 
 @Keep

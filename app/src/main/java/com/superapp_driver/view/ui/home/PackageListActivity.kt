@@ -43,6 +43,7 @@ import com.superapp_driver.util.SharedPreferencesManager
 import com.superapp_driver.view.base.BaseActivity
 import com.superapp_driver.viewmodel.RideViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import org.json.JSONObject
 import java.io.File
 
 @AndroidEntryPoint
@@ -57,6 +58,7 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
     private val rejectionReasonAdapter by lazy { RejectionReasonAdapter() }
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
     private val progressBar by lazy { CustomProgressDialog() }
+    private var rejectionReason = ""
     override fun getLayoutId(): Int {
         return R.layout.activity_package_list
     }
@@ -71,6 +73,7 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
         observeEndTrip()
         observeStartTrip()
         observeUpdatePackageStatus()
+        observeCancelTrip()
         viewModel.ongoingTrip()
         binding.ivBack.setOnClickListener { finish() }
         binding.tvSubmit.setOnClickListener {
@@ -316,9 +319,9 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                 }
                 adapter.submitList(data.package_image_while_drop_off)
                 adapterPickup.submitList(data.package_image_while_pickup)
-                binding.rvPreviousImages.adapter = adapterPickup
+                binding.rvPickupImages.adapter = adapterPickup
                 binding.rvDropImages.adapter = adapter
-                binding.llPreviousImages.isVisible = adapterPickup.itemCount > 0
+                binding.llPickupImages.isVisible = adapterPickup.itemCount > 0
                 binding.llDropImages.isVisible = adapter.itemCount > 0
                 if (isEndTrip) {
                     binding.tvAccept.text = getString(R.string.delivered_c)
@@ -335,7 +338,6 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                             data.package_image_while_pickup, false
                     )
                 }
-
                 binding.tvReject.setOnClickListener {
                     uploadImagesDialog(
                         data.package_id.toString(), if (isEndTrip)
@@ -379,10 +381,9 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
             }
             rlDismiss.setOnClickListener { dismiss() }
             tvConfirm.setOnSingleClickListener {
-
                 if (isReject) {
-                    val reason = rejectionReasonAdapter.getSelectedItemName() ?: ""
-                    if (reason.isNotEmpty()) {
+                     rejectionReason = rejectionReasonAdapter.getSelectedItemName() ?: ""
+                    if (rejectionReason.isNotEmpty()) {
                         dismiss()
                         val driverId =
                             SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
@@ -393,7 +394,7 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                             viewModel.newRideNotificationData.tripId.toString(),
                             driverId ?: "",
                             packageId,
-                            reason,
+                            rejectionReason,
                             packImageArrayList.filter { it.isNotEmpty() }, isEndTrip
                         )
                     } else
@@ -426,11 +427,18 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                         if (data.toString().isEmpty()) {
                             binding.ivUploadedImage.isVisible = false
                             binding.ivAddImages.isVisible = true
+                            binding.ivDelete.isVisible = false
                         } else {
                             Glide.with(this@PackageListActivity).load(data.toString())
                                 .into(binding.ivUploadedImage)
                             binding.ivUploadedImage.isVisible = true
                             binding.ivAddImages.isVisible = false
+                            binding.ivDelete.isVisible = true
+                        }
+                        binding.ivDelete.setOnClickListener {
+                            packImageArrayList.removeAt(position)
+                            packagesImageAdapter.submitList(packImageArrayList)
+                            packagesImageAdapter.refreshAdapter()
                         }
                         binding.root.setOnClickListener {
                             if (data.toString().isEmpty()) {
@@ -449,7 +457,8 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                                             Manifest.permission.WRITE_EXTERNAL_STORAGE
                                         )
                                     )
-                            }
+                            } else
+                                fullImagesDialog(data.toString())
                         }
                     }
                 }
@@ -490,6 +499,16 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
         hideProgressDialog()
         showToastShort(this)
     })
+
+
+    private fun onReject(type: Int) {
+        viewModel.cancelTrip(jsonObject = JSONObject().apply {
+            put("engagementId", viewModel.newRideNotificationData.tripId)
+            put("customerId", viewModel.newRideNotificationData.customerId)
+            put("cancellationReason", rejectionReason)
+            put("by_operator", 1)
+        })
+    }
 
     private fun observeOngoingTrip() =
         viewModel.ongoingTrip.observeData(this, onSuccess = {
@@ -539,6 +558,13 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
         }, onSuccess = {
 //            hideProgressDialog()
             progressBar.dismiss()
+            viewModel.newRideNotificationData.also {
+                it.estimatedDriverFare = this?.estimatedDriverFare
+                it.customerName = this?.customerName
+                it.customerImage = this?.customerImage
+                it.rideTime = this?.date
+                it.paidUsingWallet = this?.paidUsingWallet
+            }
             startActivity(
                 Intent(this@PackageListActivity, AcceptTripActivity::class.java).putExtra(
                     "screenType", "RideCompleted"
@@ -572,6 +598,14 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                     binding.tvSubmit.alpha = 1f
                     binding.tvSubmit.isEnabled = true
                 }
+                if (this?.message != null) {
+                    DialogUtils.getNegativeDialog(
+                        this@PackageListActivity,
+                        "Reject/Cancel Delivery",
+                        this.message,
+                        ::onReject
+                    )
+                }
             }
             viewModel.ongoingTrip()
         }, onError = {
@@ -593,6 +627,20 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
 //        hideProgressDialog()
         progressBar.dismiss()
         finish()
+    })
+
+    /**
+     * Observe Cancel Trip
+     * */
+    private fun observeCancelTrip() = viewModel.cancelTrip.observeData(this, onLoading = {
+        showProgressDialog()
+    }, onSuccess = {
+        hideProgressDialog()
+        showToastLong(getString(R.string.ride_has_been_cancelled_by_you))
+        finish()
+    }, onError = {
+        hideProgressDialog()
+        showErrorMessage(this)
     })
 
     data class ReasonItem(

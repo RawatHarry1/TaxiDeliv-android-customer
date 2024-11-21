@@ -2,30 +2,42 @@ package com.superapp_driver.view.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.view.Window
+import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.superapp_driver.BuildConfig
 import com.superapp_driver.R
 import com.superapp_driver.customClasses.singleClick.setOnSingleClickListener
 import com.superapp_driver.databinding.ActivityBookingDetailsBinding
+import com.superapp_driver.databinding.ItemPackageImagesBinding
+import com.superapp_driver.databinding.ItemPackageListBinding
 import com.superapp_driver.dialogs.DialogUtils
 import com.superapp_driver.model.api.observeData
 import com.superapp_driver.model.dataclassses.bookingHistory.RideSummaryDC
+import com.superapp_driver.model.dataclassses.rideModels.OngoingPackages
+import com.superapp_driver.util.GenericAdapter
 import com.superapp_driver.util.SharedPreferencesManager
 import com.superapp_driver.util.formatAmount
 import com.superapp_driver.util.getTime
@@ -35,6 +47,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
+    private lateinit var packagesAdapter: GenericAdapter<OngoingPackages>
     lateinit var binding: ActivityBookingDetailsBinding
     private val bookingId by lazy { intent.getStringExtra("bookingId").orEmpty() }
     private val viewModel by viewModels<BookingVM>()
@@ -57,6 +70,7 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
         } catch (e: Exception) {
         }
     }
+
     /**
      * Get Layout Id
      * */
@@ -71,6 +85,7 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = getViewDataBinding()
+        setAdapter()
         clickHandler()
         observeRideSummary()
         viewModel.rideSummary(tripId = bookingId)
@@ -123,8 +138,123 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
                     )
                 )
         }
+
+        binding.rlPackage.setOnSingleClickListener {
+            if (binding.rvAddedPackages.isVisible) {
+                binding.ivArrowPackage.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this@BookingDetailsActivity,
+                        R.drawable.ic_drop_down_theme
+                    )
+                )
+                binding.rvAddedPackages.isVisible = false
+            } else {
+                binding.ivArrowPackage.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this@BookingDetailsActivity,
+                        R.drawable.ic_arrow_up_theme
+                    )
+                )
+                binding.rvAddedPackages.isVisible = true
+            }
+        }
     }
 
+    private fun setAdapter() {
+        packagesAdapter = object : GenericAdapter<OngoingPackages>(R.layout.item_package_list) {
+            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                val binding = ItemPackageListBinding.bind(holder.itemView)
+                val data = getItem(position)
+                binding.tvPackageSize.text = data.package_size
+                binding.tvPackageType.text = data.package_type
+                binding.tvPackageQuantity.text = data.package_quantity.toString()
+                binding.llCustomerImages.isVisible = true
+                binding.llPickupImages.isVisible = true
+                binding.llDropImages.isVisible = true
+                when (data.delivery_status) {
+                    5 -> {
+                        binding.rlStatus.isVisible = true
+                        binding.statusViewLine.isVisible = true
+                        binding.llPickupImages.isVisible = false
+                        binding.llDropImages.isVisible = false
+                    }
+
+                    3 -> {
+                        binding.rlStatus.isVisible = true
+                        binding.statusViewLine.isVisible = true
+                        binding.tvStatus.text = "Not Delivered"
+                        binding.llDropImages.isVisible = false
+                    }
+                }
+                val adapterCustomer =
+                    object : GenericAdapter<String>(R.layout.item_package_images) {
+                        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                            val bindingM = ItemPackageImagesBinding.bind(holder.itemView)
+                            Glide.with(this@BookingDetailsActivity)
+                                .load(getItem(position).toString())
+                                .into(bindingM.ivUploadedImage)
+                            bindingM.root.setOnClickListener {
+                                fullImagesDialog(getItem(position))
+                            }
+                        }
+                    }
+
+                val adapterPick = object : GenericAdapter<String>(R.layout.item_package_images) {
+                    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                        val bindingM = ItemPackageImagesBinding.bind(holder.itemView)
+                        Glide.with(this@BookingDetailsActivity).load(getItem(position).toString())
+                            .into(bindingM.ivUploadedImage)
+                        bindingM.root.setOnClickListener {
+                            fullImagesDialog(getItem(position))
+                        }
+                    }
+                }
+                val adapterDrop = object : GenericAdapter<String>(R.layout.item_package_images) {
+                    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                        val bindingM = ItemPackageImagesBinding.bind(holder.itemView)
+                        Glide.with(this@BookingDetailsActivity).load(getItem(position).toString())
+                            .into(bindingM.ivUploadedImage)
+                        bindingM.root.setOnClickListener {
+                            fullImagesDialog(getItem(position))
+                        }
+                    }
+                }
+                adapterCustomer.submitList(data.package_images_by_customer)
+                binding.rvCustomerImages.adapter = adapterCustomer
+
+                adapterPick.submitList(data.package_image_while_pickup)
+                binding.rvPickupImages.adapter = adapterPick
+
+                adapterDrop.submitList(data.package_image_while_drop_off)
+                binding.rvDropImages.adapter = adapterDrop
+            }
+        }
+        binding.rvAddedPackages.adapter = packagesAdapter
+    }
+
+    fun fullImagesDialog(
+        string: String
+    ): Dialog {
+        val dialogView = Dialog(this)
+        with(dialogView) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.dialog_full_image)
+            setCancelable(false)
+            val rlDismiss = findViewById<RelativeLayout>(R.id.rlDismiss)
+            rlDismiss.setOnClickListener { dismiss() }
+            val ivPackageImage = findViewById<ImageView>(R.id.ivPackageImage)
+            Glide.with(this@BookingDetailsActivity).load(string)
+                .into(ivPackageImage)
+            // Set width to full screen
+            window?.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            show()
+        }
+        return dialogView
+    }
 
     /**
      * Set Up UI
@@ -161,6 +291,21 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
         )
 
         Glide.with(binding.ivMap).load(dataClass.trackingImage).into(binding.ivMap)
+        if (dataClass.serviceType == 2) {
+            binding.ivArrowPackage.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this@BookingDetailsActivity,
+                    R.drawable.ic_drop_down_theme
+                )
+            )
+            binding.rlPackage.isVisible = true
+            binding.rvAddedPackages.isVisible = true
+            binding.viewLine1.isVisible = true
+        }
+        packagesAdapter.submitList(
+            dataClass.deliveryPackages.orEmpty()
+        )
+        packagesAdapter.refreshAdapter()
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -193,7 +338,7 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
             ) // Add a user-agent header
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        downloadID =  downloadManager.enqueue(request) // Enqueue the download
+        downloadID = downloadManager.enqueue(request) // Enqueue the download
     }
 
     private fun handlePermissionResult(permissions: Map<String, Boolean>) {

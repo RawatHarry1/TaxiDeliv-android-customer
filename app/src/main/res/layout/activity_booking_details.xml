@@ -176,9 +176,7 @@
                     android:visibility="gone"
                     app:fontFamily="@font/poppins_regular"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/titleDriverName"
-
-                    />
+                    app:layout_constraintTop_toBottomOf="@+id/titleDriverName" />
 
                 <View
                     android:id="@+id/view3"
@@ -190,6 +188,55 @@
                     android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@+id/ivDriverImage" />
 
+
+                <RelativeLayout
+                    android:id="@+id/rlPackage"
+                    android:visibility="gone"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    app:layout_constraintTop_toBottomOf="@+id/view3">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="@string/package_details"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/ivArrowPackage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_drop_down_theme" />
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAddedPackages"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:orientation="vertical"
+                    tools:itemCount="1"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/rlPackage"
+                    tools:listitem="@layout/item_package_list" />
+                <View
+                    android:id="@+id/viewLine1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:background="@color/grey_line"
+                    app:layout_constraintTop_toBottomOf="@+id/rvAddedPackages" />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvFareDetails"
                     android:layout_width="wrap_content"
@@ -198,8 +245,8 @@
                     android:text="@string/fare_receipt"
                     android:textSize="16sp"
                     app:fontFamily="@font/poppins"
-                    app:layout_constraintStart_toStartOf="@id/view3"
-                    app:layout_constraintTop_toBottomOf="@+id/view3" />
+                    app:layout_constraintStart_toStartOf="@id/viewLine1"
+                    app:layout_constraintTop_toBottomOf="@+id/viewLine1" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/titleRideFare"
