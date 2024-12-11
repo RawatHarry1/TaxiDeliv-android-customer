@@ -530,6 +530,7 @@
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="wrap_content"
+                                android:id="@+id/tvUsingStripe"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
                                 android:text="@string/paid_using_stripe"
@@ -666,13 +667,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_15sdp"
-                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
                     android:background="@drawable/bg_outline_circular"
                     android:fontFamily="@font/poppins_regular"
                     android:gravity="center"
                     android:padding="@dimen/_10sdp"
-                    android:text="Download Invoice"
+                    android:text="@string/download_invoice"
                     android:textColor="@color/black_text_color"
+                    app:layout_constraintBottom_toTopOf="@id/tvRaiseTicket" />
+
+                <TextView
+                    android:id="@+id/tvRaiseTicket"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:background="@drawable/bg_button"
+                    android:fontFamily="@font/poppins_regular"
+                    android:gravity="center"
+                    android:padding="@dimen/_10sdp"
+                    android:text="@string/raise_a_ticket"
+                    android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>

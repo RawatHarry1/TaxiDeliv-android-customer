@@ -162,6 +162,7 @@
                 app:layout_constraintStart_toEndOf="@+id/ivStar"
                 app:layout_constraintTop_toTopOf="@+id/ivStar" />
 
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/llDistanceTime"
                 android:layout_width="40dp"
@@ -264,10 +265,22 @@
                 app:layout_constraintStart_toStartOf="@id/tvNumber"
                 app:layout_constraintTop_toBottomOf="@id/tvNumber" />
 
+            <TextView
+                android:id="@+id/tvViewDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="@string/view_packages"
+                android:textColor="@color/theme"
+                android:textSize="@dimen/_12ssp"
+                android:fontFamily="@font/poppins_regular"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvCarName" />
+
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivCar"
-                android:layout_width="140dp"
+                android:layout_width="100dp"
                 android:layout_height="65dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tvNumber" />
@@ -277,9 +290,9 @@
                 android:id="@+id/viewLocationTop"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="15dp"
+
                 android:background="@color/grey_arrow"
-                app:layout_constraintTop_toBottomOf="@id/tvCarName" />
+                app:layout_constraintTop_toBottomOf="@id/tvViewDetails" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clMainPickDrop"
@@ -368,6 +381,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:ellipsize="end"
+                        android:layout_marginBottom="@dimen/_10sdp"
                         android:fontFamily="@font/poppins_regular"
                         android:maxLines="2"
                         android:text=""
@@ -392,6 +406,8 @@
                 android:id="@+id/clDistanceTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/viewLocationBottom">
 
                 <androidx.appcompat.widget.AppCompatTextView

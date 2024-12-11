@@ -8,37 +8,43 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/splash_color"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivWalkImage"
-            android:layout_width="match_parent"
+            android:layout_width="240dp"
+            android:layout_marginEnd="-40dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_height="250dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tvWalkTitle"
-            android:src="@drawable/ic_venus"
+            android:src="@drawable/app_logo_image"
             android:layout_marginTop="50dp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <ImageView
             android:id="@+id/tvWalkTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tvWalkDesc"
             android:layout_margin="20dp"
-            android:text="@string/txt_venus"
+            android:src="@drawable/ic_ujeff"
             android:gravity="center"
             android:textColor="@color/walk_title_color"
-            android:textSize="24dp"
-            />
+            android:textSize="24dp" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvWalkDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/guide"
             android:layout_margin="30dp"
+            android:fontFamily="@font/poppins_medium"
             android:text="@string/txt_clear_air_ride"
             android:gravity="center"
-            android:textColor="@color/walk_desc_color"
+            android:textColor="@color/black"
             android:textSize="16dp"
             />
 
@@ -57,6 +63,7 @@
             android:background="@drawable/bg_button"
             android:gravity="center"
             android:padding="10dp"
+            android:fontFamily="@font/poppins"
             android:text="@string/txt_sign_in"
             android:textColor="@color/white"
             android:textSize="18sp"
@@ -70,6 +77,7 @@
             android:layout_margin="20dp"
             android:gravity="center"
             android:padding="10dp"
+            android:fontFamily="@font/poppins"
             android:text="@string/txt_have_an_account"
             android:textColor="@color/text_color"
             android:textSize="14sp"

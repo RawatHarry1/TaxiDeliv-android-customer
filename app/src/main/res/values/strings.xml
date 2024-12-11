@@ -30,15 +30,16 @@
     <string name="txt_skip">Skip</string>
 
     <!--sign in/up-->
-    <string name="txt_venus">Smart App</string>
-    <string name="txt_clear_air_ride">Clean Air Ride share</string>
+    <string name="txt_venus">UJEFF</string>
+    <string name="txt_clear_air_ride">Fastest delivery in the area</string>
     <string name="txt_sign_in">Sign In</string>
     <string name="txt_have_an_account">Don’t have an account? <font color='#1b1c3c'>Sign up</font></string>
 
     <!--sign-in-->
+    <string name="txt_welcome_back_thanks_for_going_green">Welcome Back\nto UJEFF!</string>
     <string name="txt_welcome_back">Welcome Back</string>
     <string name="txt_create_account">Create An Account</string>
-    <string name="txt_thanks_for_going_green">Thanks for going green!</string>
+    <string name="txt_thanks_for_going_green">To UJEFF!</string>
     <string name="txt_enter_email_phone">Enter your phone to receive a verification code.</string>
     <string name="txt_sign_up">Sign Up</string>
     <string name="txt_email_address">Email Address</string>
@@ -325,11 +326,11 @@
     <string name="paid_using_wallet">Paid Using Wallet</string>
     <string name="delete_account">Delete Account</string>
     <string name="allow">Allow</string>
-    <string name="allow_notifications">Enable notifications for Smart App? Stay informed about your ride details, driver updates, and promotions with timely alerts.</string>
+    <string name="allow_notifications">Enable notifications for UJEFF? Stay informed about your ride details, driver updates, and promotions with timely alerts.</string>
     <string name="allow_location_precise">Allow precise location access to get nearby drivers, track your ride in real-time, and provide accurate pick-up and drop-off points</string>
-    <string name="allow_camera_and_gallery">Enable camera and gallery access for Smart App? Capture and upload photos for ride verification, document incidents, or share important visuals seamlessly.</string>
-    <string name="allow_call_permission">Enable call access for Smart App? Call driver and support for better ride experience.</string>
-    <string name="allow_download_permission">Enable download access for Smart App? For downloading invoice please allow permissions.</string>
+    <string name="allow_camera_and_gallery">Enable camera and gallery access for UJEFF? Capture and upload photos for ride verification, document incidents, or share important visuals seamlessly.</string>
+    <string name="allow_call_permission">Enable call access for UJEFF? Call driver and support for better ride experience.</string>
+    <string name="allow_download_permission">Enable download access for UJEFF? For downloading invoice please allow permissions.</string>
     <string name="refer_to_your_friends">Refer a friend</string>
     <string name="fetching_address">Fetching Address...</string>
     <string name="welcome_to_taxi_booking">Start Your Taxi Booking!</string>
@@ -368,4 +369,12 @@
     <string name="customer_side_images">Customer Side Images</string>
     <string name="have_a_promo_code_type_here">Have a Promo Code? Type Here</string>
     <string name="apply">APPLY</string>
+    <string name="note">Note</string>
+    <string name="download_invoice">Download Invoice</string>
+    <string name="raise_a_ticket">Raise a Ticket</string>
+    <string name="raise_ticket">Raise Ticket</string>
+    <string name="select_reason">Select Reason</string>
+    <string name="enter_description">Enter Description</string>
+    <string name="raised_tickets">Raised Tickets</string>
+    <string name="view_packages"><u>View Packages</u></string>
 </resources>

@@ -267,6 +267,7 @@
                 <!--                </androidx.cardview.widget.CardView>-->
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/cvCurrentLocation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_10sdp"
@@ -370,10 +371,10 @@
 
                             <LinearLayout
                                 android:id="@+id/llRideTypes"
-                                android:layout_marginTop="@dimen/_6sdp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_10sdp"
+                                android:layout_marginTop="@dimen/_6sdp"
                                 android:orientation="horizontal"
                                 app:layout_constraintTop_toBottomOf="@id/tvSuggestion">
 
@@ -568,10 +569,10 @@
                                         android:layout_height="wrap_content"
                                         android:fontFamily="@font/poppins_medium"
                                         android:gravity="center"
-                                        android:textSize="12sp"
+                                        android:includeFontPadding="false"
                                         android:text="@string/coming_nsoon"
                                         android:textColor="@color/black"
-                                        android:includeFontPadding="false"
+                                        android:textSize="12sp"
                                         app:layout_constraintBottom_toBottomOf="@id/rlRideRental"
                                         app:layout_constraintEnd_toEndOf="parent"
                                         app:layout_constraintStart_toStartOf="parent"
@@ -586,6 +587,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_margin="@dimen/_10sdp"
+                                android:visibility="gone"
                                 app:cardCornerRadius="@dimen/_6sdp"
                                 app:cardUseCompatPadding="true"
                                 app:layout_constraintTop_toBottomOf="@id/llRideTypes">
@@ -593,7 +595,7 @@
                                 <androidx.constraintlayout.widget.ConstraintLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="132dp"
-                                    android:background="#96CCFF">
+                                    android:background="@color/splash_color">
 
                                     <TextView
                                         android:id="@+id/tvPromotions"
@@ -624,7 +626,7 @@
                                         android:layout_marginStart="@dimen/_20sdp"
                                         android:layout_marginTop="@dimen/_10sdp"
                                         android:fontFamily="@font/poppins_regular"
-                                        android:text="Redeem Now"
+                                        android:text="Coming Soon"
                                         android:textColor="@color/black"
                                         android:textSize="18sp"
                                         app:layout_constraintStart_toStartOf="parent"
@@ -633,7 +635,33 @@
                                 </androidx.constraintlayout.widget.ConstraintLayout>
                             </androidx.cardview.widget.CardView>
 
+                            <include
+                                android:id="@+id/shimmerBanners"
+                                layout="@layout/shimmer_banner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintTop_toBottomOf="@id/llRideTypes" />
 
+                            <androidx.viewpager2.widget.ViewPager2
+                                android:id="@+id/promotionBannerViewPager"
+                                android:layout_width="match_parent"
+                                android:layout_height="142dp"
+                                android:layout_marginHorizontal="16dp"
+                                android:layout_marginTop="@dimen/_10sdp"
+                                android:visibility="gone"
+                                app:layout_constraintTop_toBottomOf="@id/llRideTypes" />
+                            <com.google.android.material.tabs.TabLayout
+                                android:id="@+id/tabLayoutDotsPromo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                app:layout_constraintBottom_toBottomOf="@id/promotionBannerViewPager"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:tabIndicatorHeight="0dp"
+                                app:tabPaddingEnd="-1dp"
+                                app:tabPaddingStart="-1dp"
+                                app:tabRippleColor="@android:color/transparent" />
                             <!-- ViewPager2 for banners -->
                             <androidx.viewpager2.widget.ViewPager2
                                 android:id="@+id/bannerViewPager"
@@ -641,7 +669,8 @@
                                 android:layout_height="142dp"
                                 android:layout_marginHorizontal="16dp"
                                 android:layout_marginTop="@dimen/_10sdp"
-                                app:layout_constraintTop_toBottomOf="@id/cvPromotions" />
+                                android:visibility="gone"
+                                app:layout_constraintTop_toBottomOf="@id/promotionBannerViewPager" />
 
                             <!-- TabLayout for dots -->
                             <com.google.android.material.tabs.TabLayout
@@ -788,16 +817,18 @@
 
         <include
             android:id="@+id/viewDeliveryVehicleType"
-            android:visibility="gone"
-            layout="@layout/dialog_delivery_vehicle_type" />
+            layout="@layout/dialog_delivery_vehicle_type"
+            android:visibility="gone" />
 
         <include
             android:id="@+id/viewCarDetail"
-            layout="@layout/dialog_car_detail" />
+            layout="@layout/dialog_car_detail"
+            android:visibility="gone" />
 
         <include
             android:id="@+id/viewStartRide"
-            layout="@layout/dialog_ride_start" />
+            layout="@layout/dialog_ride_start"
+            />
 
         <nl.dionsegijn.konfetti.xml.KonfettiView
             android:id="@+id/konfettiView"

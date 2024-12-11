@@ -7,37 +7,37 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.superapp_customer.view.activity.walk_though.ui.home.HomeFragment"
+        android:name="com.ujeff_customer.view.activity.walk_though.ui.home.HomeFragment"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_trips"
-        android:name="com.superapp_customer.view.fragment.trips.TripsFragment"
+        android:name="com.ujeff_customer.view.fragment.trips.TripsFragment"
         tools:layout="@layout/fragment_trips" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.superapp_customer.view.fragment.notification.NotificationFragment"
+        android:name="com.ujeff_customer.view.fragment.notification.NotificationFragment"
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
         android:id="@+id/navigation_account"
-        android:name="com.superapp_customer.view.fragment.profile.AccountFragment"
+        android:name="com.ujeff_customer.view.fragment.profile.AccountFragment"
         tools:layout="@layout/fragment_account" />
 
     <fragment
         android:id="@+id/navigation_faq"
-        android:name="com.superapp_customer.view.fragment.FAQFragment"
+        android:name="com.ujeff_customer.view.fragment.FAQFragment"
         tools:layout="@layout/fragment_f_a_q" />
 
     <fragment
         android:id="@+id/navigation_change_password"
-        android:name="com.superapp_customer.view.fragment.profile.ChangePasswordFragment"
+        android:name="com.ujeff_customer.view.fragment.profile.ChangePasswordFragment"
         tools:layout="@layout/fragment_change_password" />
 
     <fragment
         android:id="@+id/navigation_ride_details"
-        android:name="com.superapp_customer.view.fragment.trips.RideDetailsFragment"
+        android:name="com.ujeff_customer.view.fragment.trips.RideDetailsFragment"
         tools:layout="@layout/fragment_ride_details">
         <argument
             android:name="tripId"
@@ -56,7 +56,7 @@
 
     <fragment
         android:id="@+id/navigation_rate_driver"
-        android:name="com.superapp_customer.view.fragment.feedback.FeedbackFragment"
+        android:name="com.ujeff_customer.view.fragment.feedback.FeedbackFragment"
         tools:layout="@layout/fragment_feed_bacl">
         <argument
             android:name="engagementId"
@@ -78,14 +78,14 @@
 
     <fragment
         android:id="@+id/navigation_ride_complete"
-        android:name="com.superapp_customer.view.fragment.RideCompleteFragment"
+        android:name="com.ujeff_customer.view.fragment.RideCompleteFragment"
         tools:layout="@layout/fragment_ride_complete">
 
     </fragment>
 
     <fragment
         android:id="@+id/navigation_select_location"
-        android:name="com.superapp_customer.view.fragment.SelectLocationFragment"
+        android:name="com.ujeff_customer.view.fragment.SelectLocationFragment"
         tools:layout="@layout/fragment_select_location">
         <argument
             android:name="selectLocationType"
@@ -95,7 +95,7 @@
 
     <fragment
         android:id="@+id/navigation_cancel_ride"
-        android:name="com.superapp_customer.view.fragment.cancelRideFragment.CancelRideFragment"
+        android:name="com.ujeff_customer.view.fragment.cancelRideFragment.CancelRideFragment"
         tools:layout="@layout/fragment_cancel_ride">
         <argument
             android:name="sessionId"
@@ -105,37 +105,47 @@
 
     <fragment
         android:id="@+id/navigation_terms_conditions"
-        android:name="com.superapp_customer.view.fragment.profile.TermsConditionsFragment"
+        android:name="com.ujeff_customer.view.fragment.profile.TermsConditionsFragment"
         tools:layout="@layout/fragment_terms_conditions" />
 
 
     <fragment
         android:id="@+id/navigation_about_us"
-        android:name="com.superapp_customer.view.fragment.profile.AboutUsFragment"
+        android:name="com.ujeff_customer.view.fragment.profile.AboutUsFragment"
         tools:layout="@layout/fragment_about_us" />
 
     <fragment
         android:id="@+id/navigation_offers"
-        android:name="com.superapp_customer.view.fragment.profile.OffersFragment"
+        android:name="com.ujeff_customer.view.fragment.profile.OffersFragment"
         tools:layout="@layout/fragment_offers" />
 
     <fragment
         android:id="@+id/navigation_wallet"
-        android:name="com.superapp_customer.view.fragment.profile.WalletFragment"
+        android:name="com.ujeff_customer.view.fragment.profile.WalletFragment"
         tools:layout="@layout/fragment_wallet" />
     <fragment
         android:id="@+id/navigate_referral"
-        android:name="com.superapp_customer.view.fragment.profile.ReferralCodeFragment"
+        android:name="com.ujeff_customer.view.fragment.profile.ReferralCodeFragment"
         tools:layout="@layout/fragment_referral_code" />
     <fragment
         android:id="@+id/addPackageFragment"
-        android:name="com.superapp_customer.view.fragment.AddPackageFragment"
+        android:name="com.ujeff_customer.view.fragment.AddPackageFragment"
         android:label="AddPackageFragment"
         tools:layout="@layout/fragment_add_package" />
     <fragment
         android:id="@+id/packageReviewDetailsFragment"
-        android:name="com.superapp_customer.view.fragment.PackageReviewDetailsFragment"
+        android:name="com.ujeff_customer.view.fragment.PackageReviewDetailsFragment"
         android:label="PackageReviewDetailsFragment"
         tools:layout="@layout/fragment_package_review"/>
+    <fragment
+        android:id="@+id/raiseATicketFragment"
+        tools:layout="@layout/fragment_raise_a_ticket"
+        android:name="com.ujeff_customer.view.fragment.RaiseATicketFragment"
+        android:label="RaiseATicketFragment" />
+    <fragment
+        android:id="@+id/raisedTicketsListFragment"
+        tools:layout="@layout/fragment_raised_ticket_list"
+        android:name="com.ujeff_customer.view.fragment.RaisedTicketsListFragment"
+        android:label="RaisedTicketsListFragment" />
 
 </navigation>

@@ -20,7 +20,7 @@ android {
             keyPassword '123456'
         }
     }
-    namespace 'com.superapp_customer'
+    namespace 'com.ujeff_customer'
     compileSdk 34
 
     dataBinding {
@@ -28,7 +28,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.superapp_customer"
+        applicationId "com.ujeff_customer"
         minSdk 26
         targetSdk 34
         versionCode 1
@@ -41,14 +41,9 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            /*Dev*/
-//            https://chuki-rides.venustaxi.in
-//            https://chuki-rides-api.venustaxi.in
-            buildConfigField("String", "BASE_URL", '"https://super-app-rides.venustaxi.in/"')
-            buildConfigField("String", "SOCKET_BASE_URL", '"https://super-app-rides-api.venustaxi.in"')
-            /*Live*/
-//            buildConfigField("String", "BASE_URL", '"https://rides.venustaxi.in/"')
-//            buildConfigField("String", "SOCKET_BASE_URL", '"https://rides-api.venustaxi.in"')
+
+            buildConfigField("String", "BASE_URL", '"https://chuki-rides.venustaxi.in/"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://chuki-rides-api.venustaxi.in"')
         }
 
         release {
@@ -73,7 +68,7 @@ android {
         venus {
             dimension "product"
             buildConfigField("String", "VARIANT", '"dev"')
-            resValue "string", "app_name", "Smart App"
+            resValue "string", "app_name", "UJEFF"
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }
     }

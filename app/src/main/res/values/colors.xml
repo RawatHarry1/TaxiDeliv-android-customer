@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="theme">#043662</color>
+    <color name="theme">#CF0921</color>
     <color name="theme_red">#FF3B30</color>
-    <color name="theme1">#043662</color>
-    <color name="theme_button">#043662</color>
+    <color name="theme1">#CF0921</color>
+    <color name="splash_color">#FCD20F</color>
+    <color name="theme_button">#CF0921</color>
     <color name="theme_light">#330054A5</color>
     <color name="pink_card">#EAF5FF</color>
     <color name="cancel_btn_color">#E9F0FC</color>

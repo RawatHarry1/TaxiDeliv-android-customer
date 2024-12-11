@@ -48,12 +48,27 @@
             android:layout_marginStart="-30dp"
             android:layout_marginEnd="-30dp"
             />
+        <TextView
+            android:id="@+id/tvWelcomeToUJEFF"
+            android:layout_width="0dp"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/txt_welcome_back_thanks_for_going_green"
+            android:textColor="@color/text_color"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivBack" />
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvSignUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/ivBack"
+            app:layout_constraintTop_toBottomOf="@id/tvWelcomeToUJEFF"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/txt_sign_up"
             android:textColor="@color/border_color_dark"
@@ -66,7 +81,7 @@
             android:id="@+id/tvSignIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/ivBack"
+            app:layout_constraintTop_toBottomOf="@id/tvWelcomeToUJEFF"
             app:layout_constraintStart_toEndOf="@id/tvSignUp"
             android:text="@string/txt_sign_in"
             android:textColor="@color/theme_button"
@@ -189,6 +204,16 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintTop_toBottomOf="@id/cbRememberMe" />
+
+        <ImageView
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="-40dp"
+            android:layout_marginTop="@dimen/_20sdp"
+            app:layout_constraintTop_toBottomOf="@id/tvSignUpBtn"
+            android:src="@drawable/app_logo_image"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_200sdp"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvForgotPassword"
