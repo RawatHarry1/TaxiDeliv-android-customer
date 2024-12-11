@@ -8,11 +8,10 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
-
 }
 
 android {
-    namespace 'com.superapp_driver'
+    namespace 'com.ujeff_driver'
     compileSdk 34
 
     dataBinding {
@@ -20,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.superapp_driver"
+        applicationId "com.ujeff_driver"
         minSdk 26
         targetSdk 33
         versionCode 2
@@ -46,15 +45,15 @@ android {
     productFlavors {
         venus {
             dimension "product"
-            applicationId "com.superapp_driver"
-            resValue "string", "app_name", "Smart Driver"
+            applicationId "com.ujeff_driver"
+            resValue "string", "app_name", "UJEFF PRO"
         }
 
         dev {
             dimension "server"
-            buildConfigField("String", "BASE_URL", '"https://super-app-rides.venustaxi.in/"')
+            buildConfigField("String", "BASE_URL", '"https://chuki-rides.venustaxi.in/"')
             buildConfigField("String", "VARIANT", '"dev"')
-            buildConfigField("String", "SOCKET_BASE_URL", '"https://super-app-rides-api.venustaxi.in"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://chuki-rides-api.venustaxi.in"')
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }
 

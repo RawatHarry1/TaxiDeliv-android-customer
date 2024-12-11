@@ -7,85 +7,90 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.superapp_driver.view.ui.home_drawer.ui.home.HomeFragment"
+        android:name="com.ujeff_driver.view.ui.home_drawer.ui.home.HomeFragment"
         android:label="@string/menu_account"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.superapp_driver.view.ui.home_drawer.ui.gallery.GalleryFragment"
+        android:name="com.ujeff_driver.view.ui.home_drawer.ui.gallery.GalleryFragment"
         android:label="@string/menu_earnings"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="com.superapp_driver.view.ui.home_drawer.ui.slideshow.SlideshowFragment"
+        android:name="com.ujeff_driver.view.ui.home_drawer.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_bookings"
         tools:layout="@layout/fragment_slideshow" />
 
 
     <fragment
         android:id="@+id/nav_account"
-        android:name="com.superapp_driver.view.fragment.AccountFragment"
+        android:name="com.ujeff_driver.view.fragment.AccountFragment"
         android:label="@string/menu_bookings"
         tools:layout="@layout/fragment_account" />
 
 
     <fragment
         android:id="@+id/nav_earnings"
-        android:name="com.superapp_driver.view.fragment.MyEarningsFragment"
+        android:name="com.ujeff_driver.view.fragment.MyEarningsFragment"
         android:label="@string/menu_bookings"
         tools:layout="@layout/fragment_my_earnings" />
 
     <fragment
         android:id="@+id/nav_documents"
-        android:name="com.superapp_driver.view.fragment.DocumentsFragment"
+        android:name="com.ujeff_driver.view.fragment.DocumentsFragment"
         android:label="@string/menu_bookings"
         tools:layout="@layout/activity_documents" />
 
 
     <fragment
         android:id="@+id/nav_notifications"
-        android:name="com.superapp_driver.view.fragment.notifications.NotificationsListingFragment"
+        android:name="com.ujeff_driver.view.fragment.notifications.NotificationsListingFragment"
         android:label="@string/menu_bookings"
         tools:layout="@layout/fragment_notifications_listing" />
 
     <fragment
         android:id="@+id/nav_ratings"
-        android:name="com.superapp_driver.view.fragment.RatingsListingFragment"
+        android:name="com.ujeff_driver.view.fragment.RatingsListingFragment"
         android:label="@string/menu_bookings"
         tools:layout="@layout/fragment_ratings_listing" />
 
     <fragment
         android:id="@+id/nav_vehicle_listing"
-        android:name="com.superapp_driver.view.fragment.VehicleListingFragment"
+        android:name="com.ujeff_driver.view.fragment.VehicleListingFragment"
         android:label="@string/menu_bookings"
         tools:layout="@layout/fragment_vehicle_listing" />
 
     <fragment
         android:id="@+id/nav_contact_us"
-        android:name="com.superapp_driver.view.fragment.ContactUsFragment"
+        android:name="com.ujeff_driver.view.fragment.ContactUsFragment"
         android:label="@string/menu_bookings"
         tools:layout="@layout/fragment_contact_us" />
 
 
     <fragment
         android:id="@+id/nav_support"
-        android:name="com.superapp_driver.view.fragment.SupportFragment"
+        android:name="com.ujeff_driver.view.fragment.SupportFragment"
         android:label="@string/menu_bookings"
         tools:layout="@layout/fragment_support" />
 
     <fragment
         android:id="@+id/wallet"
-        android:name="com.superapp_driver.view.fragment.wallet.WalletFragment"
+        android:name="com.ujeff_driver.view.fragment.wallet.WalletFragment"
         android:label="@string/wallet"
         tools:layout="@layout/fragment_wallet" />
 
 
     <fragment
         android:id="@+id/nav_about_app"
-        android:name="com.superapp_driver.view.fragment.aboutApp.AboutApp"
+        android:name="com.ujeff_driver.view.fragment.aboutApp.AboutApp"
         android:label="@string/about_app"
         tools:layout="@layout/about_app" />
+    <fragment
+        android:id="@+id/raisedTicketsListFragment"
+        tools:layout="@layout/fragment_raised_ticket_list"
+        android:name="com.ujeff_driver.view.fragment.RaisedTicketsListFragment"
+        android:label="RaisedTicketsListFragment" />
 
 </navigation>

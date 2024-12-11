@@ -33,9 +33,30 @@
             android:textSize="30sp"
             app:fontFamily="@font/poppins_regular"
             app:layout_constraintStart_toStartOf="@+id/ivMenuBurg"
-            app:layout_constraintTop_toBottomOf="@+id/ivMenuBurg"
+            app:layout_constraintTop_toBottomOf="@+id/ivMenuBurg" />
 
-            />
+        <AutoCompleteTextView
+            android:id="@+id/tvFilter"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:drawablePadding="@dimen/_2sdp"
+            android:drawableEnd="@drawable/ic_arrow_drop_down"
+            android:paddingVertical="@dimen/_6sdp"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:background="@drawable/bg_outline_circular"
+            android:text="All"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:minWidth="120dp"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:gravity="center"
+            app:fontFamily="@font/poppins_regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/llSelectionBtn"
@@ -129,12 +150,12 @@
                 android:drawableStart="@drawable/ic_filter"
                 android:drawableEnd="@drawable/ic_keyboard_arrow_down_24"
                 android:drawablePadding="10dp"
-                android:visibility="invisible"
                 android:elevation="4dp"
                 android:gravity="center"
                 android:paddingHorizontal="10dp"
                 android:text="@string/filter"
                 android:textSize="8sp"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/titleBalance" />
 
@@ -156,15 +177,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:visibility="gone"
-                android:text="No Data Found"
-                android:textSize="@dimen/_16sdp"
                 android:fontFamily="@font/poppins_bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnFilter"
+                android:gravity="center"
+                android:text="No Data Found"
                 android:textColor="@color/black"
-                />
+                android:textSize="@dimen/_16sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnFilter" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -184,8 +204,8 @@
                 android:layout_marginHorizontal="30dp"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:listitem="@layout/item_bookings" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -193,15 +213,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:visibility="gone"
-                android:text="No Data Found"
-                android:textSize="@dimen/_16sdp"
                 android:fontFamily="@font/poppins_bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:gravity="center"
+                android:text="No Data Found"
                 android:textColor="@color/black"
-                />
+                android:textSize="@dimen/_16sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

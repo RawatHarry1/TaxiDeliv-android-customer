@@ -20,7 +20,7 @@
             android:layout_marginBottom="-40dp"
             app:layout_constraintBottom_toTopOf="@+id/bestRoute"
             app:layout_constraintTop_toTopOf="parent"
-            tools:context=".MapsActivity"/>
+            tools:context=".MapsActivity" />
 
         <include
             android:id="@+id/bestRoute"
@@ -40,18 +40,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCall"
+            android:visibility="gone"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            android:elevation="20dp"
+            android:src="@drawable/ic_call"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivMenuBurg" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivMsgIndicator"
             android:layout_width="14dp"
             android:layout_height="14dp"
-            android:visibility="gone"
-            android:elevation="@dimen/_20sdp"
             android:layout_marginStart="@dimen/_20sdp"
-            app:tint="@color/red_text_color"
-            app:layout_constraintEnd_toEndOf="@id/ivMenuBurg"
+            android:elevation="@dimen/_20sdp"
             android:src="@drawable/bg_round_outline_button"
-            app:layout_constraintTop_toTopOf="@id/ivMenuBurg" />
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/ivMenuBurg"
+            app:layout_constraintTop_toTopOf="@id/ivMenuBurg"
+            app:tint="@color/red_text_color" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -124,6 +135,42 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvInstructions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"
+            app:cardCornerRadius="@dimen/_4sdp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivMenuBurg"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/theme"
+                android:padding="@dimen/_10sdp">
+
+                <TextView
+                    android:id="@+id/tvStepInstructions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_medium"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+
         <include
             android:id="@+id/alertView"
             layout="@layout/home_page_alert"
@@ -132,6 +179,68 @@
             android:elevation="@dimen/_5sdp"
             app:layout_constraintBottom_toBottomOf="parent" />
 
+        <TextView
+            android:id="@+id/tvHideAndShowDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/bg_theme_shape_round_button"
+            android:backgroundTint="@color/white"
+            android:elevation="@dimen/_6sdp"
+            android:fontFamily="@font/poppins_regular"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_4sdp"
+            android:text="View Map"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cvInstructions" />
+
+        <RelativeLayout
+            android:id="@+id/rlMapView"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_20sdp"
+            android:background="@drawable/bg_theme_shape_round_button"
+            android:backgroundTint="@color/white"
+            android:elevation="@dimen/_6sdp"
+            android:gravity="center"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintBottom_toTopOf="@id/bestRoute"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/ivMapType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_map_types" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlSpeaker"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:visibility="gone"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:background="@drawable/bg_theme_shape_round_button"
+            android:backgroundTint="@color/white"
+            android:elevation="@dimen/_6sdp"
+            android:gravity="center"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvHideAndShowDetail">
+
+            <ImageView
+                android:id="@+id/ivSpeaker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_unmuted_speaker" />
+
+        </RelativeLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

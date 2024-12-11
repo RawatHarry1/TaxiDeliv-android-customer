@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "152682101202",
-    "project_id": "superapp-5a3ad",
-    "storage_bucket": "superapp-5a3ad.appspot.com"
+    "project_number": "78941285879",
+    "project_id": "ujeff-f478b",
+    "storage_bucket": "ujeff-f478b.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:152682101202:android:02b5d3ff5be9ddf3c2b00b",
+        "mobilesdk_app_id": "1:78941285879:android:e76b4909741e8f0c5b12f2",
         "android_client_info": {
-          "package_name": "com.superapp_customer"
+          "package_name": "com.ujeff_customer"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDo8GYhr8dd90hpKmTMPjC5bEezXJYMYSs"
+          "current_key": "AIzaSyAmsYDlIjZuhSOHynaRI1CwQUHG5m3X06g"
         }
       ],
       "services": {
@@ -26,15 +26,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:152682101202:android:9c1f05efb933d39ec2b00b",
+        "mobilesdk_app_id": "1:78941285879:android:a6e3de34b70ddd8a5b12f2",
         "android_client_info": {
-          "package_name": "com.superapp_driver"
+          "package_name": "com.ujeff_driver"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDo8GYhr8dd90hpKmTMPjC5bEezXJYMYSs"
+          "current_key": "AIzaSyAmsYDlIjZuhSOHynaRI1CwQUHG5m3X06g"
         }
       ],
       "services": {

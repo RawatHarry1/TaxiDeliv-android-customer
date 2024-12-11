@@ -106,6 +106,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/clReceiver" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvEta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_6sdp"
+            android:fontFamily="@font/poppins_regular"
+            app:layout_constraintBottom_toBottomOf="@id/tvBestRoute"
+            android:textColor="#1a1824"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="@id/tvBestRoute"
+            app:layout_constraintStart_toEndOf="@id/tvBestRoute"
+            app:layout_constraintTop_toBottomOf="@+id/clReceiver" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivArrivePickup"
             android:layout_width="wrap_content"

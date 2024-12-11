@@ -16,16 +16,16 @@
     <string name="txt_available_everywhere">Available Everywhere</string>
     <string name="txt_set_your_own_hours_area">Set your own hours and areas where you would like to drive.</string>
     <string name="txt_highest_earnings">Highest Earnings</string>
-    <string name="txt_earn_100_of_fare">Earn 100% of the passenger fare. Pay a small flat fee per trip.</string>
+    <string name="txt_earn_100_of_fare">Earn 100% of the passenger fare. Pay a small flat fee per delivery.</string>
     <string name="txt_turn_on_location">Turn on location services in your device settings</string>
     <string name="txt_next">Next</string>
     <string name="txt_skip">Skip</string>
 
     <!--sign in/up-->
-    <string name="txt_app_name">Smart Driver</string>
-    <string name="txt_clear_air_ride">Clean Air Ride share</string>
+    <string name="txt_app_name">UJEFF PRO</string>
+    <string name="txt_clear_air_ride">Fast reliable and transparent</string>
     <string name="txt_sign_in">Sign In</string>
-    <string name="txt_have_an_account">Don’t have an account? <font color='#1b1c3c'>Sign up</font></string>
+    <string name="txt_have_an_account">Don’t have an account? <font color='#FFFFFFFF'>Sign up</font></string>
 
     <!--sign-in-->
     <string name="txt_welcome_back">Welcome Back</string>
@@ -107,10 +107,10 @@
     <string name="txt_welcome">Welcome</string>
     <string name="title_activity_home">Home</string>
     <string name="title_home">Home</string>
-    <string name="title_trips">Trips</string>
+    <string name="title_trips">Deliveries</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_account">Account</string>
-    <string name="trip_history">Trip History</string>
+    <string name="trip_history">Delivery History</string>
     <string name="completed">Completed</string>
     <string name="_8_june_2019_18_39">8 June 2019, 18:39</string>
     <string name="_11_24">11:24</string>
@@ -168,7 +168,7 @@
     <string name="txt_great_thank_you">Great. Thank you!</string>
     <string name="txt_connecting_you_to_a_driver">Connecting you to a driver</string>
     <string name="txt_slide_to_cancel">Slide to cancel</string>
-    <string name="txt_slide_to_cancel_trip">Slide to cancel Trip</string>
+    <string name="txt_slide_to_cancel_trip">Slide to cancel Delivery</string>
     <string name="txt_hs785k">HS785K</string>
     <string name="txt_volkswagen_polo">Volkswagen Polo</string>
     <string name="txt_2664_royal_ln_mesa_newjersey">2664 Royal Ln, Mesa, NewJersey</string>
@@ -200,8 +200,8 @@
     <string name="txt_choose_on_map">Choose On Map</string>
     <string name="schedule">Schedule</string>
     <string name="add_address">Add Address</string>
-    <string name="cancel_ride">Cancel Ride</string>
-    <string name="i_want_to_cancel_my_ride_because">I want to cancel my ride because</string>
+    <string name="cancel_ride">Cancel Delivery</string>
+    <string name="i_want_to_cancel_my_ride_because">I want to cancel my delivery because</string>
     <string name="customer_is_not_picking_call">Customer is not picking call</string>
     <string name="customer_is_not_available">Customer is not available</string>
     <string name="driver_is_late">Driver is late</string>
@@ -252,14 +252,14 @@
     <string name="txt_please_enter_a_valid_otp">Please enter 4 numbers in otp</string>
     <string name="take_picture">Take Picture</string>
     <string name="choose_from_gallery">Choose from gallery</string>
-    <string name="accept_trip">Accept Trip</string>
+    <string name="accept_trip">Accept Delivery</string>
     <string name="july_24_2020_9_58_am">July 24, 2020, 9:58 AM</string>
     <string name="pick_up">Pick-Up</string>
     <string name="_199_brown_estate_apt_866">199 Brown Estate Apt. 866</string>
     <string name="kindly_call_me_once_you_arrive">Kindly call me once you arrive</string>
     <string name="fare">Fare</string>
     <string name="incl_tax">incl. Tax</string>
-    <string name="txt_welcome_back_thanks_for_going_green">Welcome Back\nThanks for going green!</string>
+    <string name="txt_welcome_back_thanks_for_going_green">Welcome Back\nto UJEFF PRO!</string>
     <string name="txt_enter_your_email_or_mobile_number">Enter your mobile number</string>
     <string name="txt_enter_your_password">Enter your password</string>
     <string name="txt_confirm_your_password">Confirm your password</string>
@@ -386,15 +386,15 @@
     <string name="txt_best_route">Best Route</string>
     <string name="txt_arrived_at_pickup_location">Arrived at pickup location</string>
     <string name="on_the_way_to_destination">On the way to destination</string>
-    <string name="txt_volt_ride_completed">Smart Driver Ride completed</string>
-    <string name="txt_volt_delivery_completed">Smart Driver Delivery completed</string>
+    <string name="txt_volt_ride_completed">UJEFF Ride completed</string>
+    <string name="txt_volt_delivery_completed">UJEFF Delivery completed</string>
     <string name="txt_slide_to_arrive_at_location">Slide to arrive at location</string>
     <string name="txt_slide_to_mark_arrive">Slide to mark arrive</string>
-    <string name="txt_slide_to_start_trip">Slide to start trip</string>
+    <string name="txt_slide_to_start_trip">Slide to start delivery</string>
     <string name="txt_slide_to_start_delivery">Slide to start delivery</string>
-    <string name="txt_slide_to_end_trip">Slide to end trip</string>
-    <string name="txt_complete_trip">Complete Trip</string>
-    <string name="trip_accepted">Trip Accepted</string>
+    <string name="txt_slide_to_end_trip">Slide to end delivery</string>
+    <string name="txt_complete_trip">Complete Delivery</string>
+    <string name="trip_accepted">Delivery Accepted</string>
     <string name="go_to_pick_up">Go to Pick-Up</string>
     <string name="old_password">Old Password</string>
     <string name="or">OR</string>
@@ -459,8 +459,8 @@
     <string name="your_wallet_balance_is_currently_running_low_please_recharge_your_wallet">Your wallet balance is currently running low. Please recharge your wallet.</string>
     <string name="recharge">Recharge</string>
     <string name="need_to_take_action_on_your_documents_please_check_documents_in_menu">Need to take action on your documents. Please check Documents in menu.</string>
-    <string name="cancel_thr_ride_request">Cancel the ride Request?</string>
-    <string name="ride_has_been_cancelled_by_you">Ride has been cancelled by you.</string>
+    <string name="cancel_thr_ride_request">Cancel the delivery Request?</string>
+    <string name="ride_has_been_cancelled_by_you">Delivery has been cancelled by you.</string>
     <string name="please_enter_mobile_wallet">*Please enter mobile wallet.</string>
     <string name="vehicle_country">Vehicle Country</string>
     <string name="reach_destination">Reach Destination</string>
@@ -478,12 +478,12 @@
     <string name="add_new_card">Add New Card</string>
     <string name="select_a_card">Select a card</string>
     <string name="allow">Allow</string>
-    <string name="allow_notifications">Enable notifications for Smart Driver? Stay updated with ride requests, customer details, and important trip alerts to ensure seamless service.</string>
+    <string name="allow_notifications">Enable notifications for UJEFF? Stay updated with ride requests, customer details, and important deliver alerts to ensure seamless service.</string>
     <string name="allow_location">Enable all time location to receive ride requests from nearby customers and navigate easily to pick-up and drop-off locations.</string>
     <string name="allow_location_precise">Enable location to receive ride requests from nearby customers and navigate easily to pick-up and drop-off locations.</string>
-    <string name="allow_camera_and_gallery">Enable camera and gallery access for Smart Driver? Capture and upload photos for ride verification, document incidents, or share important visuals seamlessly.</string>
-    <string name="allow_call_permission">Enable call access for Smart Driver? Call customer and support.</string>
-    <string name="allow_download_permission">Enable download access for Smart Driver? For downloading invoice please allow permissions.</string>
+    <string name="allow_camera_and_gallery">Enable camera and gallery access for UJEFF? Capture and upload photos for ride verification, document incidents, or share important visuals seamlessly.</string>
+    <string name="allow_call_permission">Enable call access for UJEFF? Call customer and support.</string>
+    <string name="allow_download_permission">Enable download access for UJEFF? For downloading invoice please allow permissions.</string>
     <string name="select_driver_type">Select Driver Type</string>
     <string name="platform_fee">Platform Fee</string>
     <string name="account_type">Account Type</string>
@@ -500,4 +500,11 @@
     <string name="not_delivered_c">NOT DELIVERED</string>
     <string name="reject">REJECT</string>
     <string name="reason_for_rejection">Reason For Rejection</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="set">Set</string>
+    <string name="raise_a_ticket">Raise a Ticket</string>
+    <string name="raise_ticket">Raise Ticket</string>
+    <string name="select_reason">Select Reason</string>
+    <string name="enter_description">Enter Description</string>
+    <string name="raised_tickets">Raised Tickets</string>
 </resources>

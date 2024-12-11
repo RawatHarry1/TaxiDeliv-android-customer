@@ -9,29 +9,29 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/clWelcomeCheck"
+        android:background="@color/theme"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.activity.Welcome">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivCheck"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_200sdp"
+            android:layout_marginEnd="-40dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_check" />
+            app:srcCompat="@drawable/app_logo_image" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <ImageView
             android:id="@+id/tvWelcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="@string/txt_welcome"
-            android:textColor="@color/black"
-            android:textSize="30dp"
-            app:layout_constraintBottom_toTopOf="@id/ivCheck"
+            android:src="@drawable/ic_welcome_to_ujeff"
+            app:layout_constraintTop_toBottomOf="@id/ivCheck"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
