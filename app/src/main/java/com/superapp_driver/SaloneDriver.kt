@@ -40,6 +40,10 @@ class SaloneDriver : Application(), ActivityLifecycleCallbacks {
         getFCMToken {
             Log.e("TokenIS", "Here:- $it")
         }
+        Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
+            Log.e("UncaughtException", "Thread: $thread, Exception: $exception", exception)
+        }
+
     }
 
 

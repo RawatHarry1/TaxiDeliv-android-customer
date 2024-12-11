@@ -106,7 +106,9 @@ data class Login(
     @SerializedName("stripeCredentials")
     val stripeCredentials: StripeCredentials? = null,
     @SerializedName("service_type")
-    val serviceType: Int? = null
+    val serviceType: Int? = null,
+    @SerializedName("support_ticket_reasons")
+    val supportTicketReasons: List<String>
 )
 
 @Keep

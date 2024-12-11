@@ -1,22 +1,30 @@
 package com.superapp_driver.view.ui.home_drawer.ui.home
 
 import android.Manifest
+import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.PowerManager
 import android.provider.Settings
+import android.speech.tts.TextToSpeech
+import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -25,6 +33,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -39,11 +48,15 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.card.MaterialCardView
+import com.google.gson.Gson
+import com.google.maps.android.PolyUtil
 import com.ncorti.slidetoact.SlideToActView
 import com.superapp_driver.R
 import com.superapp_driver.SaloneDriver
 import com.superapp_driver.customClasses.LocationResultHandler
 import com.superapp_driver.customClasses.SingleFusedLocation
+import com.superapp_driver.customClasses.singleClick.setOnSingleClickListener
 import com.superapp_driver.databinding.DialogTripsBinding
 import com.superapp_driver.databinding.FragmentHomeBinding
 import com.superapp_driver.dialogs.DialogUtils
@@ -54,8 +67,10 @@ import com.superapp_driver.model.api.observeData
 import com.superapp_driver.model.dataclassses.userData.UserDataDC
 import com.superapp_driver.socketSetup.SocketSetup
 import com.superapp_driver.socketSetup.locationServices.LocationService
+import com.superapp_driver.trackingData.StepInstruction
 import com.superapp_driver.trackingData.animateDriver
 import com.superapp_driver.trackingData.clearMap
+import com.superapp_driver.trackingData.findEta
 import com.superapp_driver.trackingData.showPath
 import com.superapp_driver.trackingData.vectorToBitmap
 import com.superapp_driver.util.AppUtils
@@ -72,14 +87,19 @@ import com.superapp_driver.view.ui.home.PackageListActivity
 import com.superapp_driver.view.ui.home_drawer.HomeActivity
 import com.superapp_driver.viewmodel.RideViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
+class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitListener,
+    LocationResultHandler,
     NotificationInterface, CheckOnGoingBooking {
     private lateinit var notificationPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     companion object {
         var notificationInterface: NotificationInterface? = null
         var checkOnGoingBooking: CheckOnGoingBooking? = null
+        var stepsInstructionArrayList = ArrayList<StepInstruction>()
+        var temStepsInstructionArrayList = ArrayList<StepInstruction>()
     }
 
     lateinit var binding: FragmentHomeBinding
@@ -90,6 +110,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     private val viewModel by viewModels<HomeViewModel>()
     private val rideViewModel by viewModels<RideViewModel>()
     private lateinit var locationPermissionLauncher: ActivityResultLauncher<Array<String>>
+    private lateinit var textToSpeech: TextToSpeech
+    private var isSpeakerEnabled = true
+    private var wakeLock: PowerManager.WakeLock? = null
     override fun initialiseFragmentBaseViewModel() {
 
     }
@@ -97,7 +120,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     override fun getLayoutId(): Int {
         return R.layout.fragment_home
     }
+    private fun wakeUpScreen() {
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        val powerManager = requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager
+        wakeLock = powerManager.newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK,
+            "YourApp:RideWakeLock"
+        )
+        wakeLock?.acquire(30 * 60 * 1000L /*10 minutes*/)
+    }
 
+    private fun releaseWakeUp() {
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        wakeLock?.release()
+        wakeLock = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -148,8 +185,37 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                 }
             }
         }
+
+        binding.tvHideAndShowDetail.setOnClickListener {
+            if (binding.bestRoute.clParent.isVisible) {
+                binding.tvHideAndShowDetail.text = "Show Detail"
+                binding.bestRoute.clParent.isVisible = false
+            } else {
+                binding.tvHideAndShowDetail.text = "View Map"
+                binding.bestRoute.clParent.isVisible = true
+            }
+        }
+
         binding.swOnOff.setOnClickListener {
             viewModel.changeStatus(binding.swOnOff.isChecked)
+        }
+
+        requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                makePhoneCall(
+                    rideViewModel.newRideNotificationData.recipientPhoneNo ?: ""
+                )
+                // Replace with the phone number you want to call
+            } else {
+                DialogUtils.getPermissionDeniedDialog(
+                    requireActivity(),
+                    1,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -163,8 +229,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                 IntentFilter("newMsg")
             )
         }
-
-
+        binding.rlMapView.setOnClickListener {
+            showMapType(googleMap)
+        }
+        binding.ivCall.setOnSingleClickListener {
+            checkPermissionAndMakeCall(rideViewModel.newRideNotificationData.recipientPhoneNo ?: "")
+        }
+        binding.rlSpeaker.setOnClickListener {
+            isSpeakerEnabled = !isSpeakerEnabled
+            SharedPreferencesManager.put(SharedPreferencesManager.Keys.SPEAKER, isSpeakerEnabled)
+            updateSpeakerButtonUI()
+        }
 
         locationPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
@@ -241,6 +316,55 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
 
     }
 
+    private fun checkPermissionAndMakeCall(phoneNumber: String) {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.CALL_PHONE
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Permission is already granted
+                makePhoneCall(phoneNumber)
+            }
+
+            shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE) -> {
+                // Show rationale and request permission
+                // You can show a dialog explaining why you need this permission
+                DialogUtils.getPermissionDeniedDialog(
+                    requireActivity(),
+                    0,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
+            }
+
+            else -> {
+                // Directly request the permission
+                DialogUtils.getPermissionDeniedDialog(
+                    requireActivity(),
+                    1,
+                    getString(R.string.allow_call_permission),
+                    ::onDialogCallPermissionAllowClick
+                )
+            }
+        }
+    }
+
+    private fun makePhoneCall(phoneNumber: String) {
+        val callIntent = Intent(Intent.ACTION_CALL)
+        callIntent.data = Uri.parse("tel:$phoneNumber")
+        startActivity(callIntent)
+    }
+
+    private fun onDialogCallPermissionAllowClick(type: Int) {
+        if (type == 0) {
+            requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+        } else {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", requireActivity().packageName, null)
+            }
+            startActivity(intent)
+        }
+    }
     private fun checkAndRequestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             when {
@@ -334,7 +458,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                         driverLongitude = longitude.toDoubleOrNull() ?: 0.0,
                         bearing = bearing.toDoubleOrNull() ?: 0.0,
                         googleMap = googleMap
-                    )
+                    ) {
+                        checkInstructions()
+                        val dropLatLan = LatLng(
+                            (rideViewModel.newRideNotificationData.dropLatitude
+                                ?: "0.0").toDouble(),
+                            (rideViewModel.newRideNotificationData.dropLongitude
+                                ?: "0.0").toDouble()
+                        )
+                        requireActivity().findEta(
+                            LatLng(
+                                latitude.toDoubleOrNull() ?: 0.0,
+                                longitude.toDoubleOrNull() ?: 0.0
+                            ), dropLatLan
+                        ) {
+                            binding.bestRoute.tvEta.text =
+                                "(${it.durationText}) ${it.srcDesDistanceInKm}"
+                        }
+                    }
                 }
             }
         }
@@ -362,6 +503,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
 
     override fun onResume() {
         super.onResume()
+        textToSpeech = TextToSpeech(requireActivity(), this)
         screenType = 0
         notificationInterface = this
         checkAndRequestNotificationPermission()
@@ -375,6 +517,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     private fun setScreenType(context: Context) {
         when (screenType) {
             0 -> {
+                binding.tvHideAndShowDetail.isVisible = false
+                binding.rlSpeaker.isVisible = false
+                stepsInstructionArrayList.clear()
+                temStepsInstructionArrayList.clear()
+                binding.ivCall.isVisible = false
+                releaseWakeUp()
+                binding.cvInstructions.isVisible = false
                 binding.ivMsgIndicator.isVisible = false
                 binding.clOffOn.visibility =
                     if (binding.swOnOff.isChecked) View.GONE else View.VISIBLE
@@ -397,8 +546,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             }
 
             2 -> {
+                binding.tvHideAndShowDetail.isVisible = true
+                binding.rlSpeaker.isVisible = true
+
+                isSpeakerEnabled =
+                    SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.SPEAKER)
+                updateSpeakerButtonUI()
+                wakeUpScreen()
                 binding.swOnOff.visibility = View.INVISIBLE
                 binding.clOffOn.visibility = View.GONE
+                binding.ivCall.isVisible = true
                 binding.tvStatus.text = ""
                 binding.ivMenuBurg.setImageDrawable(
                     ContextCompat.getDrawable(
@@ -503,6 +660,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         if (dialog?.isShowing == true) dialog?.dismiss()
         val viewLayout = binding.bestRoute
         viewLayout.clParent.isVisible = true
+        binding.tvHideAndShowDetail.text = "View Map"
+
         setRouteType(
             viewLayout.tvSlideTrip,
             context,
@@ -523,7 +682,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
             rideViewModel.newRideNotificationData.recipientName ?: ""
         viewLayout.tvReceiverPhoneValue.text =
             rideViewModel.newRideNotificationData.recipientPhoneNo ?: ""
-
+        binding.ivCall.isVisible = (rideViewModel.newRideNotificationData.serviceType ?: "0").toInt() == 2
         viewLayout.tvSlideTrip.onSlideCompleteListener =
             object : SlideToActView.OnSlideCompleteListener {
                 override fun onSlideComplete(view: SlideToActView) {
@@ -539,7 +698,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                                 Intent(
                                     requireActivity(),
                                     PackageListActivity::class.java
-                                ).putExtra("isEndTrip",false)
+                                ).putExtra("isEndTrip", false)
                             )
                         else
                             rideViewModel.startTrip(
@@ -550,7 +709,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                         routeType = RideStateEnum.END_TRIP.data
                         bestRoute(requireContext())
                     } else {
-                        if ((rideViewModel.newRideNotificationData.serviceType ?: "0").toInt() == 2) {
+                        if ((rideViewModel.newRideNotificationData.serviceType
+                                ?: "0").toInt() == 2
+                        ) {
+                            binding.cvInstructions.isVisible = false
                             dialog?.dismiss()
                             screenType = 0
                             routeType = 1
@@ -562,8 +724,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                                     PackageListActivity::class.java
                                 ).putExtra("isEndTrip", true)
                             )
-                        }
-                        else {
+                        } else {
+                            binding.cvInstructions.isVisible = false
                             rideViewModel.endTrip(
                                 customerId = rideViewModel.newRideNotificationData.customerId.orEmpty(),
                                 tripId = rideViewModel.newRideNotificationData.tripId.orEmpty(),
@@ -628,7 +790,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                         rideViewModel.newRideNotificationData.latitude?.toDoubleOrNull() ?: 0.0,
                         rideViewModel.newRideNotificationData.longitude?.toDoubleOrNull() ?: 0.0
                     ), mMap = googleMap
-                )
+                ) {
+                    checkInstructions()
+                    val dropLatLan = LatLng(
+                        (rideViewModel.newRideNotificationData.latitude
+                            ?: "0.0").toDouble(),
+                        (rideViewModel.newRideNotificationData.longitude
+                            ?: "0.0").toDouble()
+                    )
+                    requireActivity().findEta(
+                        LatLng(
+                            SaloneDriver.latLng?.latitude ?: 0.0,
+                            SaloneDriver.latLng?.longitude ?: 0.0
+                        ), dropLatLan
+                    ) {
+                        binding.bestRoute.tvEta.text =
+                            "(${it.durationText}) ${it.srcDesDistanceInKm}"
+                    }
+                }
             }
 
             RideStateEnum.ARRIVE_AT_PICKUP.data -> {
@@ -647,7 +826,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                         rideViewModel.newRideNotificationData.latitude?.toDoubleOrNull() ?: 0.0,
                         rideViewModel.newRideNotificationData.longitude?.toDoubleOrNull() ?: 0.0
                     ), mMap = googleMap
-                )
+                ) { checkInstructions() }
             }
 
             RideStateEnum.ON_THE_WAY.data -> {
@@ -665,7 +844,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
                         rideViewModel.newRideNotificationData.dropLatitude?.toDoubleOrNull() ?: 0.0,
                         rideViewModel.newRideNotificationData.dropLongitude?.toDoubleOrNull() ?: 0.0
                     ), mMap = googleMap
-                )
+                ) {
+                    checkInstructions()
+                    val dropLatLan = LatLng(
+                        (rideViewModel.newRideNotificationData.dropLatitude
+                            ?: "0.0").toDouble(),
+                        (rideViewModel.newRideNotificationData.dropLongitude
+                            ?: "0.0").toDouble()
+                    )
+                    requireActivity().findEta(
+                        LatLng(
+                            SaloneDriver.latLng?.latitude ?: 0.0,
+                            SaloneDriver.latLng?.longitude ?: 0.0
+                        ), dropLatLan
+                    ) {
+                        binding.bestRoute.tvEta.text =
+                            "(${it.durationText}) ${it.srcDesDistanceInKm}"
+                    }
+                }
             }
 
             RideStateEnum.END_TRIP.data -> {
@@ -681,6 +877,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         }
     }
 
+    private fun checkInstructions() {
+        Log.i("StepsInstruction", "Main STEPS:: " + Gson().toJson(stepsInstructionArrayList))
+//        Log.i("StepsInstruction", "TEMP STEPS:: " + Gson().toJson(temStepsInstructionArrayList))
+        val nextInstruction = SaloneDriver.latLng?.let { getNextStepInstruction(it) }
+        if (nextInstruction != null) {
+            binding.cvInstructions.isVisible = true
+            binding.tvStepInstructions.text =
+                Html.fromHtml(
+                    nextInstruction,
+                    Html.FROM_HTML_MODE_COMPACT
+                )
+        } else
+            binding.cvInstructions.isVisible = false
+//        if (temStepsInstructionArrayList.isNotEmpty()) {
+//            binding.cvInstructions.isVisible = true
+////            binding.tvManeuver.text = stepsInstructionArrayList[0].maneuver ?: ""
+//            if (temStepsInstructionArrayList.size > 1)
+//                binding.tvStepInstructions.text =
+//                    Html.fromHtml(
+//                        temStepsInstructionArrayList[1].instruction ?: "",
+//                        Html.FROM_HTML_MODE_COMPACT
+//                    )
+//            else
+//            {
+//                binding.tvStepInstructions.text =
+//                    Html.fromHtml(
+//                        temStepsInstructionArrayList[0].instruction ?: "",
+//                        Html.FROM_HTML_MODE_COMPACT
+//                    )
+//            }
+//        } else {
+//            binding.cvInstructions.isVisible = false
+//        }
+    }
 
     /**
      * Initialize Map
@@ -689,6 +919,31 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync {
             googleMap = it
+
+            when (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.MAP_TYPE)) {
+                1 -> googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
+                2 -> googleMap?.mapType = GoogleMap.MAP_TYPE_SATELLITE
+                3 -> googleMap?.mapType = GoogleMap.MAP_TYPE_TERRAIN
+                0 -> {
+                    SharedPreferencesManager.put(SharedPreferencesManager.Keys.MAP_TYPE, 1)
+                    googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
+                }
+            }
+            when (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.MAP_DETAILS)) {
+                1 -> {
+                    googleMap?.isTrafficEnabled = false
+                    googleMap?.uiSettings?.isMapToolbarEnabled = false
+                }
+
+                2 -> googleMap?.isTrafficEnabled = true
+                3 -> googleMap?.uiSettings?.isMapToolbarEnabled = true
+                0 -> {
+                    SharedPreferencesManager.put(SharedPreferencesManager.Keys.MAP_DETAILS, 1)
+                    googleMap?.isTrafficEnabled = false
+                    googleMap?.uiSettings?.isMapToolbarEnabled = false
+                }
+            }
+
             googleMap?.clear()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 if (ContextCompat.checkSelfPermission(
@@ -1282,8 +1537,232 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), LocationResultHandler,
     }
 
 
+    private fun showMapType(map: GoogleMap?): Dialog {
+        val dialogView = Dialog(requireActivity())
+        with(dialogView) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.dialog_map_type)
+            setCancelable(false)
+            val cvDefault = findViewById<MaterialCardView>(R.id.cvDefault)
+            val cvDefaultMapDefault = findViewById<MaterialCardView>(R.id.cvDefaultMapDefault)
+            val cvTraffic = findViewById<MaterialCardView>(R.id.cvTraffic)
+            val cvStreetView = findViewById<MaterialCardView>(R.id.cvStreetView)
+            val cvSatellite = findViewById<MaterialCardView>(R.id.cvSatellite)
+            val cvTerrain = findViewById<MaterialCardView>(R.id.cvTerrain)
+            val tvSet = findViewById<AppCompatTextView>(R.id.tvSet)
+            val tvCancel = findViewById<AppCompatTextView>(R.id.tvCancel)
+            var mapDetailType =
+                SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.MAP_DETAILS)
+            var mapType = SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.MAP_TYPE)
+
+            cvDefaultMapDefault.setOnClickListener {
+                mapDetailType = 1
+                cvDefaultMapDefault.strokeWidth = 4
+                cvDefaultMapDefault.strokeColor =
+                    ContextCompat.getColor(requireActivity(), R.color.theme)
+                cvTraffic.strokeWidth = 0
+                cvStreetView.strokeWidth = 0
+            }
+            cvTraffic.setOnClickListener {
+                mapDetailType = 2
+                cvTraffic.strokeWidth = 4
+                cvTraffic.strokeColor =
+                    ContextCompat.getColor(requireActivity(), R.color.theme)
+                cvDefaultMapDefault.strokeWidth = 0
+                cvStreetView.strokeWidth = 0
+            }
+
+            cvStreetView.setOnClickListener {
+                mapDetailType = 3
+                cvStreetView.strokeWidth = 4
+                cvStreetView.strokeColor =
+                    ContextCompat.getColor(requireActivity(), R.color.theme)
+                cvDefaultMapDefault.strokeWidth = 0
+                cvTraffic.strokeWidth = 0
+            }
+
+            cvDefault.setOnClickListener {
+                mapType = 1
+                cvDefault.strokeWidth = 4
+                cvDefault.strokeColor =
+                    ContextCompat.getColor(requireActivity(), R.color.theme)
+                cvSatellite.strokeWidth = 0
+                cvTerrain.strokeWidth = 0
+            }
+            cvSatellite.setOnClickListener {
+                mapType = 2
+                cvSatellite.strokeWidth = 4
+                cvSatellite.strokeColor =
+                    ContextCompat.getColor(requireActivity(), R.color.theme)
+                cvDefault.strokeWidth = 0
+                cvTerrain.strokeWidth = 0
+            }
+            cvTerrain.setOnClickListener {
+                mapType = 3
+                cvTerrain.strokeWidth = 4
+                cvTerrain.strokeColor =
+                    ContextCompat.getColor(requireActivity(), R.color.theme)
+                cvDefault.strokeWidth = 0
+                cvSatellite.strokeWidth = 0
+            }
+            when (mapType) {
+                1 -> cvDefault.performClick()
+                2 -> cvSatellite.performClick()
+                3 -> cvTerrain.performClick()
+            }
+
+            when (mapDetailType) {
+                1 -> cvDefaultMapDefault.performClick()
+                2 -> cvTraffic.performClick()
+            }
+            tvSet.setOnClickListener {
+                SharedPreferencesManager.put(SharedPreferencesManager.Keys.MAP_TYPE, mapType)
+                when (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.MAP_TYPE)) {
+                    1 -> map?.mapType = GoogleMap.MAP_TYPE_NORMAL
+                    2 -> map?.mapType = GoogleMap.MAP_TYPE_SATELLITE
+                    3 -> map?.mapType = GoogleMap.MAP_TYPE_TERRAIN
+                }
+                SharedPreferencesManager.put(
+                    SharedPreferencesManager.Keys.MAP_DETAILS,
+                    mapDetailType
+                )
+                when (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.MAP_DETAILS)) {
+                    1 -> {
+                        map?.isTrafficEnabled = false
+                        map?.uiSettings?.isMapToolbarEnabled = false
+                    }
+
+                    2 -> {
+                        map?.isTrafficEnabled = true
+                        map?.uiSettings?.isMapToolbarEnabled = false
+                    }
+
+                }
+
+                dismiss()
+            }
+            tvCancel.setOnClickListener {
+                dismiss()
+            }
+            // Set dialog to full-screen width
+            window?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            show()
+        }
+        return dialogView
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            val result = textToSpeech.setLanguage(Locale.US)
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TEXTTOSPEAK","TTS: Language not supported!")
+            }
+        } else {
+            Log.e("TEXTTOSPEAK","TTS: Initialization failed!")
+        }
+    }
+
+    private fun updateSpeakerButtonUI() {
+        val srcD = if (isSpeakerEnabled) ContextCompat.getDrawable(
+            requireActivity(),
+            R.drawable.ic_unmuted_speaker
+        ) else ContextCompat.getDrawable(requireActivity(), R.drawable.ic_muted_speaker)
+        binding.ivSpeaker.setImageDrawable(srcD)
+    }
+
+    private fun speakInstruction(instruction: String) {
+        Log.i("TEXTTOSPEAK","IN speakInstruction")
+        if (isSpeakerEnabled && !textToSpeech.isSpeaking) {
+            Log.i("TEXTTOSPEAK","IN IF speakInstruction")
+            textToSpeech.speak(instruction, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (::textToSpeech.isInitialized) {
+            textToSpeech.stop()
+            textToSpeech.shutdown()
+        }
+        releaseWakeUp()
+    }
+
+    override fun onDestroyView() {
+        if (::textToSpeech.isInitialized) {
+            textToSpeech.stop()
+            textToSpeech.shutdown()
+        }
+        super.onDestroyView()
+
+    }
+
+    private fun getNextStepInstruction(currentPosition: LatLng): String? {
+        // Iterate through the list of steps
+        for ((index, step) in HomeFragment.stepsInstructionArrayList.withIndex()) {
+            val start =
+                step.startLocation?.latitude?.let { LatLng(it, step.startLocation.longitude) }
+            val end = step.endLocation?.latitude?.let { LatLng(it, step.endLocation.longitude) }
+
+            // Check if the current position is within the bounds of the current step
+            val isOnPath = PolyUtil.isLocationOnPath(
+                currentPosition,
+                listOfNotNull(start, end), // Ensure non-null list
+                false,
+                50.0
+            )
+
+            if (isOnPath) {
+                Log.i("TEXTTOSPEAK","IN isOnPath")
+                val inst = if (index + 1 < HomeFragment.stepsInstructionArrayList.size) {
+                    if (HomeFragment.stepsInstructionArrayList[index + 1].instruction.isNullOrEmpty()) "Continue straight" else HomeFragment.stepsInstructionArrayList[index + 1].instruction
+                } else {
+                    speakInstruction("You have reached your destination!")
+                    "You have reached your destination!"
+                }
+                // Show the next step's instruction, if available
+                val distanceToEndLocation =
+                    calculateDistance(currentPosition, stepsInstructionArrayList[index].endLocation)
+                Log.i("TEXTTOSPEAK","DISTANCE  $distanceToEndLocation")
+                if (distanceToEndLocation <= 100) {
+                    Log.i("TEXTTOSPEAK","IN distanceToEndLocation")
+                    inst?.let {
+                        speakInstruction(
+                            Html.fromHtml(inst, Html.FROM_HTML_MODE_COMPACT).toString()
+                        )
+                    }
+                }
+                return inst
+            }
+        }
+        return null // No matching step found
+    }
 }
 
 interface CheckOnGoingBooking {
     fun checkOnGoingBooking()
 }
+
+/**
+ * Calculate distance in meters between two LatLng points
+ */
+private fun calculateDistance(current: LatLng, destination: LatLng?): Float {
+    if (destination == null) return Float.MAX_VALUE
+
+    val currentLocation = Location("").apply {
+        latitude = current.latitude
+        longitude = current.longitude
+    }
+    val destinationLocation = Location("").apply {
+        latitude = destination.latitude
+        longitude = destination.longitude
+    }
+    return currentLocation.distanceTo(destinationLocation)
+}
+
+
+
+

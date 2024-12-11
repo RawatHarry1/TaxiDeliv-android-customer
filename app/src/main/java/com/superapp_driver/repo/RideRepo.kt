@@ -90,7 +90,14 @@ class RideRepo @Inject constructor(
         packageId: String,
         cancellationReason: String? = null,
         packageImages: List<String>? = null,
-        isEnd: Boolean
+        isEnd: Boolean,
+        currentLat: String? = null,
+        currentLan: String? = null,
+        dropLat: String? = null,
+        dropLan: String? = null,
+        cityId: String? = null,
+        isRestrictionEnabled: Int? = null,
+        distance: String? = null
     ) = flow {
         emit(apiInterface.updatePackageStatus(requestBody = JSONObject().apply {
             put("trip_id", sessionId)
@@ -101,8 +108,17 @@ class RideRepo @Inject constructor(
             if (!packageImages.isNullOrEmpty())
                 put("package_images", JSONArray(packageImages))
 //            put("notes", "")
-            if (isEnd)
+            if (isEnd) {
                 put("is_for_end", "1")
+                put("current_latitude", currentLat)
+                put("current_longitude", currentLan)
+                put("drop_latitude", dropLat)
+                put("drop_longitude", dropLan)
+                put("city_id", cityId)
+                put("package_delivery_restriction_enabled", isRestrictionEnabled)
+                val d = if (distance.isNullOrEmpty()) 0.0 else distance.toDouble()
+                put("maximum_distance", d)
+            }
             else
                 put("is_for_pickup", "1")
         }.getJsonRequestBody()))
@@ -125,4 +141,21 @@ class RideRepo @Inject constructor(
     suspend fun generateSupportTicket(jsonObject: JSONObject) = flow {
         emit(apiInterface.generateSupportTicket(jsonObject.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
+
+    suspend fun raiseATicket(jsonObject: JSONObject) = flow {
+        emit(
+            apiInterface.generateTicket(
+                requestBody = jsonObject.getJsonRequestBody()
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getTicketsList() = flow {
+        emit(apiInterface.getRaisedListing())
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun uploadTicketFile(part: MultipartBody.Part, hashMap: HashMap<String, RequestBody?>) =
+        flow {
+            emit(apiInterface.uploadTicketFile(multipartBody = part, hashMap))
+        }.flowOn(Dispatchers.IO)
 }

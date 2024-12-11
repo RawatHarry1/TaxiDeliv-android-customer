@@ -60,9 +60,9 @@ android {
 
         live {
             dimension "server"
-            buildConfigField("String", "BASE_URL", '"https://rides.venustaxi.in/"')
+            buildConfigField("String", "BASE_URL", '"https://chuki-rides.venustaxi.in/"')
             buildConfigField("String", "VARIANT", '"live"')
-            buildConfigField("String", "SOCKET_BASE_URL", '"https://rides-api.venustaxi.in"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://chuki-rides-api.venustaxi.in"')
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }
 

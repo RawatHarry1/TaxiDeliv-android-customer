@@ -2,6 +2,7 @@ package com.superapp_driver.view.ui.home
 
 import android.Manifest
 import android.app.Dialog
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -9,6 +10,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.Window
@@ -24,8 +26,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.mukesh.photopicker.utils.getMediaFilePathFor
 import com.mukesh.photopicker.utils.pickerDialog
 import com.superapp_driver.R
+import com.superapp_driver.SaloneDriver
 import com.superapp_driver.customClasses.singleClick.setOnSingleClickListener
 import com.superapp_driver.databinding.ActivityPackageListBinding
 import com.superapp_driver.databinding.ItemPackageImagesBinding
@@ -36,6 +40,7 @@ import com.superapp_driver.dialogs.DialogUtils
 import com.superapp_driver.model.api.getJsonRequestBody
 import com.superapp_driver.model.api.getPartMap
 import com.superapp_driver.model.api.observeData
+import com.superapp_driver.model.dataclassses.clientConfig.ClientConfigDC
 import com.superapp_driver.model.dataclassses.rideModels.OngoingPackages
 import com.superapp_driver.model.dataclassses.userData.UserDataDC
 import com.superapp_driver.util.GenericAdapter
@@ -59,6 +64,8 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
     private val progressBar by lazy { CustomProgressDialog() }
     private var rejectionReason = ""
+    private var isRestrictionEnabled = 0
+    private var distance = ""
     override fun getLayoutId(): Int {
         return R.layout.activity_package_list
     }
@@ -74,6 +81,8 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
         observeStartTrip()
         observeUpdatePackageStatus()
         observeCancelTrip()
+        getDistance()
+
         viewModel.ongoingTrip()
         binding.ivBack.setOnClickListener { finish() }
         binding.tvSubmit.setOnClickListener {
@@ -105,14 +114,15 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
             if (permissions[Manifest.permission.CAMERA] == true
                 && permissions[Manifest.permission.READ_MEDIA_IMAGES] == true
             ) {
-                pickerDialog().setPickerCloseListener { _, uris ->
-                    Log.i("UPLOADIMAGE", "checkPermissions if ")
-                    viewModel.uploadPackageImage(
-                        part = File(uris).getPartMap("image"), hashMap = hashMapOf(
-                            "trip_id" to viewModel.newRideNotificationData.tripId?.getJsonRequestBody()
-                        )
-                    )
-                }.show()
+//                pickerDialog().setPickerCloseListener { _, uris ->
+//                    Log.i("UPLOADIMAGE", "checkPermissions if ")
+//                    viewModel.uploadPackageImage(
+//                        part = File(uris).getPartMap("image"), hashMap = hashMapOf(
+//                            "trip_id" to viewModel.newRideNotificationData.tripId?.getJsonRequestBody()
+//                        )
+//                    )
+//                }.show()
+                openCamera()
             } else {
                 if (shouldShowRequestPermissionRationale(
                         Manifest.permission.READ_MEDIA_IMAGES
@@ -139,14 +149,15 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                 && permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true
                 && permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
             ) {
-                pickerDialog().setPickerCloseListener { _, uris ->
-                    Log.i("UPLOADIMAGE", "Handle else ")
-                    viewModel.uploadPackageImage(
-                        part = File(uris).getPartMap("image"), hashMap = hashMapOf(
-                            "trip_id" to viewModel.newRideNotificationData.tripId?.getJsonRequestBody()
-                        )
-                    )
-                }.show()
+                openCamera()
+//                pickerDialog().setPickerCloseListener { _, uris ->
+//                    Log.i("UPLOADIMAGE", "Handle else ")
+//                    viewModel.uploadPackageImage(
+//                        part = File(uris).getPartMap("image"), hashMap = hashMapOf(
+//                            "trip_id" to viewModel.newRideNotificationData.tripId?.getJsonRequestBody()
+//                        )
+//                    )
+//                }.show()
             } else {
                 if (shouldShowRequestPermissionRationale(
                         Manifest.permission.CAMERA
@@ -175,6 +186,36 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
             }
         }
     }
+
+    private lateinit var imageUri: Uri
+    private val takePictureResultContract =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) {
+            if (it) {
+                imageUri.let { uri ->
+                    getMediaFilePathFor(uri).let { path ->
+                        viewModel.uploadPackageImage(
+                            part = File(path).getPartMap("image"), hashMap = hashMapOf(
+                                "trip_id" to viewModel.newRideNotificationData.tripId?.getJsonRequestBody()
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+
+    private fun openCamera() {
+        val fileName = "${System.currentTimeMillis()}.jpg"
+        val contentValues = ContentValues()
+        contentValues.put(MediaStore.Images.Media.TITLE, fileName)
+        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "TENET KYC")
+        contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            ?.let {
+                imageUri = it
+                takePictureResultContract.launch(it)
+            } ?: openCamera()
+    }
+
 
 
     private fun onDialogPermissionAllowClick(type: Int) {
@@ -206,14 +247,15 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                     )
                 )
             } else {
-                pickerDialog().setPickerCloseListener { _, uris ->
-                    Log.i("UPLOADIMAGE", "checkPermissions if ")
-                    viewModel.uploadPackageImage(
-                        part = File(uris).getPartMap("image"), hashMap = hashMapOf(
-                            "trip_id" to viewModel.newRideNotificationData.tripId?.getJsonRequestBody()
-                        )
-                    )
-                }.show()
+//                pickerDialog().setPickerCloseListener { _, uris ->
+//                    Log.i("UPLOADIMAGE", "checkPermissions if ")
+//                    viewModel.uploadPackageImage(
+//                        part = File(uris).getPartMap("image"), hashMap = hashMapOf(
+//                            "trip_id" to viewModel.newRideNotificationData.tripId?.getJsonRequestBody()
+//                        )
+//                    )
+//                }.show()
+                openCamera()
             }
         } else {
             if (ContextCompat.checkSelfPermission(
@@ -237,14 +279,15 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                     )
                 )
             } else {
-                pickerDialog().setPickerCloseListener { _, uris ->
-                    Log.i("UPLOADIMAGE", "checkPermissions else ")
-                    viewModel.uploadPackageImage(
-                        part = File(uris).getPartMap("image"), hashMap = hashMapOf(
-                            "trip_id" to viewModel.newRideNotificationData.tripId?.getJsonRequestBody()
-                        )
-                    )
-                }.show()
+//                pickerDialog().setPickerCloseListener { _, uris ->
+//                    Log.i("UPLOADIMAGE", "checkPermissions else ")
+//                    viewModel.uploadPackageImage(
+//                        part = File(uris).getPartMap("image"), hashMap = hashMapOf(
+//                            "trip_id" to viewModel.newRideNotificationData.tripId?.getJsonRequestBody()
+//                        )
+//                    )
+//                }.show()
+                openCamera()
             }
         }
     }
@@ -402,6 +445,8 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                 } else {
                     if (packImageArrayList.size > 1) {
                         dismiss()
+                        val cityId =
+                            SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)?.login?.city
                         val driverId =
                             SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
                                 ?.let {
@@ -412,7 +457,12 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                             driverId ?: "",
                             packageId,
                             null,
-                            packImageArrayList.filter { it.isNotEmpty() }, isEndTrip
+                            packImageArrayList.filter { it.isNotEmpty() }, isEndTrip,
+                            SaloneDriver.latLng?.latitude.toString(),
+                            SaloneDriver.latLng?.longitude.toString(),
+                            viewModel.newRideNotificationData.dropLatitude,
+                            viewModel.newRideNotificationData.dropLongitude,
+                            cityId.toString(),isRestrictionEnabled, distance
                         )
                     } else
                         showSnackBar("Please upload package image.", tvConfirm)
@@ -486,6 +536,26 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
             show()
         }
         return dialogView
+    }
+
+    private fun getDistance() {
+        try {
+            val cityList =
+                SharedPreferencesManager.getModel<ClientConfigDC>(SharedPreferencesManager.Keys.CLIENT_CONFIG)?.cityList
+                    ?: ArrayList()
+            isRestrictionEnabled = cityList.find {
+                it.cityId == SharedPreferencesManager.getModel<UserDataDC>(
+                    SharedPreferencesManager.Keys.USER_DATA
+                )?.login?.city.orEmpty()
+            }?.packageDeliveryRestrictionEnabled ?: 0
+            distance = cityList.find {
+                it.cityId == SharedPreferencesManager.getModel<UserDataDC>(
+                    SharedPreferencesManager.Keys.USER_DATA
+                )?.login?.city.orEmpty()
+            }?.maximumDistance ?: ""
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun observeData() = viewModel.uploadPackage.observeData(this, onLoading = {

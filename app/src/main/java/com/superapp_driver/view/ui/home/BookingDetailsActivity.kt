@@ -42,6 +42,7 @@ import com.superapp_driver.util.SharedPreferencesManager
 import com.superapp_driver.util.formatAmount
 import com.superapp_driver.util.getTime
 import com.superapp_driver.view.base.BaseActivity
+import com.superapp_driver.view.fragment.RaiseATicketActivity
 import com.superapp_driver.viewmodel.BookingVM
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -157,6 +158,15 @@ class BookingDetailsActivity : BaseActivity<ActivityBookingDetailsBinding>() {
                 )
                 binding.rvAddedPackages.isVisible = true
             }
+        }
+
+        binding.tvRaiseTicket.setOnClickListener {
+            startActivity(
+                Intent(this, RaiseATicketActivity::class.java).putExtra(
+                    "tripId",
+                    bookingId
+                )
+            )
         }
     }
 

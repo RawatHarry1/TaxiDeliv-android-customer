@@ -88,4 +88,10 @@
         android:label="@string/about_app"
         tools:layout="@layout/about_app" />
 
+    <fragment
+        android:id="@+id/raisedTicketsListFragment"
+        tools:layout="@layout/fragment_raised_ticket_list"
+        android:name="com.superapp_driver.view.fragment.RaisedTicketsListFragment"
+        android:label="RaisedTicketsListFragment" />
+
 </navigation>

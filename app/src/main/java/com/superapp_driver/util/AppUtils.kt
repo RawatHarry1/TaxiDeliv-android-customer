@@ -187,6 +187,19 @@ object AppUtils {
         val formatterLocal = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH)
         return localDateTime.format(formatterLocal)
     }
+
+    fun convertUtcToLocalDate(utcTimeString: String): String {
+        val formatterUtc = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val utcDateTime = LocalDateTime.parse(utcTimeString, formatterUtc)
+
+        val localZoneId = ZoneId.systemDefault() // Or specify a specific zone ID if needed
+        val localDateTime =
+            utcDateTime.atZone(ZoneOffset.UTC).withZoneSameInstant(localZoneId).toLocalDateTime()
+
+        val formatterLocal = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH)
+        return localDateTime.format(formatterLocal)
+    }
+
     fun hasScreenNavigation(activity: Activity): Boolean {
         val hasSoftwareKeys: Boolean
         val d = activity.windowManager.defaultDisplay

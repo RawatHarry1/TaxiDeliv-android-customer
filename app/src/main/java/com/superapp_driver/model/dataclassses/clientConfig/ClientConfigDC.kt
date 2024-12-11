@@ -77,5 +77,9 @@ data class CountryList(
     @SerializedName("is_gender_enabled")
     val isGenderEnabled: String? = null,
     @SerializedName("operator_available")
-    val operatorAvailable: List<Int>? = null
+    val operatorAvailable: List<Int>? = null,
+    @SerializedName("package_delivery_restriction_enabled")
+    val packageDeliveryRestrictionEnabled: Int? = null,
+    @SerializedName("maximum_distance")
+    val maximumDistance: String? = null
 )

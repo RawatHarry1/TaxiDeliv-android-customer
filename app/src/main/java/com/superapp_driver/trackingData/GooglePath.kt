@@ -31,6 +31,7 @@ import com.superapp_driver.R
 import com.superapp_driver.SaloneDriver
 import com.superapp_driver.model.dataclassses.clientConfig.ClientConfigDC
 import com.superapp_driver.util.SharedPreferencesManager
+import com.superapp_driver.view.ui.home_drawer.ui.home.HomeFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,6 +46,13 @@ private var srcMarker: Marker? = null
 private var driverMarker: Marker? = null
 private var destMarker: Marker? = null
 private var polyline: Polyline? = null
+
+data class StepInstruction(
+    val startLocation: LatLng? = null,
+    val endLocation: LatLng? = null,
+    val instruction: String? = null,
+    val maneuver: String? = null
+)
 
 /**Show path on Map*/
 fun Context.showPath(
@@ -70,6 +78,29 @@ fun Context.showPath(
         CoroutineScope(Dispatchers.IO).launch {
             val result = URL(url).readText()
             val pathResponse: PathResponse = Gson().fromJson(result, PathResponse::class.java)
+            val steps = pathResponse.routes?.getOrNull(0)?.legs?.getOrNull(0)?.steps
+            HomeFragment.stepsInstructionArrayList = (steps?.map {
+                StepInstruction(
+                    startLocation = it?.startLocation?.lat?.let { it1 ->
+                        it.startLocation?.lng?.let { it2 ->
+                            LatLng(
+                                it1,
+                                it2
+                            )
+                        }
+                    },
+                    endLocation = it?.endLocation?.lat?.let { it1 ->
+                        it.endLocation?.lng?.let { it2 ->
+                            LatLng(
+                                it1,
+                                it2
+                            )
+                        }
+                    },
+                    instruction = it?.htmlInstructions,
+                    maneuver = it?.maneuver
+                )
+            } ?: emptyList()) as ArrayList<StepInstruction>
             CoroutineScope(Dispatchers.Main).launch {
                 mMap?.clear()
                 val parser = Parser()
@@ -274,6 +305,32 @@ fun Context.vectorToBitmap(@DrawableRes id: Int): BitmapDescriptor? {
     } ?: return null
 }
 
+fun filterInstructions(currentPosition: LatLng): ArrayList<StepInstruction> {
+    // Create a list to hold the filtered instructions
+    val filteredInstructions = ArrayList<StepInstruction>()
+
+    for (step in HomeFragment.stepsInstructionArrayList) {
+        val start = step.startLocation?.latitude?.let { LatLng(it, step.startLocation.longitude) }
+        val end = step.endLocation?.latitude?.let { LatLng(it, step.endLocation.longitude) }
+
+        // Check if the current position is within the bounds of the start and end location
+        val isOnPath = PolyUtil.isLocationOnPath(
+            currentPosition,
+            listOf(start, end),
+            false,
+            50.0
+        )
+
+        // If user is on the path, add the instruction to the filtered list
+        if (isOnPath) {
+            filteredInstructions.add(step)
+        }
+    }
+
+    // Return the filtered instructions
+    return filteredInstructions
+}
+
 /**Animate Driver*/
 
 var oldDriverLat: Double? = null
@@ -328,6 +385,7 @@ fun Context.animateDriver(
                 polyline?.remove()
                 polyLine = null
                 val filteredPoints = mainPolyLine!!.subList(nearestPointIndex, mainPolyLine!!.size)
+                HomeFragment.temStepsInstructionArrayList = filterInstructions(currentPosition)
                 val polylineOptions = PolylineOptions()
                     .color(ContextCompat.getColor(this, R.color.theme))
                     .addAll(filteredPoints)
@@ -346,6 +404,7 @@ fun Context.animateDriver(
                 // Logging for debugging
                 Log.d("animateDriver", "No points found on the path for current position.")
             }
+            eta("")
         }
     }
 }

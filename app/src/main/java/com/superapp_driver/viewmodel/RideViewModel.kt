@@ -8,6 +8,7 @@ import com.superapp_driver.model.api.ApiState
 import com.superapp_driver.model.api.SingleLiveEvent
 import com.superapp_driver.model.api.setApiState
 import com.superapp_driver.model.dataclassses.PackageStatus
+import com.superapp_driver.model.dataclassses.Ticket
 import com.superapp_driver.model.dataclassses.UploadPackageResponse
 import com.superapp_driver.model.dataclassses.base.BaseResponse
 import com.superapp_driver.model.dataclassses.rideModels.AcceptRideDC
@@ -86,10 +87,28 @@ class RideViewModel @Inject constructor(
         packageId: String,
         cancellationReason: String? = null,
         packageImages: List<String>? = null,
-        isEnd: Boolean
+        isEnd: Boolean,
+        currentLat: String? = null,
+        currentLan: String? = null,
+        dropLat: String? = null,
+        dropLan: String? = null,
+        cityId: String? = null,
+        isRestrictionEnabled: Int? = null,
+        distance: String? = null
     ) = viewModelScope.launch {
         rideRepo.updatePackageStatus(
-            sessionId, driverId, packageId, cancellationReason, packageImages, isEnd
+            sessionId,
+            driverId,
+            packageId,
+            cancellationReason,
+            packageImages,
+            isEnd,
+            currentLat,
+            currentLan,
+            dropLat,
+            dropLan,
+            cityId,
+            isRestrictionEnabled, distance
         ).setApiState(_updatePackage)
     }
 
@@ -130,5 +149,33 @@ class RideViewModel @Inject constructor(
                 part, hashMap
             ).setApiState(_uploadPackage)
         }
+
+
+    private val _raiseATicket by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
+    val raiseATicket: LiveData<ApiState<BaseResponse<Any>>> get() = _raiseATicket
+
+    fun raiseATicket(jsonObject: JSONObject) = viewModelScope.launch {
+        rideRepo.raiseATicket(
+            jsonObject
+        ).setApiState(_raiseATicket)
+    }
+
+    private val _getTicketList by lazy { SingleLiveEvent<ApiState<BaseResponse<List<Ticket>>>>() }
+    val getTicketList: LiveData<ApiState<BaseResponse<List<Ticket>>>> get() = _getTicketList
+
+    fun getTicketList() = viewModelScope.launch {
+        rideRepo.getTicketsList().setApiState(_getTicketList)
+    }
+
+    private val _uploadTicketFile by lazy { SingleLiveEvent<ApiState<BaseResponse<UploadPackageResponse>>>() }
+    val uploadTicketFile: LiveData<ApiState<BaseResponse<UploadPackageResponse>>> get() = _uploadTicketFile
+
+    fun uploadTicketFile(part: MultipartBody.Part, hashMap: HashMap<String, RequestBody?>) =
+        viewModelScope.launch {
+            rideRepo.uploadTicketFile(
+                part, hashMap
+            ).setApiState(_uploadTicketFile)
+        }
+
 
 }

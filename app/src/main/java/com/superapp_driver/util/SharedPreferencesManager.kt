@@ -113,5 +113,8 @@ object SharedPreferencesManager {
         const val DOCUMENT_APPROVED = "documentApproved"
         const val DRIVER_ONLINE = "driverOnline"
         const val SELECTED_OPERATOR_ID = "operator_id"
+        const val MAP_TYPE = "map_type"
+        const val MAP_DETAILS = "map_details"
+        const val SPEAKER = "speaker"
     }
 }

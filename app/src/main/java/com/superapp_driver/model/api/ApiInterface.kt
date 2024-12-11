@@ -6,6 +6,7 @@ import com.superapp_driver.model.dataclassses.AboutUsDC
 import com.superapp_driver.model.dataclassses.CardData
 import com.superapp_driver.model.dataclassses.PackageStatus
 import com.superapp_driver.model.dataclassses.SetUpIntentResponse
+import com.superapp_driver.model.dataclassses.Ticket
 import com.superapp_driver.model.dataclassses.UploadPackageResponse
 import com.superapp_driver.model.dataclassses.VehicleListDC
 import com.superapp_driver.model.dataclassses.base.BaseResponse
@@ -259,4 +260,17 @@ interface ApiInterface {
     suspend fun updatePackageStatus(
         @Body requestBody: RequestBody
     ): Response<BaseResponse<PackageStatus>>
+
+    @Multipart
+    @POST(UPLOAD_TICKET_FILE)
+    suspend fun uploadTicketFile(
+        @Part multipartBody: MultipartBody.Part? = null,
+        @PartMap partMap: HashMap<String, RequestBody?>,
+    ): Response<BaseResponse<UploadPackageResponse>>
+
+    @GET(LIST_TICKETS)
+    suspend fun getRaisedListing(): Response<BaseResponse<List<Ticket>>>
+
+    @POST(GENERATE_TICKET)
+    suspend fun generateTicket(@Body requestBody: RequestBody): Response<BaseResponse<Any>>
 }

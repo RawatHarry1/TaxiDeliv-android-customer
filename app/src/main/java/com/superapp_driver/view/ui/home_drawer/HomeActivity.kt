@@ -284,6 +284,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             navController.navigate(R.id.wallet)
             drawerLayout.close()
         }
+        binding.llTicketList.setOnClickListener {
+            navController.navigate(R.id.raisedTicketsListFragment)
+            drawerLayout.close()
+        }
         binding.llLogOut.setOnClickListener {
             drawerLayout.close()
             logoutAlert {
