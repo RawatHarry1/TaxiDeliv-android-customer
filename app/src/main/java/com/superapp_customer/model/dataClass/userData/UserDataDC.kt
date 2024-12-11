@@ -83,12 +83,16 @@ data class UserDataDC(
         val popup: Popup? = null,
         @SerializedName("banner")
         val banner: List<Banners>? = null,
+        @SerializedName("home_banners")
+        val homeBanners: List<Banners>? = null,
         @SerializedName("package_details")
         val packageDetails: List<PackageDetail>,
         @SerializedName("package_types")
         val packageTypes: List<String>,
         @SerializedName("vehicle_types")
-        val vehicleTypes: List<VehicleType>
+        val vehicleTypes: List<VehicleType>,
+        @SerializedName("support_ticket_reasons")
+        val supportTicketReasons: List<String>
     ) {
 
         @Keep
@@ -98,7 +102,13 @@ data class UserDataDC(
             @SerializedName("banner_text")
             val bannerText: String,
             @SerializedName("banner_image")
-            val bannerImage: String
+            val bannerImage: String,
+            @SerializedName("banner_order")
+            val bannerOrder: Int? = null,
+            @SerializedName("banner_type_name")
+            val bannerTypeName: String? = null,
+            @SerializedName("banner_type_id")
+            val bannerTypeId: Int? = null
         )
 
 

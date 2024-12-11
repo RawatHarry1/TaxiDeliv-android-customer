@@ -25,12 +25,14 @@ import com.superapp_customer.model.dataClass.userData.UserDataDC
 import com.superapp_customer.repo.RideRepo
 import com.superapp_customer.util.SharedPreferencesManager
 import com.superapp_customer.util.convertDouble
+import com.superapp_customer.model.dataClass.Ticket
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
@@ -493,6 +495,53 @@ class RideVM @Inject constructor(
             part
         ).setApiState(_uploadPackage)
     }
+
+    private val _uploadTicketFile by lazy { SingleLiveEvent<ApiState<BaseResponse<UploadPackageResponse>>>() }
+    val uploadTicketFile: LiveData<ApiState<BaseResponse<UploadPackageResponse>>> get() = _uploadTicketFile
+
+    fun uploadTicketFile(part: MultipartBody.Part, hashMap: HashMap<String, RequestBody?>) =
+        viewModelScope.launch {
+            rideRepo.uploadTicketFile(
+                part, hashMap
+            ).setApiState(_uploadTicketFile)
+        }
+
+
+//    private val _initializeMobileMoney by lazy { SingleLiveEvent<ApiState<BaseResponse<MobileMoney>>>() }
+//    val initializeMobileMoney: LiveData<ApiState<BaseResponse<MobileMoney>>> get() = _initializeMobileMoney
+//
+//    fun initializeMobileMoney(jsonObject: JSONObject) = viewModelScope.launch {
+//        rideRepo.initializeMobileMoney(
+//            jsonObject
+//        ).setApiState(_initializeMobileMoney)
+//    }
+//
+//    private val _mobileMoneyStatus by lazy { SingleLiveEvent<ApiState<BaseResponse<MobileMoney>>>() }
+//    val mobileMoneyStatus: LiveData<ApiState<BaseResponse<MobileMoney>>> get() = _mobileMoneyStatus
+//
+//    fun mobileMoneyStatus(jsonObject: JSONObject) = viewModelScope.launch {
+//        rideRepo.mobileMoneyStatus(
+//            jsonObject
+//        ).setApiState(_mobileMoneyStatus)
+//    }
+
+    private val _raiseATicket by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
+    val raiseATicket: LiveData<ApiState<BaseResponse<Any>>> get() = _raiseATicket
+
+    fun raiseATicket(jsonObject: JSONObject) = viewModelScope.launch {
+        rideRepo.raiseATicket(
+            jsonObject
+        ).setApiState(_raiseATicket)
+    }
+
+    private val _getTicketList by lazy { SingleLiveEvent<ApiState<BaseResponse<List<Ticket>>>>() }
+    val getTicketList: LiveData<ApiState<BaseResponse<List<Ticket>>>> get() = _getTicketList
+
+    fun getTicketList() = viewModelScope.launch {
+        rideRepo.getTicketsList().setApiState(_getTicketList)
+    }
+
+
 
     /**
      * Ride Alert UI State

@@ -123,7 +123,9 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         binding.llReferral.setOnSingleClickListener {
             findNavController().navigate(R.id.navigate_referral)
         }
-
+        binding.llSupportTickets.setOnSingleClickListener {
+            findNavController().navigate(R.id.raisedTicketsListFragment)
+        }
         binding.llLogout.setOnSingleClickListener {
             DialogUtils.getNegativeDialog(
                 requireActivity(),

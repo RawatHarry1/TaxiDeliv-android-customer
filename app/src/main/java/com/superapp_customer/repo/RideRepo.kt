@@ -7,7 +7,6 @@ import com.superapp_customer.VenusApp
 import com.superapp_customer.model.api.ApiInterface
 import com.superapp_customer.model.api.getJsonRequestBody
 import com.superapp_customer.util.SharedPreferencesManager
-import com.superapp_customer.viewmodel.rideVM.RideVM
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
@@ -27,6 +26,10 @@ class RideRepo @Inject constructor(
             emit(apiInterface.uploadDocument(multipartBody = part))
         }.flowOn(Dispatchers.IO)
 
+    suspend fun uploadTicketFile(part: MultipartBody.Part, hashMap: HashMap<String, RequestBody?>) =
+        flow {
+            emit(apiInterface.uploadTicketFile(multipartBody = part, hashMap))
+        }.flowOn(Dispatchers.IO)
 
 
     suspend fun searchPlaces(
@@ -77,7 +80,8 @@ class RideRepo @Inject constructor(
     suspend fun requestTrip(jsonObject: JSONObject) = flow {
         emit(
             apiInterface.requestTrip(
-                requestBody = jsonObject.getJsonRequestBody())
+                requestBody = jsonObject.getJsonRequestBody()
+            )
         )
     }.flowOn(Dispatchers.IO)
 
@@ -187,5 +191,34 @@ class RideRepo @Inject constructor(
     suspend fun addAddress(request: okhttp3.RequestBody) = flow {
         emit(apiInterface.addAddress(request))
     }
+
+//    suspend fun initializeMobileMoney(jsonObject: JSONObject) = flow {
+//        emit(
+//            apiInterface.initializeMobileMoney(
+//                requestBody = jsonObject.getJsonRequestBody()
+//            )
+//        )
+//    }.flowOn(Dispatchers.IO)
+//
+//    suspend fun mobileMoneyStatus(jsonObject: JSONObject) = flow {
+//        emit(
+//            apiInterface.mobileMoneyStatus(
+//                requestBody = jsonObject.getJsonRequestBody()
+//            )
+//        )
+//    }.flowOn(Dispatchers.IO)
+
+    suspend fun raiseATicket(jsonObject: JSONObject) = flow {
+        emit(
+            apiInterface.generateTicket(
+                requestBody = jsonObject.getJsonRequestBody()
+            )
+        )
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getTicketsList() = flow {
+        emit(apiInterface.getRaisedListing())
+    }.flowOn(Dispatchers.IO)
+
 
 }

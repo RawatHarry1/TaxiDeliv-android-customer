@@ -255,6 +255,14 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
                     )
                 )
         }
+
+        binding.tvRaiseTicket.setOnClickListener {
+            findNavController().navigate(
+                R.id.raiseATicketFragment, bundleOf(
+                    "tripId" to navArgs.tripId
+                )
+            )
+        }
     }
 
     private fun downloadPdf(context: Context, url: String, title: String, description: String) {

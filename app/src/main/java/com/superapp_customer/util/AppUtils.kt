@@ -280,6 +280,17 @@ object AppUtils {
         return localDateTime.format(formatterLocal)
     }
 
+    fun convertUtcToLocalDate(utcTimeString: String): String {
+        val formatterUtc = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val utcDateTime = LocalDateTime.parse(utcTimeString, formatterUtc)
+
+        val localZoneId = ZoneId.systemDefault() // Or specify a specific zone ID if needed
+        val localDateTime =
+            utcDateTime.atZone(ZoneOffset.UTC).withZoneSameInstant(localZoneId).toLocalDateTime()
+
+        val formatterLocal = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH)
+        return localDateTime.format(formatterLocal)
+    }
     @RequiresApi(Build.VERSION_CODES.N)
     fun getDateFromDateISO(selectDate: String?, format: String): String? {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")

@@ -3,11 +3,14 @@ package com.superapp_customer.model.dataClass.fetchOngoingTrip
 
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.superapp_customer.viewmodel.rideVM.CreateRideData
 
 @Keep
 data class FetchOngoingTripDC(
     @SerializedName("trips")
-    val trips: List<Trip?>? = null
+    val trips: List<Trip?>? = null,
+    @SerializedName("deliveryPackages")
+    val deliveryPackages: List<CreateRideData.Package>? = null
 ) {
     @Keep
     data class Trip(

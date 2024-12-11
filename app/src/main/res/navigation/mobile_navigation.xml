@@ -136,6 +136,16 @@
         android:id="@+id/packageReviewDetailsFragment"
         android:name="com.superapp_customer.view.fragment.PackageReviewDetailsFragment"
         android:label="PackageReviewDetailsFragment"
-        tools:layout="@layout/fragment_package_review"/>
+        tools:layout="@layout/fragment_package_review" />
+    <fragment
+        android:id="@+id/raiseATicketFragment"
+        android:name="com.superapp_customer.view.fragment.RaiseATicketFragment"
+        android:label="RaiseATicketFragment"
+        tools:layout="@layout/fragment_raise_a_ticket" />
+    <fragment
+        android:id="@+id/raisedTicketsListFragment"
+        android:name="com.superapp_customer.view.fragment.RaisedTicketsListFragment"
+        android:label="RaisedTicketsListFragment"
+        tools:layout="@layout/fragment_raised_ticket_list" />
 
 </navigation>

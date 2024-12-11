@@ -44,8 +44,8 @@ android {
             /*Dev*/
 //            https://chuki-rides.venustaxi.in
 //            https://chuki-rides-api.venustaxi.in
-            buildConfigField("String", "BASE_URL", '"https://super-app-rides.venustaxi.in/"')
-            buildConfigField("String", "SOCKET_BASE_URL", '"https://super-app-rides-api.venustaxi.in"')
+//            buildConfigField("String", "BASE_URL", '"https://super-app-rides.venustaxi.in/"')
+//            buildConfigField("String", "SOCKET_BASE_URL", '"https://super-app-rides-api.venustaxi.in"')
             /*Live*/
 //            buildConfigField("String", "BASE_URL", '"https://rides.venustaxi.in/"')
 //            buildConfigField("String", "SOCKET_BASE_URL", '"https://rides-api.venustaxi.in"')
@@ -68,12 +68,27 @@ android {
         jvmTarget = '1.8'
     }
 
-    flavorDimensions "product"
+    flavorDimensions "product", "server"
     productFlavors {
         venus {
             dimension "product"
             buildConfigField("String", "VARIANT", '"dev"')
             resValue "string", "app_name", "Smart App"
+            resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
+        }
+        dev {
+            dimension "server"
+            buildConfigField("String", "BASE_URL", '"https://super-app-rides.venustaxi.in/"')
+            buildConfigField("String", "VARIANT", '"dev"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://super-app-rides-api.venustaxi.in"')
+            resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
+        }
+
+        live {
+            dimension "server"
+            buildConfigField("String", "BASE_URL", '"https://chuki-rides.venustaxi.in/"')
+            buildConfigField("String", "VARIANT", '"live"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://chuki-rides-api.venustaxi.in"')
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }
     }

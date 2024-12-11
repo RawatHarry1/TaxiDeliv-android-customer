@@ -27,6 +27,8 @@ import com.superapp_customer.model.dataClass.userData.UserDataDC
 import com.superapp_customer.util.constants.APIEndPointsConstants
 import com.superapp_customer.util.constants.APIEndPointsConstants.FIND_NEAR_DRIVER
 import com.superapp_customer.util.constants.APIEndPointsConstants.GET_NOTIFICATIONS
+import com.superapp_customer.util.constants.APIEndPointsConstants.LIST_TICKETS
+import com.superapp_customer.model.dataClass.Ticket
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -50,6 +52,13 @@ interface ApiInterface {
     @POST(APIEndPointsConstants.UPLOAD_PACKAGE_IMAGE)
     suspend fun uploadDocument(
         @Part multipartBody: MultipartBody.Part? = null
+    ): Response<BaseResponse<UploadPackageResponse>>
+
+    @Multipart
+    @POST(APIEndPointsConstants.UPLOAD_TICKET_FILE)
+    suspend fun uploadTicketFile(
+        @Part multipartBody: MultipartBody.Part? = null,
+        @PartMap partMap: HashMap<String, RequestBody?>,
     ): Response<BaseResponse<UploadPackageResponse>>
 
     @GET
@@ -245,5 +254,16 @@ interface ApiInterface {
     @POST(APIEndPointsConstants.FETCH_COUPON_PROMO)
     suspend fun getCouponAndPromo(@Body requestBody: RequestBody): Response<BaseResponse<CouponAndPromos>>
 
+//    @POST(APIEndPointsConstants.INITIALIZE_MOBILE_MONEY)
+//    suspend fun initializeMobileMoney(@Body requestBody: RequestBody): Response<BaseResponse<MobileMoney>>
+//
+//    @POST(APIEndPointsConstants.VERIFY_MOBILE_MONEY)
+//    suspend fun mobileMoneyStatus(@Body requestBody: RequestBody): Response<BaseResponse<MobileMoney>>
+
+    @POST(APIEndPointsConstants.GENERATE_TICKET)
+    suspend fun generateTicket(@Body requestBody: RequestBody): Response<BaseResponse<Any>>
+
+    @GET(LIST_TICKETS)
+    suspend fun getRaisedListing(): Response<BaseResponse<List<Ticket>>>
 
 }

@@ -5,6 +5,7 @@ import SwipeToShowDeleteCallback
 import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,6 +14,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.net.Uri
@@ -26,11 +28,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -64,8 +70,11 @@ import com.superapp_customer.customClasses.trackingData.clearMap
 import com.superapp_customer.customClasses.trackingData.showPath
 import com.superapp_customer.customClasses.trackingData.vectorToBitmap
 import com.superapp_customer.databinding.DialogDateTimeBinding
+import com.superapp_customer.databinding.DialogShowPackagesBinding
 import com.superapp_customer.databinding.FragmentHomeBinding
 import com.superapp_customer.databinding.ItemBannersBinding
+import com.superapp_customer.databinding.ItemPackageImagesBinding
+import com.superapp_customer.databinding.ItemPackageListBinding
 import com.superapp_customer.databinding.ItemSuggestionsBinding
 import com.superapp_customer.dialogs.DialogUtils
 import com.superapp_customer.firebaseSetup.NotificationInterface
@@ -76,6 +85,7 @@ import com.superapp_customer.model.dataClass.findDriver.FindDriverDC
 import com.superapp_customer.model.dataClass.userData.UserDataDC
 import com.superapp_customer.socketSetup.SocketInterface
 import com.superapp_customer.socketSetup.SocketSetup
+import com.superapp_customer.util.GenericAdapter
 import com.superapp_customer.util.SharedPreferencesManager
 import com.superapp_customer.util.TripStatus
 import com.superapp_customer.util.constants.AppConstants
@@ -88,6 +98,7 @@ import com.superapp_customer.view.activity.walk_though.Home
 import com.superapp_customer.view.activity.walk_though.PaymentActivity
 import com.superapp_customer.view.base.BaseActivity
 import com.superapp_customer.view.base.BaseFragment
+import com.superapp_customer.viewmodel.HomeVM
 import com.superapp_customer.viewmodel.SearchLocationVM
 import com.superapp_customer.viewmodel.rideVM.CreateRideData
 import com.superapp_customer.viewmodel.rideVM.RideVM
@@ -117,16 +128,20 @@ data class RideTypes(val drawable: Drawable?, val name: String, val type: Int)
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface, SocketInterface {
     lateinit var binding: FragmentHomeBinding
     private val rideVM by activityViewModels<RideVM>()
+    private val homeViewModel by viewModels<HomeVM>()
     private val searchLocationVM by viewModels<SearchLocationVM>()
     private var locationAlertState: BottomSheetBehavior<View>? = null
     private var carTypeAlertState: BottomSheetBehavior<View>? = null
     private var carDetailAlertState: BottomSheetBehavior<View>? = null
     private var startRideAlertState: BottomSheetBehavior<View>? = null
 
-    //    private var deliveryVehicleTypeAlertState: BottomSheetBehavior<View>? = null
+    // private var deliveryVehicleTypeAlertState: BottomSheetBehavior<View>? = null
     private var googleMap: GoogleMap? = null
     private var nearByDriverMap: GoogleMap? = null
     private var isVehicleShowing = false
+
+    private val bannerArrayList = ArrayList<UserDataDC.Login.Banners>()
+    private val promoBannerArrayList = ArrayList<UserDataDC.Login.Banners>()
     private var nearByDriverLatLanArrayList = ArrayList<NearByDriverMarkers>()
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var notificationPermissionLauncher: ActivityResultLauncher<String>
@@ -136,22 +151,42 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         )
     }
     private var onGoingRideType = 0
-    private val bannerArrayList = ArrayList<Drawable>()
     private val rideTypeArrayList = ArrayList<RideTypes>()
-    private lateinit var bannerAdapter: BannerAdapter
     private lateinit var rideTypeAdapter: RideTypeAdapter
+
+    private lateinit var bannerAdapter: BannerAdapter
+    private lateinit var promotionalBannerAdapter: BannerAdapter
     private var currentPage = 0
+    private var currentPagePromotional = 0
     private val handler = Handler(Looper.getMainLooper())
+    private val promoHandler = Handler(Looper.getMainLooper())
+
     private var showOfferAnimationOnce = true
     private val stateHandle: SavedStateHandle by lazy {
         findNavController().currentBackStackEntry?.savedStateHandle
             ?: throw IllegalStateException("State Handle is null")
     }
+
     private val slideRunnable = object : Runnable {
         override fun run() {
-            currentPage = (currentPage + 1) % bannerArrayList.size
-            binding.bannerViewPager.setCurrentItem(currentPage, true)
-            handler.postDelayed(this, 3000) // 3 seconds
+            if (bannerArrayList.isNotEmpty()) {
+                currentPage = (currentPage + 1) % bannerArrayList.size
+                binding.bannerViewPager.setCurrentItem(currentPage, true)
+                handler.postDelayed(this, 3000) // 3 seconds
+            } else
+                handler.removeCallbacks(this)
+        }
+    }
+
+    private val slideRunnablePromotions = object : Runnable {
+        override fun run() {
+            if (promoBannerArrayList.isNotEmpty()) {
+                currentPagePromotional = (currentPagePromotional + 1) % promoBannerArrayList.size
+                binding.promotionBannerViewPager.setCurrentItem(currentPagePromotional, true)
+                promoHandler.postDelayed(this, 3000) // 3 seconds
+            } else
+                promoHandler.removeCallbacks(this)
+
         }
     }
 
@@ -206,6 +241,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         getNearByDrivers()
         observeSOS()
         observeDeliveryState()
+        observeProfileData()
         rideVM.rideAlertUiState.value?.let { uiStateHandler(it) }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         requestPermissionLauncher = registerForActivityResult(
@@ -285,7 +321,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         Glide.with(requireActivity()).asGif().load(R.drawable.promotional_gif).into(binding.ivGif)
 
         lifecycleScope.launch {
-            getLocationDataFromLatLng(VenusApp.latLng)
+            getLocationDataFromLatLng(VenusApp.latLng,true)
         }
     }
 
@@ -326,10 +362,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //                    ), "Rental", 4
 //                )
 //            )
-            ContextCompat.getDrawable(requireActivity(), R.drawable.ride_banner)
-                ?.let { bannerArrayList.add(it) }
-            ContextCompat.getDrawable(requireActivity(), R.drawable.ride_banner)
-                ?.let { bannerArrayList.add(it) }
+//            ContextCompat.getDrawable(requireActivity(), R.drawable.ride_banner)
+//                ?.let { bannerArrayList.add(it) }
+//            ContextCompat.getDrawable(requireActivity(), R.drawable.ride_banner)
+//                ?.let { bannerArrayList.add(it) }
         } else {
             binding.ivSuggestions.setImageDrawable(
                 ContextCompat.getDrawable(
@@ -390,18 +426,104 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //                    ), "Truck", 4
 //                )
 //            )
-            ContextCompat.getDrawable(requireActivity(), R.drawable.delivery_banner)
-                ?.let { bannerArrayList.add(it) }
-            ContextCompat.getDrawable(requireActivity(), R.drawable.delivery_banner)
-                ?.let { bannerArrayList.add(it) }
+//            ContextCompat.getDrawable(requireActivity(), R.drawable.delivery_banner)
+//                ?.let { bannerArrayList.add(it) }
+//            ContextCompat.getDrawable(requireActivity(), R.drawable.delivery_banner)
+//                ?.let { bannerArrayList.add(it) }
         }
 //        rideTypeAdapter = RideTypeAdapter()
 //        binding.rvSuggestions.adapter = rideTypeAdapter
 
 
-        bannerAdapter = BannerAdapter()
+        bannerAdapter = BannerAdapter(bannerArrayList)
+        promotionalBannerAdapter = BannerAdapter(promoBannerArrayList)
+
         binding.bannerViewPager.adapter = bannerAdapter
+        binding.promotionBannerViewPager.adapter = promotionalBannerAdapter
+
         binding.tabLayoutDots.setSelectedTabIndicatorColor(Color.WHITE)
+        binding.tabLayoutDotsPromo.setSelectedTabIndicatorColor(Color.WHITE)
+
+        TabLayoutMediator(
+            binding.tabLayoutDotsPromo, binding.promotionBannerViewPager
+        ) { tab, position ->
+            val unselectedIcon =
+                ContextCompat.getDrawable(requireContext(), R.drawable.banner_indicator_unselected)
+            unselectedIcon?.setTintMode(PorterDuff.Mode.SRC_IN)
+            tab.setIcon(unselectedIcon)
+            tab.icon?.setTint(ContextCompat.getColor(requireContext(), R.color.white))
+        }.attach()
+
+        TabLayoutMediator(
+            binding.tabLayoutDots, binding.bannerViewPager
+        ) { tab, position ->
+            val unselectedIcon =
+                ContextCompat.getDrawable(requireContext(), R.drawable.banner_indicator_unselected)
+            unselectedIcon?.setTintMode(PorterDuff.Mode.SRC_IN)
+            tab.setIcon(unselectedIcon)
+            tab.icon?.setTint(ContextCompat.getColor(requireContext(), R.color.white))
+        }.attach()
+
+
+        // Customize dot appearance based on selection
+        binding.promotionBannerViewPager.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                for (i in 0 until binding.tabLayoutDotsPromo.tabCount) {
+                    val unselectedIcon = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.banner_indicator_unselected
+                    )
+                    unselectedIcon?.setTintMode(PorterDuff.Mode.SRC_IN)
+                    val selectedIcon = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.banner_indicator_selected
+                    )
+                    selectedIcon?.setTintMode(PorterDuff.Mode.SRC_IN)
+                    binding.tabLayoutDotsPromo.getTabAt(i)?.setIcon(
+                        if (i == position) selectedIcon else unselectedIcon
+                    )
+                    binding.tabLayoutDotsPromo.getTabAt(i)?.icon?.setTint(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                }
+            }
+
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                for (i in 0 until binding.tabLayoutDotsPromo.tabCount) {
+                    val unselectedIcon = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.banner_indicator_unselected
+                    )
+                    unselectedIcon?.setTintMode(PorterDuff.Mode.SRC_IN)
+                    val selectedIcon = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.banner_indicator_selected
+                    )
+                    selectedIcon?.setTintMode(PorterDuff.Mode.SRC_IN)
+                    binding.tabLayoutDotsPromo.getTabAt(i)?.setIcon(
+                        if (i == position) selectedIcon else unselectedIcon
+                    )
+                    binding.tabLayoutDotsPromo.getTabAt(i)?.icon?.setTint(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                }
+            }
+        })
+
+
+
         TabLayoutMediator(
             binding.tabLayoutDots, binding.bannerViewPager
         ) { tab, position ->
@@ -600,6 +722,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //            }
 //        })
         handler.removeCallbacks(slideRunnable)
+        promoHandler.removeCallbacks(slideRunnablePromotions)
     }
 
     private fun addAdapterSetupAndApiHit() {
@@ -617,6 +740,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         SocketSetup.initializeInterface(this)
         SocketSetup.connectSocket()
         setupRideTypeAndBanner()
+        homeViewModel.loginViaToken2()
     }
 
     private fun startRepeatingJob() {
@@ -1393,7 +1517,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 clConnecting.visibility = View.GONE
                 clPickUpLocation.visibility = View.VISIBLE
             }
-
+            tvViewDetails.setOnSingleClickListener {
+                rideVM.createRideData.deliveryPackages?.let { showPackages(requireActivity(), it) }
+            }
 
             ivChat.setOnSingleClickListener {
                 ivChatIndicator.isVisible = false
@@ -1895,6 +2021,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //            hideProgressDialog()
             if (activity != null) binding.llInProgessRide.isVisible = false
             if (this?.trips?.isNotEmpty() == true) {
+                rideVM.createRideData.deliveryPackages = this.deliveryPackages.orEmpty()
                 this.trips.firstOrNull()?.let { trip ->
                     with(rideVM.createRideData) {
                         currencyCode = trip.currency.orEmpty()
@@ -2338,7 +2465,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
 
-    private suspend fun getLocationDataFromLatLng(latLng: LatLng) {
+    private suspend fun getLocationDataFromLatLng(latLng: LatLng, forTop: Boolean = false) {
         withContext(Dispatchers.IO) {
             try {
                 val apiKey = VenusApp.googleMapKey
@@ -2352,6 +2479,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     if (results.length() > 0) {
                         val address = results.getJSONObject(0).getString("formatted_address")
                         val placeId = results.getJSONObject(0).getString("place_id")
+                        if (!forTop)
                         rideVM.createRideData.pickUpLocation = CreateRideData.LocationData(
                             address = address,
                             latitude = latLng.latitude.toString(),
@@ -2361,9 +2489,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                         // Optionally update the UI with the new location data
 //                    // Ensure to switch back to the main thread for UI updates
                         withContext(Dispatchers.Main) {
+                            if (forTop)
+                                binding.tvPickUpAddress.text = address
                             rideVM.createRideData.pickUpLocation?.address?.let {
-                                binding.viewLocation.tvPickUpValue.text = it
-                                binding.tvPickUpAddress.text = it
+                                if (!forTop)
+                                    binding.viewLocation.tvPickUpValue.text = it
                             }
                         }
                     } else {
@@ -2403,21 +2533,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     }
 
 
-    inner class BannerAdapter : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
+    inner class BannerAdapter(private val bannerList: ArrayList<UserDataDC.Login.Banners>) :
+        RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
 
         inner class BannerViewHolder(private val binding: ItemBannersBinding) :
             RecyclerView.ViewHolder(binding.root) {
-            fun bind(banners: Drawable) {
-                Glide.with(requireActivity()).load(banners ?: "")
+            fun bind(banners: UserDataDC.Login.Banners) {
+                Glide.with(requireActivity()).load(banners.bannerImage ?: "")
                     .error(R.drawable.ic_banner_image_new).into(binding.ivBannerImage)
 
-//                binding.ivBannerImage.setOnClickListener {
-//                    if (!banners.actionUrl.isNullOrEmpty())
-//                        safeCall {
-//                            CustomTabsIntent.Builder().build()
-//                                .launchUrl(requireContext(), Uri.parse(banners.actionUrl))
-//                        }
-//                }
+                binding.ivBannerImage.setOnClickListener {
+                    if (!banners.actionUrl.isNullOrEmpty())
+                        safeCall {
+                            CustomTabsIntent.Builder().build()
+                                .launchUrl(requireContext(), Uri.parse(banners.actionUrl))
+                        }
+                }
             }
         }
 
@@ -2426,11 +2557,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }
 
         override fun onBindViewHolder(holder: BannerViewHolder, position: Int) {
-            holder.bind(bannerArrayList[position])
+            holder.bind(bannerList[position])
         }
 
-        override fun getItemCount(): Int = bannerArrayList.size
+        override fun getItemCount(): Int = bannerList.size
     }
+
+
 
 
     inner class RideTypeAdapter : RecyclerView.Adapter<RideTypeAdapter.RideTypeViewHolder>() {
@@ -2474,6 +2607,171 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
         override fun getItemCount(): Int = rideTypeArrayList.size
     }
+
+    private fun showPackages(context: Context, packageList: List<CreateRideData.Package>) {
+        val dialog = BottomSheetDialog(context, R.style.SheetDialog)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val binding = DialogShowPackagesBinding.inflate(LayoutInflater.from(context), null, false)
+        dialog.setContentView(binding.root)
+        binding.ivDismiss.setOnClickListener { dialog.dismiss() }
+        setAdapter(binding, packageList)
+        dialog.setCancelable(true)
+        dialog.show()
+    }
+
+
+    private lateinit var packagesAdapter: GenericAdapter<CreateRideData.Package>
+    private fun setAdapter(
+        binding: DialogShowPackagesBinding,
+        packageList: List<CreateRideData.Package>
+    ) {
+        packagesAdapter =
+            object : GenericAdapter<CreateRideData.Package>(R.layout.item_package_list) {
+                override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                    val binding = ItemPackageListBinding.bind(holder.itemView)
+                    val data = getItem(position)
+                    binding.tvPackageSize.text = data.package_size
+                    binding.tvPackageType.text = data.package_type
+                    binding.tvPackageQuantity.text = data.package_quantity.toString()
+                    binding.llCustomerImages.isVisible = true
+
+                    binding.ivEdit.isVisible = false
+                    binding.ivDelete.isVisible = false
+                    when (data.delivery_status) {
+                        5 -> {
+                            binding.rlStatus.isVisible = true
+                            binding.statusViewLine.isVisible = true
+                            binding.llPickupImages.isVisible = false
+                            binding.llDropImages.isVisible = false
+                        }
+
+                        3 -> {
+                            binding.rlStatus.isVisible = true
+                            binding.statusViewLine.isVisible = true
+                            binding.tvStatus.text = "Not Delivered"
+                            binding.llDropImages.isVisible = false
+                        }
+                    }
+                    val adapterCustomer =
+                        object : GenericAdapter<String>(R.layout.item_package_images) {
+                            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                                val bindingM = ItemPackageImagesBinding.bind(holder.itemView)
+                                Glide.with(requireActivity())
+                                    .load(getItem(position).toString())
+                                    .into(bindingM.ivUploadedImage)
+                                bindingM.root.setOnClickListener {
+                                    fullImagesDialog(getItem(position))
+                                }
+                            }
+                        }
+
+                    val adapterPick =
+                        object : GenericAdapter<String>(R.layout.item_package_images) {
+                            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                                val bindingM = ItemPackageImagesBinding.bind(holder.itemView)
+                                Glide.with(requireActivity()).load(getItem(position).toString())
+                                    .into(bindingM.ivUploadedImage)
+                                bindingM.root.setOnClickListener {
+                                    fullImagesDialog(getItem(position))
+                                }
+                            }
+                        }
+                    val adapterDrop =
+                        object : GenericAdapter<String>(R.layout.item_package_images) {
+                            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                                val bindingM = ItemPackageImagesBinding.bind(holder.itemView)
+                                Glide.with(requireActivity()).load(getItem(position).toString())
+                                    .into(bindingM.ivUploadedImage)
+                                bindingM.root.setOnClickListener {
+                                    fullImagesDialog(getItem(position))
+                                }
+                            }
+                        }
+                    adapterCustomer.submitList(data.package_images_by_customer)
+                    binding.rvCustomerImages.adapter = adapterCustomer
+
+                    adapterPick.submitList(data.package_image_while_pickup)
+                    binding.rvPickupImages.adapter = adapterPick
+
+                    adapterDrop.submitList(data.package_image_while_drop_off)
+                    binding.rvDropImages.adapter = adapterDrop
+                    binding.llPickupImages.isVisible = adapterPick.itemCount > 0
+                    binding.llDropImages.isVisible = adapterDrop.itemCount > 0
+                }
+            }
+        binding.rvPackages.adapter = packagesAdapter
+        packagesAdapter.submitList(packageList)
+    }
+
+    fun fullImagesDialog(
+        string: String
+    ): Dialog {
+        val dialogView = Dialog(requireActivity())
+        with(dialogView) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.dialog_full_image)
+            setCancelable(false)
+            val rlDismiss = findViewById<RelativeLayout>(R.id.rlDismiss)
+            rlDismiss.setOnClickListener { dismiss() }
+            val ivPackageImage = findViewById<ImageView>(R.id.ivPackageImage)
+            Glide.with(requireActivity()).load(string)
+                .into(ivPackageImage)
+            // Set width to full screen
+            window?.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            show()
+        }
+        return dialogView
+    }
+
+    private fun observeProfileData() = homeViewModel.loginViaToken.observeData(this, onLoading = {
+//        showProgressDialog()
+    }, onSuccess = {
+        hideProgressDialog()
+        SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.USER_DATA, this)
+        if (activity != null) {
+            binding.shimmerBanners.shimmerLayout.isVisible = false
+            bannerArrayList.clear()
+            promoBannerArrayList.clear()
+            this?.login?.homeBanners?.forEach {
+                if (it.bannerTypeId == 1)
+                    promoBannerArrayList.add(it)
+                else
+                    bannerArrayList.add(it)
+            }
+            handler.removeCallbacks(slideRunnable)
+            promoHandler.removeCallbacks(slideRunnablePromotions)
+            if (bannerArrayList.isNotEmpty()) {
+                bannerAdapter.notifyDataSetChanged()
+                // Start auto-sliding
+                handler.post(slideRunnable)
+                binding.bannerViewPager.isVisible = true
+                binding.tabLayoutDots.isVisible = true
+                binding.tabLayoutDots.isVisible = bannerAdapter.itemCount > 1
+            } else {
+                binding.bannerViewPager.isVisible = false
+                binding.tabLayoutDots.isVisible = false
+
+            }
+
+            if (promoBannerArrayList.isNotEmpty()) {
+                promotionalBannerAdapter.notifyDataSetChanged()
+                // Start auto-sliding
+                promoHandler.post(slideRunnablePromotions)
+                binding.promotionBannerViewPager.isVisible = true
+                binding.tabLayoutDotsPromo.isVisible = promotionalBannerAdapter.itemCount > 1
+            } else {
+                binding.promotionBannerViewPager.isVisible = false
+                binding.tabLayoutDotsPromo.isVisible = false
+            }
+        }
+    }, onError = {
+        hideProgressDialog()
+        showToastShort(this)
+    })
 
 
 }

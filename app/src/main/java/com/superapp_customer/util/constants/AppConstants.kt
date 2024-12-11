@@ -53,6 +53,12 @@ object APIEndPointsConstants {
     const val DELETE_ACCOUNT = "removeAccount"
     const val ADD_MONEY = "add_money_via_stripe"
     const val UPLOAD_PACKAGE_IMAGE = "upload_file_customer"
+
+    const val INITIALIZE_MOBILE_MONEY = "paystack/initialize_mobile_money"
+    const val VERIFY_MOBILE_MONEY = "paystack/verify_mobile_money_payment"
+    const val GENERATE_TICKET = "generate_ticket"
+    const val LIST_TICKETS = "list_support_tickets"
+    const val UPLOAD_TICKET_FILE = "upload_file_support_ticket"
 }
 
 

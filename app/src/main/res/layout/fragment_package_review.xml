@@ -630,7 +630,7 @@
                         android:fontFamily="@font/poppins_semibold"
                         android:text="@string/txt__20_43"
                         android:textColor="@color/theme"
-                        android:textSize="38sp"
+                        android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />

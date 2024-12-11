@@ -264,6 +264,18 @@
                 app:layout_constraintStart_toStartOf="@id/tvNumber"
                 app:layout_constraintTop_toBottomOf="@id/tvNumber" />
 
+            <TextView
+                android:id="@+id/tvViewDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_regular"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="@string/view_packages"
+                android:textColor="@color/theme"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvCarName" />
+
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivCar"
@@ -277,9 +289,8 @@
                 android:id="@+id/viewLocationTop"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="15dp"
                 android:background="@color/grey_arrow"
-                app:layout_constraintTop_toBottomOf="@id/tvCarName" />
+                app:layout_constraintTop_toBottomOf="@id/tvViewDetails" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clMainPickDrop"
@@ -367,6 +378,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
+                        android:layout_marginBottom="@dimen/_10sdp"
                         android:ellipsize="end"
                         android:fontFamily="@font/poppins_regular"
                         android:maxLines="2"
@@ -392,6 +404,8 @@
                 android:id="@+id/clDistanceTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/viewLocationBottom">
 
                 <androidx.appcompat.widget.AppCompatTextView
