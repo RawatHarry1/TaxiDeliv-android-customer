@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "152682101202",
-    "project_id": "superapp-5a3ad",
-    "storage_bucket": "superapp-5a3ad.appspot.com"
+    "project_number": "1054055778676",
+    "project_id": "projectvyba-2fb2b",
+    "storage_bucket": "projectvyba-2fb2b.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:152682101202:android:02b5d3ff5be9ddf3c2b00b",
+        "mobilesdk_app_id": "1:1054055778676:android:462b6696bfe0e517fd4421",
         "android_client_info": {
-          "package_name": "com.superapp_customer"
+          "package_name": "com.vyba_cust"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDo8GYhr8dd90hpKmTMPjC5bEezXJYMYSs"
+          "current_key": "AIzaSyA_nxKv27W6j1oH23gSXX28BxBwsBzzh7s"
         }
       ],
       "services": {
@@ -26,15 +26,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:152682101202:android:9c1f05efb933d39ec2b00b",
+        "mobilesdk_app_id": "1:1054055778676:android:a51552f25c4095a8fd4421",
         "android_client_info": {
-          "package_name": "com.superapp_driver"
+          "package_name": "com.vyba_dri"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDo8GYhr8dd90hpKmTMPjC5bEezXJYMYSs"
+          "current_key": "AIzaSyA_nxKv27W6j1oH23gSXX28BxBwsBzzh7s"
         }
       ],
       "services": {

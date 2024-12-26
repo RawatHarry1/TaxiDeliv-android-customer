@@ -29,6 +29,7 @@
             android:layout_marginStart="25dp"
             android:padding="5dp"
             android:text="@string/txt_sign_in"
+            android:fontFamily="@font/poppins_regular"
             android:textColor="@color/theme_button"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@id/ivBack"
@@ -78,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:background="@null"
-                android:fontFamily="@font/sufi_reg"
+                android:fontFamily="@font/poppins_regular"
                 android:hint="@string/enter_your_phone_number"
                 android:inputType="phone"
                 android:maxLength="20"
@@ -149,9 +150,20 @@
             android:gravity="center"
             android:padding="10dp"
             android:text="@string/txt_sign_up"
+            android:fontFamily="@font/poppins_regular"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintTop_toBottomOf="@id/clPhone" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivWalkImage"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:src="@drawable/app_logo_image"
+            app:layout_constraintTop_toBottomOf="@+id/tvSignUpBtn"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 

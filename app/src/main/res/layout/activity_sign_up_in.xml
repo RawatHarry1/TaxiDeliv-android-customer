@@ -15,9 +15,9 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:layout_marginTop="50dp"
-            android:src="@drawable/ic_phone_tick"
-            app:layout_constraintBottom_toTopOf="@id/tvWalkTitle"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:src="@drawable/app_logo_image"
+            app:layout_constraintBottom_toTopOf="@id/tvWalkTitle" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvWalkTitle"
@@ -25,9 +25,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:gravity="center"
-            android:text="@string/txt_app_name"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/fast_reliable_and_transparency"
             android:textColor="@color/walk_title_color"
-            android:textSize="24dp"
+            android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@id/tvWalkDesc" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -36,6 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="30dp"
             android:gravity="center"
+            android:visibility="gone"
             android:text="@string/txt_clear_air_ride"
             android:textColor="@color/walk_desc_color"
             android:textSize="16dp"
@@ -57,8 +59,9 @@
             android:gravity="center"
             android:padding="10dp"
             android:text="@string/txt_sign_in"
+            android:fontFamily="@font/poppins_regular"
             android:textColor="@color/white"
-            android:textSize="18dp"
+            android:textSize="18sp"
             app:layout_constraintTop_toBottomOf="@id/guide" />
 
 
@@ -71,7 +74,8 @@
             android:padding="10dp"
             android:text="@string/txt_have_an_account"
             android:textColor="@color/text_color"
-            android:textSize="14dp"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_regular"
             app:layout_constraintTop_toBottomOf="@id/tvSignIn" />
 
 

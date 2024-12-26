@@ -15,6 +15,6 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
-rootProject.name = "Superapp Driver"
+rootProject.name = "VYBA Drivers"
 include ':app'
 include ':photoPicker'

@@ -14,26 +14,27 @@
         tools:context=".view.activity.Welcome">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivCheck"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/ivWalkImage"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:src="@drawable/app_logo_image"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_check" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvWelcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="@string/txt_welcome"
+            android:text="@string/welcome_to_a2b_logistics"
             android:textColor="@color/black"
-            android:textSize="30dp"
-            app:layout_constraintBottom_toTopOf="@id/ivCheck"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/ivWalkImage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
