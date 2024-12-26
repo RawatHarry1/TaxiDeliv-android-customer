@@ -12,14 +12,6 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        release {
-            storeFile file('SalonCustomer.jks')
-            storePassword '123456'
-            keyAlias 'SalonCustomer'
-            keyPassword '123456'
-        }
-    }
     namespace 'com.ujeff_customer'
     compileSdk 34
 
@@ -41,18 +33,15 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
             buildConfigField("String", "BASE_URL", '"https://chuki-rides.venustaxi.in/"')
             buildConfigField("String", "SOCKET_BASE_URL", '"https://chuki-rides-api.venustaxi.in"')
         }
 
         release {
             minifyEnabled false
-            _isDebuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "BASE_URL", '"https://rides.venustaxi.in/"')
-            buildConfigField("String", "SOCKET_BASE_URL", '"https://rides-api.venustaxi.in"')
-            signingConfig signingConfigs.debug
+            buildConfigField("String", "BASE_URL", '"https://chuki-rides.venustaxi.in/"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://chuki-rides-api.venustaxi.in"')
         }
     }
     compileOptions {
@@ -65,9 +54,8 @@ android {
 
     flavorDimensions "product"
     productFlavors {
-        venus {
+        ujeff {
             dimension "product"
-            buildConfigField("String", "VARIANT", '"dev"')
             resValue "string", "app_name", "UJEFF"
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }

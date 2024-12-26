@@ -2430,8 +2430,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }, onError = {
             hideProgressDialog()
             showToastShort(this)
-            rideVM.createRideData.pickUpLocation = null
-            rideVM.createRideData.dropLocation = null
+            rideVM.createRideData = CreateRideData()
             binding.clWhereMain.visibility = View.VISIBLE
             binding.clMapMain.visibility = View.GONE
             rideVM.cardId = ""
@@ -2445,8 +2444,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             hideProgressDialog()
             rideVM.hideHomeNav(false)
             showSnackBar("Your ride has been scheduled successfully!!")
-            rideVM.createRideData.pickUpLocation = null
-            rideVM.createRideData.dropLocation = null
+            rideVM.createRideData = CreateRideData()
             binding.clWhereMain.visibility = View.VISIBLE
             binding.clMapMain.visibility = View.GONE
             rideVM.cardId = ""

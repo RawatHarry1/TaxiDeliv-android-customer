@@ -26,6 +26,7 @@ import com.ujeff_customer.util.safeCall
 import com.ujeff_customer.util.showSnackBar
 import com.ujeff_customer.view.activity.walk_though.PaymentActivity
 import com.ujeff_customer.view.base.BaseFragment
+import com.ujeff_customer.viewmodel.rideVM.CreateRideData
 import com.ujeff_customer.viewmodel.rideVM.RideVM
 import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
@@ -418,8 +419,7 @@ class PackageReviewDetailsFragment : BaseFragment<FragmentPackageReviewBinding>(
             hideProgressDialog()
             rideVM.hideHomeNav(false)
             showSnackBar("Your ride has been scheduled successfully!!")
-            rideVM.createRideData.pickUpLocation = null
-            rideVM.createRideData.dropLocation = null
+            rideVM.createRideData = CreateRideData()
             rideVM.cardId = ""
             rideVM.last4 = ""
             rideVM.couponToApply = 0
