@@ -54,8 +54,6 @@ private var destMarker: Marker? = null
 private var polyline: Polyline? = null
 
 
-
-
 fun Context.showPathWithAlternateRoutes(
     srcLat: LatLng,
     desLat: LatLng,
@@ -185,10 +183,6 @@ fun Context.showPathWithAlternateRoutes(
 }
 
 
-
-
-
-
 /**Show path on Map*/
 fun Context.showPath(
     srcLat: LatLng,
@@ -214,7 +208,11 @@ fun Context.showPath(
         CoroutineScope(Dispatchers.IO).launch {
             val result = URL(url).readText()
             val pathResponse: PathResponse = Gson().fromJson(result, PathResponse::class.java)
-            val steps = pathResponse.routes?.get(0)?.legs?.get(0)?.steps
+            val steps = try {
+                pathResponse.routes?.get(0)?.legs?.get(0)?.steps
+            } catch (e: Exception) {
+                emptyList()
+            }
             HomeFragment.stepsInstructionArrayList = (steps?.map {
                 StepInstruction(
                     startLocation = it?.startLocation?.lat?.let { it1 ->
@@ -670,10 +668,6 @@ private fun Context.bitmapDescriptorFromVector(): BitmapDescriptor? {
         BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 }
-
-
-
-
 
 
 fun findNearestPoint(p: LatLng, start: LatLng, end: LatLng): LatLng {
