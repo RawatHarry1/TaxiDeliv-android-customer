@@ -576,7 +576,7 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
             put("engagementId", viewModel.newRideNotificationData.tripId)
             put("customerId", viewModel.newRideNotificationData.customerId)
             put("cancellationReason", rejectionReason)
-            put("by_operator", 1)
+            put("by_operator", 0)
         })
     }
 

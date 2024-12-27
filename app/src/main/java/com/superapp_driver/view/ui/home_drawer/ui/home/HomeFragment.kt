@@ -95,6 +95,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
     NotificationInterface, CheckOnGoingBooking {
     private lateinit var notificationPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+
     companion object {
         var notificationInterface: NotificationInterface? = null
         var checkOnGoingBooking: CheckOnGoingBooking? = null
@@ -120,6 +121,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
     override fun getLayoutId(): Int {
         return R.layout.fragment_home
     }
+
     private fun wakeUpScreen() {
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val powerManager = requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -365,6 +367,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
             startActivity(intent)
         }
     }
+
     private fun checkAndRequestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             when {
@@ -374,7 +377,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     // Permission already granted
                     Log.i("Permission", "Notification permission granted")
-
                 }
 
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
@@ -682,7 +684,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
             rideViewModel.newRideNotificationData.recipientName ?: ""
         viewLayout.tvReceiverPhoneValue.text =
             rideViewModel.newRideNotificationData.recipientPhoneNo ?: ""
-        binding.ivCall.isVisible = (rideViewModel.newRideNotificationData.serviceType ?: "0").toInt() == 2
+        binding.ivCall.isVisible =
+            (rideViewModel.newRideNotificationData.serviceType ?: "0").toInt() == 2
         viewLayout.tvSlideTrip.onSlideCompleteListener =
             object : SlideToActView.OnSlideCompleteListener {
                 override fun onSlideComplete(view: SlideToActView) {
@@ -1098,6 +1101,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
 
                 else -> {
                     binding.alertView.clRoot.isVisible = false
+                    binding.rlMapView.isVisible = true
                     checkOnGoingBooking()
                 }
             }
@@ -1659,10 +1663,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
         if (status == TextToSpeech.SUCCESS) {
             val result = textToSpeech.setLanguage(Locale.US)
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TEXTTOSPEAK","TTS: Language not supported!")
+                Log.e("TEXTTOSPEAK", "TTS: Language not supported!")
             }
         } else {
-            Log.e("TEXTTOSPEAK","TTS: Initialization failed!")
+            Log.e("TEXTTOSPEAK", "TTS: Initialization failed!")
         }
     }
 
@@ -1675,9 +1679,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
     }
 
     private fun speakInstruction(instruction: String) {
-        Log.i("TEXTTOSPEAK","IN speakInstruction")
+        Log.i("TEXTTOSPEAK", "IN speakInstruction")
         if (isSpeakerEnabled && !textToSpeech.isSpeaking) {
-            Log.i("TEXTTOSPEAK","IN IF speakInstruction")
+            Log.i("TEXTTOSPEAK", "IN IF speakInstruction")
             textToSpeech.speak(instruction, TextToSpeech.QUEUE_FLUSH, null, null)
         }
     }
@@ -1716,7 +1720,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
             )
 
             if (isOnPath) {
-                Log.i("TEXTTOSPEAK","IN isOnPath")
+                Log.i("TEXTTOSPEAK", "IN isOnPath")
                 val inst = if (index + 1 < HomeFragment.stepsInstructionArrayList.size) {
                     if (HomeFragment.stepsInstructionArrayList[index + 1].instruction.isNullOrEmpty()) "Continue straight" else HomeFragment.stepsInstructionArrayList[index + 1].instruction
                 } else {
@@ -1726,9 +1730,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                 // Show the next step's instruction, if available
                 val distanceToEndLocation =
                     calculateDistance(currentPosition, stepsInstructionArrayList[index].endLocation)
-                Log.i("TEXTTOSPEAK","DISTANCE  $distanceToEndLocation")
+                Log.i("TEXTTOSPEAK", "DISTANCE  $distanceToEndLocation")
                 if (distanceToEndLocation <= 100) {
-                    Log.i("TEXTTOSPEAK","IN distanceToEndLocation")
+                    Log.i("TEXTTOSPEAK", "IN distanceToEndLocation")
                     inst?.let {
                         speakInstruction(
                             Html.fromHtml(inst, Html.FROM_HTML_MODE_COMPACT).toString()

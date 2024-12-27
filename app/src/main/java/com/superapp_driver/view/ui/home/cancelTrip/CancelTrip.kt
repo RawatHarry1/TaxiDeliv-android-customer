@@ -57,7 +57,7 @@ class CancelTrip: BaseActivity<CancelRideBinding>() {
                     put("engagementId",tripId)
                     put("customerId",customerId)
                     put("cancellationReason",reason)
-                    put("by_operator",1)
+                    put("by_operator",0)
                 })
             }
         }

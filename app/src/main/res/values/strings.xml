@@ -507,4 +507,5 @@
     <string name="select_reason">Select Reason</string>
     <string name="enter_description">Enter Description</string>
     <string name="raised_tickets">Raised Tickets</string>
+    <string name="no_notifications_found">No Notifications Found</string>
 </resources>

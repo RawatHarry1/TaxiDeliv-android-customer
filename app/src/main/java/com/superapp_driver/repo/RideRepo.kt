@@ -103,11 +103,14 @@ class RideRepo @Inject constructor(
             put("trip_id", sessionId)
             put("driver_id", driverId)
             put("package_id", packageId)
+
             if (cancellationReason != null)
             put("cancelltion_reason", cancellationReason)
+
             if (!packageImages.isNullOrEmpty())
                 put("package_images", JSONArray(packageImages))
 //            put("notes", "")
+
             if (isEnd) {
                 put("is_for_end", "1")
                 put("current_latitude", currentLat)
@@ -121,6 +124,7 @@ class RideRepo @Inject constructor(
             }
             else
                 put("is_for_pickup", "1")
+
         }.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
 

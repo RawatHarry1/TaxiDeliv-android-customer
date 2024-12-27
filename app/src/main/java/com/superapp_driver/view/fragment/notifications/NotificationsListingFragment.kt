@@ -2,6 +2,7 @@ package com.superapp_driver.view.fragment.notifications
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.superapp_driver.R
 import com.superapp_driver.customClasses.PaginationScrollListener
@@ -43,7 +44,7 @@ class NotificationsListingFragment : BaseFragment<FragmentNotificationsListingBi
         }
 
 
-        binding.rvNotifications.addOnScrollListener(object : PaginationScrollListener(){
+        binding.rvNotifications.addOnScrollListener(object : PaginationScrollListener() {
             override fun loadMoreItems() {
                 if (!viewModel.isLoading) {
                     viewModel.isLoading = true
@@ -63,21 +64,23 @@ class NotificationsListingFragment : BaseFragment<FragmentNotificationsListingBi
     }
 
 
-    private fun observeNotification() = viewModel.notificationData.observeData(viewLifecycleOwner, onLoading = {
-        if (viewModel.currentPage == 1){
-            showProgressDialog()
-        }
-    }, onSuccess = {
-        hideProgressDialog()
-        viewModel.isLastPage = this.isNullOrEmpty() == true
-        if (viewModel.currentPage == 1){
-            adapter.submitList(this ?: emptyList())
-        } else {
-            adapter.addMoreItems(this ?: emptyList())
-        }
-    }, onError = {
-        hideProgressDialog()
-        showToastLong(this)
-    })
+    private fun observeNotification() =
+        viewModel.notificationData.observeData(viewLifecycleOwner, onLoading = {
+            if (viewModel.currentPage == 1) {
+                showProgressDialog()
+            }
+        }, onSuccess = {
+            hideProgressDialog()
+            viewModel.isLastPage = this.isNullOrEmpty() == true
+            binding.tvNoNotificationFound.isVisible = this.isNullOrEmpty()
+            if (viewModel.currentPage == 1) {
+                adapter.submitList(this ?: emptyList())
+            } else {
+                adapter.addMoreItems(this ?: emptyList())
+            }
+        }, onError = {
+            hideProgressDialog()
+            showToastLong(this)
+        })
 
 }
