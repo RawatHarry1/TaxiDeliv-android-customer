@@ -29,6 +29,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -40,6 +41,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.SavedStateHandle
@@ -70,6 +72,7 @@ import com.superapp_customer.customClasses.trackingData.clearMap
 import com.superapp_customer.customClasses.trackingData.showPath
 import com.superapp_customer.customClasses.trackingData.vectorToBitmap
 import com.superapp_customer.databinding.DialogDateTimeBinding
+import com.superapp_customer.databinding.DialogRentalBinding
 import com.superapp_customer.databinding.DialogShowPackagesBinding
 import com.superapp_customer.databinding.FragmentHomeBinding
 import com.superapp_customer.databinding.ItemBannersBinding
@@ -150,6 +153,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             requireActivity(), ::addressAdapterClick
         )
     }
+
     private var onGoingRideType = 0
     private val rideTypeArrayList = ArrayList<RideTypes>()
     private lateinit var rideTypeAdapter: RideTypeAdapter
@@ -321,8 +325,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         Glide.with(requireActivity()).asGif().load(R.drawable.promotional_gif).into(binding.ivGif)
 
         lifecycleScope.launch {
-            getLocationDataFromLatLng(VenusApp.latLng,true)
+            getLocationDataFromLatLng(VenusApp.latLng, true)
         }
+
+
     }
 
 
@@ -330,6 +336,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         rideTypeArrayList.clear()
         bannerArrayList.clear()
         if (SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == 1) {
+            binding.rlRideRental.alpha = 1f
+            binding.tvRideRental.alpha = 1f
+            binding.tvRideRentalComingSoon.isVisible = false
 //            rideTypeArrayList.add(
 //                RideTypes(
 //                    ContextCompat.getDrawable(
@@ -791,8 +800,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         // Bottom sheet is expanded
                         Log.i("CarType", "in STATE_EXPANDED")
-                        isVehicleShowing = true
-                        startRepeatingJob()
+                        if (!rideVM.schedule) {
+                            isVehicleShowing = true
+                            startRepeatingJob()
+                        }
                     }
 
                     BottomSheetBehavior.STATE_HALF_EXPANDED -> {
@@ -867,13 +878,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     Log.i("SavedStateData", "in pickUpLocation")
                     rideVM.createRideData.pickUpLocation =
                         it.get<CreateRideData.LocationData>("pickUpLocation")
-                    rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+                    if (rideVM.isRental) {
+                        startRentalDialog(this)
+                    } else
+                        rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
                 }
                 if (it.contains("dropLocation")) {
                     Log.i("SavedStateData", "in dropLocation")
                     rideVM.createRideData.dropLocation =
                         it.get<CreateRideData.LocationData>("dropLocation")
-                    rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
+                    if (rideVM.isRental) {
+                        startRentalDialog(this)
+                    } else
+                        rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
                 }
                 if (it.contains("add_address")) {
                     Log.i("SavedStateData", "in add_address")
@@ -903,16 +920,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             hideAllBottomSheets()
             startTimeDialog(requireContext())
         }
-//        binding.tvWhereTo.setOnSingleClickListener {
-//            binding.tvNow.text = requireContext().getString(R.string.txt_now)
-//            rideVM.createRideData = CreateRideData()
-//            schedule = false
-//            rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
-//        }
+
+        binding.rlRideRental.setOnSingleClickListener {
+            rideVM.createRideData = CreateRideData()
+            try {
+                findNavController().currentBackStackEntry?.savedStateHandle?.remove<CreateRideData.LocationData>(
+                    "pickUpLocation"
+                )
+                findNavController().currentBackStackEntry?.savedStateHandle?.remove<CreateRideData.LocationData>(
+                    "dropLocation"
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            hideAllBottomSheets()
+            startRentalDialog(this@HomeFragment)
+        }
+
         binding.rlRide.setOnSingleClickListener {
-//            binding.tvNow.text = requireContext().getString(R.string.txt_now)
             rideVM.createRideData = CreateRideData()
             rideVM.schedule = false
+            rideVM.isRental = false
             rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
         }
 
@@ -1228,6 +1256,72 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //        }
     }
 
+    private var rentalDialog: BottomSheetDialog? = null
+    private fun startRentalDialog(fragment: Fragment) {
+
+        // Check if the dialog is already open
+        if (rentalDialog?.isShowing == true) {
+            // Update the existing dialog's content if needed
+            updateRentalDialogContent()
+            return
+        }
+        rentalDialog = BottomSheetDialog(requireActivity(), R.style.SheetDialog)
+        rentalDialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val binding =
+            DialogRentalBinding.inflate(LayoutInflater.from(requireActivity()), null, false)
+        rentalDialog?.setContentView(binding.root)
+//        if (rideVM.createRideData.pickUpLocation?.address.isNullOrEmpty())
+//            lifecycleScope.launch {
+//                getLocationDataFromLatLng(VenusApp.latLng)
+//            }
+//        else {
+//            binding.etPickup.setText(rideVM.createRideData.pickUpLocation?.address)
+//        }
+        rideVM.createRideData.pickUpLocation?.address?.let { binding.etPickup.setText(it) }
+        rideVM.createRideData.dropLocation?.address?.let { binding.etDropOff.setText(it) }
+        setCurrentDate(binding.etPickupDate)
+        setCurrentTime(binding.etPickupTime)
+        
+        binding.etPickup.setOnSingleClickListener {
+            rentalDialog?.dismiss()
+            rideVM.isRental = true
+            val bundle = bundleOf("selectLocationType" to "pickUp")
+            fragment.findNavController().navigate(R.id.navigation_select_location, bundle)
+        }
+
+        binding.etPickupDate.setOnSingleClickListener {
+            showDatePickerForRentalDialog(binding.etPickupDate, binding.etDropDate, true)
+        }
+        binding.etPickupTime.setOnSingleClickListener {
+            showTimePickerDialog(binding.etPickupTime)
+        }
+
+        binding.etDropDate.setOnSingleClickListener {
+            showDatePickerForRentalDialog(binding.etDropDate, binding.etDropDate, false)
+        }
+        binding.etDropTime.setOnSingleClickListener {
+            showTimePickerDialog(binding.etDropTime)
+        }
+
+        binding.etDropOff.setOnSingleClickListener {
+            rentalDialog?.dismiss()
+            rideVM.isRental = true
+            val bundle = bundleOf("selectLocationType" to "dropOff")
+            fragment.findNavController().navigate(R.id.navigation_select_location, bundle)
+        }
+        rentalDialog?.setCancelable(true)
+        rentalDialog?.show()
+    }
+
+    // Function to update the content of the dialog
+    private fun updateRentalDialogContent() {
+        rentalDialog?.findViewById<EditText>(R.id.etPickup)
+            ?.setText(rideVM.createRideData.pickUpLocation?.address ?: "")
+        rentalDialog?.findViewById<EditText>(R.id.etDropOff)
+            ?.setText(rideVM.createRideData.dropLocation?.address ?: "")
+        // Add any other content updates here
+    }
+
     //    private var selectedPickDateTimeForSchedule = ""
     private fun startTimeDialog(context: Context) {
         val dialog = BottomSheetDialog(context, R.style.SheetDialog)
@@ -1265,6 +1359,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 )
             } else {
                 rideVM.schedule = true
+                rideVM.isRental = false
                 rideVM.selectedPickDateTimeForSchedule =
                     convertToUTC(binding.tvDateValue.text.toString() + " " + binding.tvTimeValue.text.toString())
                 dialog.dismiss()
@@ -1381,6 +1476,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         val minDate = Calendar.getInstance()
         val dateFormatter = SimpleDateFormat("E, MMM dd", Locale.getDefault())
         val formattedDate = dateFormatter.format(minDate.time)
+        pickupInMilli = minDate.timeInMillis
         textView.text = formattedDate
     }
 
@@ -1415,6 +1511,47 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }
 
         datePickerDialog.datePicker.minDate = minDate.timeInMillis
+        datePickerDialog.datePicker.maxDate = maxDate.timeInMillis
+        datePickerDialog.show()
+    }
+
+    private var pickupInMilli = 0L
+    private fun showDatePickerForRentalDialog(
+        et: EditText,
+        etDrop: EditText,
+        isForPickup: Boolean
+    ) {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val dateFormatter = SimpleDateFormat("E, MMM dd", Locale.getDefault())
+        val datePickerDialog = DatePickerDialog(
+            requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+                calendar.set(selectedYear, selectedMonth, selectedDay)
+                val formattedDate = dateFormatter.format(calendar.time)
+                if (isForPickup) {
+                    pickupInMilli = calendar.timeInMillis
+                    et.setText(formattedDate)
+                    etDrop.setText("")
+                } else {
+                    etDrop.setText(formattedDate)
+                }
+            }, year, month, day
+        )
+
+        // Set the minimum date to the current date
+        val minDate = Calendar.getInstance()
+
+        // Set the maximum date to four months from the current month
+        val maxDate = Calendar.getInstance().apply {
+            add(Calendar.MONTH, 3)
+        }
+        if (isForPickup)
+            datePickerDialog.datePicker.minDate = minDate.timeInMillis
+        else
+            datePickerDialog.datePicker.minDate = pickupInMilli
+
         datePickerDialog.datePicker.maxDate = maxDate.timeInMillis
         datePickerDialog.show()
     }
@@ -1495,7 +1632,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 tvNumber.text = vehicleData?.vehicleNumber.orEmpty()
                 tvCarName.text = vehicleData?.name.orEmpty()
                 tvNumber.text = vehicleData?.vehicleNumber.orEmpty()
+                Log.i("pickUpLocation", "address:::::    ${Gson().toJson(pickUpLocation)}")
+                Log.i("pickUpLocation", "address:::::    ${pickUpLocation?.address}")
                 tvAddress.text = pickUpLocation?.address.orEmpty()
+
                 tvPickUpAddress.text = pickUpLocation?.address.orEmpty()
                 tvDestinationAddress.text = dropLocation?.address.orEmpty()
                 tvDistanceValue.text = vehicleData?.distance.orEmpty()
@@ -1507,6 +1647,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     .error(R.mipmap.ic_launcher).into(ivProfileImage)
                 Glide.with(requireView()).load(vehicleData?.image.orEmpty())
                     .error(R.mipmap.ic_launcher).into(ivCar)
+                tvViewDetails.isVisible = !deliveryPackages.isNullOrEmpty()
             }
 
 
@@ -1590,6 +1731,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 TripStatus.ACCEPTED.type -> {
                     binding.tvSOS.isVisible = true
                     binding.viewStartRide.llDistanceTime.isVisible = false
+                    tvAddress.isVisible = true
+                    tvAddress.text = rideVM.createRideData.pickUpLocation?.address.orEmpty()
                     Log.i(
                         "DRIVERLOCATION",
                         "on accept     lat::${rideVM.createRideData.driverLocation?.latitude?.toDouble() ?: 0.0} lan::${rideVM.createRideData.driverLocation?.longitude?.toDouble() ?: 0.0}"
@@ -1710,7 +1853,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 requireActivity(),
                 rideVM.regionsList,
                 currencyCode = rideVM.createRideData.currencyCode.orEmpty(),
-                rideVM.customerETA
+                rideVM.customerETA,
+                rideVM.schedule
             ) {
                 rideVM.createRideData.regionId = it?.regionId.orEmpty()
                 rideVM.createRideData.vehicleType = it?.vehicleType.orEmpty()
@@ -2301,8 +2445,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }, onError = {
             hideProgressDialog()
             showToastShort(this)
-            rideVM.createRideData.pickUpLocation = null
-            rideVM.createRideData.dropLocation = null
+            rideVM.createRideData = CreateRideData()
             binding.clWhereMain.visibility = View.VISIBLE
             binding.clMapMain.visibility = View.GONE
             rideVM.cardId = ""
@@ -2316,8 +2459,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             hideProgressDialog()
             rideVM.hideHomeNav(false)
             showSnackBar("Your ride has been scheduled successfully!!")
-            rideVM.createRideData.pickUpLocation = null
-            rideVM.createRideData.dropLocation = null
+            rideVM.createRideData = CreateRideData()
             binding.clWhereMain.visibility = View.VISIBLE
             binding.clMapMain.visibility = View.GONE
             rideVM.cardId = ""
@@ -2339,6 +2481,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }, onSuccess = {
             hideProgressDialog()
         })
+
 
     private fun observePromoCode() =
         rideVM.enterPromoCode.observeData(lifecycle = viewLifecycleOwner, onLoading = {
@@ -2479,15 +2622,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     if (results.length() > 0) {
                         val address = results.getJSONObject(0).getString("formatted_address")
                         val placeId = results.getJSONObject(0).getString("place_id")
+
                         if (!forTop)
-                        rideVM.createRideData.pickUpLocation = CreateRideData.LocationData(
-                            address = address,
-                            latitude = latLng.latitude.toString(),
-                            longitude = latLng.longitude.toString(),
-                            placeId = placeId
-                        )
-                        // Optionally update the UI with the new location data
-//                    // Ensure to switch back to the main thread for UI updates
+                            rideVM.createRideData.pickUpLocation = CreateRideData.LocationData(
+                                address = address,
+                                latitude = latLng.latitude.toString(),
+                                longitude = latLng.longitude.toString(),
+                                placeId = placeId
+                            )
+
                         withContext(Dispatchers.Main) {
                             if (forTop)
                                 binding.tvPickUpAddress.text = address
@@ -2562,8 +2705,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
         override fun getItemCount(): Int = bannerList.size
     }
-
-
 
 
     inner class RideTypeAdapter : RecyclerView.Adapter<RideTypeAdapter.RideTypeViewHolder>() {
@@ -2772,6 +2913,4 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         hideProgressDialog()
         showToastShort(this)
     })
-
-
 }

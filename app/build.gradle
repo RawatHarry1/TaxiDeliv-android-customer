@@ -70,9 +70,8 @@ android {
 
     flavorDimensions "product", "server"
     productFlavors {
-        venus {
+        smart {
             dimension "product"
-            buildConfigField("String", "VARIANT", '"dev"')
             resValue "string", "app_name", "Smart App"
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }

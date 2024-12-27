@@ -22,6 +22,7 @@ class CarsTypeAdapter(
     var list: List<FindDriverDC.Region>?,
     var currencyCode: String,
     var customerETA: FindDriverDC.CustomerETA,
+    var isSchedule: Boolean = false,
     var onClick: (region: FindDriverDC.Region?) -> Unit
 ) : RecyclerView.Adapter<CarsTypeAdapter.CarsTypeAdapter>() {
 
@@ -56,14 +57,14 @@ class CarsTypeAdapter(
                     ContextCompat.getDrawable(context, R.drawable.ic_person)
                 }
 
-// Set the drawableStart programmatically
+            // Set the drawableStart programmatically
             itemBinding.tvPersonCount.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 drawable,
                 null,
                 null,
                 null
             )
-            if (carTypeData?.eta == null) {
+            if (!isSchedule && carTypeData?.eta == null) {
                 itemBinding.clBackground.alpha = 0.5f
             } else {
                 itemBinding.clBackground.alpha = 1f
@@ -126,7 +127,10 @@ class CarsTypeAdapter(
 
             itemBinding.root.setOnSingleClickListener {
                 if (!itemBinding.noDriverFound.isVisible) {
-                    if (carTypeData?.eta != null) {
+                    if (isSchedule) {
+                        onClick(carTypeData)
+                        updateListData(carTypeData)
+                    } else if (carTypeData?.eta != null) {
                         onClick(carTypeData)
                         updateListData(carTypeData)
                     }

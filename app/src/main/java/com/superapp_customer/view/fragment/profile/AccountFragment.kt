@@ -170,17 +170,7 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         )
         requireActivity().finishAffinity()
     }, onError = {
-        hideProgressDialog()
-        VenusApp.offerApplied = 0
-        VenusApp.offerTitle = ""
-        SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.USER_DATA)
-        startActivity(
-            Intent(
-                requireContext(),
-                SignIn::class.java
-            ).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        )
-        requireActivity().finishAffinity()
+       showToastShort(this)
     })
 
     private fun observeDeleteData() = viewModel.deleteAccount.observeData(this, onLoading = {
@@ -198,17 +188,7 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
         )
         requireActivity().finishAffinity()
     }, onError = {
-        hideProgressDialog()
-        VenusApp.offerApplied = 0
-        VenusApp.offerTitle = ""
-        SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.USER_DATA)
-        startActivity(
-            Intent(
-                requireContext(),
-                SignIn::class.java
-            ).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        )
-        requireActivity().finishAffinity()
+       showToastShort(this)
     })
 
     private fun observeProfileData() = homeViewModel.loginViaToken.observeData(this, onLoading = {

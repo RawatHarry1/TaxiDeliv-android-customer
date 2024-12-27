@@ -375,4 +375,9 @@
     <string name="enter_description">Enter Description</string>
     <string name="raised_tickets">Raised Tickets</string>
     <string name="view_packages"><u>View Packages</u></string>
+    <string name="with_a_driver">With a driver</string>
+    <string name="drop_off_address">Drop Off Address</string>
+    <string name="pick_up_address">Pick Up Address</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
 </resources>

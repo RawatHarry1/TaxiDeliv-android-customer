@@ -53,6 +53,7 @@ class RideVM @Inject constructor(
     var cardId = ""
     var last4 = ""
     var schedule = false
+    var isRental = false
     var selectedPickDateTimeForSchedule = ""
 
     /**
