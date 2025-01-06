@@ -3,7 +3,7 @@
     <data>
         <variable
             name="vm"
-            type="com.superapp_driver.viewmodel.AboutAppVM" />
+            type="com.mcabs_driver.viewmodel.AboutAppVM" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

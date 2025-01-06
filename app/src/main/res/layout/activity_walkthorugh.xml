@@ -4,7 +4,7 @@
     <data>
         <variable
             name="walkViewModel"
-            type="com.superapp_driver.viewmodel.WalkThroughViewModel" />
+            type="com.mcabs_driver.viewmodel.WalkThroughViewModel" />
 
     </data>
 

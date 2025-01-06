@@ -177,6 +177,15 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintTop_toBottomOf="@id/tvForgotPassword" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivMainVenus"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_200sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:src="@drawable/app_logo_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSignUpBtn" />
 
 
         <androidx.appcompat.widget.AppCompatTextView

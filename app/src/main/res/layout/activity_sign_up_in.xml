@@ -11,35 +11,28 @@
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivWalkImage"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginTop="50dp"
-            android:src="@drawable/ic_phone_tick"
-            app:layout_constraintBottom_toTopOf="@id/tvWalkTitle"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/ivMainVenus"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_150sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            app:layout_constraintBottom_toTopOf="@+id/tvWalkTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:src="@drawable/app_logo_image" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvWalkTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
+            android:fontFamily="@font/poppins_semibold"
             android:gravity="center"
             android:text="@string/txt_app_name"
             android:textColor="@color/walk_title_color"
-            android:textSize="24dp"
-            app:layout_constraintBottom_toTopOf="@id/tvWalkDesc" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvWalkDesc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            android:gravity="center"
-            android:text="@string/txt_clear_air_ride"
-            android:textColor="@color/walk_desc_color"
-            android:textSize="16dp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@id/guide" />
+
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guide"
@@ -57,8 +50,9 @@
             android:gravity="center"
             android:padding="10dp"
             android:text="@string/txt_sign_in"
+            android:fontFamily="@font/poppins_regular"
             android:textColor="@color/white"
-            android:textSize="18dp"
+            android:textSize="18sp"
             app:layout_constraintTop_toBottomOf="@id/guide" />
 
 
@@ -68,10 +62,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:gravity="center"
+            android:fontFamily="@font/poppins_regular"
             android:padding="10dp"
             android:text="@string/txt_have_an_account"
             android:textColor="@color/text_color"
-            android:textSize="14dp"
+            android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@id/tvSignIn" />
 
 

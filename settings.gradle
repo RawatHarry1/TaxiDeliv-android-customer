@@ -15,6 +15,6 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
-rootProject.name = "Superapp Driver"
+rootProject.name = "Mcabs-dispatch Driver"
 include ':app'
 include ':photoPicker'

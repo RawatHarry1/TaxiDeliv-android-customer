@@ -22,7 +22,7 @@
     <string name="txt_skip">Skip</string>
 
     <!--sign in/up-->
-    <string name="txt_app_name">Smart Driver</string>
+    <string name="txt_app_name">Clean Air Ride share</string>
     <string name="txt_clear_air_ride">Clean Air Ride share</string>
     <string name="txt_sign_in">Sign In</string>
     <string name="txt_have_an_account">Don’t have an account? <font color='#1b1c3c'>Sign up</font></string>
@@ -104,7 +104,7 @@
     <string name="txt_enter_location">Enter location</string>
     <string name="txt_pincode_zipcode_optional">Pincode/Zipcode (Optional)</string>
     <string name="txt_enter_pincode_zipcode">Enter Pincode/Zipcode</string>
-    <string name="txt_welcome">Welcome</string>
+    <string name="txt_welcome">Welcome to Mcabs-dispatch</string>
     <string name="title_activity_home">Home</string>
     <string name="title_home">Home</string>
     <string name="title_trips">Trips</string>
@@ -386,8 +386,8 @@
     <string name="txt_best_route">Best Route</string>
     <string name="txt_arrived_at_pickup_location">Arrived at pickup location</string>
     <string name="on_the_way_to_destination">On the way to destination</string>
-    <string name="txt_volt_ride_completed">Smart Driver Ride completed</string>
-    <string name="txt_volt_delivery_completed">Smart Driver Delivery completed</string>
+    <string name="txt_volt_ride_completed">Mcabs-dispatch Ride completed</string>
+    <string name="txt_volt_delivery_completed">Mcabs-dispatch Delivery completed</string>
     <string name="txt_slide_to_arrive_at_location">Slide to arrive at location</string>
     <string name="txt_slide_to_mark_arrive">Slide to mark arrive</string>
     <string name="txt_slide_to_start_trip">Slide to start trip</string>
@@ -478,12 +478,12 @@
     <string name="add_new_card">Add New Card</string>
     <string name="select_a_card">Select a card</string>
     <string name="allow">Allow</string>
-    <string name="allow_notifications">Enable notifications for Smart Driver? Stay updated with ride requests, customer details, and important trip alerts to ensure seamless service.</string>
+    <string name="allow_notifications">Enable notifications for Mcabs-dispatch? Stay updated with ride requests, customer details, and important trip alerts to ensure seamless service.</string>
     <string name="allow_location">Enable all time location to receive ride requests from nearby customers and navigate easily to pick-up and drop-off locations.</string>
     <string name="allow_location_precise">Enable location to receive ride requests from nearby customers and navigate easily to pick-up and drop-off locations.</string>
-    <string name="allow_camera_and_gallery">Enable camera and gallery access for Smart Driver? Capture and upload photos for ride verification, document incidents, or share important visuals seamlessly.</string>
-    <string name="allow_call_permission">Enable call access for Smart Driver? Call customer and support.</string>
-    <string name="allow_download_permission">Enable download access for Smart Driver? For downloading invoice please allow permissions.</string>
+    <string name="allow_camera_and_gallery">Enable camera and gallery access for Mcabs-dispatch? Capture and upload photos for ride verification, document incidents, or share important visuals seamlessly.</string>
+    <string name="allow_call_permission">Enable call access for Mcabs-dispatch? Call customer and support.</string>
+    <string name="allow_download_permission">Enable download access for Mcabs-dispatch? For downloading invoice please allow permissions.</string>
     <string name="select_driver_type">Select Driver Type</string>
     <string name="platform_fee">Platform Fee</string>
     <string name="account_type">Account Type</string>
@@ -507,4 +507,5 @@
     <string name="select_reason">Select Reason</string>
     <string name="enter_description">Enter Description</string>
     <string name="raised_tickets">Raised Tickets</string>
+    <string name="no_notifications_found">No Notifications Found</string>
 </resources>
