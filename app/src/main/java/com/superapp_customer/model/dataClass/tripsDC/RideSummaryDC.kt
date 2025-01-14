@@ -202,6 +202,12 @@ data class RideSummaryDC(
     val trackingImage: String? = null,
     @SerializedName("support_number")
     val supportNumber: String? = null,
+    @SerializedName("is_for_rental")
+    val isForRental: String? = null,
+    @SerializedName("end_time")
+    val endTime: String? = null,
+    @SerializedName("start_time")
+    val startTime: String? = null,
     @SerializedName("delivery_packages")
     val deliveryPackages: List<OngoingPackages>? = null
 ) {

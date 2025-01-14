@@ -166,6 +166,66 @@
                         android:layout_weight="1">
 
                         <RelativeLayout
+                            android:id="@+id/rlRideRental"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:background="@drawable/bg_suggestions"
+                            app:layout_constraintHeight_default="wrap"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.3">
+
+                            <ImageView
+                                android:id="@+id/ivRideRental"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_rental" />
+
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvRideRental"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="Rental"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="@id/rlRideRental"
+                            app:layout_constraintStart_toStartOf="@id/rlRideRental"
+                            app:layout_constraintTop_toBottomOf="@id/rlRideRental" />
+
+                        <TextView
+                            android:id="@+id/tvRideRentalComingSoon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="@string/coming_nsoon"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/rlRideRental"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/rlRideRental" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="0dp" />
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <RelativeLayout
                             android:id="@+id/rlRideOutStation"
                             android:layout_width="match_parent"
                             android:layout_height="64dp"
@@ -215,67 +275,6 @@
                             app:layout_constraintTop_toTopOf="@id/rlRideOutStation" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <View
-                        android:layout_width="@dimen/_10sdp"
-                        android:layout_height="0dp" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                        <RelativeLayout
-                            android:id="@+id/rlRideRental"
-                            android:layout_width="match_parent"
-                            android:layout_height="64dp"
-                            android:alpha=".3"
-                            android:background="@drawable/bg_suggestions"
-                            app:layout_constraintHeight_default="wrap"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintWidth_percent="0.3">
-
-                            <ImageView
-                                android:id="@+id/ivRideRental"
-                                android:layout_width="60dp"
-                                android:layout_height="60dp"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/ic_rental" />
-
-                        </RelativeLayout>
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tvRideRental"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:alpha=".5"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Rental"
-                            android:textColor="@color/black_text_color"
-                            android:textSize="14sp"
-                            app:layout_constraintEnd_toEndOf="@id/rlRideRental"
-                            app:layout_constraintStart_toStartOf="@id/rlRideRental"
-                            app:layout_constraintTop_toBottomOf="@id/rlRideRental" />
-
-                        <TextView
-                            android:id="@+id/tvRideRentalComingSoon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_medium"
-                            android:gravity="center"
-                            android:includeFontPadding="false"
-                            android:text="@string/coming_nsoon"
-                            android:textColor="@color/black"
-                            android:textSize="12sp"
-                            app:layout_constraintBottom_toBottomOf="@id/rlRideRental"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="@id/rlRideRental" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
                 </LinearLayout>
 
 

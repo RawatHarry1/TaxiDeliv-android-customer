@@ -147,6 +147,15 @@ class ServicesFragment : BaseFragment<FragmentServicesBinding>() {
             VenusApp.isServiceTypeDefault = false
             startActivity(Intent(requireActivity(), Home::class.java))
         }
+        binding.rlRideRental.setOnSingleClickListener {
+            SharedPreferencesManager.put(
+                SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID,
+                1
+            )
+
+            VenusApp.isServiceTypeDefault = false
+            startActivity(Intent(requireActivity(), Home::class.java))
+        }
         binding.rlDelivery.setOnSingleClickListener {
             SharedPreferencesManager.put(
                 SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID,

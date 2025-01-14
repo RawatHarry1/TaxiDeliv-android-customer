@@ -18,6 +18,7 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.gms.maps.model.LatLng
 import com.superapp_customer.R
 import com.superapp_customer.VenusApp
+import com.superapp_customer.VenusApp.Companion.primaryColor
 import com.superapp_customer.customClasses.LocationResultHandler
 import com.superapp_customer.customClasses.SingleFusedLocation
 import com.superapp_customer.customClasses.singleClick.setOnSingleClickListener
@@ -36,7 +37,9 @@ class SignUpInActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignUpInBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_in)
+
         SharedPreferencesManager.getModel<ClientConfig>(SharedPreferencesManager.Keys.CLIENT_CONFIG)
             ?.let {
                 binding.tvWalkTitle.text = it.walkThroughTitle ?: "Venus"

@@ -378,6 +378,7 @@
     <string name="with_a_driver">With a driver</string>
     <string name="drop_off_address">Drop Off Address</string>
     <string name="pick_up_address">Pick Up Address</string>
-    <string name="from">From</string>
-    <string name="to">To</string>
+    <string name="from">Start Date And Time</string>
+    <string name="to">End Date And Time</string>
+    <string name="rental_type">Rental Type</string>
 </resources>

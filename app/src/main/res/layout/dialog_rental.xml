@@ -17,6 +17,38 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tvRentalType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_regular"
+        android:text="@string/rental_type"
+        android:textSize="14sp"
+        android:layout_marginTop="@dimen/_20sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewTop" />
+
+    <LinearLayout
+        android:id="@+id/llRentalType"
+        app:layout_constraintTop_toBottomOf="@id/tvRentalType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/cbNow"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="@string/txt_now" />
+
+        <CheckBox
+            android:id="@+id/cbSchedule"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="@string/schedule"
+            android:layout_marginStart="16dp" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvPickUpAddressLabel"
@@ -25,9 +57,9 @@
         android:fontFamily="@font/poppins_regular"
         android:text="@string/pick_up_address"
         android:textSize="14sp"
-        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_8sdp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewTop" />
+        app:layout_constraintTop_toBottomOf="@id/llRentalType" />
 
     <EditText
         android:id="@+id/etPickup"
@@ -72,6 +104,8 @@
         android:paddingHorizontal="@dimen/_10sdp"
         android:textSize="14sp"
         app:layout_constraintTop_toBottomOf="@id/tvDropOffAddressLabel" />
+
+
     <TextView
         android:id="@+id/tvPickUpDateTimeLabel"
         android:layout_width="wrap_content"

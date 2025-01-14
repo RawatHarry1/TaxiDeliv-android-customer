@@ -11,6 +11,7 @@ import com.superapp_customer.model.api.setApiState
 import com.superapp_customer.model.dataClass.CouponResponse
 import com.superapp_customer.model.dataClass.ScheduleList
 import com.superapp_customer.model.dataClass.ShowMessage
+import com.superapp_customer.model.dataClass.Ticket
 import com.superapp_customer.model.dataClass.UploadPackageResponse
 import com.superapp_customer.model.dataClass.addedAddresses.AddedAddressData
 import com.superapp_customer.model.dataClass.base.BaseResponse
@@ -25,7 +26,6 @@ import com.superapp_customer.model.dataClass.userData.UserDataDC
 import com.superapp_customer.repo.RideRepo
 import com.superapp_customer.util.SharedPreferencesManager
 import com.superapp_customer.util.convertDouble
-import com.superapp_customer.model.dataClass.Ticket
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -55,6 +55,8 @@ class RideVM @Inject constructor(
     var schedule = false
     var isRental = false
     var selectedPickDateTimeForSchedule = ""
+    var rentalStartDateTime = ""
+    var rentalEndDateTime = ""
 
     /**
      * Ride Alert UI State
@@ -82,7 +84,7 @@ class RideVM @Inject constructor(
      * */
     private val _findDriverData by lazy { SingleLiveEvent<ApiState<BaseResponse<FindDriverDC>>>() }
     val findDriverData: LiveData<ApiState<BaseResponse<FindDriverDC>>> = _findDriverData
-    fun findDriver(isSchedule: Boolean = false) = viewModelScope.launch {
+    fun findDriver(isRental: Boolean = false) = viewModelScope.launch {
         rideRepo.findDriver(
             latLng = LatLng(
                 createRideData.pickUpLocation?.latitude.convertDouble(),
@@ -91,7 +93,7 @@ class RideVM @Inject constructor(
             opLatLng = LatLng(
                 createRideData.dropLocation?.latitude.convertDouble(),
                 createRideData.dropLocation?.longitude.convertDouble()
-            ), isSchedule
+            ), isRental
         ).setApiState(_findDriverData)
     }
 
@@ -100,7 +102,7 @@ class RideVM @Inject constructor(
      * */
     private val _findDriverDataInLoop by lazy { SingleLiveEvent<ApiState<BaseResponse<FindDriverDC>>>() }
     val findDriverDataInLoop: LiveData<ApiState<BaseResponse<FindDriverDC>>> = _findDriverDataInLoop
-    fun findDriverInLoop(isSchedule: Boolean = false) = viewModelScope.launch {
+    fun findDriverInLoop(isRental: Boolean = false) = viewModelScope.launch {
         rideRepo.findDriver(
             latLng = LatLng(
                 createRideData.pickUpLocation?.latitude.convertDouble(),
@@ -109,7 +111,7 @@ class RideVM @Inject constructor(
             opLatLng = LatLng(
                 createRideData.dropLocation?.latitude.convertDouble(),
                 createRideData.dropLocation?.longitude.convertDouble()
-            ), isSchedule
+            ), isRental
         ).setApiState(_findDriverDataInLoop)
     }
 
@@ -159,6 +161,10 @@ class RideVM @Inject constructor(
                     "request_ride_type",
                     SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID)
                 )
+                if (isRental) {
+                    put("is_for_rental", 1)
+                    put("drop_date", rentalEndDateTime)
+                }
 
                 if (
                     SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == 1
@@ -228,6 +234,11 @@ class RideVM @Inject constructor(
                     "request_ride_type",
                     SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID)
                 )
+                if (isRental) {
+                    put("is_for_rental", 1)
+                    put("start_date", rentalStartDateTime)
+                    put("drop_date", rentalEndDateTime)
+                }
                 if (
                     SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID) == 1
                 ) {
@@ -541,7 +552,6 @@ class RideVM @Inject constructor(
     fun getTicketList() = viewModelScope.launch {
         rideRepo.getTicketsList().setApiState(_getTicketList)
     }
-
 
 
     /**

@@ -17,6 +17,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
+import com.superapp_customer.VenusApp.Companion.primaryColor
 import com.superapp_customer.customClasses.LocationResultHandler
 import com.superapp_customer.customClasses.SingleFusedLocation
 import com.superapp_customer.databinding.ActivitySplashBinding
@@ -50,6 +51,7 @@ class Splash : BaseActivity<ActivitySplashBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = getViewDataBinding()
+        // Apply colors to the window
         setObservers()
 
         // Setup the permission launcher

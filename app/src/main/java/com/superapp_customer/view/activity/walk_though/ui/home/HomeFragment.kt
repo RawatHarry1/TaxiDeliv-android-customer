@@ -165,6 +165,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
     private val handler = Handler(Looper.getMainLooper())
     private val promoHandler = Handler(Looper.getMainLooper())
 
+    private var rentalSchedule = false
+    private var rentalPickupDate = ""
+    private var rentalPickupTime = ""
+    private var rentalDropDate = ""
+    private var rentalDropTime = ""
+
     private var showOfferAnimationOnce = true
     private val stateHandle: SavedStateHandle by lazy {
         findNavController().currentBackStackEntry?.savedStateHandle
@@ -190,7 +196,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 promoHandler.postDelayed(this, 3000) // 3 seconds
             } else
                 promoHandler.removeCallbacks(this)
-
         }
     }
 
@@ -327,8 +332,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         lifecycleScope.launch {
             getLocationDataFromLatLng(VenusApp.latLng, true)
         }
-
-
     }
 
 
@@ -400,7 +403,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     R.drawable.ic_delivery_truck
                 )
             )
-            binding.tvRideRental.text = "Truck"
+//            binding.tvRideRental.text = ""
 
 
 //            rideTypeArrayList.add(
@@ -757,7 +760,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             while (true) {
                 withContext(Dispatchers.IO) {
                     Log.i("CarType", "Api hit")
-                    rideVM.findDriverInLoop(rideVM.schedule)
+                    rideVM.findDriverInLoop(rideVM.isRental)
                 }
                 delay(10000) // 15 seconds
             }
@@ -913,7 +916,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //            rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
 //        }
 //
-//
+
         binding.rlRideSchedule.setOnSingleClickListener {
 //            binding.tvNow.text = requireContext().getString(R.string.schedule)
             rideVM.createRideData = CreateRideData()
@@ -923,6 +926,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 
         binding.rlRideRental.setOnSingleClickListener {
             rideVM.createRideData = CreateRideData()
+            rentalDropTime = ""
+            rentalPickupTime = ""
+            rentalPickupDate = ""
+            rentalDropDate = ""
             try {
                 findNavController().currentBackStackEntry?.savedStateHandle?.remove<CreateRideData.LocationData>(
                     "pickUpLocation"
@@ -954,6 +961,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             startRideDialog(requireContext(), RideVM.RideAlertUiState.FindDriverDialog)
             startRideAlertState?.state = BottomSheetBehavior.STATE_EXPANDED
         }
+
         binding.tvSOS.setOnSingleClickListener {
             rideVM.sosApi(rideVM.createRideData.tripId ?: "")
         }
@@ -1279,9 +1287,58 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //        }
         rideVM.createRideData.pickUpLocation?.address?.let { binding.etPickup.setText(it) }
         rideVM.createRideData.dropLocation?.address?.let { binding.etDropOff.setText(it) }
-        setCurrentDate(binding.etPickupDate)
-        setCurrentTime(binding.etPickupTime)
-        
+
+        if (rentalPickupDate == "")
+            setCurrentDate(binding.etPickupDate)
+        else
+            binding.etPickupDate.setText(rentalPickupDate)
+
+        if (rentalPickupTime == "")
+            setCurrentTime(binding.etPickupTime)
+        else
+            binding.etPickupTime.setText(rentalPickupTime)
+
+        binding.etDropDate.setText(rentalDropDate)
+        binding.etDropTime.setText(rentalDropTime)
+
+        binding.cbNow.isChecked = !rentalSchedule
+        binding.cbSchedule.isChecked = rentalSchedule
+        binding.switchCompat.isChecked = true
+        binding.tvPickUpDateTimeLabel.isVisible = false
+        binding.llPickupDateAndTime.isVisible = false
+
+        if (rentalSchedule) {
+            binding.cbNow.isChecked = false
+            binding.tvPickUpDateTimeLabel.isVisible = true
+            binding.llPickupDateAndTime.isVisible = true
+        }
+        binding.switchCompat.setOnClickListener {
+            binding.switchCompat.isChecked = true
+        }
+        binding.cbNow.setOnClickListener {
+            if (!binding.cbNow.isChecked) {
+                binding.cbNow.isChecked = true // Prevent deselection
+            } else {
+                rentalSchedule = false
+                binding.cbSchedule.isChecked = false
+                binding.tvPickUpDateTimeLabel.isVisible = false
+                binding.llPickupDateAndTime.isVisible = false
+            }
+        }
+
+        binding.cbSchedule.setOnClickListener {
+            if (!binding.cbSchedule.isChecked) {
+                binding.cbSchedule.isChecked = true // Prevent deselection
+            } else {
+                binding.etDropDate.setText("")
+                binding.etDropTime.setText("")
+                rentalSchedule = true
+                binding.cbNow.isChecked = false
+                binding.tvPickUpDateTimeLabel.isVisible = true
+                binding.llPickupDateAndTime.isVisible = true
+            }
+        }
+
         binding.etPickup.setOnSingleClickListener {
             rentalDialog?.dismiss()
             rideVM.isRental = true
@@ -1294,6 +1351,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
         }
         binding.etPickupTime.setOnSingleClickListener {
             showTimePickerDialog(binding.etPickupTime)
+
         }
 
         binding.etDropDate.setOnSingleClickListener {
@@ -1308,6 +1366,36 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             rideVM.isRental = true
             val bundle = bundleOf("selectLocationType" to "dropOff")
             fragment.findNavController().navigate(R.id.navigation_select_location, bundle)
+        }
+        binding.tvSubmitBtn.setOnSingleClickListener {
+            if (binding.etPickup.text.toString().trim().isEmpty())
+                showSnackBar("Please Enter Pick-up location", binding.clRoot)
+            else if (binding.etDropOff.text.toString().trim().isEmpty())
+                showSnackBar("Please Enter Drop-off location", binding.clRoot)
+            else if (binding.cbSchedule.isChecked && binding.etPickupDate.text.toString().trim()
+                    .isEmpty()
+            )
+                showSnackBar("Please Enter Start date", binding.clRoot)
+            else if (binding.cbSchedule.isChecked && binding.etPickupTime.text.toString().trim()
+                    .isEmpty()
+            )
+                showSnackBar("Please Enter Start Time", binding.clRoot)
+            else if (binding.etDropDate.text.toString().trim().isEmpty())
+                showSnackBar("Please Enter End Date", binding.clRoot)
+            else if (binding.etDropTime.text.toString().trim().isEmpty())
+                showSnackBar("Please Enter End Time", binding.clRoot)
+            else {
+                rentalPickupTime = binding.etPickupTime.text.toString()
+                rentalDropTime = binding.etDropTime.text.toString()
+                rentalDialog?.dismiss()
+                rideVM.schedule = binding.cbSchedule.isChecked
+                if (binding.cbSchedule.isChecked)
+                    rideVM.rentalStartDateTime =
+                        convertToUTC(binding.etPickupDate.text.toString() + " " + binding.etPickupTime.text.toString())
+                rideVM.rentalEndDateTime =
+                    convertToUTC(binding.etDropDate.text.toString() + " " + binding.etDropTime.text.toString())
+                rideVM.findDriver(true)
+            }
         }
         rentalDialog?.setCancelable(true)
         rentalDialog?.show()
@@ -1533,9 +1621,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 if (isForPickup) {
                     pickupInMilli = calendar.timeInMillis
                     et.setText(formattedDate)
+                    rentalPickupDate = formattedDate
                     etDrop.setText("")
                 } else {
                     etDrop.setText(formattedDate)
+                    rentalDropDate = formattedDate
                 }
             }, year, month, day
         )
@@ -1950,7 +2040,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
 //                        rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
 //                    else
 //                        rideVM.updateUiState(RideVM.RideAlertUiState.ShowDeliveryVehicleTypeDialog)
-
                     rideVM.updateUiState(RideVM.RideAlertUiState.ShowLocationDialog)
                 }
 
@@ -2035,16 +2124,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 }
 
                 RideVM.RideAlertUiState.ShowLocationDialog -> {
-                    rideVM.hideHomeNav(true)
                     Log.i("SavedStateData", "in ShowLocationDialog")
-                    if (rideVM.createRideData.pickUpLocation?.address.isNullOrEmpty())
-                        lifecycleScope.launch {
-                            getLocationDataFromLatLng(VenusApp.latLng)
-                        }
-                    startWhereDialog()
+                    if (rideVM.isRental) {
+                        rideVM.hideHomeNav(false)
+                        startRentalDialog(this@HomeFragment)
+                        rideVM.updateUiState(RideVM.RideAlertUiState.HomeScreen)
+                    } else {
+                        rideVM.hideHomeNav(true)
+                        if (rideVM.createRideData.pickUpLocation?.address.isNullOrEmpty())
+                            lifecycleScope.launch {
+                                getLocationDataFromLatLng(VenusApp.latLng)
+                            }
+                        startWhereDialog()
+                        locationAlertState?.state = BottomSheetBehavior.STATE_EXPANDED
+                    }
                     binding.clWhereMain.visibility = View.VISIBLE
                     binding.clMapMain.visibility = View.GONE
-                    locationAlertState?.state = BottomSheetBehavior.STATE_EXPANDED
                 }
 
                 RideVM.RideAlertUiState.ShowVehicleTypesDialog -> {

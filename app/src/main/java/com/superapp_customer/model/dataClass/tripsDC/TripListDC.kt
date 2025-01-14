@@ -73,5 +73,7 @@ data class TripListDC(
     @SerializedName("vehicle_type")
     val vehicleType: String? = null,
     @SerializedName("wait_time")
-    val waitTime: String? = null
+    val waitTime: String? = null,
+    @SerializedName("is_for_rental")
+    val isForRental: String? = null
 )

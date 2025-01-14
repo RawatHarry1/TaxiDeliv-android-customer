@@ -17,5 +17,8 @@ data class ScheduleList(
     val ride_type: Int,
     var status: Int,
     var service_type: Int = 1,
-    val vehicle_name: String
+    val vehicle_name: String,
+    val is_for_rental: String?,
+    val start_time: String?,
+    val end_time: String?
 )

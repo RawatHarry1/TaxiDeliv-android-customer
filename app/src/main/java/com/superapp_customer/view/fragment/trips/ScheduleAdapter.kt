@@ -44,15 +44,21 @@ class ScheduleAdapter(
                 binding.tvCancelSchedule.isClickable = false
                 binding.tvCancelSchedule.alpha = .5f
             }
+            else {
+                binding.tvCancelSchedule.isEnabled = true
+                binding.tvCancelSchedule.isClickable = true
+                binding.tvCancelSchedule.alpha = 1f
+            }
             binding.tvCancelSchedule.isVisible = true
-            binding.tvRideStatus.text =
 
+            val rental = if ((data.is_for_rental ?: "") == "1")"Rental " else ""
+            binding.tvRideStatus.text =
                 if (data.service_type == 1)
                     when (data.status) {
-                        0 -> "Ride In Queue"
-                        1 -> "Ride In Progress"
-                        2 -> "Ride Completed"
-                        3 -> "Ride Cancelled"
+                        0 -> "$rental Ride In Queue"
+                        1 -> "$rental Ride In Progress"
+                        2 -> "$rental Ride Completed"
+                        3 -> "$rental Ride Cancelled"
                         else -> ""
                     }
                 else

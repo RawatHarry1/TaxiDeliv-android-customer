@@ -100,6 +100,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
     implementation project(':photoPicker')
+    implementation 'com.google.firebase:firebase-config-ktx:22.0.1'
 /*
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
 */
@@ -169,6 +170,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation ("com.google.firebase:firebase-config:21.4.2")
 
     implementation "androidx.browser:browser:1.5.0"
 

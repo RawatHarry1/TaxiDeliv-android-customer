@@ -1,6 +1,7 @@
 package com.superapp_customer.view.fragment.trips
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
@@ -311,11 +312,14 @@ class RideDetailsFragment : BaseFragment<FragmentRideDetailsBinding>() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setUpUI(rideSummaryDC: RideSummaryDC?) {
         try {
+            val rental = if ((rideSummaryDC?.isForRental ?: "") == "1")"Rental " else ""
             supportNumber = rideSummaryDC?.supportNumber ?: ""
             viewModel.createRideData.sessionId = rideSummaryDC?.engagementId.orEmpty()
-            binding.tvTitle.text = rideSummaryDC?.autosStatusText.orEmpty()
+            binding.tvTitle.text = rental+
+                    rideSummaryDC?.autosStatusText.orEmpty()
             binding.tvStartTime.text =
                 rideSummaryDC?.pickupTime.getTime(output = "HH:mm", applyTimeZone = true)
             binding.tvEndTime.text =

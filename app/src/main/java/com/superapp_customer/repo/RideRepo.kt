@@ -59,7 +59,7 @@ class RideRepo @Inject constructor(
     suspend fun findDriver(
         latLng: LatLng,
         opLatLng: LatLng,
-        isSchedule: Boolean
+        isRental: Boolean
     ) = flow {
         emit(apiInterface.findDriver(JSONObject().apply {
             put("latitude", latLng.latitude)
@@ -72,6 +72,8 @@ class RideRepo @Inject constructor(
                 "request_ride_type",
                 SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID)
             )
+            if (isRental)
+                put("is_for_rental", 1)
 //            }
         }.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
