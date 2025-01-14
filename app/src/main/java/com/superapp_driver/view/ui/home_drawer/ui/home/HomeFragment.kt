@@ -77,6 +77,7 @@ import com.superapp_driver.util.AppUtils
 import com.superapp_driver.util.DriverDocumentStatusForApp
 import com.superapp_driver.util.SharedPreferencesManager
 import com.superapp_driver.util.TripStatus
+import com.superapp_driver.util.convertUTCToLocal
 import com.superapp_driver.util.documentNotVerifiedBottomSheet
 import com.superapp_driver.util.formatAmount
 import com.superapp_driver.view.base.BaseFragment
@@ -583,6 +584,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
         dialog?.setContentView(binding.root)
         dialog?.setCancelable(false)
         dialog?.setCanceledOnTouchOutside(false)
+
+        if (data.isForRental == "1") {
+            binding.tvRentalType.isVisible = true
+            binding.tvEndDateValue.isVisible = true
+            binding.tvEndDate.isVisible = true
+            binding.viewEndDate.isVisible = true
+            binding.tvEndDateValue.text = data.rentalDropDate?.convertUTCToLocal().orEmpty()
+        }
 
         binding.tvUser.text = data.customerName.orEmpty()
         binding.tvPrice.text =

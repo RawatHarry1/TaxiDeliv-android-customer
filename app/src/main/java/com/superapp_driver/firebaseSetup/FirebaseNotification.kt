@@ -181,7 +181,10 @@ class FirebaseNotification : FirebaseMessagingService() {
                         distanceUnit = jsonData.optString("distanceUnit"),
                         userPhoneNo = jsonData.optString("user_phone_no"),
                         serviceType = jsonData.optString("service_type"),
-                        deliveryPackages = deliveryPackages
+                        deliveryPackages = deliveryPackages,
+                        isForRental = jsonData.optString("is_for_rental"),
+                        rentalStartDate = jsonData.optString("rental_start_date"),
+                        rentalDropDate = jsonData.optString("rental_drop_date")
                     ).apply {
                         SharedPreferencesManager.putModel(
                             SharedPreferencesManager.Keys.NEW_BOOKING, this

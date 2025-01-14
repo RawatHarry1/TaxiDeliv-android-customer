@@ -44,7 +44,9 @@ class BookingsAdapter(val onClickBookingLambda: String.() -> Unit) :
             binding.tvAmount.text = "${SharedPreferencesManager.getCurrencySymbol()} ${
                 dataClass.totalFare.orEmpty().formatAmount()
             }"
-            binding.tvRideStatus.text = dataClass.statusString ?: ""
+            val rental = if ((dataClass.isForRental ?: "") == "1")"Rental " else ""
+            binding.tvRideStatus.text =
+                (rental + dataClass.statusString) ?: ""
             Glide.with(binding.ivMap).load(dataClass.trackingImage).into(binding.ivMap)
             binding.root.setOnClickListener {
                 onClickBookingLambda(dataClass.tripId.orEmpty())

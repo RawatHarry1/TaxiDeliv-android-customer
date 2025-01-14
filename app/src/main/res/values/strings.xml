@@ -253,6 +253,7 @@
     <string name="take_picture">Take Picture</string>
     <string name="choose_from_gallery">Choose from gallery</string>
     <string name="accept_trip">Accept Trip</string>
+    <string name="accept_delivery">Accept Delivery</string>
     <string name="july_24_2020_9_58_am">July 24, 2020, 9:58 AM</string>
     <string name="pick_up">Pick-Up</string>
     <string name="_199_brown_estate_apt_866">199 Brown Estate Apt. 866</string>
@@ -508,4 +509,6 @@
     <string name="enter_description">Enter Description</string>
     <string name="raised_tickets">Raised Tickets</string>
     <string name="no_notifications_found">No Notifications Found</string>
+    <string name="rental">Rental</string>
+    <string name="rental_end_date_and_time">Rental End Date And Time</string>
 </resources>

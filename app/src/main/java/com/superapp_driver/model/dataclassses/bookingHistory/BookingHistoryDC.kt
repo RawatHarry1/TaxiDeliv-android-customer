@@ -45,5 +45,7 @@ data class BookingHistoryDC(
     @SerializedName("total_fare")
     val totalFare: String? = null,
     @SerializedName("created_at")
-    val createdAt: String? = null
+    val createdAt: String? = null,
+    @SerializedName("is_for_rental")
+    val isForRental: String? = null
 )

@@ -39,6 +39,7 @@ import com.superapp_driver.util.GenericAdapter
 import com.superapp_driver.util.SharedPreferencesManager
 import com.superapp_driver.util.TripStatus
 import com.superapp_driver.util.cancelTrip
+import com.superapp_driver.util.convertUTCToLocal
 import com.superapp_driver.util.formatAmount
 import com.superapp_driver.util.getTime
 import com.superapp_driver.util.gone
@@ -181,7 +182,25 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             binding.rvAddedPackages.isVisible = false
             binding.rlPackage.isVisible = false
             binding.viewLine.isVisible = false
+        } else {
+              if (rideData?.serviceType == "1")
+            binding.tvTitle.text =
+                if (rideData?.isForRental == "1") getString(R.string.accept_trip) + " (Rental)" else getString(
+                    R.string.accept_trip
+                )
+          else
+              binding.tvTitle.text =
+                if (rideData?.isForRental == "1") getString(R.string.accept_delivery) + " (Rental)" else getString(
+                    R.string.accept_delivery
+                )
+
+            if (rideData?.isForRental == "1") {
+                binding.tvEndDate.isVisible = true
+                binding.tvEndDateValue.isVisible = true
+                binding.tvEndDateValue.text = rideData?.rentalDropDate?.convertUTCToLocal()
+            }
         }
+
         binding.tvCustomerNote.text = if ((rideData?.serviceType
                 ?: "1").ifEmpty { "1" }.toInt() == 1
         ) "Customer Note: " else "Customer Goods: "

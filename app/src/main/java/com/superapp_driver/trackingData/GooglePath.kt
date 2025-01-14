@@ -79,6 +79,7 @@ fun Context.showPath(
             val result = URL(url).readText()
             val pathResponse: PathResponse = Gson().fromJson(result, PathResponse::class.java)
             val steps = pathResponse.routes?.getOrNull(0)?.legs?.getOrNull(0)?.steps
+
             HomeFragment.stepsInstructionArrayList = (steps?.map {
                 StepInstruction(
                     startLocation = it?.startLocation?.lat?.let { it1 ->
@@ -101,6 +102,7 @@ fun Context.showPath(
                     maneuver = it?.maneuver
                 )
             } ?: emptyList()) as ArrayList<StepInstruction>
+
             CoroutineScope(Dispatchers.Main).launch {
                 mMap?.clear()
                 val parser = Parser()

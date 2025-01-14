@@ -27,6 +27,7 @@ import com.superapp_driver.view.adapter.VehicleModelAdapter
 import com.superapp_driver.view.ui.SignIn
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
@@ -113,7 +114,7 @@ fun Context.vehicleModelAdapter(
 fun showSessionExpire() {
     try {
         SaloneDriver.appContext.let { context ->
-            context.stopService(Intent(context,SoundService::class.java))
+            context.stopService(Intent(context, SoundService::class.java))
             Toast.makeText(
                 context,
                 context.getString(R.string.session_expire_due_to_security_purpose_please_sign_in_again),
@@ -293,4 +294,26 @@ fun cancelTrip(callback: () -> Unit) = try {
     }
 } catch (e: Exception) {
     e.printStackTrace()
+}
+
+
+fun String?.convertUTCToLocal(): String? {
+    try {
+        // Define the input format as UTC
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
+        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+        // Parse the input UTC string to a Date object
+        val date: Date? = this?.let { inputFormat.parse(it) }
+
+        // Define the output format for local time
+        val outputFormat = SimpleDateFormat("E, MMM dd hh:mm a", Locale.getDefault())
+        outputFormat.timeZone = TimeZone.getDefault()
+
+        // Convert the Date object to a local formatted string
+        return date?.let { outputFormat.format(it) }
+    } catch (e: Exception) {
+        return null
+    }
+
 }

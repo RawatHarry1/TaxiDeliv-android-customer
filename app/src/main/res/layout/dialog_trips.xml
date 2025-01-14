@@ -45,8 +45,8 @@
                         android:id="@+id/ivUser"
                         android:layout_width="@dimen/_50sdp"
                         android:layout_height="@dimen/_50sdp"
-                        android:theme="@style/CircleImage"
                         android:layout_marginStart="15dp"
+                        android:theme="@style/CircleImage"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -59,14 +59,14 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="@dimen/_5sdp"
                         android:fontFamily="@font/poppins_semibold"
-                        android:text="@string/esther"
                         android:maxLines="1"
                         android:singleLine="true"
+                        android:text="@string/esther"
                         android:textColor="@color/text_color"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@id/ivUser"
-                        app:layout_constraintStart_toEndOf="@id/ivUser"
                         app:layout_constraintEnd_toStartOf="@+id/tvPrice"
+                        app:layout_constraintStart_toEndOf="@id/ivUser"
                         app:layout_constraintTop_toTopOf="@id/ivUser" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -95,6 +95,19 @@
                         app:layout_constraintEnd_toEndOf="@id/tvPrice"
                         app:layout_constraintTop_toBottomOf="@id/tvPrice" />
 
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvRentalType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="@string/rental"
+                        android:visibility="gone"
+                        android:textColor="@color/theme"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@id/tvDistance"
+                        app:layout_constraintTop_toBottomOf="@id/tvDistance" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -103,8 +116,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="25dp"
                     android:fontFamily="@font/poppins_regular"
-                    android:text="@string/txt_pick_up"
                     android:includeFontPadding="false"
+                    android:text="@string/txt_pick_up"
                     android:textColor="#5b5b5b"
                     android:textSize="10sp"
                     android:textStyle="bold"
@@ -116,10 +129,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:paddingHorizontal="@dimen/_20sdp"
                     android:fontFamily="@font/poppins_regular"
-                    android:text="@string/_7958_swift_village"
                     android:includeFontPadding="false"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:text="@string/_7958_swift_village"
                     android:textColor="#242e42"
                     android:textSize="15sp"
                     android:textStyle="normal"
@@ -152,10 +165,10 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvDestinationAddress"
                     android:layout_width="match_parent"
-                    android:paddingHorizontal="@dimen/_20sdp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/poppins_regular"
+                    android:paddingHorizontal="@dimen/_20sdp"
                     android:text="@string/_7958_swift_village"
                     android:textColor="#242e42"
                     android:textSize="15sp"
@@ -170,6 +183,44 @@
                     android:layout_marginTop="5dp"
                     android:background="#efeff4"
                     app:layout_constraintTop_toBottomOf="@id/tvDestinationAddress" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvEndDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="25dp"
+                    android:layout_marginTop="15dp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="@string/rental_end_date_and_time"
+                    android:textColor="#5b5b5b"
+                    android:textSize="10sp"
+                    android:visibility="gone"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/viewDestination" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvEndDateValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:textColor="#242e42"
+                    android:textSize="15sp"
+                    android:textStyle="normal"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="@id/tvEndDate"
+                    app:layout_constraintTop_toBottomOf="@id/tvEndDate" />
+
+                <View
+                    android:id="@+id/viewEndDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="5dp"
+                    android:background="#efeff4"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/tvEndDateValue" />
 
 
                 <androidx.constraintlayout.widget.Guideline
@@ -196,7 +247,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/guideCenter"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/viewDestination" />
+                    app:layout_constraintTop_toBottomOf="@id/viewEndDate" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvAcceptBtn"
@@ -215,7 +266,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/guideCenter"
-                    app:layout_constraintTop_toBottomOf="@id/viewDestination" />
+                    app:layout_constraintTop_toBottomOf="@id/viewEndDate" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

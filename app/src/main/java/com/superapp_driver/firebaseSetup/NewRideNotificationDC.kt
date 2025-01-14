@@ -58,6 +58,12 @@ data class NewRideNotificationDC(
     var recipientName: String? = null,
     @SerializedName("recipient_phone_no")
     var recipientPhoneNo: String? = null,
+    @SerializedName("is_for_rental")
+    var isForRental: String? = null,
+    @SerializedName("rental_drop_date")
+    var rentalDropDate: String? = null,
+    @SerializedName("rental_start_date")
+    var rentalStartDate: String? = null,
     @SerializedName("delivery_packages")
     val deliveryPackages: List<PackageDetails>? = null
 ) : Parcelable

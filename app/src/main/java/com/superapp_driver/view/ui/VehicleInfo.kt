@@ -46,7 +46,7 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
         appTypeAdapter = AppTypeAdapter()
         SharedPreferencesManager.getModel<ClientConfigDC>(SharedPreferencesManager.Keys.CLIENT_CONFIG)
             ?.let {
-                if(it.enabledService == 3) {
+                if (it.enabledService == 3) {
                     appTypeArrayList.clear()
                     appTypeArrayList.addAll(it.operatorAvailablity.orEmpty())
                     if (appTypeArrayList.isNotEmpty()) {
@@ -56,9 +56,7 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
                         )
                     }
                     binding.rvDriverType.adapter = appTypeAdapter
-                }
-                else
-                {
+                } else {
                     binding.rvDriverType.isVisible = false
                     binding.tvSelectDriverType.isVisible = false
                     SharedPreferencesManager.put(
@@ -137,7 +135,7 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
                     SharedPreferencesManager.Keys.USER_DATA
                 )?.login?.city.isNullOrEmpty()
             ) {
-                showSnackBar("Your Are Not In Operational Area")
+                showSnackBar("You Are Not In Operational Area")
             } else {
                 val cityList =
                     SharedPreferencesManager.getModel<ClientConfigDC>(SharedPreferencesManager.Keys.CLIENT_CONFIG)?.cityList
@@ -164,15 +162,18 @@ class VehicleInfo : BaseActivity<ActivityVehicleInfoBinding>() {
         }
 
         binding.etVehicleType.setOnClickListener {
-            arrayAdapter(autoCompleteTextView = binding.etVehicleType,
-                list = viewModel.vehicleType.map { it.vehicleTypeName.orEmpty() }) {
-                val data = viewModel.vehicleType[it]
-                viewModel.vehicleType.map {
-                    it.isSelected = it == data
+            if (binding.etVehicleCountry.text.toString().trim().isEmpty())
+                showSnackBar("Please select vehicle country first")
+            else
+                arrayAdapter(autoCompleteTextView = binding.etVehicleType,
+                    list = viewModel.vehicleType.map { it.vehicleTypeName.orEmpty() }) {
+                    val data = viewModel.vehicleType[it]
+                    viewModel.vehicleType.map {
+                        it.isSelected = it == data
+                    }
+                    binding.etVehicleModel.setText("")
+                    viewModel.vehicleList.map { it.isSelected = false }
                 }
-                binding.etVehicleModel.setText("")
-                viewModel.vehicleList.map { it.isSelected = false }
-            }
         }
 
         binding.etVehicleModel.setOnClickListener {
