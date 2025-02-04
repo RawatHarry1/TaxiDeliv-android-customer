@@ -2,9 +2,47 @@
   "project_info": {
     "project_number": "152682101202",
     "project_id": "superapp-5a3ad",
-    "storage_bucket": "superapp-5a3ad.appspot.com"
+    "storage_bucket": "superapp-5a3ad.firebasestorage.app"
   },
   "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152682101202:android:f84228a114c7ff25c2b00b",
+        "android_client_info": {
+          "package_name": "com.marsapp_customer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDo8GYhr8dd90hpKmTMPjC5bEezXJYMYSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152682101202:android:161e879a857396ddc2b00b",
+        "android_client_info": {
+          "package_name": "com.marsapp_driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDo8GYhr8dd90hpKmTMPjC5bEezXJYMYSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:152682101202:android:02b5d3ff5be9ddf3c2b00b",
@@ -29,6 +67,44 @@
         "mobilesdk_app_id": "1:152682101202:android:9c1f05efb933d39ec2b00b",
         "android_client_info": {
           "package_name": "com.superapp_driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDo8GYhr8dd90hpKmTMPjC5bEezXJYMYSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152682101202:android:82aa80bcf6fbadddc2b00b",
+        "android_client_info": {
+          "package_name": "com.venusapp_customer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDo8GYhr8dd90hpKmTMPjC5bEezXJYMYSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152682101202:android:b906004a947da84dc2b00b",
+        "android_client_info": {
+          "package_name": "com.venusapp_driver"
         }
       },
       "oauth_client": [],

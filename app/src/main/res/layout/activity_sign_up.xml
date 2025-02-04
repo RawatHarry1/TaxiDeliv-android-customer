@@ -101,6 +101,44 @@
                 app:layout_constraintTop_toBottomOf="@+id/etEmail" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clPassCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/clPhone">
+
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etPasscode"
+                android:layout_width="match_parent"
+                android:layout_height="39dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@null"
+                android:fontFamily="@font/poppins_regular"
+                android:hint="@string/enter_passcode_optional"
+                android:inputType="text"
+                android:maxLength="20"
+                android:paddingVertical="@dimen/_4sdp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="8dp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/walk_title_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etPasscode" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <!--        <androidx.appcompat.widget.AppCompatEditText-->
         <!--            android:id="@+id/etPassword"-->
@@ -151,7 +189,7 @@
             android:text="@string/txt_sign_up"
             android:textColor="@color/white"
             android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@id/clPhone" />
+            app:layout_constraintTop_toBottomOf="@id/clPassCode" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 

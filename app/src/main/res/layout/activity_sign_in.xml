@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.activity.sign_in.SignIn">
@@ -102,6 +102,43 @@
                 app:layout_constraintTop_toBottomOf="@+id/etEmail" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clPassCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/clPhone">
+
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etPasscode"
+                android:layout_width="match_parent"
+                android:layout_height="39dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@null"
+                android:fontFamily="@font/poppins_regular"
+                android:hint="@string/enter_passcode_optional"
+                android:inputType="text"
+                android:maxLength="20"
+                android:paddingVertical="@dimen/_4sdp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="8dp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/walk_title_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etPasscode" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!--        <androidx.appcompat.widget.AppCompatEditText-->
         <!--            android:id="@+id/etPassword"-->
@@ -162,7 +199,7 @@
             android:textSize="14sp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/clPhone" />
+            app:layout_constraintTop_toBottomOf="@id/clPassCode" />
 
 
         <androidx.appcompat.widget.AppCompatTextView

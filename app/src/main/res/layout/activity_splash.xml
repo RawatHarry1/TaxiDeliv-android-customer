@@ -10,30 +10,15 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivMainVenus"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/_250sdp"
             android:layout_marginTop="@dimen/_20sdp"
-            app:layout_constraintBottom_toBottomOf="@id/guide"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_app_logo_1"
-            />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent=".40" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/guide"
-            android:src="@drawable/ic_splash_bg_2"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/app_logo_image"
+            />
+
 
 
 
