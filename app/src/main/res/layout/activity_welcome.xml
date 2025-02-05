@@ -15,25 +15,28 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivCheck"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_150sdp"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_check" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/app_logo_image"
+            />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvWelcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/txt_welcome"
-            android:textColor="@color/black"
-            android:textSize="30dp"
-            app:layout_constraintBottom_toTopOf="@id/ivCheck"
+            app:layout_constraintTop_toBottomOf="@id/ivCheck"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:textSize="22sp"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:text="@string/txt_welcome"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

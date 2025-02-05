@@ -8,13 +8,17 @@
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
@@ -25,9 +29,11 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
-<!--    <uses-permission tools:node="remove" android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
+    <!--    <uses-permission tools:node="remove" android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
 
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" tools:node="remove"/>
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"
+        tools:node="remove" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <queries>
@@ -37,7 +43,7 @@
     </queries>
 
     <application
-        android:name="com.superapp_driver.SaloneDriver"
+        android:name="com.mb_driver.SaloneDriver"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -51,90 +57,90 @@
         android:theme="@style/Theme.SaloneDriver"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-<!--        <activity-->
-<!--            android:name="com.salonedriver.view.ui.CancelTripActivity"-->
-<!--            android:exported="false" />-->
+        <!--        <activity-->
+        <!--            android:name="com.salonedriver.view.ui.CancelTripActivity"-->
+        <!--            android:exported="false" />-->
         <activity
-            android:name="com.superapp_driver.view.ui.ChangePasswordActivity"
+            android:name="com.mb_driver.view.ui.ChangePasswordActivity"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.PaymentActivity"
-            android:screenOrientation="portrait"
+            android:name="com.mb_driver.view.ui.PaymentActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mb_driver.view.ui.UploadMuniciple"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.UploadMuniciple"
+            android:name="com.mb_driver.view.ui.UploadDriverLicense"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.UploadDriverLicense"
+            android:name="com.mb_driver.view.ui.Verify"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.Verify"
+            android:name="com.mb_driver.view.ui.home.BookingDetailsActivity"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.home.BookingDetailsActivity"
+            android:name="com.mb_driver.view.ui.Welcome"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.Welcome"
-            android:exported="false" />
-        <activity
-            android:name="com.superapp_driver.view.ui.home_drawer.HomeActivity"
+            android:name="com.mb_driver.view.ui.home_drawer.HomeActivity"
             android:exported="false"
             android:label="@string/title_activity_home"
             android:theme="@style/Theme.SaloneDriver.NoActionBar" />
         <activity
-            android:name="com.superapp_driver.view.ui.PayoutInformation"
+            android:name="com.mb_driver.view.ui.PayoutInformation"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.VehicleInfo"
+            android:name="com.mb_driver.view.ui.VehicleInfo"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.UploadDocuments"
+            android:name="com.mb_driver.view.ui.UploadDocuments"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.CreateProfile"
+            android:name="com.mb_driver.view.ui.CreateProfile"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.home.AcceptTripActivity"
+            android:name="com.mb_driver.view.ui.home.AcceptTripActivity"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.home.cancelTrip.CancelTrip"
+            android:name="com.mb_driver.view.ui.home.cancelTrip.CancelTrip"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.SignUp"
+            android:name="com.mb_driver.view.ui.SignUp"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.chat.ChatActivity"
+            android:name="com.mb_driver.view.ui.chat.ChatActivity"
             android:exported="false"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop" />
         <activity
-            android:name="com.superapp_driver.view.ui.ForgotPassword"
+            android:name="com.mb_driver.view.ui.ForgotPassword"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.SignIn"
+            android:name="com.mb_driver.view.ui.SignIn"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.SignUpInActivity"
+            android:name="com.mb_driver.view.ui.SignUpInActivity"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.WalkThrough"
+            android:name="com.mb_driver.view.ui.WalkThrough"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.MainActivity"
+            android:name="com.mb_driver.MainActivity"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.home.RateCustomerActivity"
+            android:name="com.mb_driver.view.ui.home.RateCustomerActivity"
             android:exported="false" />
         <activity
             android:name=".view.ui.home.PackageListActivity"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.home.NeedHelpActivity"
+            android:name="com.mb_driver.view.ui.home.NeedHelpActivity"
             android:exported="false" />
         <activity
             android:name=".view.fragment.RaiseATicketActivity"
             android:exported="false" />
         <activity
-            android:name="com.superapp_driver.view.ui.Splash"
+            android:name="com.mb_driver.view.ui.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -159,7 +165,10 @@
             </intent-filter>
         </service>
 
-        <service android:name=".firebaseSetup.SoundService"/>
+        <service
+            android:name=".firebaseSetup.SoundService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
 
         <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
      See README(https://goo.gl/l4GJaQ) for more. -->
@@ -179,7 +188,7 @@
         <service
             android:name=".socketSetup.locationServices.LocationService"
             android:exported="false"
-            android:foregroundServiceType="location"/>
+            android:foregroundServiceType="location" />
 
     </application>
 </manifest>

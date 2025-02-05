@@ -11,35 +11,25 @@
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivWalkImage"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginTop="50dp"
-            android:src="@drawable/ic_phone_tick"
-            app:layout_constraintBottom_toTopOf="@id/tvWalkTitle"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvWalkTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:gravity="center"
-            android:text="@string/txt_app_name"
-            android:textColor="@color/walk_title_color"
-            android:textSize="24dp"
+            android:id="@+id/ivMainVenus"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_150sdp"
+            android:src="@drawable/app_logo_image"
             app:layout_constraintBottom_toTopOf="@id/tvWalkDesc" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvWalkDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/guide"
             android:layout_margin="30dp"
-            android:gravity="center"
+            android:fontFamily="@font/poppins_semibold"
             android:text="@string/txt_clear_air_ride"
-            android:textColor="@color/walk_desc_color"
-            android:textSize="16dp"
-            app:layout_constraintBottom_toTopOf="@id/guide" />
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guide"

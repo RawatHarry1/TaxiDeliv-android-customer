@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_5sdp"
             android:background="@drawable/bg_background"
-            android:backgroundTint="@color/_52A8A0"
+            android:backgroundTint="#080808"
             android:drawableTop="@drawable/iv_gallery"
             android:drawablePadding="@dimen/_10sdp"
             android:fontFamily="@font/bw_modelica_medium"
