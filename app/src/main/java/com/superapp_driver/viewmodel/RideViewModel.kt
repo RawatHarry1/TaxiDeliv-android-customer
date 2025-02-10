@@ -37,8 +37,8 @@ class RideViewModel @Inject constructor(
 
     private val _acceptRideData by lazy { SingleLiveEvent<ApiState<BaseResponse<AcceptRideDC>>>() }
     val acceptRideData: LiveData<ApiState<BaseResponse<AcceptRideDC>>> get() = _acceptRideData
-    fun acceptRide(customerId: String, tripId: String) = viewModelScope.launch {
-        rideRepo.acceptRide(customerId, tripId).setApiState(_acceptRideData)
+    fun acceptRide(customerId: String, tripId: String,isRor:Int) = viewModelScope.launch {
+        rideRepo.acceptRide(customerId, tripId,isRor).setApiState(_acceptRideData)
     }
 
 

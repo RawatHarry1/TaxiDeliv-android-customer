@@ -34,12 +34,13 @@ class RideRepo @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-    suspend fun acceptRide(customerId: String, tripId: String) = flow {
+    suspend fun acceptRide(customerId: String, tripId: String,isRor:Int) = flow {
         emit(apiInterface.acceptRide(requestBody = JSONObject().apply {
             put("longitude", SaloneDriver.latLng?.longitude)
             put("latitude", SaloneDriver.latLng?.latitude)
             put("customerId", customerId)
             put("tripId", tripId)
+            put("is_ror", isRor)
         }.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
 

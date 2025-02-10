@@ -183,16 +183,16 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
             binding.rlPackage.isVisible = false
             binding.viewLine.isVisible = false
         } else {
-              if (rideData?.serviceType == "1")
-            binding.tvTitle.text =
-                if (rideData?.isForRental == "1") getString(R.string.accept_trip) + " (Rental)" else getString(
-                    R.string.accept_trip
-                )
-          else
-              binding.tvTitle.text =
-                if (rideData?.isForRental == "1") getString(R.string.accept_delivery) + " (Rental)" else getString(
-                    R.string.accept_delivery
-                )
+            if (rideData?.serviceType == "1")
+                binding.tvTitle.text =
+                    if (rideData?.isForRental == "1") getString(R.string.accept_trip) + " (Rental)" else getString(
+                        R.string.accept_trip
+                    )
+            else
+                binding.tvTitle.text =
+                    if (rideData?.isForRental == "1") getString(R.string.accept_delivery) + " (Rental)" else getString(
+                        R.string.accept_delivery
+                    )
 
             if (rideData?.isForRental == "1") {
                 binding.tvEndDate.isVisible = true
@@ -274,7 +274,11 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
         binding.tvSignUpBtn.setOnClickListener {
             when (binding.tvSignUpBtn.text) {
                 getString(R.string.accept) -> {
-                    viewModel.acceptRide(rideData?.customerId.orEmpty(), rideData?.tripId.orEmpty())
+                    viewModel.acceptRide(
+                        rideData?.customerId.orEmpty(),
+                        rideData?.tripId.orEmpty(),
+                        (rideData?.isRor ?: "0").toInt()
+                    )
                 }
 
                 getString(R.string.go_to_pick_up) -> {
@@ -335,10 +339,15 @@ class AcceptTripActivity : BaseActivity<FragmentAcceptTripBinding>() {
     }, onSuccess = {
         hideProgressDialog()
         SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.NEW_BOOKING)
-        binding.tvSignUpBtn.text = getString(R.string.go_to_pick_up)
-        binding.ivBack.visibility = View.INVISIBLE
-        binding.tvCancel.visible()
-        binding.ivMsg.visible()
+        if ((rideData?.isRor ?: "0") == "0") {
+            binding.tvSignUpBtn.text = getString(R.string.go_to_pick_up)
+            binding.ivBack.visibility = View.INVISIBLE
+            binding.tvCancel.visible()
+            binding.ivMsg.visible()
+        } else {
+            showToastLong("Accepted successfully and added to queue")
+            finish()
+        }
     }, onError = {
         hideProgressDialog()
         showToastLong(this)

@@ -13,6 +13,7 @@ enum class TripStatus(val type: Int){
     CANCELLED_ACCEPTED_REQUEST(10),
     RIDE_CANCELLED_BY_CUSTOMER(13),
     ARRIVED(14),
+    NOT_RATED_BY_DRIVER(21)
 }
 
 

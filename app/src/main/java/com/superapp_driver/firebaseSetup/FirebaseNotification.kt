@@ -35,7 +35,8 @@ import kotlin.random.Random
 
 
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
-class FirebaseNotification : FirebaseMessagingService() {
+class
+FirebaseNotification : FirebaseMessagingService() {
 
     /**
      * Initialize Variables
@@ -184,7 +185,8 @@ class FirebaseNotification : FirebaseMessagingService() {
                         deliveryPackages = deliveryPackages,
                         isForRental = jsonData.optString("is_for_rental"),
                         rentalStartDate = jsonData.optString("rental_start_date"),
-                        rentalDropDate = jsonData.optString("rental_drop_date")
+                        rentalDropDate = jsonData.optString("rental_drop_date"),
+                        isRor = jsonData.optString("is_ror")
                     ).apply {
                         SharedPreferencesManager.putModel(
                             SharedPreferencesManager.Keys.NEW_BOOKING, this

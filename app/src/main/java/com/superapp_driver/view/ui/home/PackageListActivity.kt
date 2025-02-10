@@ -676,6 +676,7 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                         ::onReject
                     )
                 }
+
             }
             viewModel.ongoingTrip()
         }, onError = {

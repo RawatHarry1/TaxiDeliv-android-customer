@@ -62,6 +62,8 @@ data class NewRideNotificationDC(
     var isForRental: String? = null,
     @SerializedName("rental_drop_date")
     var rentalDropDate: String? = null,
+    @SerializedName("is_ror")
+    var isRor: String? = null,
     @SerializedName("rental_start_date")
     var rentalStartDate: String? = null,
     @SerializedName("delivery_packages")

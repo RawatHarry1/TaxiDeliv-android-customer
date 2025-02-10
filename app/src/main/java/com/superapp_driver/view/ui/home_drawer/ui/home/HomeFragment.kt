@@ -615,9 +615,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
         binding.tvIgnoreBtn.setOnClickListener {
             requireActivity().stopService(Intent(requireActivity(), SoundService::class.java))
             rideViewModel.rejectRide(data.tripId.orEmpty())
-            AppUtils.tripId = ""
-            rideViewModel.newRideNotificationData = NewRideNotificationDC()
-            screenType = 0
+            if ((data.isRor ?: "0") == "0") {
+                AppUtils.tripId = ""
+                rideViewModel.newRideNotificationData = NewRideNotificationDC()
+                screenType = 0
+            }
+
             SharedPreferencesManager.clearKeyData(SharedPreferencesManager.Keys.NEW_BOOKING)
             dialog?.dismiss()
         }
@@ -1182,6 +1185,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                         screenType = 2
                         routeType = RideStateEnum.ARRIVE_AT_PICKUP.data
                         setScreenType(requireContext())
+                    } else if ((it.status ?: 0) == TripStatus.NOT_RATED_BY_DRIVER.type) {
+                        screenType = 0
+                        routeType = 1
+                        setScreenType(requireContext())
+                        googleMap?.clear()
+                        binding.bestRoute.clParent.isVisible = false
+                        AppUtils.tripId = ""
+                        stopService()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            (activity as HomeActivity).startActivity(
+                                Intent(activity, AcceptTripActivity::class.java).putExtra(
+                                    "screenType", "RideCompleted"
+                                ).putExtra("rideData", rideViewModel.newRideNotificationData)
+                            )
+                        }, 200)
                     }
                 }
                 if (HomeActivity.isMsgNotification)
@@ -1331,6 +1349,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
         SharedPreferencesManager.getModel<NewRideNotificationDC>(SharedPreferencesManager.Keys.NEW_BOOKING)
             ?.let {
                 Log.i("PUSHNOTI", "in notification detail FETCHNOTI")
+                if ((it.isRor ?: "0") == "0")
                 rideViewModel.newRideNotificationData = it
                 callTripsDialog(requireContext(), it)
             }
@@ -1340,6 +1359,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
     override fun checkOnGoingBooking() {
         SharedPreferencesManager.getModel<NewRideNotificationDC>(SharedPreferencesManager.Keys.NEW_BOOKING)
             ?.let {
+                if ((it.isRor ?: "0") == "0")
                 rideViewModel.newRideNotificationData = it
                 callTripsDialog(requireContext(), it)
             } ?: run {
