@@ -77,9 +77,9 @@ android {
         }
         dev {
             dimension "server"
-            buildConfigField("String", "BASE_URL", '"https://super-app-rides.venustaxi.in/"')
+            buildConfigField("String", "BASE_URL", '"https://tbm-dev-rides.venustaxi.in/"')
             buildConfigField("String", "VARIANT", '"dev"')
-            buildConfigField("String", "SOCKET_BASE_URL", '"https://super-app-rides-api.venustaxi.in"')
+            buildConfigField("String", "SOCKET_BASE_URL", '"https://tbm-dev-rides-api.venustaxi.in"')
             resValue "string", "map_api_key", "AIzaSyDj2_WSPtFRadmUKXZSPB9hRE668Tsm7qw"
         }
 

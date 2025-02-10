@@ -296,6 +296,7 @@ data class FindDriverDC(
             val min_ride_time: Double,
             val nts_enabled: Double,
             val original_fare: Double,
+            val rental_per_hour_fare: Double,
             val ride_distance: Double,
             val striked_fare_text: String,
             val tax_percentage: Double,

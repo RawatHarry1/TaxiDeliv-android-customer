@@ -23,6 +23,7 @@ class CarsTypeAdapter(
     var currencyCode: String,
     var customerETA: FindDriverDC.CustomerETA,
     var isSchedule: Boolean = false,
+    var isRental: Boolean = false,
     var onClick: (region: FindDriverDC.Region?) -> Unit
 ) : RecyclerView.Adapter<CarsTypeAdapter.CarsTypeAdapter>() {
 
@@ -97,6 +98,15 @@ class CarsTypeAdapter(
                         )
                     }"
             }
+
+            itemBinding.tvPrice.isVisible = isRental
+            itemBinding.tvPrice.text =  "${carTypeData?.region_fare?.currency ?: "INR"} ${
+                String.format(
+                    "%.2f",
+                    carTypeData?.region_fare?.rental_per_hour_fare ?: 0.0
+                )
+            }/hr"
+
             Glide.with(itemBinding.root).load(carTypeData?.images?.rideNowNormal2x.orEmpty())
                 .error(R.mipmap.ic_launcher).into(itemBinding.ivCar)
             itemBinding.tvTitle.text = carTypeData?.regionName.orEmpty()

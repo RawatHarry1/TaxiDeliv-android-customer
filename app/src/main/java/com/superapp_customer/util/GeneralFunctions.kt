@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.onStart
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
@@ -207,4 +208,14 @@ fun Context.arrayAdapter(
     autoCompleteTextView.showDropDown()
     autoCompleteTextView.onItemClickListener =
         AdapterView.OnItemClickListener { _, _, p2, _ -> onClick.invoke(p2) }
+}
+
+fun getCurrentUTCDateTime(): String {
+    // Define the output format as UTC
+    val outputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
+    outputFormat.timeZone = TimeZone.getTimeZone("UTC")
+    // Get the current date and time
+    val currentDate = Date()
+    // Format the current date and time in UTC
+    return outputFormat.format(currentDate)
 }

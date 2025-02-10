@@ -1001,7 +1001,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                     showSnackBar("*Please select drop location.", clLocationAlert)
                 } else {
                     locationAlertState?.state = BottomSheetBehavior.STATE_HIDDEN
-                    rideVM.findDriver(rideVM.schedule)
+                    rideVM.findDriver()
                 }
             }
 
@@ -1944,7 +1944,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                 rideVM.regionsList,
                 currencyCode = rideVM.createRideData.currencyCode.orEmpty(),
                 rideVM.customerETA,
-                rideVM.schedule
+                rideVM.schedule,
+                rideVM.isRental
             ) {
                 rideVM.createRideData.regionId = it?.regionId.orEmpty()
                 rideVM.createRideData.vehicleType = it?.vehicleType.orEmpty()

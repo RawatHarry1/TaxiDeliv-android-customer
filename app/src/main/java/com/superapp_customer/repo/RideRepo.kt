@@ -17,14 +17,12 @@ import org.json.JSONObject
 import javax.inject.Inject
 
 class RideRepo @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val apiInterface: ApiInterface
+    @ApplicationContext private val context: Context, private val apiInterface: ApiInterface
 ) {
 
-    suspend fun uploadDocument(part: MultipartBody.Part) =
-        flow {
-            emit(apiInterface.uploadDocument(multipartBody = part))
-        }.flowOn(Dispatchers.IO)
+    suspend fun uploadDocument(part: MultipartBody.Part) = flow {
+        emit(apiInterface.uploadDocument(multipartBody = part))
+    }.flowOn(Dispatchers.IO)
 
     suspend fun uploadTicketFile(part: MultipartBody.Part, hashMap: HashMap<String, RequestBody?>) =
         flow {
@@ -37,15 +35,13 @@ class RideRepo @Inject constructor(
     ) = flow {
         emit(
             apiInterface.searchPlaces(
-                inputText = search,
-                key = context.getString(R.string.map_api_key)
+                inputText = search, key = context.getString(R.string.map_api_key)
             )
         )
     }.flowOn(Dispatchers.IO)
 
     suspend fun getDistanceFromGoogle(
-        originId: String,
-        destinationId: String
+        originId: String, destinationId: String
     ) = flow {
         emit(
             apiInterface.getDistanceFromGoogle(
@@ -59,7 +55,9 @@ class RideRepo @Inject constructor(
     suspend fun findDriver(
         latLng: LatLng,
         opLatLng: LatLng,
-        isRental: Boolean
+        isRental: Boolean,
+        rentalStartDate: String = "",
+        rentalDropDate: String = ""
     ) = flow {
         emit(apiInterface.findDriver(JSONObject().apply {
             put("latitude", latLng.latitude)
@@ -72,8 +70,12 @@ class RideRepo @Inject constructor(
                 "request_ride_type",
                 SharedPreferencesManager.getInt(SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID)
             )
-            if (isRental)
+            if (isRental) {
                 put("is_for_rental", 1)
+                put("start_date", rentalStartDate)
+                put("drop_date", rentalDropDate)
+            }
+
 //            }
         }.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
@@ -99,8 +101,7 @@ class RideRepo @Inject constructor(
     suspend fun cancelTrip(sessionId: String, jsonObject: JSONObject) = flow {
         emit(
             apiInterface.cancelTrip(
-                sessionId = sessionId,
-                requestBody = jsonObject.getJsonRequestBody()
+                sessionId = sessionId, requestBody = jsonObject.getJsonRequestBody()
             )
         )
     }.flowOn(Dispatchers.IO)
@@ -167,8 +168,7 @@ class RideRepo @Inject constructor(
 
 
     suspend fun getRideSummary(
-        tripId: String,
-        driverId: String
+        tripId: String, driverId: String
     ) = flow {
         emit(apiInterface.getTripSummary(tripId, driverId))
     }.flowOn(Dispatchers.IO)

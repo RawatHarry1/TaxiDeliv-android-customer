@@ -26,6 +26,7 @@ import com.superapp_customer.model.dataClass.userData.UserDataDC
 import com.superapp_customer.repo.RideRepo
 import com.superapp_customer.util.SharedPreferencesManager
 import com.superapp_customer.util.convertDouble
+import com.superapp_customer.util.getCurrentUTCDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -93,7 +94,10 @@ class RideVM @Inject constructor(
             opLatLng = LatLng(
                 createRideData.dropLocation?.latitude.convertDouble(),
                 createRideData.dropLocation?.longitude.convertDouble()
-            ), isRental
+            ),
+            isRental,
+            rentalStartDate = getCurrentUTCDateTime(),
+            rentalDropDate = rentalEndDateTime
         ).setApiState(_findDriverData)
     }
 
@@ -111,7 +115,10 @@ class RideVM @Inject constructor(
             opLatLng = LatLng(
                 createRideData.dropLocation?.latitude.convertDouble(),
                 createRideData.dropLocation?.longitude.convertDouble()
-            ), isRental
+            ),
+            isRental,
+            rentalStartDate = getCurrentUTCDateTime(),
+            rentalDropDate = rentalEndDateTime
         ).setApiState(_findDriverDataInLoop)
     }
 
