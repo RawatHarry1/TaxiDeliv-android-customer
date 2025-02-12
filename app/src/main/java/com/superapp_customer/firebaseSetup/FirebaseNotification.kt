@@ -124,7 +124,11 @@ class FirebaseNotification : FirebaseMessagingService() {
             ) {
                 HomeFragment.notificationInterface?.rideRejectedByDriver()
                 ChatActivity.notificationInterface?.rideRejectedByDriver()
-            } else {
+            }else  if ((notificationData.notificationType?.toIntOrNull()
+                    ?: 0) == NotificationStatus.RIDE_CANCELLED_BY_DRIVER.type
+            ) {
+                HomeFragment.notificationInterface?.rideStarted()
+            }else {
                 HomeFragment.notificationInterface?.callFetchRideApi()
             }
         } catch (e: Exception) {

@@ -24,6 +24,7 @@ import com.superapp_customer.databinding.ActivityCreateProfileBinding
 import com.superapp_customer.dialogs.DialogUtils
 import com.superapp_customer.model.api.getJsonRequestBody
 import com.superapp_customer.model.api.observeData
+import com.superapp_customer.model.dataClass.userData.UserDataDC
 import com.superapp_customer.util.NoSpaceInputFilter
 import com.superapp_customer.util.SharedPreferencesManager
 import com.superapp_customer.util.getValue
@@ -39,6 +40,7 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
     lateinit var binding: ActivityCreateProfileBinding
     private val viewModel by viewModels<ProfileViewModel>()
     private val homeViewModel by viewModels<HomeVM>()
+    private var isProfileOptional = 1
     private val isEditProfile by lazy { intent.getBooleanExtra("isEditProfile", false) }
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
 
@@ -57,6 +59,11 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
             binding.etReferral.isVisible = false
             homeViewModel.loginViaToken()
         }
+        SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+            ?.let {
+                isProfileOptional = it.login?.operatorServiceConfig?.customer_image_required ?: 1
+                viewModel.needToUploadImage = isProfileOptional ==1
+            }
         // Setup the permission launcher
         requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -122,8 +129,12 @@ class CreateProfile : BaseActivity<ActivityCreateProfileBinding>() {
     private fun checkValidation(): Boolean {
         return when {
             viewModel.imagePath.isNullOrEmpty() -> {
-                showToastShort(getString(R.string.please_select_profile_pic))
-                false
+                if (isProfileOptional == 0)
+                    true
+                else {
+                    showToastShort(getString(R.string.please_select_profile_pic))
+                    false
+                }
             }
 
             binding.etFirstName.getValue().isEmpty() -> {

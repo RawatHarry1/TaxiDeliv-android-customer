@@ -92,8 +92,18 @@ data class UserDataDC(
         @SerializedName("vehicle_types")
         val vehicleTypes: List<VehicleType>,
         @SerializedName("support_ticket_reasons")
-        val supportTicketReasons: List<String>
+        val supportTicketReasons: List<String>,
+        @SerializedName("operator_service_config")
+        val operatorServiceConfig: OperatorServiceConfig?
     ) {
+
+        data class OperatorServiceConfig(
+            val customer_image_required: Int?,
+            val earnings: Int?,
+            val quick_menu_settings: Int?,
+            val recent_rides: Int?,
+            val schedule_ride: Int?
+        )
 
         @Keep
         data class Banners(

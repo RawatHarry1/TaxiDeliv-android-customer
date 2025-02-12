@@ -12,5 +12,6 @@ enum class NotificationStatus(val type: Int) {
     RIDE_ACCEPTED(5), //Customer
     GO_TO_PICKUP(72),//Customer
     RIDE_REJECTED_BY_DRIVER(7) ,//Customer
-    CHAT(600)
+    CHAT(600),
+    OTP(128)
 }

@@ -69,6 +69,8 @@ data class FetchOngoingTripDC(
         @SerializedName("driver_current_latitude")
         val driverCurrentLatitude: String? = null,
         @SerializedName("driver_current_longitude")
-        val driverCurrentLongitude: String? = null
+        val driverCurrentLongitude: String? = null,
+        @SerializedName("ride_end_otp")
+        val rideEndOtp: String? = null
     )
 }

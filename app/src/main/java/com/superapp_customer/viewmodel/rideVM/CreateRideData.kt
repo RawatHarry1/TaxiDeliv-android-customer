@@ -12,6 +12,7 @@ data class CreateRideData(
     var currencyCode: String? = null,
     var tripId: String? = null,
     var customerId: String? = null,
+    var rideEndOtp: String? = null,
     var vehicleData: VehicleData? = VehicleData(),
     var driverDetail: DriverDetail? = DriverDetail(),
     var pickUpLocation: LocationData? = LocationData(),

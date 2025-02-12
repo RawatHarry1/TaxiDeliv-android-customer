@@ -1716,6 +1716,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
             this@HomeFragment.binding.cvTitle.visibility = View.INVISIBLE
             this@HomeFragment.binding.ivBack.visibility = View.GONE
             with(rideVM.createRideData) {
+                if (rideEndOtp.isNullOrEmpty()) {
+                    tvOtp.isVisible = false
+                    tvOtpLabel.isVisible = false
+                } else {
+                    tvOtp.isVisible = true
+                    tvOtpLabel.isVisible = true
+                    tvOtp.text = rideEndOtp
+                }
                 tvDriverRating.text =
                     driverDetail?.driverRating.orEmpty().ifEmpty { "0.0" }.formatString(1)
                 tvUserName.text = driverDetail?.driverName.orEmpty()
@@ -2268,6 +2276,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), NotificationInterface,
                         tripId = trip.tripId.orEmpty()
                         customerId = trip.customerId.orEmpty()
                         sessionId = trip.sessionId.orEmpty()
+                        rideEndOtp = trip.rideEndOtp.orEmpty()
                         status = trip.status
                         vehicleData = vehicleData?.copy(
                             image = trip.image.orEmpty(),
