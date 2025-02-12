@@ -15,12 +15,15 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.card.MaterialCardView
 import com.mukesh.mukeshotpview.mukeshOtpView.MukeshOtpView
 import com.superapp_driver.R
 import com.superapp_driver.customClasses.singleClick.setOnSingleClickListener
@@ -85,7 +88,7 @@ object DialogUtils {
 
             val tvVerify = findViewById<AppCompatTextView>(R.id.tvVerify)
             val tvResend = findViewById<AppCompatTextView>(R.id.tvResend)
-            val customOtpView = findViewById<MukeshOtpView>(R.id.customOtpView)
+            val customOtpView = findViewById<MukeshOtpView>(R.id.customRideOtpView)
             val tvEmailAddress = findViewById<AppCompatTextView>(R.id.tvEmailAddress)
             val ivClose = findViewById<AppCompatImageView>(R.id.ivClose)
             tvEmailAddress.text = phoneNumber
@@ -246,6 +249,30 @@ object DialogUtils {
 
     }
 
+    fun addLuggageDialog(mContext: Activity, onClickDialogLambda: (String) -> Unit): Dialog {
+        val dialogView = Dialog(mContext)
+        with(dialogView) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.dialog_add_luggage)
+            setCancelable(false)
+            val etEnterAmount = findViewById<AppCompatEditText>(R.id.etEnterLuggage)
+            val btnAddAmount = findViewById<AppCompatTextView>(R.id.btnAddQuantity)
+
+            btnAddAmount.setOnClickListener {
+                if (etEnterAmount.text.toString().trim().isEmpty())
+                    showSnackBar("Please enter luggage quantity", btnAddAmount)
+                else {
+                    onClickDialogLambda(etEnterAmount.text.toString())
+                    dismiss()
+                }
+            }
+            show()
+        }
+        return dialogView
+
+    }
+
     fun getVersionUpdateDialog(
         mContext: Activity,
         forceUpdate: Int,
@@ -288,5 +315,53 @@ object DialogUtils {
     interface EditProfileListener {
         fun onTakePictureListener()
         fun onGalleryPictureListener()
+    }
+
+    fun verifyOtpDialog(
+        mContext: Activity,
+        dismissDialog: (dialog: Dialog) -> Unit,
+        verify: (otp: String, dialog: Dialog) -> Unit?,
+        resend: (dialog: Dialog) -> Unit?,
+    ): Dialog {
+        val dialogView = Dialog(mContext)
+        with(dialogView) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.dialog_otp)
+            setCancelable(false)
+            val rootView = findViewById<MaterialCardView>(R.id.cardMainOtp)
+            val tvEmailAddress = findViewById<TextView>(R.id.tvEmailAddress)
+            val ivClose = findViewById<ImageView>(R.id.ivClose)
+            val tvConfirm = findViewById<AppCompatTextView>(R.id.tvVerify)
+            val tvResend = findViewById<AppCompatTextView>(R.id.tvResend)
+            val simpleOtpView = findViewById<MukeshOtpView>(R.id.customRideOtpView)
+
+//            tvEmailAddress.text = "$countryCode $phoneNumber"
+
+
+            ivClose.setOnSingleClickListener {
+                dismissDialog(dialogView)
+            }
+
+            tvConfirm.setOnSingleClickListener {
+                if ((simpleOtpView.text?.length ?: 0) == 4) {
+                    verify(simpleOtpView.text.toString(), dialogView)
+                } else if ((simpleOtpView.text?.length ?: 0) == 0) {
+                    showSnackBar(mContext.getString(R.string.please_enter_otp), this)
+                } else {
+                    showSnackBar(mContext.getString(R.string.please_enter_valid_otp), this)
+                }
+            }
+
+
+            tvResend.setOnSingleClickListener {
+                showSnackBar(mContext.getString(R.string.otp_has_been_resent), this)
+                resend(dialogView)
+            }
+            show()
+        }
+        return dialogView
     }
 }

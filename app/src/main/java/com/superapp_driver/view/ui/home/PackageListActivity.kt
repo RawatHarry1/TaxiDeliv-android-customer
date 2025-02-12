@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
@@ -27,7 +26,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mukesh.photopicker.utils.getMediaFilePathFor
-import com.mukesh.photopicker.utils.pickerDialog
 import com.superapp_driver.R
 import com.superapp_driver.SaloneDriver
 import com.superapp_driver.customClasses.singleClick.setOnSingleClickListener
@@ -82,21 +80,56 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
         observeUpdatePackageStatus()
         observeCancelTrip()
         getDistance()
+        observeTripOtp()
 
         viewModel.ongoingTrip()
         binding.ivBack.setOnClickListener { finish() }
         binding.tvSubmit.setOnClickListener {
-            if (isEndTrip)
-                viewModel.endTrip(
-                    customerId = viewModel.newRideNotificationData.customerId.orEmpty(),
-                    tripId = viewModel.newRideNotificationData.tripId.orEmpty(),
-                    dropLatitude = viewModel.newRideNotificationData.dropLatitude.orEmpty(),
-                    dropLongitude = viewModel.newRideNotificationData.dropLongitude.orEmpty(),
-                    distanceTravelled = viewModel.newRideNotificationData.distanceTravelled.orEmpty(),
-                    rideTime = viewModel.newRideNotificationData.rideTime.orEmpty(),
-                    waitTime = viewModel.newRideNotificationData.waitTime.orEmpty()
-                )
-            else
+            if (isEndTrip) {
+                SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+                    ?.let {
+                        if (it.login?.servicesConfig?.isNotEmpty() == true) {
+                            it.login?.servicesConfig?.firstOrNull()?.let { config ->
+                                if (config.config != null && config.config.authentication_with_otp == 1) {
+                                    viewModel.rideOtp(
+                                        customerId = viewModel.newRideNotificationData.customerId.orEmpty(),
+                                        tripId = viewModel.newRideNotificationData.tripId.orEmpty()
+                                    )
+                                } else {
+                                    viewModel.endTrip(
+                                        customerId = viewModel.newRideNotificationData.customerId.orEmpty(),
+                                        tripId = viewModel.newRideNotificationData.tripId.orEmpty(),
+                                        dropLatitude = viewModel.newRideNotificationData.dropLatitude.orEmpty(),
+                                        dropLongitude = viewModel.newRideNotificationData.dropLongitude.orEmpty(),
+                                        distanceTravelled = viewModel.newRideNotificationData.distanceTravelled.orEmpty(),
+                                        rideTime = viewModel.newRideNotificationData.rideTime.orEmpty(),
+                                        waitTime = viewModel.newRideNotificationData.waitTime.orEmpty()
+                                    )
+                                }
+                            } ?: run {
+                                viewModel.endTrip(
+                                    customerId = viewModel.newRideNotificationData.customerId.orEmpty(),
+                                    tripId = viewModel.newRideNotificationData.tripId.orEmpty(),
+                                    dropLatitude = viewModel.newRideNotificationData.dropLatitude.orEmpty(),
+                                    dropLongitude = viewModel.newRideNotificationData.dropLongitude.orEmpty(),
+                                    distanceTravelled = viewModel.newRideNotificationData.distanceTravelled.orEmpty(),
+                                    rideTime = viewModel.newRideNotificationData.rideTime.orEmpty(),
+                                    waitTime = viewModel.newRideNotificationData.waitTime.orEmpty()
+                                )
+                            }
+                        } else {
+                            viewModel.endTrip(
+                                customerId = viewModel.newRideNotificationData.customerId.orEmpty(),
+                                tripId = viewModel.newRideNotificationData.tripId.orEmpty(),
+                                dropLatitude = viewModel.newRideNotificationData.dropLatitude.orEmpty(),
+                                dropLongitude = viewModel.newRideNotificationData.dropLongitude.orEmpty(),
+                                distanceTravelled = viewModel.newRideNotificationData.distanceTravelled.orEmpty(),
+                                rideTime = viewModel.newRideNotificationData.rideTime.orEmpty(),
+                                waitTime = viewModel.newRideNotificationData.waitTime.orEmpty()
+                            )
+                        }
+                    }
+            } else
                 viewModel.startTrip(
                     customerId = viewModel.newRideNotificationData.customerId.orEmpty(),
                     tripId = viewModel.newRideNotificationData.tripId.orEmpty()
@@ -215,7 +248,6 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                 takePictureResultContract.launch(it)
             } ?: openCamera()
     }
-
 
 
     private fun onDialogPermissionAllowClick(type: Int) {
@@ -374,12 +406,68 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                     binding.tvReject.text = getString(R.string.reject)
                 }
                 binding.tvAccept.setOnClickListener {
-                    uploadImagesDialog(
-                        data.package_id.toString(), if (isEndTrip)
-                            data.package_image_while_drop_off
-                        else
-                            data.package_image_while_pickup, false
-                    )
+                    SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+                        ?.let {
+                            if (it.login?.servicesConfig?.isNotEmpty() == true) {
+                                it.login?.servicesConfig?.firstOrNull()?.let { config ->
+                                    if (config.config != null && config.config.driver_package_images == 1) {
+                                        uploadImagesDialog(
+                                            data.package_id.toString(), if (isEndTrip)
+                                                data.package_image_while_drop_off
+                                            else
+                                                data.package_image_while_pickup, false
+                                        )
+                                    }
+                                    else{
+                                        val driverId =
+                                            SharedPreferencesManager.getModel<UserDataDC>(
+                                                SharedPreferencesManager.Keys.USER_DATA
+                                            )
+                                                ?.let {
+                                                    it.login?.userId ?: ""
+                                                }
+                                        viewModel.updatePackage(
+                                            viewModel.newRideNotificationData.tripId.toString(),
+                                            driverId ?: "",
+                                            data.package_id.toString(),
+                                            rejectionReason,
+                                            null, isEndTrip
+                                        )
+                                    }
+                                } ?: run {
+                                    val driverId =
+                                        SharedPreferencesManager.getModel<UserDataDC>(
+                                            SharedPreferencesManager.Keys.USER_DATA
+                                        )
+                                            ?.let {
+                                                it.login?.userId ?: ""
+                                            }
+                                    viewModel.updatePackage(
+                                        viewModel.newRideNotificationData.tripId.toString(),
+                                        driverId ?: "",
+                                        data.package_id.toString(),
+                                        rejectionReason,
+                                        null, isEndTrip
+                                    )
+                                }
+                            } else {
+                                val driverId =
+                                    SharedPreferencesManager.getModel<UserDataDC>(
+                                        SharedPreferencesManager.Keys.USER_DATA
+                                    )
+                                        ?.let {
+                                            it.login?.userId ?: ""
+                                        }
+                                viewModel.updatePackage(
+                                    viewModel.newRideNotificationData.tripId.toString(),
+                                    driverId ?: "",
+                                    data.package_id.toString(),
+                                    rejectionReason,
+                                    null, isEndTrip
+                                )
+                            }
+                        }
+
                 }
                 binding.tvReject.setOnClickListener {
                     uploadImagesDialog(
@@ -425,11 +513,13 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
             rlDismiss.setOnClickListener { dismiss() }
             tvConfirm.setOnSingleClickListener {
                 if (isReject) {
-                     rejectionReason = rejectionReasonAdapter.getSelectedItemName() ?: ""
+                    rejectionReason = rejectionReasonAdapter.getSelectedItemName() ?: ""
                     if (rejectionReason.isNotEmpty()) {
                         dismiss()
                         val driverId =
-                            SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+                            SharedPreferencesManager.getModel<UserDataDC>(
+                                SharedPreferencesManager.Keys.USER_DATA
+                            )
                                 ?.let {
                                     it.login?.userId ?: ""
                                 }
@@ -446,9 +536,13 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                     if (packImageArrayList.size > 1) {
                         dismiss()
                         val cityId =
-                            SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)?.login?.city
+                            SharedPreferencesManager.getModel<UserDataDC>(
+                                SharedPreferencesManager.Keys.USER_DATA
+                            )?.login?.city
                         val driverId =
-                            SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+                            SharedPreferencesManager.getModel<UserDataDC>(
+                                SharedPreferencesManager.Keys.USER_DATA
+                            )
                                 ?.let {
                                     it.login?.userId ?: ""
                                 }
@@ -462,7 +556,7 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
                             SaloneDriver.latLng?.longitude.toString(),
                             viewModel.newRideNotificationData.dropLatitude,
                             viewModel.newRideNotificationData.dropLongitude,
-                            cityId.toString(),isRestrictionEnabled, distance
+                            cityId.toString(), isRestrictionEnabled, distance
                         )
                     } else
                         showSnackBar("Please upload package image.", tvConfirm)
@@ -628,6 +722,9 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
         }, onSuccess = {
 //            hideProgressDialog()
             progressBar.dismiss()
+            otpDialog?.dismiss()
+            otpDialog = null
+
             viewModel.newRideNotificationData.also {
                 it.estimatedDriverFare = this?.estimatedDriverFare
                 it.customerName = this?.customerName
@@ -649,9 +746,9 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
 
     private fun observeUpdatePackageStatus() =
         viewModel.updatePackage.observeData(this, onLoading = {
-            showProgressDialog()
+            progressBar.show(this)
         }, onSuccess = {
-            hideProgressDialog()
+            progressBar.dismiss()
             if (isEndTrip) {
                 if (this?.can_end != 1) {
                     binding.tvSubmit.alpha = 0.5f
@@ -680,7 +777,7 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
             }
             viewModel.ongoingTrip()
         }, onError = {
-            hideProgressDialog()
+            progressBar.dismiss()
             showToastLong(this)
         })
 
@@ -742,4 +839,49 @@ class PackageListActivity : BaseActivity<ActivityPackageListBinding>() {
         }
         return dialogView
     }
+
+    /**
+     * Observe Trip OTP
+     * */
+    private var otpDialog: Dialog? = null
+    private fun observeTripOtp() =
+        viewModel.rideOtp.observeData(this, onLoading = {
+            showProgressDialog()
+        }, onSuccess = {
+            hideProgressDialog()
+            otpDialog?.let {
+                return@let
+            } ?: run {
+                otpDialog = DialogUtils.verifyOtpDialog(
+                    this@PackageListActivity,
+                    dismissDialog = { dialog ->
+                        dialog.dismiss()
+                        otpDialog = null
+                    },
+                    verify = { otp, dialog ->
+                        otpDialog = dialog
+                        viewModel.endTrip(
+                            customerId = viewModel.newRideNotificationData.customerId.orEmpty(),
+                            tripId = viewModel.newRideNotificationData.tripId.orEmpty(),
+                            dropLatitude = viewModel.newRideNotificationData.dropLatitude.orEmpty(),
+                            dropLongitude = viewModel.newRideNotificationData.dropLongitude.orEmpty(),
+                            distanceTravelled = viewModel.newRideNotificationData.distanceTravelled.orEmpty(),
+                            rideTime = viewModel.newRideNotificationData.rideTime.orEmpty(),
+                            waitTime = viewModel.newRideNotificationData.waitTime.orEmpty(),
+                            otp
+                        )
+                    },
+                    resend = {
+                        viewModel.rideOtp(
+                            customerId = viewModel.newRideNotificationData.customerId.orEmpty(),
+                            tripId = viewModel.newRideNotificationData.tripId.orEmpty()
+                        )
+                    }
+                )
+            }
+        }, onError = {
+            hideProgressDialog()
+            showToastLong(this)
+        })
+
 }

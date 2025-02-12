@@ -108,7 +108,9 @@ data class Login(
     @SerializedName("service_type")
     val serviceType: Int? = null,
     @SerializedName("support_ticket_reasons")
-    val supportTicketReasons: List<String>
+    val supportTicketReasons: List<String>,
+    @SerializedName("services_config")
+    val servicesConfig: List<ServicesConfig>
 )
 
 @Keep
@@ -197,4 +199,23 @@ data class RegistrationSteps(
     var vehicleInfo: String? = null,
     @SerializedName("bank_details")
     var bankDetails: String? = null,
+)
+
+
+data class ServicesConfig(
+    val config: Config?,
+    val region_id: Int,
+    val vehicle_type: Int
+)
+
+data class Config(
+    val authentication_with_otp: Int,
+    val customer_package_images: Int,
+    val driver_package_images: Int,
+    val enable_luggage_fare: Int,
+    val luggage_fare: Int,
+    val minimum_distance: Int,
+    val ride_on_ride: Int,
+    val tour_vehicle: Int,
+    val navigation:Int?
 )

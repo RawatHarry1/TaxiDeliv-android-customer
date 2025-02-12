@@ -34,7 +34,7 @@ class RideRepo @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-    suspend fun acceptRide(customerId: String, tripId: String,isRor:Int) = flow {
+    suspend fun acceptRide(customerId: String, tripId: String, isRor: Int) = flow {
         emit(apiInterface.acceptRide(requestBody = JSONObject().apply {
             put("longitude", SaloneDriver.latLng?.longitude)
             put("latitude", SaloneDriver.latLng?.latitude)
@@ -72,7 +72,9 @@ class RideRepo @Inject constructor(
         dropLongitude: String,
         distanceTravelled: String,
         rideTime: String,
-        waitTime: String
+        waitTime: String,
+        rideOtp:String?,
+        luggageCount:String?
     ) = flow {
         emit(apiInterface.endTrip(requestBody = JSONObject().apply {
             put("customerId", customerId)
@@ -82,6 +84,18 @@ class RideRepo @Inject constructor(
             put("distanceTravelled", "10")
             put("rideTime", "12")
             put("waitTime", "3")
+            put("ride_end_otp", rideOtp)
+            put("luggage_count", luggageCount)
+        }.getJsonRequestBody()))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun rideOtp(
+        customerId: String,
+        tripId: String
+    ) = flow {
+        emit(apiInterface.rideOTP(requestBody = JSONObject().apply {
+            put("user_id", customerId)
+            put("engagement_id", tripId)
         }.getJsonRequestBody()))
     }.flowOn(Dispatchers.IO)
 
@@ -106,7 +120,7 @@ class RideRepo @Inject constructor(
             put("package_id", packageId)
 
             if (cancellationReason != null)
-            put("cancelltion_reason", cancellationReason)
+                put("cancelltion_reason", cancellationReason)
 
             if (!packageImages.isNullOrEmpty())
                 put("package_images", JSONArray(packageImages))
@@ -122,8 +136,7 @@ class RideRepo @Inject constructor(
                 put("package_delivery_restriction_enabled", isRestrictionEnabled)
                 val d = if (distance.isNullOrEmpty()) 0.0 else distance.toDouble()
                 put("maximum_distance", d)
-            }
-            else
+            } else
                 put("is_for_pickup", "1")
 
         }.getJsonRequestBody()))

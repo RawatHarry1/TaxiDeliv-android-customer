@@ -28,6 +28,7 @@ class RideViewModel @Inject constructor(
 ) : ViewModel() {
 
     var newRideNotificationData = NewRideNotificationDC()
+    var luggageCount: String? = null
     private val _rejectRideData by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
     val rejectRideData: LiveData<ApiState<BaseResponse<Any>>> get() = _rejectRideData
     fun rejectRide(tripId: String) = viewModelScope.launch {
@@ -37,8 +38,8 @@ class RideViewModel @Inject constructor(
 
     private val _acceptRideData by lazy { SingleLiveEvent<ApiState<BaseResponse<AcceptRideDC>>>() }
     val acceptRideData: LiveData<ApiState<BaseResponse<AcceptRideDC>>> get() = _acceptRideData
-    fun acceptRide(customerId: String, tripId: String,isRor:Int) = viewModelScope.launch {
-        rideRepo.acceptRide(customerId, tripId,isRor).setApiState(_acceptRideData)
+    fun acceptRide(customerId: String, tripId: String, isRor: Int) = viewModelScope.launch {
+        rideRepo.acceptRide(customerId, tripId, isRor).setApiState(_acceptRideData)
     }
 
 
@@ -65,17 +66,35 @@ class RideViewModel @Inject constructor(
         dropLongitude: String,
         distanceTravelled: String,
         rideTime: String,
-        waitTime: String
-    ) = viewModelScope.launch {
-        rideRepo.endTrip(
-            customerId,
-            tripId,
-            dropLatitude,
-            dropLongitude,
-            distanceTravelled,
-            rideTime,
-            waitTime
-        ).setApiState(_endTrip)
+        waitTime: String,
+        rideOtp: String? = null
+    ) {
+        viewModelScope.launch {
+            rideRepo.endTrip(
+                customerId,
+                tripId,
+                dropLatitude,
+                dropLongitude,
+                distanceTravelled,
+                rideTime,
+                waitTime, rideOtp, luggageCount
+            ).setApiState(_endTrip)
+        }
+    }
+
+    private val _rideOtp by lazy { SingleLiveEvent<ApiState<BaseResponse<Any>>>() }
+    val rideOtp: LiveData<ApiState<BaseResponse<Any>>> = _rideOtp
+
+    fun rideOtp(
+        customerId: String,
+        tripId: String
+    ) {
+        viewModelScope.launch {
+            rideRepo.rideOtp(
+                customerId,
+                tripId
+            ).setApiState(_rideOtp)
+        }
     }
 
 

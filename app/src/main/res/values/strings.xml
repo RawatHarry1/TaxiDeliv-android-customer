@@ -511,4 +511,8 @@
     <string name="no_notifications_found">No Notifications Found</string>
     <string name="rental">Rental</string>
     <string name="rental_end_date_and_time">Rental End Date And Time</string>
+    <string name="please_enter_otp">*Please enter otp.</string>
+    <string name="please_enter_valid_otp">*Please enter valid otp.</string>
+    <string name="otp_has_been_resent">OTP has been resent again.</string>
+    <string name="add_quantity">Add Quantity</string>
 </resources>

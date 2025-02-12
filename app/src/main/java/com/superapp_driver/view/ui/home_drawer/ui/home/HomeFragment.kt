@@ -59,6 +59,7 @@ import com.superapp_driver.customClasses.SingleFusedLocation
 import com.superapp_driver.customClasses.singleClick.setOnSingleClickListener
 import com.superapp_driver.databinding.DialogTripsBinding
 import com.superapp_driver.databinding.FragmentHomeBinding
+import com.superapp_driver.dialogs.CustomProgressDialog
 import com.superapp_driver.dialogs.DialogUtils
 import com.superapp_driver.firebaseSetup.NewRideNotificationDC
 import com.superapp_driver.firebaseSetup.NotificationInterface
@@ -115,6 +116,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
     private lateinit var textToSpeech: TextToSpeech
     private var isSpeakerEnabled = true
     private var wakeLock: PowerManager.WakeLock? = null
+    private val progressBar by lazy { CustomProgressDialog() }
     override fun initialiseFragmentBaseViewModel() {
 
     }
@@ -158,6 +160,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
         observeEndTrip()
         observeMarkArrived()
         observeStartTrip()
+        observeTripOtp()
         binding.ivMenuBurg.setOnClickListener {
             when (screenType) {
                 0 -> (activity as HomeActivity).openDrawer()
@@ -239,6 +242,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
             checkPermissionAndMakeCall(rideViewModel.newRideNotificationData.recipientPhoneNo ?: "")
         }
         binding.rlSpeaker.setOnClickListener {
+
             isSpeakerEnabled = !isSpeakerEnabled
             SharedPreferencesManager.put(SharedPreferencesManager.Keys.SPEAKER, isSpeakerEnabled)
             updateSpeakerButtonUI()
@@ -462,7 +466,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                         bearing = bearing.toDoubleOrNull() ?: 0.0,
                         googleMap = googleMap
                     ) {
-                        checkInstructions()
+                        SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+                            ?.let {
+                                if (it.login?.servicesConfig?.isNotEmpty() == true) {
+                                    it.login?.servicesConfig?.firstOrNull()?.let { config ->
+                                        if ((config.config?.navigation ?: 1) == 1)
+                                            checkInstructions()
+                                    }
+                                }
+                            }
+
                         val dropLatLan = LatLng(
                             (rideViewModel.newRideNotificationData.dropLatitude
                                 ?: "0.0").toDouble(),
@@ -550,11 +563,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
 
             2 -> {
                 binding.tvHideAndShowDetail.isVisible = true
-                binding.rlSpeaker.isVisible = true
+                SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+                    ?.let {
+                        if (it.login?.servicesConfig?.isNotEmpty() == true) {
+                            it.login?.servicesConfig?.firstOrNull()?.let { config ->
+                                if ((config.config?.navigation ?: 1) == 1) {
+                                    binding.rlSpeaker.isVisible = true
+                                    isSpeakerEnabled =
+                                        SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.SPEAKER)
+                                    updateSpeakerButtonUI()
+                                }
+                            }
+                        }
+                    }
 
-                isSpeakerEnabled =
-                    SharedPreferencesManager.getBoolean(SharedPreferencesManager.Keys.SPEAKER)
-                updateSpeakerButtonUI()
                 wakeUpScreen()
                 binding.swOnOff.visibility = View.INVISIBLE
                 binding.clOffOn.visibility = View.GONE
@@ -567,7 +589,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                 )
                 bestRoute(context)
             }
-
         }
     }
 
@@ -667,6 +688,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
         }
     }
 
+    private val onClickDialogLambda = { amount: String ->
+        rideViewModel.luggageCount = amount
+        routeType = RideStateEnum.END_TRIP.data
+        bestRoute(requireContext())
+    }
+
     /**
      * Best Route
      * */
@@ -721,8 +748,37 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                                 tripId = rideViewModel.newRideNotificationData.tripId.orEmpty()
                             )
                     } else if (routeType == RideStateEnum.ON_THE_WAY.data) {
-                        routeType = RideStateEnum.END_TRIP.data
-                        bestRoute(requireContext())
+                        rideViewModel.luggageCount = null
+                        if ((rideViewModel.newRideNotificationData.serviceType
+                                ?: "0").toInt() == 2
+                        ) {
+                            routeType = RideStateEnum.END_TRIP.data
+                            bestRoute(requireContext())
+                        } else {
+                            SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+                                ?.let {
+                                    if (it.login?.servicesConfig?.isNotEmpty() == true) {
+                                        it.login?.servicesConfig?.firstOrNull()?.let { config ->
+                                            if (config.config != null && config.config.enable_luggage_fare == 1) {
+                                                DialogUtils.addLuggageDialog(
+                                                    requireActivity(),
+                                                    onClickDialogLambda
+                                                )
+                                            } else {
+                                                routeType = RideStateEnum.END_TRIP.data
+                                                bestRoute(requireContext())
+                                            }
+                                        } ?: run {
+                                            routeType = RideStateEnum.END_TRIP.data
+                                            bestRoute(requireContext())
+                                        }
+                                    } else {
+                                        routeType = RideStateEnum.END_TRIP.data
+                                        bestRoute(requireContext())
+                                    }
+                                }
+
+                        }
                     } else {
                         if ((rideViewModel.newRideNotificationData.serviceType
                                 ?: "0").toInt() == 2
@@ -741,16 +797,52 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                             )
                         } else {
                             binding.cvInstructions.isVisible = false
-                            rideViewModel.endTrip(
-                                customerId = rideViewModel.newRideNotificationData.customerId.orEmpty(),
-                                tripId = rideViewModel.newRideNotificationData.tripId.orEmpty(),
-                                dropLatitude = rideViewModel.newRideNotificationData.dropLatitude.orEmpty(),
-                                dropLongitude = rideViewModel.newRideNotificationData.dropLongitude.orEmpty(),
-                                distanceTravelled = rideViewModel.newRideNotificationData.distanceTravelled.orEmpty(),
-                                rideTime = rideViewModel.newRideNotificationData.rideTime.orEmpty(),
-                                waitTime = rideViewModel.newRideNotificationData.waitTime.orEmpty()
-                            )
-                            dialog?.dismiss()
+                            SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+                                ?.let {
+                                    if (it.login?.servicesConfig?.isNotEmpty() == true) {
+                                        it.login?.servicesConfig?.firstOrNull()?.let { config ->
+                                            if (config.config != null && config.config.authentication_with_otp == 1) {
+                                                rideViewModel.rideOtp(
+                                                    customerId = rideViewModel.newRideNotificationData.customerId.orEmpty(),
+                                                    tripId = rideViewModel.newRideNotificationData.tripId.orEmpty()
+                                                )
+                                            } else {
+                                                rideViewModel.endTrip(
+                                                    customerId = rideViewModel.newRideNotificationData.customerId.orEmpty(),
+                                                    tripId = rideViewModel.newRideNotificationData.tripId.orEmpty(),
+                                                    dropLatitude = rideViewModel.newRideNotificationData.dropLatitude.orEmpty(),
+                                                    dropLongitude = rideViewModel.newRideNotificationData.dropLongitude.orEmpty(),
+                                                    distanceTravelled = rideViewModel.newRideNotificationData.distanceTravelled.orEmpty(),
+                                                    rideTime = rideViewModel.newRideNotificationData.rideTime.orEmpty(),
+                                                    waitTime = rideViewModel.newRideNotificationData.waitTime.orEmpty()
+                                                )
+                                                dialog?.dismiss()
+                                            }
+                                        } ?: run {
+                                            rideViewModel.endTrip(
+                                                customerId = rideViewModel.newRideNotificationData.customerId.orEmpty(),
+                                                tripId = rideViewModel.newRideNotificationData.tripId.orEmpty(),
+                                                dropLatitude = rideViewModel.newRideNotificationData.dropLatitude.orEmpty(),
+                                                dropLongitude = rideViewModel.newRideNotificationData.dropLongitude.orEmpty(),
+                                                distanceTravelled = rideViewModel.newRideNotificationData.distanceTravelled.orEmpty(),
+                                                rideTime = rideViewModel.newRideNotificationData.rideTime.orEmpty(),
+                                                waitTime = rideViewModel.newRideNotificationData.waitTime.orEmpty()
+                                            )
+                                            dialog?.dismiss()
+                                        }
+                                    } else {
+                                        rideViewModel.endTrip(
+                                            customerId = rideViewModel.newRideNotificationData.customerId.orEmpty(),
+                                            tripId = rideViewModel.newRideNotificationData.tripId.orEmpty(),
+                                            dropLatitude = rideViewModel.newRideNotificationData.dropLatitude.orEmpty(),
+                                            dropLongitude = rideViewModel.newRideNotificationData.dropLongitude.orEmpty(),
+                                            distanceTravelled = rideViewModel.newRideNotificationData.distanceTravelled.orEmpty(),
+                                            rideTime = rideViewModel.newRideNotificationData.rideTime.orEmpty(),
+                                            waitTime = rideViewModel.newRideNotificationData.waitTime.orEmpty()
+                                        )
+                                        dialog?.dismiss()
+                                    }
+                                }
                         }
                     }
                 }
@@ -806,7 +898,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                         rideViewModel.newRideNotificationData.longitude?.toDoubleOrNull() ?: 0.0
                     ), mMap = googleMap
                 ) {
-                    checkInstructions()
+                    SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+                        ?.let {
+                            if (it.login?.servicesConfig?.isNotEmpty() == true) {
+                                it.login?.servicesConfig?.firstOrNull()?.let { config ->
+                                    if ((config.config?.navigation ?: 1) == 1)
+                                        checkInstructions()
+                                }
+                            }
+                        }
                     val dropLatLan = LatLng(
                         (rideViewModel.newRideNotificationData.latitude
                             ?: "0.0").toDouble(),
@@ -841,7 +941,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                         rideViewModel.newRideNotificationData.latitude?.toDoubleOrNull() ?: 0.0,
                         rideViewModel.newRideNotificationData.longitude?.toDoubleOrNull() ?: 0.0
                     ), mMap = googleMap
-                ) { checkInstructions() }
+                ) {
+                    SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+                        ?.let {
+                            if (it.login?.servicesConfig?.isNotEmpty() == true) {
+                                it.login?.servicesConfig?.firstOrNull()?.let { config ->
+                                    if ((config.config?.navigation ?: 1) == 1)
+                                        checkInstructions()
+                                }
+                            }
+                        }
+                }
             }
 
             RideStateEnum.ON_THE_WAY.data -> {
@@ -860,7 +970,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                         rideViewModel.newRideNotificationData.dropLongitude?.toDoubleOrNull() ?: 0.0
                     ), mMap = googleMap
                 ) {
-                    checkInstructions()
+                    SharedPreferencesManager.getModel<UserDataDC>(SharedPreferencesManager.Keys.USER_DATA)
+                        ?.let {
+                            if (it.login?.servicesConfig?.isNotEmpty() == true) {
+                                it.login?.servicesConfig?.firstOrNull()?.let { config ->
+                                    if ((config.config?.navigation ?: 1) == 1)
+                                        checkInstructions()
+                                }
+                            }
+                        }
                     val dropLatLan = LatLng(
                         (rideViewModel.newRideNotificationData.dropLatitude
                             ?: "0.0").toDouble(),
@@ -1035,7 +1153,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
     //Login Via Access Token
     private fun observeLoginAccessToken() =
         viewModel.loginViaAccessToken.observeData(viewLifecycleOwner, onLoading = {
-            showProgressDialog()
+//            showProgressDialog()
         }, onSuccess = {
             hideProgressDialog()
             SharedPreferencesManager.putModel(SharedPreferencesManager.Keys.USER_DATA, this)
@@ -1053,6 +1171,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                     )
                 }
             }
+
+
+
             SharedPreferencesManager.put(
                 SharedPreferencesManager.Keys.SELECTED_OPERATOR_ID,
                 this?.login?.serviceType ?: 0
@@ -1113,7 +1234,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
 
                 else -> {
                     binding.alertView.clRoot.isVisible = false
-                    binding.rlMapView.isVisible = true
+                    if (this?.login?.servicesConfig?.isNotEmpty() == true) {
+                        this.login?.servicesConfig?.firstOrNull()?.let { config ->
+                            if ((config.config?.navigation ?: 1) == 1) {
+                                binding.rlMapView.isVisible = true
+                            }
+                            else
+                            {
+                                binding.rlMapView.isVisible = false
+                            }
+                        }
+                    }
                     checkOnGoingBooking()
                 }
             }
@@ -1281,10 +1412,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
      * */
     private fun observeEndTrip() =
         rideViewModel.endTrip.observeData(viewLifecycleOwner, onLoading = {
-            showProgressDialog()
+//            showProgressDialog()
+            progressBar.show(requireActivity())
         }, onSuccess = {
-            hideProgressDialog()
+//            hideProgressDialog()
+            progressBar.dismiss()
             dialog?.dismiss()
+            otpDialog?.dismiss()
+            otpDialog = null
             screenType = 0
             routeType = 1
             setScreenType(requireContext())
@@ -1306,6 +1441,52 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
                     ).putExtra("rideData", rideViewModel.newRideNotificationData)
                 )
             }, 200)
+        }, onError = {
+//            hideProgressDialog()
+            progressBar.dismiss()
+            showToastLong(this)
+        })
+
+    /**
+     * Observe Trip OTP
+     * */
+    private var otpDialog: Dialog? = null
+    private fun observeTripOtp() =
+        rideViewModel.rideOtp.observeData(viewLifecycleOwner, onLoading = {
+            showProgressDialog()
+        }, onSuccess = {
+            hideProgressDialog()
+            otpDialog?.let {
+                return@let
+            } ?: run {
+                otpDialog = DialogUtils.verifyOtpDialog(
+                    requireActivity(),
+                    dismissDialog = { dialog ->
+                        dialog.dismiss()
+                        otpDialog = null
+                    },
+                    verify = { otp, dialog ->
+                        hideKeyboard()
+                        otpDialog = dialog
+                        rideViewModel.endTrip(
+                            customerId = rideViewModel.newRideNotificationData.customerId.orEmpty(),
+                            tripId = rideViewModel.newRideNotificationData.tripId.orEmpty(),
+                            dropLatitude = rideViewModel.newRideNotificationData.dropLatitude.orEmpty(),
+                            dropLongitude = rideViewModel.newRideNotificationData.dropLongitude.orEmpty(),
+                            distanceTravelled = rideViewModel.newRideNotificationData.distanceTravelled.orEmpty(),
+                            rideTime = rideViewModel.newRideNotificationData.rideTime.orEmpty(),
+                            waitTime = rideViewModel.newRideNotificationData.waitTime.orEmpty(),
+                            otp
+                        )
+                    },
+                    resend = {
+                        rideViewModel.rideOtp(
+                            customerId = rideViewModel.newRideNotificationData.customerId.orEmpty(),
+                            tripId = rideViewModel.newRideNotificationData.tripId.orEmpty()
+                        )
+                    }
+                )
+            }
         }, onError = {
             hideProgressDialog()
             showToastLong(this)
@@ -1350,7 +1531,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
             ?.let {
                 Log.i("PUSHNOTI", "in notification detail FETCHNOTI")
                 if ((it.isRor ?: "0") == "0")
-                rideViewModel.newRideNotificationData = it
+                    rideViewModel.newRideNotificationData = it
                 callTripsDialog(requireContext(), it)
             }
     }
@@ -1360,7 +1541,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), TextToSpeech.OnInitLis
         SharedPreferencesManager.getModel<NewRideNotificationDC>(SharedPreferencesManager.Keys.NEW_BOOKING)
             ?.let {
                 if ((it.isRor ?: "0") == "0")
-                rideViewModel.newRideNotificationData = it
+                    rideViewModel.newRideNotificationData = it
                 callTripsDialog(requireContext(), it)
             } ?: run {
             requireActivity().stopService(Intent(requireActivity(), SoundService::class.java))

@@ -184,6 +184,11 @@ interface ApiInterface {
         @Body requestBody: RequestBody
     ): Response<BaseResponse<NewRideNotificationDC>>
 
+    @POST(RIDE_OTP)
+    suspend fun rideOTP(
+        @Body requestBody: RequestBody
+    ): Response<BaseResponse<Any>>
+
 
     @POST(ONGOING_TRIP)
     suspend fun ongoingTrip(): Response<BaseResponse<OngoingRideDC>>

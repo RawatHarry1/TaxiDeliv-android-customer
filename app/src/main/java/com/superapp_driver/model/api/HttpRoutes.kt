@@ -50,6 +50,8 @@ const val START_TRIP = "driver/startTrip"
 
 const val END_TRIP = "driver/endTrip"
 
+const val RIDE_OTP = "generate_ride_end_otp"
+
 const val ONGOING_TRIP = "driver/fetchOngoingTrip"
 
 const val ABOUT_US = "getInformationUrls"
